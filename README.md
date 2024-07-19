@@ -5,4 +5,4 @@ Commands that I only want to keep:
 ***CSG***: -cliptype -noclip -nowadtextures -wadautodetect
 ***BSP***: -subdivide
 ***VIS***: -fast -full
-***RAD***: -bounce -chop -coring -extra -gamma -fade -scale -sky -smooth -sparse -texchop -noskyfix
+***RAD***: -bounce -chop -coring -extra -blur -gamma -fade -scale -sky -smooth -sparse -texchop -noskyfix
