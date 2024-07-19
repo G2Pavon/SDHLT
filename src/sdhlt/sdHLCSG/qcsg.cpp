@@ -37,7 +37,6 @@ bool            g_bWadAutoDetect = DEFAULT_WADAUTODETECT; // "-nowadautodetect"
 
 vec_t g_scalesize = DEFAULT_SCALESIZE;
 bool g_resetlog = DEFAULT_RESETLOG;
-bool g_nolightopt = DEFAULT_NOLIGHTOPT;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
@@ -1267,9 +1266,6 @@ static void     Usage() // prints out usage sheet
     Log("    -nonulltex       : Turns off null texture stripping\n");
 	Log("    -nonullifytrigger: don't remove 'aaatrigger' texture\n");
 
-
-	Log("    -nolightopt      : don't optimize engine light entities\n");
-
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
 #endif
@@ -1391,7 +1387,6 @@ static void     Settings() // prints out settings sheet
 			strcpy (buf2, "None");
         Log("map scaling           [ %7s ] [ %7s ]\n", buf1, buf2);
     }
-    Log("light name optimize   [ %7s ] [ %7s ]\n", !g_nolightopt? "on" : "off", !DEFAULT_NOLIGHTOPT? "on" : "off");
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("convert game_text     [ %7s ] [ %7s ]\n", !g_noutf8? "on" : "off", !DEFAULT_NOUTF8? "on" : "off");
 #endif
@@ -1704,10 +1699,6 @@ int             main(const int argc, char** argv)
 		else if (!strcasecmp (argv[i], "-noresetlog"))
 		{
 			g_resetlog = false;
-		}
-		else if (!strcasecmp (argv[i], "-nolightopt"))
-		{
-			g_nolightopt = true;
 		}
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 		else if (!strcasecmp (argv[i], "-notextconvert"))

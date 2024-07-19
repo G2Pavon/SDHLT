@@ -1572,47 +1572,45 @@ void            UnparseEntities()
 		}
 	}
 #ifdef SDHLCSG //seedee
-	extern bool g_nolightopt;
-	if (!g_nolightopt)
 	{
-		int i, j;
-		int count = 0;
-		bool *lightneedcompare = (bool *)malloc (g_numentities * sizeof (bool));
-		hlassume (lightneedcompare != NULL, assume_NoMemory);
-		memset (lightneedcompare, 0, g_numentities * sizeof(bool));
-		for (i = g_numentities - 1; i > -1; i--)
+	int i, j;
+	int count = 0;
+	bool *lightneedcompare = (bool *)malloc (g_numentities * sizeof (bool));
+	hlassume (lightneedcompare != NULL, assume_NoMemory);
+	memset (lightneedcompare, 0, g_numentities * sizeof(bool));
+	for (i = g_numentities - 1; i > -1; i--)
+	{
+		entity_t *ent = &g_entities[i];
+		const char *classname = ValueForKey (ent, "classname");
+		const char *targetname = ValueForKey (ent, "targetname");
+		int style = IntForKey (ent, "style");
+		if (!targetname[0] || strcmp (classname, "light") && strcmp (classname, "light_spot") && strcmp (classname, "light_environment"))
+			continue;
+		for (j = i + 1; j < g_numentities; j++)
 		{
-			entity_t *ent = &g_entities[i];
-			const char *classname = ValueForKey (ent, "classname");
-			const char *targetname = ValueForKey (ent, "targetname");
-			int style = IntForKey (ent, "style");
-			if (!targetname[0] || strcmp (classname, "light") && strcmp (classname, "light_spot") && strcmp (classname, "light_environment"))
+			if (!lightneedcompare[j])
 				continue;
-			for (j = i + 1; j < g_numentities; j++)
-			{
-				if (!lightneedcompare[j])
-					continue;
-				entity_t *ent2 = &g_entities[j];
-				const char *targetname2 = ValueForKey (ent2, "targetname");
-				int style2 = IntForKey (ent2, "style");
-				if (style == style2 && !strcmp (targetname, targetname2))
-					break;
-			}
-			if (j < g_numentities)
-			{
-				DeleteKey (ent, "targetname");
-				count++;
-			}
-			else
-			{
-				lightneedcompare[i] = true;
-			}
+			entity_t *ent2 = &g_entities[j];
+			const char *targetname2 = ValueForKey (ent2, "targetname");
+			int style2 = IntForKey (ent2, "style");
+			if (style == style2 && !strcmp (targetname, targetname2))
+				break;
 		}
-		if (count > 0)
+		if (j < g_numentities)
 		{
-			Log ("%d redundant named lights optimized.\n", count);
+			DeleteKey (ent, "targetname");
+			count++;
 		}
-		free (lightneedcompare);
+		else
+		{
+			lightneedcompare[i] = true;
+		}
+	}
+	if (count > 0)
+	{
+		Log ("%d redundant named lights optimized.\n", count);
+	}
+	free (lightneedcompare);
 	}
 #endif
     for (i = 0; i < g_numentities; i++)

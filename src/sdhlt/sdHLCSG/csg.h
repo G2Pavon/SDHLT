@@ -50,7 +50,6 @@
 
 #define DEFAULT_SCALESIZE -1.0 //dont scale
 #define DEFAULT_RESETLOG true
-#define DEFAULT_NOLIGHTOPT false
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 #define DEFAULT_NOUTF8 false
 #endif
@@ -271,7 +270,6 @@ extern const char*	GetClipTypeString(cliptype);
 
 extern vec_t g_scalesize;
 extern bool g_resetlog;
-extern bool g_nolightopt;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 extern bool g_noutf8;
 #endif
