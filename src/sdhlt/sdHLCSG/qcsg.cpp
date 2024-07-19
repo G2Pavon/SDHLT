@@ -41,7 +41,6 @@ bool g_resetlog = DEFAULT_RESETLOG;
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
 bool g_nullifytrigger = DEFAULT_NULLIFYTRIGGER;
-bool g_viewsurface = false;
 
 
 void            GetParamsFromEnt(entity_t* mapent) // parses entity keyvalues for setting information
@@ -215,29 +214,6 @@ void            WriteFace(const int hull, const bface_t* const f
         fprintf(out[hull], "%5.8f %5.8f %5.8f\n", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]); // write the co-ords
     }
     fprintf(out[hull], "\n");
-	if (g_viewsurface)
-	{
-		static bool side = false;
-		side = !side;
-		if (side)
-		{
-			vec3_t center, center2;
-			w->getCenter (center);
-			VectorAdd (center, f->plane->normal, center2);
-			fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", center2[0], center2[1], center2[2]);
-			for (i = 0; i < w->m_NumPoints; i++)
-			{
-				vec_t *p1, *p2;
-				p1 = w->m_Points[i];
-				p2 = w->m_Points[(i+1)%w->m_NumPoints];
-				fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", center[0], center[1], center[2]);
-				fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", p1[0], p1[1], p1[2]);
-				fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", p2[0], p2[1], p2[2]);
-			}
-			fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", center[0], center[1], center[2]);
-			fprintf (out_view[hull], "%5.2f %5.2f %5.2f\n", center2[0], center2[1], center2[2]);
-		}
-	}
 
     ThreadUnlock();
 }
@@ -1262,8 +1238,6 @@ static void     Usage() // prints out usage sheet
 #endif
     Log("    -verbose         : compile with verbose messages\n");
     Log("    -noinfo          : Do not show tool configuration information\n");
-
-    Log("    -nonulltex       : Turns off null texture stripping\n");
 	Log("    -nonullifytrigger: don't remove 'aaatrigger' texture\n");
 
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
@@ -1706,10 +1680,6 @@ int             main(const int argc, char** argv)
 			g_noutf8 = true;
 		}
 #endif
-		else if (!strcasecmp (argv[i], "-viewsurface"))
-		{
-			g_viewsurface = true;
-		}
 		else if (!strcasecmp (argv[i], "-nonullifytrigger"))
 		{
 			g_nullifytrigger = false;
@@ -1983,13 +1953,6 @@ int             main(const int argc, char** argv)
 		out_detailbrush[i] = fopen(name, "w");
 		if (!out_detailbrush[i])
 			Error("Couldn't open %s", name);
-		if (g_viewsurface)
-		{
-			safe_snprintf (name, _MAX_PATH, "%s_surface%i.pts", g_Mapname, i);
-			out_view[i] = fopen (name, "w");
-			if (!out[i])
-				Error ("Counldn't open %s", name);
-		}
     }
 	{
 		FILE			*f;
@@ -2024,10 +1987,6 @@ int             main(const int argc, char** argv)
 	{
         fclose(out[i]);
 		fclose (out_detailbrush[i]);
-		if (g_viewsurface)
-		{
-			fclose (out_view[i]);
-		}
 	}
 
     EmitPlanes();
