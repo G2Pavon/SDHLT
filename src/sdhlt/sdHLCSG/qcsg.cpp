@@ -16,7 +16,6 @@ BoundingBox     world_bounds;
 
 vec_t           g_tiny_threshold = DEFAULT_TINY_THRESHOLD;
      
-bool            g_noclip = DEFAULT_NOCLIP;              // no clipping hull "-noclip"
 bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlyents"
 bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
 bool            g_chart = DEFAULT_CHART;                // show chart "-chart"
@@ -142,16 +141,6 @@ void            GetParamsFromEnt(entity_t* mapent) // parses entity keyvalues fo
     }
     Log("%30s [ %-9s ]\n", "Onlyents", g_onlyents ? "on" : "off");
 
-    iTmp = IntForKey(mapent, "nocliphull");
-    if (iTmp == 1)
-    {
-        g_noclip = true;
-    }
-    else 
-    {
-        g_noclip = false;
-    }
-    Log("%30s [ %-9s ]\n", "Clipping Hull Generation", g_noclip ? "off" : "on");
     iTmp = IntForKey(mapent, "cliptype");
 	switch(iTmp)
 	{
@@ -1248,7 +1237,6 @@ static void     Usage() // prints out usage sheet
 	Log("    -lang file       : localization file\n");
     Log("    -nowadtextures   : Include all used textures into bsp\n");
     Log("    -wadinclude file : Include specific wad or directory into bsp\n");
-    Log("    -noclip          : don't create clipping hull\n");
     
     Log("    -clipeconomy     : turn clipnode economy mode on\n");
 
@@ -1363,8 +1351,6 @@ static void     Settings() // prints out settings sheet
     Log("\n");
 
     // HLCSG Specific Settings
-
-    Log("noclip                [ %7s ] [ %7s ]\n", g_noclip          ? "on" : "off", DEFAULT_NOCLIP       ? "on" : "off");
 
     Log("null texture stripping[ %7s ] [ %7s ]\n", g_bUseNullTex     ? "on" : "off", DEFAULT_NULLTEX      ? "on" : "off");
 
@@ -1542,10 +1528,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-noskyclip"))
         {
             g_skyclip = false;
-        }
-        else if (!strcasecmp(argv[i], "-noclip"))
-        {
-            g_noclip = true;
         }
         else if (!strcasecmp(argv[i], "-onlyents"))
         {

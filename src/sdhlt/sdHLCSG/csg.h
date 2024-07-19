@@ -33,7 +33,6 @@
 
 #define DEFAULT_BRUSH_UNION_THRESHOLD 0.0f
 #define DEFAULT_TINY_THRESHOLD        0.0
-#define DEFAULT_NOCLIP      false
 #define DEFAULT_ONLYENTS    false
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP     true
@@ -258,7 +257,6 @@ extern void		InitDefaultHulls ();
 
 extern bool     g_chart;
 extern bool     g_onlyents;
-extern bool     g_noclip;
 extern bool     g_wadtextures;
 extern bool     g_skyclip;
 extern bool     g_estimate;         

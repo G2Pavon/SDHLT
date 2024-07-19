@@ -43,7 +43,6 @@
 #define DEFAULT_NOINSIDEFILL	false
 #define DEFAULT_NOTJUNC         false
 #define DEFAULT_NOBRINK			false
-#define DEFAULT_NOCLIP          false
 #define DEFAULT_NOOPT			false
 #define DEFAULT_NOCLIPNODEMERGE	false
 #define DEFAULT_LEAKONLY        false

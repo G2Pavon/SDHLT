@@ -61,7 +61,6 @@ bool            g_nofill = DEFAULT_NOFILL;      // dont fill "-nofill"
 bool			g_noinsidefill = DEFAULT_NOINSIDEFILL;
 bool            g_notjunc = DEFAULT_NOTJUNC;
 bool			g_nobrink = DEFAULT_NOBRINK;
-bool            g_noclip = DEFAULT_NOCLIP;      // no clipping hull "-noclip"
 bool            g_chart = DEFAULT_CHART;        // print out chart? "-chart"
 bool            g_estimate = DEFAULT_ESTIMATE;  // estimate mode "-estimate"
 bool            g_info = DEFAULT_INFO;
@@ -162,25 +161,6 @@ void            GetParamsFromEnt(entity_t* mapent)
 	{
 		g_noopt = true;
 	}
-
-    /*
-    nocliphull(choices) : "Generate clipping hulls" : 0 =
-    [
-        0 : "Yes"
-        1 : "No"
-    ]
-    */
-    iTmp = IntForKey(mapent, "nocliphull");
-    if (iTmp == 0)
-    {
-        g_noclip = false;
-    }
-    else if (iTmp == 1)
-    {
-        g_noclip = true;
-    }
-    Log("%30s [ %-9s ]\n", "Clipping Hull Generation", g_noclip ? "off" : "on");
-
     //////////////////
     Verbose("\n");
 }
@@ -1248,19 +1228,6 @@ static bool     ProcessModel()
     model->numfaces = g_numfaces - model->firstface;
     model->visleafs = g_numleafs - startleafs;
 
-    if (g_noclip)
-    {
-		/*
-			KGP 12/31/03 - store empty content type in headnode pointers to signify
-			lack of clipping information in a way that doesn't crash the half-life
-			engine at runtime.
-		*/
-		model->headnode[1] = CONTENTS_EMPTY;
-		model->headnode[2] = CONTENTS_EMPTY;
-		model->headnode[3] = CONTENTS_EMPTY;
-		goto skipclip;
-    }
-
     // the clipping hulls are simpler
     for (g_hullnum = 1; g_hullnum < NUM_HULLS; g_hullnum++)
     {
@@ -1385,7 +1352,6 @@ static void     Usage()
     Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
     Log("    -notjunc       : Don't break edges on t-junctions     (not for final runs)\n");
 	Log("    -nobrink       : Don't smooth brinks                  (not for final runs)\n");
-    Log("    -noclip        : Don't process the clipping hull      (not for final runs)\n");
     Log("    -nofill        : Don't fill outside (will mask LEAKs) (not for final runs)\n");
 	Log("    -noinsidefill  : Don't fill empty spaces\n");
 	Log("    -noopt         : Don't optimize planes on BSP write   (not for final runs)\n");
@@ -1465,7 +1431,6 @@ static void     Settings()
     Log("\n");
 
     // HLBSP Specific Settings
-    Log("noclip              [ %7s ] [ %7s ]\n", g_noclip ? "on" : "off", DEFAULT_NOCLIP ? "on" : "off");
     Log("nofill              [ %7s ] [ %7s ]\n", g_nofill ? "on" : "off", DEFAULT_NOFILL ? "on" : "off");
 	Log("noinsidefill        [ %7s ] [ %7s ]\n", g_noinsidefill ? "on" : "off", DEFAULT_NOINSIDEFILL ? "on" : "off");
 	Log("noopt               [ %7s ] [ %7s ]\n", g_noopt ? "on" : "off", DEFAULT_NOOPT ? "on" : "off");
@@ -1674,10 +1639,6 @@ int             main(const int argc, char** argv)
 		{
 			g_nobrink = true;
 		}
-        else if (!strcasecmp(argv[i], "-noclip"))
-        {
-            g_noclip = true;
-        }
         else if (!strcasecmp(argv[i], "-nofill"))
         {
             g_nofill = true;
