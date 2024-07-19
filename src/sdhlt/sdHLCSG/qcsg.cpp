@@ -47,10 +47,8 @@ bool g_noutf8 = DEFAULT_NOUTF8;
 bool g_nullifytrigger = DEFAULT_NULLIFYTRIGGER;
 bool g_viewsurface = false;
 
-// =====================================================================================
-//  GetParamsFromEnt: parses entity keyvalues for setting information
-// =====================================================================================
-void            GetParamsFromEnt(entity_t* mapent)
+
+void            GetParamsFromEnt(entity_t* mapent) // parses entity keyvalues for setting information
 {
     int     iTmp;
     char    szTmp[256];
