@@ -32,7 +32,6 @@
 #endif
 
 #define DEFAULT_BRUSH_UNION_THRESHOLD 0.0f
-#define DEFAULT_TINY_THRESHOLD        0.0
 #define DEFAULT_ONLYENTS    false
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP     true
@@ -273,7 +272,6 @@ extern bool g_resetlog;
 extern bool g_noutf8;
 #endif
 
-extern vec_t    g_tiny_threshold;
 extern vec_t    g_BrushUnionThreshold;
 
 extern plane_t  g_mapplanes[MAX_INTERNAL_MAP_PLANES];

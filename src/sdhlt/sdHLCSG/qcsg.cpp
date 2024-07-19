@@ -7,14 +7,10 @@
 static FILE*    out[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)  
 static FILE*    out_view[NUM_HULLS];
 static FILE*    out_detailbrush[NUM_HULLS];
-static int      c_tiny;        
-static int      c_tiny_clip;
 static int      c_outfaces;
 static int      c_csgfaces;
 BoundingBox     world_bounds;
 
-
-vec_t           g_tiny_threshold = DEFAULT_TINY_THRESHOLD;
      
 bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlyents"
 bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
@@ -298,15 +294,6 @@ static void     SaveOutside(const brush_t* const b, const int hull, bface_t* out
 
 		f->contents = frontcontents;
 		f->texinfo = frontnull? -1: texinfo;
-        if (f->w->getArea() < g_tiny_threshold)
-        {
-            c_tiny++;
-            Verbose("Entity %i, Brush %i: tiny fragment\n", 
-				b->originalentitynum, b->originalbrushnum
-				);
-            continue;
-        }
-
         if (!hull) // count unique faces
         {
             for (f2 = b->hulls[hull].faces; f2; f2 = f2->next)
@@ -680,15 +667,6 @@ static void     CSGBrush(int brushnum)
 				delete w;
 
                 area = f ? f->w->getArea() : 0;
-                if (f && area < g_tiny_threshold)
-                {
-                    Verbose("Entity %i, Brush %i: tiny penetration\n", 
-						b1->originalentitynum, b1->originalbrushnum
-						);
-                    c_tiny_clip++;
-                    FreeFace(f);
-                    f = NULL;
-                }
                 if (f) // there is one convex fragment of the original, face left inside brush2
                 {
 					if ((hull? (b2->clipnodedetaillevel > b1->clipnodedetaillevel): (b2->detaillevel > b1->detaillevel)))
@@ -1217,7 +1195,6 @@ static void     Usage() // prints out usage sheet
 
     Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
-    Log("    -tiny #          : minmum brush face surface area before it is discarded\n");
     Log("    -brushunion #    : threshold to warn about overlapping brushes\n\n");
     Log("    -hullfile file   : Reads in custom collision hull dimensions\n");
 	Log("    -wadcfgfile file : wad configuration file\n");
@@ -1328,14 +1305,6 @@ static void     Settings() // prints out settings sheet
 	Log("wad.cfg file          [ %7s ] [ %7s ]\n", g_wadcfgfile? g_wadcfgfile: "None", "None");
 	Log("wad.cfg config name   [ %7s ] [ %7s ]\n", g_wadconfigname? g_wadconfigname: "None", "None");
 	Log("nullfile              [ %7s ] [ %7s ]\n", g_nullfile ? g_nullfile : "None", "None");
-    {   // calc min surface area
-        char            tiny_penetration[10];
-        char            default_tiny_penetration[10];
-
-        safe_snprintf(tiny_penetration, sizeof(tiny_penetration), "%3.3f", g_tiny_threshold);
-        safe_snprintf(default_tiny_penetration, sizeof(default_tiny_penetration), "%3.3f", DEFAULT_TINY_THRESHOLD);
-        Log("min surface area      [ %7s ] [ %7s ]\n", tiny_penetration, default_tiny_penetration);
-    }
     {   // calc union threshold
         char            brush_union[10];
         char            default_brush_union[10];
@@ -1589,17 +1558,6 @@ int             main(const int argc, char** argv)
             if (i + 1 < argc)	//added "1" .--vluzacn
             {
                 g_BrushUnionThreshold = (float)atof(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
-        }
-        else if (!strcasecmp(argv[i], "-tiny"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_tiny_threshold = (float)atof(argv[++i]);
             }
             else
             {
@@ -1973,8 +1931,6 @@ int             main(const int argc, char** argv)
 
     Verbose("%5i csg faces\n", c_csgfaces);
     Verbose("%5i used faces\n", c_outfaces);
-    Verbose("%5i tiny faces\n", c_tiny);
-    Verbose("%5i tiny clips\n", c_tiny_clip);
 
     for (i = 0; i < NUM_HULLS; i++) // close hull files 
 	{
