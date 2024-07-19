@@ -486,16 +486,15 @@ static void ParseBrush(entity_t* mapent)
 			strcpy (side->td.name, "NULL");
 		}
 	}
-	if (g_nullifytrigger)
 	{
-		for (j = 0; j < b->numsides; j++)
+	for (j = 0; j < b->numsides; j++) // NULLIFY trigger
+	{
+		side = &g_brushsides[b->firstside + j];
+		if (!strncasecmp (side->td.name, "AAATRIGGER", 10))
 		{
-			side = &g_brushsides[b->firstside + j];
-			if (!strncasecmp (side->td.name, "AAATRIGGER", 10))
-			{
-				strcpy (side->td.name, "NULL");
-			}
+			strcpy (side->td.name, "NULL");
 		}
+	}
 	}
 
     //

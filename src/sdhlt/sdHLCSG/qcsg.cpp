@@ -40,7 +40,6 @@ bool g_resetlog = DEFAULT_RESETLOG;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
-bool g_nullifytrigger = DEFAULT_NULLIFYTRIGGER;
 
 
 void            GetParamsFromEnt(entity_t* mapent) // parses entity keyvalues for setting information
@@ -1238,7 +1237,6 @@ static void     Usage() // prints out usage sheet
 #endif
     Log("    -verbose         : compile with verbose messages\n");
     Log("    -noinfo          : Do not show tool configuration information\n");
-	Log("    -nonullifytrigger: don't remove 'aaatrigger' texture\n");
 
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
@@ -1330,7 +1328,6 @@ static void     Settings() // prints out settings sheet
 	Log("wad.cfg file          [ %7s ] [ %7s ]\n", g_wadcfgfile? g_wadcfgfile: "None", "None");
 	Log("wad.cfg config name   [ %7s ] [ %7s ]\n", g_wadconfigname? g_wadconfigname: "None", "None");
 	Log("nullfile              [ %7s ] [ %7s ]\n", g_nullfile ? g_nullfile : "None", "None");
-	Log("nullify trigger       [ %7s ] [ %7s ]\n", g_nullifytrigger? "on": "off", DEFAULT_NULLIFYTRIGGER? "on": "off");
     {   // calc min surface area
         char            tiny_penetration[10];
         char            default_tiny_penetration[10];
@@ -1680,10 +1677,6 @@ int             main(const int argc, char** argv)
 			g_noutf8 = true;
 		}
 #endif
-		else if (!strcasecmp (argv[i], "-nonullifytrigger"))
-		{
-			g_nullifytrigger = false;
-		}
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);

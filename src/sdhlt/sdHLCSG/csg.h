@@ -53,7 +53,6 @@
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 #define DEFAULT_NOUTF8 false
 #endif
-#define DEFAULT_NULLIFYTRIGGER true
 
 // AJM: added in
 #define UNLESS(a)  if (!(a))
@@ -273,7 +272,6 @@ extern bool g_resetlog;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 extern bool g_noutf8;
 #endif
-extern bool g_nullifytrigger;
 
 extern vec_t    g_tiny_threshold;
 extern vec_t    g_BrushUnionThreshold;
