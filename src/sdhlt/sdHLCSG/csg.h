@@ -42,7 +42,6 @@
 #define FLOOR_Z 0.7 // Quake default
 #define DEFAULT_CLIPTYPE clip_simple //clip_legacy //--vluzacn
 
-#define DEFAULT_NULLTEX     true
 
 #define DEFAULT_CLIPNAZI    false
 
@@ -261,8 +260,6 @@ extern bool     g_wadtextures;
 extern bool     g_skyclip;
 extern bool     g_estimate;         
 extern const char* g_hullfile;        
-
-extern bool     g_bUseNullTex; 
 
 
 extern bool     g_bClipNazi; 

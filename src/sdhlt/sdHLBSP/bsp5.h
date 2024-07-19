@@ -50,8 +50,6 @@
 #define DEFAULT_CHART           true //seedee
 #define DEFAULT_INFO            true
 
-#define DEFAULT_NULLTEX             true
-
 
 #ifdef SYSTEM_WIN32
 #define DEFAULT_ESTIMATE        false
@@ -304,7 +302,6 @@ extern char		g_extentfilename[_MAX_PATH];
 
 
 
-extern bool     g_bUseNullTex;
 
 extern bool		g_nohull2;
 

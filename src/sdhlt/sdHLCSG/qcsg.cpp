@@ -26,8 +26,6 @@ const char*     g_hullfile = NULL;                      // external hullfile "-h
 const char*		g_wadcfgfile = NULL;
 const char*		g_wadconfigname = NULL;
 
-bool            g_bUseNullTex = DEFAULT_NULLTEX;        // "-nonulltex"
-
 cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
 const char*			g_nullfile = NULL;
@@ -1351,10 +1349,6 @@ static void     Settings() // prints out settings sheet
     Log("\n");
 
     // HLCSG Specific Settings
-
-    Log("null texture stripping[ %7s ] [ %7s ]\n", g_bUseNullTex     ? "on" : "off", DEFAULT_NULLTEX      ? "on" : "off");
-
-
     Log("clipnode economy mode [ %7s ] [ %7s ]\n", g_bClipNazi       ? "on" : "off", DEFAULT_CLIPNAZI     ? "on" : "off");
 
 	Log("clip hull type        [ %7s ] [ %7s ]\n", GetClipTypeString(g_cliptype), GetClipTypeString(DEFAULT_CLIPTYPE));
@@ -1532,11 +1526,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-onlyents"))
         {
             g_onlyents = true;
-        }
-
-        else if (!strcasecmp(argv[i], "-nonulltex"))
-        {
-            g_bUseNullTex = false;
         }
 
         else if (!strcasecmp(argv[i], "-clipeconomy"))
@@ -1873,8 +1862,7 @@ int             main(const int argc, char** argv)
 	}
     Verbose("Loading hull file\n");
     LoadHullfile(g_hullfile);               // if the user specified a hull file, load it now
-	if(g_bUseNullTex)
-	{ properties_initialize(g_nullfile); }
+	properties_initialize(g_nullfile);
     safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
 	FlipSlashes(name);
     DefaultExtension(name, ".map");                  // might be .reg

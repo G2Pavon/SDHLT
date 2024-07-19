@@ -68,8 +68,6 @@ bool            g_bLeakOnly = DEFAULT_LEAKONLY; // leakonly mode "-leakonly"
 bool            g_bLeaked = false;
 int             g_subdivide_size = DEFAULT_SUBDIVIDE_SIZE;
 
-bool            g_bUseNullTex = DEFAULT_NULLTEX; // "-nonulltex"
-
 
 
 bool g_nohull2 = false;
@@ -831,18 +829,11 @@ bool            CheckFaceForNull(const face_t* const f)
         if (strncasecmp(name, "sky", 3)) // for env_rain
 			return true;
     }
-    // null faces are only of facetype face_null if we are using null texture stripping
-    if (g_bUseNullTex)
-    {
-		const char *name = GetTextureByNumber (f->texturenum);
-		if (!strncasecmp(name, "null", 4))
-			return true;
-		return false;
-    }
-    else // otherwise, under normal cases, null textured faces should be facetype face_normal
-    {
-        return false;
-    }
+    const char *name = GetTextureByNumber (f->texturenum);
+    if (!strncasecmp(name, "null", 4))
+        return true;
+
+    return false;
 }
 // =====================================================================================
 //Cpt_Andrew - UTSky Check
@@ -1435,7 +1426,6 @@ static void     Settings()
 	Log("noinsidefill        [ %7s ] [ %7s ]\n", g_noinsidefill ? "on" : "off", DEFAULT_NOINSIDEFILL ? "on" : "off");
 	Log("noopt               [ %7s ] [ %7s ]\n", g_noopt ? "on" : "off", DEFAULT_NOOPT ? "on" : "off");
 	Log("no clipnode merging [ %7s ] [ %7s ]\n", g_noclipnodemerge? "on": "off", DEFAULT_NOCLIPNODEMERGE? "on": "off");
-    Log("null tex. stripping [ %7s ] [ %7s ]\n", g_bUseNullTex ? "on" : "off", DEFAULT_NULLTEX ? "on" : "off" );
     Log("notjunc             [ %7s ] [ %7s ]\n", g_notjunc ? "on" : "off", DEFAULT_NOTJUNC ? "on" : "off");
 	Log("nobrink             [ %7s ] [ %7s ]\n", g_nobrink? "on": "off", DEFAULT_NOBRINK? "on": "off");
     Log("subdivide size      [ %7d ] [ %7d ] (Min %d) (Max %d)\n",
@@ -1716,13 +1706,6 @@ int             main(const int argc, char** argv)
         {
             g_log = false;
         }
-
-        else if (!strcasecmp(argv[i], "-nonulltex"))
-        {
-            g_bUseNullTex = false;
-        }
-
-
 		else if (!strcasecmp (argv[i], "-nohull2"))
 		{
 			g_nohull2 = true;
