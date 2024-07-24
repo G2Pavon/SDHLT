@@ -1250,7 +1250,6 @@ static void     Usage()
 
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #     : Set to 0 to turn off the pop-up console (default is 1)\n");
-	Log("    -lang file     : localization file\n");
     Log("    -leakonly      : Run BSP only enough to check for LEAKs\n");
     Log("    -subdivide #   : Sets the face subdivide size\n");
     Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
@@ -1718,23 +1717,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-		else if (!strcasecmp (argv[i], "-lang"))
-		{
-			if (i + 1 < argc)
-			{
-				char tmp[_MAX_PATH];
-#ifdef SYSTEM_WIN32
-				GetModuleFileName (NULL, tmp, _MAX_PATH);
-#else
-				safe_strncpy (tmp, argv[0], _MAX_PATH);
-#endif
-				LoadLangFile (argv[++i], tmp);
-			}
-			else
-			{
-				Usage();
-			}
-		}
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);

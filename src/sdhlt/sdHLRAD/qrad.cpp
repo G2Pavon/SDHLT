@@ -2489,7 +2489,6 @@ static void     Usage()
 
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
-	Log("    -lang file      : localization file\n");
 	Log("    -waddir folder  : Search this folder for wad files.\n");
 	Log("    -fast           : Fast rad\n");
 	Log("    -vismatrix value: Set vismatrix method to normal, sparse or off.\n");
@@ -3684,23 +3683,6 @@ int             main(const int argc, char** argv)
 			else
 			{
 				Usage ();
-			}
-		}
-		else if (!strcasecmp (argv[i], "-lang"))
-		{
-			if (i + 1 < argc)
-			{
-				char tmp[_MAX_PATH];
-#ifdef SYSTEM_WIN32
-				GetModuleFileName (NULL, tmp, _MAX_PATH);
-#else
-				safe_strncpy (tmp, argv[0], _MAX_PATH);
-#endif
-				LoadLangFile (argv[++i], tmp);
-			}
-			else
-			{
-				Usage();
 			}
 		}
 		else if (!strcasecmp(argv[i], "-pre25")) //Pre25 should be after everything else to override

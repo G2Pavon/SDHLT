@@ -1052,7 +1052,6 @@ static void     Usage() // prints out usage sheet
 
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
-	Log("    -lang file       : localization file\n");
     Log("    -nowadtextures   : Include all used textures into bsp\n");
     Log("    -wadinclude file : Include specific wad or directory into bsp\n");
     
@@ -1461,23 +1460,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-		else if (!strcasecmp (argv[i], "-lang"))
-		{
-			if (i + 1 < argc)
-			{
-				char tmp[_MAX_PATH];
-#ifdef SYSTEM_WIN32
-				GetModuleFileName (NULL, tmp, _MAX_PATH);
-#else
-				safe_strncpy (tmp, argv[0], _MAX_PATH);
-#endif
-				LoadLangFile (argv[++i], tmp);
-			}
-			else
-			{
-				Usage();
-			}
-		}
 		else if (!strcasecmp (argv[i], "-noresetlog"))
 		{
 			g_resetlog = false;
