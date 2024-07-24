@@ -100,7 +100,8 @@ Temporary Items
 !/tools/wad.cfg
 
 *.zip
-
+*.pro
+*.sh
 /build*/
 .vs/SDHLT/v17/.wsuo
 .vs/SDHLT/v17/DocumentLayout.json
