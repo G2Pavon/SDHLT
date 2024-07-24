@@ -128,13 +128,6 @@ static bool CheckForInvisible(entity_t* mapent)
 	using namespace std;
 
 	string keyval(ValueForKey(mapent,"classname"));
-	if(g_invisible_items.count(keyval))
-	{ return true; }
-
-	keyval.assign(ValueForKey(mapent,"targetname"));
-	if(g_invisible_items.count(keyval))
-	{ return true; }
-
 	keyval.assign(ValueForKey(mapent,"zhlt_invisible"));
 	if(!keyval.empty() && strcmp(keyval.c_str(),"0"))
 	{ return true; }

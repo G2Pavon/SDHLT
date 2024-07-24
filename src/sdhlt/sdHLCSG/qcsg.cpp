@@ -23,8 +23,6 @@ const char*		g_wadconfigname = NULL;
 
 cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
-const char*			g_nullfile = NULL;
-
 bool            g_bClipNazi = DEFAULT_CLIPNAZI;         // "-noclipeconomy"
 
 bool            g_bWadAutoDetect = DEFAULT_WADAUTODETECT; // "-nowadautodetect"
@@ -1061,7 +1059,6 @@ static void     Usage() // prints out usage sheet
     Log("    -clipeconomy     : turn clipnode economy mode on\n");
 
 	Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
-	Log("    -nullfile file   : specify list of entities to retexture with NULL\n");
 
     Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
@@ -1174,7 +1171,6 @@ static void     Settings() // prints out settings sheet
     Log("hullfile              [ %7s ] [ %7s ]\n", g_hullfile ? g_hullfile : "None", "None");
 	Log("wad.cfg file          [ %7s ] [ %7s ]\n", g_wadcfgfile? g_wadcfgfile: "None", "None");
 	Log("wad.cfg config name   [ %7s ] [ %7s ]\n", g_wadconfigname? g_wadconfigname: "None", "None");
-	Log("nullfile              [ %7s ] [ %7s ]\n", g_nullfile ? g_nullfile : "None", "None");
     {   // calc union threshold
         char            brush_union[10];
         char            default_brush_union[10];
@@ -1357,19 +1353,6 @@ int             main(const int argc, char** argv)
             else
             {
                 Log("Error: -cliptype: incorrect usage of parameter\n");
-                Usage();
-            }
-		}
-
-		else if (!strcasecmp(argv[i], "-nullfile"))
-		{
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_nullfile = argv[++i];
-            }
-            else
-            {
-            	Log("Error: -nullfile: expected path to null ent file following parameter\n");
                 Usage();
             }
 		}
@@ -1590,32 +1573,7 @@ int             main(const int argc, char** argv)
 			}
 		}
 	}
-	if (g_nullfile)
-	{
-		char temp[_MAX_PATH];
-		char test[_MAX_PATH];
-		safe_strncpy (temp, g_Mapname, _MAX_PATH);
-		ExtractFilePath (temp, test);
-		safe_strncat (test, g_nullfile, _MAX_PATH);
-		if (q_exists (test))
-		{
-			g_nullfile = strdup (test);
-		}
-		else
-		{
-#ifdef SYSTEM_WIN32
-			GetModuleFileName (NULL, temp, _MAX_PATH);
-#else
-			safe_strncpy (temp, argv[0], _MAX_PATH);
-#endif
-			ExtractFilePath (temp, test);
-			safe_strncat (test, g_nullfile, _MAX_PATH);
-			if (q_exists (test))
-			{
-				g_nullfile = strdup (test); //Todo rename all these vars //seedee
-			}
-		}
-	}
+
 	if (g_wadcfgfile) //If wad.cfg exists //seedee
 	{
 		char mapDirPath[_MAX_PATH];
@@ -1644,7 +1602,6 @@ int             main(const int argc, char** argv)
 	}
     Verbose("Loading hull file\n");
     LoadHullfile(g_hullfile);               // if the user specified a hull file, load it now
-	properties_initialize(g_nullfile);
     safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
 	FlipSlashes(name);
     DefaultExtension(name, ".map");                  // might be .reg

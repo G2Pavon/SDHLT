@@ -309,10 +309,5 @@ extern bool     g_bWadAutoDetect;
 //=============================================================================
 // properties.cpp
 
-#include <string>
-#include <set>
-extern void properties_initialize(const char* filename);
-extern std::set< std::string > g_invisible_items;
-
 //============================================================================
 #endif//HLCSG_H__

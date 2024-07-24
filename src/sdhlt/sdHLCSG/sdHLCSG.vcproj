@@ -241,10 +241,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\properties.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\qcsg.cpp"
 				>
 			</File>

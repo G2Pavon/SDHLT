@@ -102,7 +102,6 @@ set(CSG_SOURCES
     ${CSG_DIR}/brushunion.cpp
     ${CSG_DIR}/hullfile.cpp
     ${CSG_DIR}/map.cpp
-    ${CSG_DIR}/properties.cpp
     ${CSG_DIR}/qcsg.cpp
     ${CSG_DIR}/textures.cpp
     ${CSG_DIR}/wadcfg.cpp
