@@ -255,8 +255,7 @@ extern bool     g_chart;
 extern bool     g_onlyents;
 extern bool     g_wadtextures;
 extern bool     g_skyclip;
-extern bool     g_estimate;         
-extern const char* g_hullfile;        
+extern bool     g_estimate;               
 
 
 extern bool     g_bClipNazi; 
@@ -292,7 +291,6 @@ void            CalculateBrushUnions(int brushnum);
 //============================================================================
 // hullfile.cpp
 extern vec3_t   g_hull_size[NUM_HULLS][2];
-extern void     LoadHullfile(const char* filename);
 
 extern const char *g_wadcfgfile;
 extern const char *g_wadconfigname;

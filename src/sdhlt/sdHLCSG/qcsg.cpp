@@ -17,7 +17,6 @@ bool            g_chart = DEFAULT_CHART;                // show chart "-chart"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
 bool            g_info = DEFAULT_INFO;                  // "-info" ?
-const char*     g_hullfile = NULL;                      // external hullfile "-hullfie sdfsd"
 const char*		g_wadcfgfile = NULL;
 const char*		g_wadconfigname = NULL;
 
@@ -1061,7 +1060,6 @@ static void     Usage() // prints out usage sheet
     Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
     Log("    -brushunion #    : threshold to warn about overlapping brushes\n\n");
-    Log("    -hullfile file   : Reads in custom collision hull dimensions\n");
 	Log("    -wadcfgfile file : wad configuration file\n");
 	Log("    -wadconfig name  : use the old wad configuration approach (select a group from wad.cfg)\n");
     Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
@@ -1161,7 +1159,6 @@ static void     Settings() // prints out settings sheet
     Log("onlyents              [ %7s ] [ %7s ]\n", g_onlyents        ? "on" : "off", DEFAULT_ONLYENTS     ? "on" : "off");
     Log("wadtextures           [ %7s ] [ %7s ]\n", g_wadtextures     ? "on" : "off", DEFAULT_WADTEXTURES  ? "on" : "off");
     Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
-    Log("hullfile              [ %7s ] [ %7s ]\n", g_hullfile ? g_hullfile : "None", "None");
 	Log("wad.cfg file          [ %7s ] [ %7s ]\n", g_wadcfgfile? g_wadcfgfile: "None", "None");
 	Log("wad.cfg config name   [ %7s ] [ %7s ]\n", g_wadconfigname? g_wadconfigname: "None", "None");
     {   // calc union threshold
@@ -1406,17 +1403,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-        else if (!strcasecmp(argv[i], "-hullfile"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_hullfile = argv[++i];
-            }
-            else
-            {
-                Usage();
-            }
-        }
 		else if (!strcasecmp (argv[i], "-wadcfgfile"))
 		{
 			if (i + 1 < argc)
@@ -1513,32 +1499,6 @@ int             main(const int argc, char** argv)
     atexit(dtexdata_free);
 
     start = I_FloatTime(); // START CSG
-	if (g_hullfile)
-	{
-		char temp[_MAX_PATH];
-		char test[_MAX_PATH];
-		safe_strncpy (temp, g_Mapname, _MAX_PATH);
-		ExtractFilePath (temp, test);
-		safe_strncat (test, g_hullfile, _MAX_PATH);
-		if (q_exists (test))
-		{
-			g_hullfile = strdup (test);
-		}
-		else
-		{
-#ifdef SYSTEM_WIN32
-			GetModuleFileName (NULL, temp, _MAX_PATH);
-#else
-			safe_strncpy (temp, argv[0], _MAX_PATH);
-#endif
-			ExtractFilePath (temp, test);
-			safe_strncat (test, g_hullfile, _MAX_PATH);
-			if (q_exists (test))
-			{
-				g_hullfile = strdup (test);
-			}
-		}
-	}
 
 	if (g_wadcfgfile) //If wad.cfg exists //seedee
 	{
@@ -1566,8 +1526,6 @@ int             main(const int argc, char** argv)
 			}
 		}
 	}
-    Verbose("Loading hull file\n");
-    LoadHullfile(g_hullfile);               // if the user specified a hull file, load it now
     safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
 	FlipSlashes(name);
     DefaultExtension(name, ".map");                  // might be .reg
