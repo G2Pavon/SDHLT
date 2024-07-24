@@ -28,9 +28,6 @@
 #define DEFAULT_NOFIXPRT    false
 #define DEFAULT_CHART       true //seedee
 #define DEFAULT_INFO        true
-#ifdef SYSTEM_WIN32
-#define DEFAULT_ESTIMATE    false
-#endif
 #ifdef SYSTEM_POSIX
 #define DEFAULT_ESTIMATE    true
 #endif

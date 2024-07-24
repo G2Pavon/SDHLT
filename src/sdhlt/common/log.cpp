@@ -3,10 +3,6 @@
 #endif
 
 #ifdef ZHLT_NETVIS
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 #endif
 
 #ifdef STDC_HEADERS
@@ -29,10 +25,6 @@
 #include "log.h"
 #include "filelib.h"
 
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 #include "scriplib.h"
 
@@ -198,20 +190,6 @@ void CDECL      OpenLog(const int clientid)
         char            logfilename[_MAX_PATH];
 
 #ifdef ZHLT_NETVIS
-    #ifdef SYSTEM_WIN32
-        if (clientid)
-        {
-            char            computername[MAX_COMPUTERNAME_LENGTH + 1];
-            unsigned long   size = sizeof(computername);
-
-            if (!GetComputerName(computername, &size))
-            {
-                safe_strncpy(computername, "unknown", sizeof(computername));
-            }
-            safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
-        }
-        else
-    #endif
     #ifdef SYSTEM_POSIX
         if (clientid)
         {
@@ -259,48 +237,15 @@ void CDECL      CloseLog()
 //  Every function up to this point should check g_log, the functions below should not
 //
 
-#ifdef SYSTEM_WIN32
-// AJM: fprintf/flush wasnt printing newline chars correctly (prefixed with \r) under win32
-//      due to the fact that those streams are in byte mode, so this function prefixes 
-//      all \n with \r automatically.
-//      NOTE: system load may be more with this method, but there isnt that much logging going
-//      on compared to the time taken to compile the map, so its negligable.
-void            Safe_WriteLog(const char* const message)
-{
-    const char* c;
-    
-    if (!CompileLog)
-        return;
-
-    c = &message[0];
-
-    while (1)
-    {
-        if (!*c)
-            return; // end of string
-
-        if (*c == '\n')
-            fputc('\r', CompileLog);
-
-        fputc(*c, CompileLog);
-
-        c++;
-    }
-}
-#endif
 
 void            WriteLog(const char* const message)
 {
 
-#ifndef SYSTEM_WIN32
     if (CompileLog)
     {
         fprintf(CompileLog, "%s", message); //fprintf(CompileLog, message); //--vluzacn
         fflush(CompileLog);
     }
-#else
-    Safe_WriteLog(message);
-#endif
 
     fprintf(stdout, "%s", message); //fprintf(stdout, message); //--vluzacn
     fflush(stdout);
@@ -662,62 +607,12 @@ void LogTimeElapsed(float elapsed_time)
     }
 }
 
-#ifdef SYSTEM_WIN32
-void wait ()
-{
-	Sleep (1000);
-}
-int InitConsole (int argc, char **argv)
-{
-	int i;
-	bool wrong = false;
-	twice = false;
-	useconsole = true;
-	for (i = 1; i < argc; ++i)
-	{
-		if (!strcasecmp (argv[i], "-console"))
-		{
-			if (i + 1 < argc)
-			{
-				if (!strcasecmp (argv[i+1], "0"))
-					useconsole = false;
-				else if (!strcasecmp (argv[i+1], "1"))
-					useconsole = true;
-				else
-					wrong = true;
-			}
-			else
-				wrong = true;
-		}
-	}
-	if (useconsole)
-		twice = AllocConsole ();
-	if (useconsole)
-	{
-		conout = fopen ("CONOUT$", "w");
-		if (!conout)
-		{
-			useconsole = false;
-			twice = false;
-			Warning ("Can not open 'CONOUT$'");
-			if (twice)
-				FreeConsole ();
-		}
-	}
-	if (twice)
-		atexit (&wait);
-	if (wrong)
-		return -1;
-	return 0;
-}
-#else
 int InitConsole (int argc, char **argv)
 {
 	twice = false;
 	useconsole = false;
 	return 0;
 }
-#endif
 void CDECL FORMAT_PRINTF(1,2) PrintConsole(const char* const warning, ...)
 {
     char            message[MAX_MESSAGE];

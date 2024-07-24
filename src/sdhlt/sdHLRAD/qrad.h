@@ -23,11 +23,6 @@
 
 #include <vector>
 
-#ifdef SYSTEM_WIN32
-#pragma warning(disable: 4142 4028)
-#include <io.h>
-#pragma warning(default: 4142 4028)
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -41,9 +36,6 @@
 #include <ctype.h>
 #endif
 
-#ifdef SYSTEM_WIN32
-#include <direct.h>
-#endif
 #include <string>
 
 #define DEFAULT_PRE25UPDATE         false
@@ -144,9 +136,6 @@
 	#define DEFAULT_TEXLIGHTGAP 0.0
 
 
-#ifdef SYSTEM_WIN32
-#define DEFAULT_ESTIMATE    false
-#endif
 #ifdef SYSTEM_POSIX
 #define DEFAULT_ESTIMATE    true
 #endif

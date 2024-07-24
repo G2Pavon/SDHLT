@@ -56,9 +56,6 @@
 // AJM: added in
 #define UNLESS(a)  if (!(a))
 
-#ifdef SYSTEM_WIN32
-#define DEFAULT_ESTIMATE    false
-#endif
 
 #ifdef SYSTEM_POSIX
 #define DEFAULT_ESTIMATE    true

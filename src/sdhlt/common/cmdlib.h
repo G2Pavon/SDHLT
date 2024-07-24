@@ -51,15 +51,9 @@
 // ZHLT_* features are spread across more than one tool. Hence, changing
 //      one of these settings probably means recompiling the whole set
 
-	#ifdef SYSTEM_WIN32
-#define RIPENT_PAUSE //--vluzacn
-	#endif
 
 // tool specific settings below only mean a recompile of the tool affected
 
-	#ifdef SYSTEM_WIN32
-#define HLCSG_GAMETEXTMESSAGE_UTF8 //--vluzacn
-	#endif
 
 //=====================================================================
 
@@ -90,15 +84,6 @@
 #include "win32fix.h"
 #include "mathtypes.h"
 
-#ifdef SYSTEM_WIN32
-#pragma warning(disable: 4127)                      // conditional expression is constant
-#pragma warning(disable: 4115)                      // named type definition in parentheses
-#pragma warning(disable: 4244)                      // conversion from 'type' to type', possible loss of data
-// AJM
-#pragma warning(disable: 4786)                      // identifier was truncated to '255' characters in the browser information
-#pragma warning(disable: 4305)                      // truncation from 'const double' to 'float'
-#pragma warning(disable: 4800)                     // forcing value to bool 'true' or 'false' (performance warning)
-#endif
 
 
 #ifdef STDC_HEADERS
@@ -125,10 +110,6 @@
 #include "c2cpp.h"
 #endif
 
-#ifdef SYSTEM_WIN32
-#define SYSTEM_SLASH_CHAR  '\\'
-#define SYSTEM_SLASH_STR   "\\"
-#endif
 #ifdef SYSTEM_POSIX
 #define SYSTEM_SLASH_CHAR  '/'
 #define SYSTEM_SLASH_STR   "/"

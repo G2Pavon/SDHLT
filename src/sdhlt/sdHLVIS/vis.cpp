@@ -13,12 +13,6 @@
 */
 
 #include "vis.h"
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-// std:clamp() is at least MVSC 19
-#define CLAMP(x, min, max) x <= min ? min : x >= max ? max : x
-#endif
 
 #ifdef SYSTEM_POSIX
 #include <algorithm>
@@ -418,10 +412,6 @@ static portal_t* GetNextPortal()
 // =====================================================================================
 //  LeafThread
 // =====================================================================================
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable: 4100)                             // unreferenced formal parameter
-#endif
 
 #ifndef ZHLT_NETVIS
 static void     LeafThread(int unused)
@@ -517,9 +507,6 @@ static void     LeafThread(int unused)
 }
 #endif
 
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif
 
 // Recursively add `add` to `current` visibility leaf.
 std::unordered_map<int, bool> leaf_flow_add_exclude = {};
@@ -1198,9 +1185,6 @@ static void     Usage()
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -nolog          : don't generate the compile logfiles\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
-#ifdef SYSTEM_WIN32
-    Log("    -estimate       : display estimated time during compile\n");
-#endif
 #ifdef SYSTEM_POSIX
     Log("    -noestimate     : do not display continuous compile time estimates\n");
 #endif
@@ -1471,20 +1455,12 @@ int             main(const int argc, char** argv)
 
 		else if (!strcasecmp(argv[i], "-console"))
 		{
-#ifndef SYSTEM_WIN32
 			Warning("The option '-console #' is only valid for Windows.");
-#endif
 			if (i + 1 < argc)
 				++i;
 			else
 				Usage();
 		}
-#ifdef SYSTEM_WIN32
-        else if (!strcasecmp(argv[i], "-estimate"))
-        {
-            g_estimate = true;
-        }
-#endif
 #ifdef SYSTEM_POSIX
         else if (!strcasecmp(argv[i], "-noestimate"))
         {
@@ -1647,11 +1623,7 @@ int             main(const int argc, char** argv)
 			if (i + 1 < argc)
 			{
 				char tmp[_MAX_PATH];
-#ifdef SYSTEM_WIN32
-				GetModuleFileName (NULL, tmp, _MAX_PATH);
-#else
 				safe_strncpy (tmp, argv[0], _MAX_PATH);
-#endif
 				LoadLangFile (argv[++i], tmp);
 			}
 			else
@@ -1954,19 +1926,15 @@ int             main(const int argc, char** argv)
         free(g_uncompressed);
         // END VIS
 
-#ifndef SYSTEM_WIN32
         // Talk about cheese . . .
         StopNetvisSocketServer();
-#endif
 
     }
     else if (g_vismode == VIS_MODE_CLIENT)
     {
 
-#ifndef SYSTEM_WIN32
         // Dont ask  . . 
         DisconnectFromServer();
-#endif
 
         end = I_FloatTime();
         LogTimeElapsed(end - start);

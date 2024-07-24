@@ -2,11 +2,6 @@
 #include "config.h"
 #endif
 
-#ifdef SYSTEM_WIN32
-#include <sys/stat.h>
-#include <io.h>
-#include <fcntl.h>
-#endif
 
 #ifdef SYSTEM_POSIX
 #ifdef HAVE_SYS_STAT_H

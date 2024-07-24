@@ -1,8 +1,4 @@
 #include "csg.h" 
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> //--vluzacn
-#endif
 
 static FILE*    out[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)  
 static FILE*    out_view[NUM_HULLS];
@@ -1206,9 +1202,6 @@ static void     Usage() // prints out usage sheet
     Log("    -nolog           : don't generate the compile logfiles\n");
 	Log("    -noresetlog      : Do not delete log file\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
-#ifdef SYSTEM_WIN32
-    Log("    -estimate        : display estimated time during compile\n");
-#endif
 #ifdef SYSTEM_POSIX
     Log("    -noestimate      : do not display continuous compile time estimates\n");
 #endif
@@ -1393,20 +1386,12 @@ int             main(const int argc, char** argv)
 
 		else if (!strcasecmp(argv[i], "-console"))
 		{
-#ifndef SYSTEM_WIN32
 			Warning("The option '-console #' is only valid for Windows.");
-#endif
 			if (i + 1 < argc)
 				++i;
 			else
 				Usage();
 		}
-#ifdef SYSTEM_WIN32
-        else if (!strcasecmp(argv[i], "-estimate"))
-        {
-            g_estimate = true;
-        }
-#endif
 
 #ifdef SYSTEM_POSIX
         else if (!strcasecmp(argv[i], "-noestimate"))
@@ -1613,11 +1598,7 @@ int             main(const int argc, char** argv)
 			if (i + 1 < argc)
 			{
 				char tmp[_MAX_PATH];
-#ifdef SYSTEM_WIN32
-				GetModuleFileName (NULL, tmp, _MAX_PATH);
-#else
 				safe_strncpy (tmp, argv[0], _MAX_PATH);
-#endif
 				LoadLangFile (argv[++i], tmp);
 			}
 			else
@@ -1707,11 +1688,7 @@ int             main(const int argc, char** argv)
 		}
 		else
 		{
-#ifdef SYSTEM_WIN32
-			GetModuleFileName (NULL, temp, _MAX_PATH);
-#else
 			safe_strncpy (temp, argv[0], _MAX_PATH);
-#endif
 			ExtractFilePath (temp, test);
 			safe_strncat (test, g_hullfile, _MAX_PATH);
 			if (q_exists (test))
@@ -1733,11 +1710,7 @@ int             main(const int argc, char** argv)
 		}
 		else
 		{
-#ifdef SYSTEM_WIN32
-			GetModuleFileName (NULL, temp, _MAX_PATH);
-#else
 			safe_strncpy (temp, argv[0], _MAX_PATH);
-#endif
 			ExtractFilePath (temp, test);
 			safe_strncat (test, g_nullfile, _MAX_PATH);
 			if (q_exists (test))
@@ -1759,11 +1732,7 @@ int             main(const int argc, char** argv)
 		}
 		else
 		{
-#ifdef SYSTEM_WIN32 //Look relative to exe
-			GetModuleFileName (NULL, mapDirPath, _MAX_PATH);
-#else //Fallback
 			safe_strncpy (mapDirPath, argv[0], _MAX_PATH);
-#endif
 			ExtractFilePath (mapDirPath, wadCfgPath);
 			safe_strncat (wadCfgPath, g_wadcfgfile, _MAX_PATH);
 			if (q_exists (wadCfgPath))
@@ -1826,11 +1795,7 @@ int             main(const int argc, char** argv)
 	{
         char exePath[_MAX_PATH];
         char wadCfgPath[_MAX_PATH];
-#ifdef SYSTEM_WIN32 //Get exe path
-        GetModuleFileName(NULL, exePath, _MAX_PATH);
-#else //Fallback
         safe_strncpy(exePath, argv[0], _MAX_PATH);
-#endif
         ExtractFilePath(exePath, wadCfgPath);
         safe_strncat(wadCfgPath, "wad.cfg", _MAX_PATH);
 
