@@ -9,7 +9,6 @@
 #   make sdHLBSP      - Build sdHLBSP.
 #   make sdHLVIS      - Build sdHLVIS.
 #   make sdHLRAD      - Build sdHLRAD.
-#   make sdRIPENT     - Build sdRIPENT.
 #
 # Before running the tools, please make sure the default maximum stack size on your computer
 #   is more than 4MB.
@@ -90,7 +89,7 @@ COMMON_DEFINITIONS = \
 COMMON_FLAGS = -Wall -O2 -fno-strict-aliasing -pthread -pipe
 
 #
-# Specific .cpp and .h files for hlcsg, hlbsp, hlvis, hlrad and ripent
+# Specific .cpp and .h files for hlcsg, hlbsp, hlvis and hlrad
 #
 
 HLCSG_CPPFILES = \
@@ -203,28 +202,12 @@ HLRAD_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
 			SDHLRAD \
 
-RIPENT_CPPFILES = \
-			$(COMMON_CPPFILES) \
-			sdRIPENT/ripent.cpp \
-
-RIPENT_INCLUDEDIRS = \
-			$(COMMON_INCLUDEDIRS) \
-			sdRIPENT \
-
-RIPENT_INCLUDEFILES = \
-			$(COMMON_INCLUDEFILES) \
-			sdRIPENT/ripent.h \
-
-RIPENT_DEFINITIONS = \
-			$(COMMON_DEFINITIONS) \
-			SDRIPENT \
-
 #
 # Build commands
 #
 
 .PHONY : all
-all : bin/sdHLCSG bin/sdHLBSP bin/sdHLVIS bin/sdHLRAD bin/sdRIPENT printusage
+all : bin/sdHLCSG bin/sdHLBSP bin/sdHLVIS bin/sdHLRAD printusage
 	@echo ======== OK ========
 
 .PHONY : sdHLCSG
@@ -241,10 +224,6 @@ sdHLVIS : bin/sdHLVIS printusage
 
 .PHONY : sdHLRAD
 sdHLRAD : bin/sdHLRAD printusage
-	@echo ======== OK ========
-
-.PHONY : sdRIPENT
-sdRIPENT : bin/sdRIPENT printusage
 	@echo ======== OK ========
 
 bin/sdHLCSG : $(HLCSG_CPPFILES:%.cpp=sdHLCSG/release/%.o) printusage
@@ -295,18 +274,6 @@ $(HLRAD_CPPFILES:%.cpp=sdHLRAD/release/%.o) : sdHLRAD/release/%.o : %.cpp $(HLRA
 	mkdir -p $(dir $@)
 	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(HLRAD_INCLUDEDIRS)) $(addprefix -D,$(HLRAD_DEFINITIONS)) $<
 
-bin/sdRIPENT : $(RIPENT_CPPFILES:%.cpp=sdRIPENT/release/%.o) printusage
-	@echo ======== sdRIPENT : linking ========
-	mkdir -p sdRIPENT/release/bin
-	g++ $(COMMON_FLAGS) -o sdRIPENT/release/bin/sdRIPENT $(addprefix -I,$(RIPENT_INCLUDEDIRS)) $(addprefix -D,$(RIPENT_DEFINITIONS)) $(RIPENT_CPPFILES:%.cpp=sdRIPENT/release/%.o)
-	mkdir -p bin
-	cp sdRIPENT/release/bin/sdRIPENT bin/sdRIPENT
-
-$(RIPENT_CPPFILES:%.cpp=sdRIPENT/release/%.o) : sdRIPENT/release/%.o : %.cpp $(RIPENT_INCLUDEFILES) printusage
-	@echo ======== sdRIPENT : compiling $< ========
-	mkdir -p $(dir $@)
-	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(RIPENT_INCLUDEDIRS)) $(addprefix -D,$(RIPENT_DEFINITIONS)) $<
-
 .PHONY : printusage
 printusage :
 	head -n 35 Makefile
@@ -321,7 +288,6 @@ clean : printusage
 	rm -rf sdHLBSP/release
 	rm -rf sdHLVIS/release
 	rm -rf sdHLRAD/release
-	rm -rf sdRIPENT/release
 	rm -rf bin
 	@echo ======== OK ========
 

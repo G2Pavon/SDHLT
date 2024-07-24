@@ -64,14 +64,6 @@
 //   -gamma #
 //   -minlight #
 // 
-// RIPENT:
-//   -export
-//   -import
-//   -parse
-//   -textureexport
-//   -textureimport
-//   -textureparse
-
 
 
 #ifndef <ripent>              // CSG\BSP\VIS\RAD
@@ -113,7 +105,3 @@
     #define -vismatrix off
   #endif
 #endif
-
-#ifdef <ripent>               // RIPENT
-#endif
-

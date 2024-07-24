@@ -11,6 +11,3 @@ rmdir /s /q sdhlt\sdHLRAD\Release_x64\
 
 rmdir /s /q sdhlt\sdHLVIS\Release\
 rmdir /s /q sdhlt\sdHLVIS\Release_x64\
-
-rmdir /s /q sdhlt\sdRIPENT\Release\
-rmdir /s /q sdhlt\sdRIPENT\Release_x64\

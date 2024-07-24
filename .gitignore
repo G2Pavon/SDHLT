@@ -88,9 +88,6 @@ Temporary Items
 /src/sdhlt/sdHLVIS/Release/
 /src/sdhlt/sdHLVIS/Release_x64/
 
-/src/sdhlt/sdRIPENT/Release/
-/src/sdhlt/sdRIPENT/Release_x64/
-
 /build/
 /tools/*
 !/tools/*.fgd
