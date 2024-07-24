@@ -1383,17 +1383,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-        else if (!strcasecmp(argv[i], "-brushunion"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_BrushUnionThreshold = (float)atof(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
-        }
 		else if (!strcasecmp (argv[i], "-wadcfgfile"))
 		{
 			if (i + 1 < argc)
@@ -1625,13 +1614,10 @@ int             main(const int argc, char** argv)
 
     Verbose("%5i map planes\n", g_nummapplanes);
 
-    for (i = 0; i < g_numentities; i++) SetModelCenters (i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
-
-    if ((g_BrushUnionThreshold > 0.0) && (g_BrushUnionThreshold <= 100.0)) // Calc brush unions
+    for (i = 0; i < g_numentities; i++) 
     {
-        NamedRunThreadsOnIndividual(g_nummapbrushes, g_estimate, CalculateBrushUnions);
+        SetModelCenters (i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
     }
-
     for (i = 0; i < NUM_HULLS; i++) // open hull files
     {
         char            name[_MAX_PATH];
