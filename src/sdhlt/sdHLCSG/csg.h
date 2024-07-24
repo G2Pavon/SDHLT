@@ -267,7 +267,6 @@ extern cliptype g_cliptype;
 extern const char*	GetClipTypeString(cliptype);
 
 extern vec_t g_scalesize;
-extern bool g_resetlog;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 extern bool g_noutf8;
 #endif

@@ -29,7 +29,6 @@ bool            g_bWadAutoDetect = DEFAULT_WADAUTODETECT; // "-nowadautodetect"
 
 
 vec_t g_scalesize = DEFAULT_SCALESIZE;
-bool g_resetlog = DEFAULT_RESETLOG;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
@@ -1070,7 +1069,6 @@ static void     Usage() // prints out usage sheet
     Log("    -chart           : display bsp statitics\n");
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -nolog           : don't generate the compile logfiles\n");
-	Log("    -noresetlog      : Do not delete log file\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
 #ifdef SYSTEM_WIN32
     Log("    -estimate        : display estimated time during compile\n");
@@ -1135,7 +1133,6 @@ static void     Settings() // prints out settings sheet
 
     Log("verbose               [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("log                   [ %7s ] [ %7s ]\n", g_log ? "on" : "off", DEFAULT_LOG ? "on" : "off");
-    Log("reset logfile         [ %7s ] [ %7s ]\n", g_resetlog ? "on" : "off", DEFAULT_RESETLOG ? "on" : "off");
 
     Log("developer             [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("chart                 [ %7s ] [ %7s ]\n", g_chart ? "on" : "off", DEFAULT_CHART ? "on" : "off");
@@ -1460,10 +1457,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-		else if (!strcasecmp (argv[i], "-noresetlog"))
-		{
-			g_resetlog = false;
-		}
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 		else if (!strcasecmp (argv[i], "-notextconvert"))
 		{
@@ -1499,9 +1492,7 @@ int             main(const int argc, char** argv)
     if (!g_onlyents) // onlyents
         ResetTmpFiles();
 
-    ResetErrorLog();                
-	if (!g_onlyents && g_resetlog)
-		ResetLog();                          
+    ResetErrorLog();                                       
     OpenLog(g_clientid);                  
     atexit(CloseLog);                       
     LogStart(argcold, argvold);
