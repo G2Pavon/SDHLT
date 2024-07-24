@@ -42,7 +42,6 @@ char            g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
 
 developer_level_t g_developer = DEFAULT_DEVELOPER;
 bool            g_verbose = DEFAULT_VERBOSE;
-bool            g_log = DEFAULT_LOG;
 
 unsigned long   g_clientid = 0;
 unsigned long   g_nextclientid = 0;
@@ -62,100 +61,87 @@ char*			g_lang[g_lang_max][2];
 
 void            ResetTmpFiles()
 {
-    if (g_log)
-    {
-        char            filename[_MAX_PATH];
+    char            filename[_MAX_PATH];
 
-        safe_snprintf(filename, _MAX_PATH, "%s.bsp", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.bsp", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.inc", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.inc", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.p0", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.p0", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.p1", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.p1", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.p2", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.p2", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.p3", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.p3", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.prt", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.prt", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.pts", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.pts", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.lin", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.lin", g_Mapname);
+    _unlink(filename);
 
+    safe_snprintf(filename, _MAX_PATH, "%s.hsz", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.hsz", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.pln", g_Mapname);
+    _unlink(filename);
 
-        safe_snprintf(filename, _MAX_PATH, "%s.pln", g_Mapname);
-        _unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.b0", g_Mapname);
+    _unlink(filename);
 
-		safe_snprintf(filename, _MAX_PATH, "%s.b0", g_Mapname);
-		_unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.b1", g_Mapname);
+    _unlink(filename);
 
-		safe_snprintf(filename, _MAX_PATH, "%s.b1", g_Mapname);
-		_unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.b2", g_Mapname);
+    _unlink(filename);
 
-		safe_snprintf(filename, _MAX_PATH, "%s.b2", g_Mapname);
-		_unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.b3", g_Mapname);
+    _unlink(filename);
 
-		safe_snprintf(filename, _MAX_PATH, "%s.b3", g_Mapname);
-		_unlink(filename);
+    safe_snprintf(filename, _MAX_PATH, "%s.wa_", g_Mapname);
+    _unlink(filename);
 
-		safe_snprintf(filename, _MAX_PATH, "%s.wa_", g_Mapname);
-		_unlink(filename);
-
-		safe_snprintf(filename, _MAX_PATH, "%s.ext", g_Mapname);
-		_unlink(filename);
-    }
+    safe_snprintf(filename, _MAX_PATH, "%s.ext", g_Mapname);
+    _unlink(filename);
 }
 
 void            ResetLog()
 {
-    if (g_log)
-    {
         char            logfilename[_MAX_PATH];
 
         safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
         _unlink(logfilename);
-    }
 }
 
 void            ResetErrorLog()
 {
-    if (g_log)
-    {
         char            logfilename[_MAX_PATH];
 
         safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
         _unlink(logfilename);
-    }
 }
 
 void            CheckForErrorLog()
 {
-    if (g_log)
-    {
-        char            logfilename[_MAX_PATH];
+    char            logfilename[_MAX_PATH];
 
-        safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
-        if (q_exists(logfilename))
-        {
-            Log(">> There was a problem compiling the map.\n"
-                ">> Check the file %s.log for the cause.\n",
-                 g_Mapname);
-            exit(1);
-        }
+    safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
+    if (q_exists(logfilename))
+    {
+        Log(">> There was a problem compiling the map.\n"
+            ">> Check the file %s.log for the cause.\n",
+                g_Mapname);
+        exit(1);
     }
 }
 
@@ -163,7 +149,7 @@ void            CheckForErrorLog()
 
 void            LogError(const char* const message)
 {
-    if (g_log && CompileLog)
+    if (CompileLog)
     {
         char            logfilename[_MAX_PATH];
         FILE*           ErrorLog = NULL;
@@ -193,60 +179,57 @@ void            LogError(const char* const message)
 
 void CDECL      OpenLog(const int clientid)
 {
-    if (g_log)
-    {
-        char            logfilename[_MAX_PATH];
+    char            logfilename[_MAX_PATH];
 
 #ifdef ZHLT_NETVIS
-    #ifdef SYSTEM_WIN32
-        if (clientid)
-        {
-            char            computername[MAX_COMPUTERNAME_LENGTH + 1];
-            unsigned long   size = sizeof(computername);
+#ifdef SYSTEM_WIN32
+    if (clientid)
+    {
+        char            computername[MAX_COMPUTERNAME_LENGTH + 1];
+        unsigned long   size = sizeof(computername);
 
-            if (!GetComputerName(computername, &size))
-            {
-                safe_strncpy(computername, "unknown", sizeof(computername));
-            }
-            safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
-        }
-        else
-    #endif
-    #ifdef SYSTEM_POSIX
-        if (clientid)
+        if (!GetComputerName(computername, &size))
         {
-            char            computername[_MAX_PATH];
-            unsigned long   size = sizeof(computername);
-
-            if (gethostname(computername, size))
-            {
-                safe_strncpy(computername, "unknown", sizeof(computername));
-            }
-            safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
+            safe_strncpy(computername, "unknown", sizeof(computername));
         }
-    #endif
+        safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
+    }
+    else
 #endif
-        {
-            safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
-        }
-        CompileLog = fopen(logfilename, "a");
+#ifdef SYSTEM_POSIX
+    if (clientid)
+    {
+        char            computername[_MAX_PATH];
+        unsigned long   size = sizeof(computername);
 
-        if (!CompileLog)
+        if (gethostname(computername, size))
         {
-            fprintf(stderr, Localize ("ERROR: Could not open logfile %s"), logfilename);
-            fflush(stderr);
-			if (twice)
-			{
-				fprintf (conout, Localize ("ERROR: Could not open logfile %s"), logfilename);
-				fflush (conout);
-			}
+            safe_strncpy(computername, "unknown", sizeof(computername));
+        }
+        safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
+    }
+#endif
+#endif
+    {
+        safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
+    }
+    CompileLog = fopen(logfilename, "a");
+
+    if (!CompileLog)
+    {
+        fprintf(stderr, Localize ("ERROR: Could not open logfile %s"), logfilename);
+        fflush(stderr);
+        if (twice)
+        {
+            fprintf (conout, Localize ("ERROR: Could not open logfile %s"), logfilename);
+            fflush (conout);
         }
     }
 }
 
 void CDECL      CloseLog()
 {
-    if (g_log && CompileLog)
+    if (CompileLog)
     {
         LogEnd();
         fflush(CompileLog);

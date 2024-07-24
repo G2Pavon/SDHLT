@@ -35,7 +35,6 @@ extern char     g_Wadpath[_MAX_PATH]; //seedee
 
 extern developer_level_t g_developer;
 extern bool          g_verbose;
-extern bool          g_log;
 extern unsigned long g_clientid;                           // Client id of this program
 extern unsigned long g_nextclientid;                       // Client id of next client to spawn from this server
 
