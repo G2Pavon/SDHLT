@@ -66,7 +66,6 @@ bool            g_fastvis = DEFAULT_FASTVIS;
 bool            g_fullvis = DEFAULT_FULLVIS;
 bool            g_nofixprt = DEFAULT_NOFIXPRT;                   //seedee
 bool            g_estimate = DEFAULT_ESTIMATE;
-bool            g_chart = DEFAULT_CHART;
 bool            g_info = DEFAULT_INFO;
 
 // AJM: MVD
@@ -1106,7 +1105,6 @@ static void     Usage()
 #endif
     Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata //--vluzacn
-    Log("    -chart          : display bsp statitics\n");
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
 #ifdef SYSTEM_WIN32
@@ -1162,7 +1160,6 @@ static void     Settings()
 
     Log("verbose             [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer           [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
-    Log("chart               [ %7s ] [ %7s ]\n", g_chart ? "on" : "off", DEFAULT_CHART ? "on" : "off");
     Log("estimate            [ %7s ] [ %7s ]\n", g_estimate ? "on" : "off", DEFAULT_ESTIMATE ? "on" : "off");
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 
@@ -1485,10 +1482,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-noinfo"))
         {
             g_info = false;
-        }
-        else if (!strcasecmp(argv[i], "-chart"))
-        {
-            g_chart = true;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {
@@ -1875,11 +1868,7 @@ int             main(const int argc, char** argv)
         FixPrt(portalfile);
     }
 
-    if (g_chart)
-    {
-        PrintBSPFileSizes();
-    }
-
+    PrintBSPFileSizes();
     WriteBSPFile(source);
 
     end = I_FloatTime();

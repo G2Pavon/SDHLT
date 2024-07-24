@@ -836,10 +836,8 @@ void            FinishBSPFile()
 #else
 	Warning ("The " PLATFORM_VERSIONSTRING " version of hlbsp couldn't create extent file. The lack of extent file may cause hlrad error.");
 #endif
-	if (g_chart)
-    {
-        PrintBSPFileSizes();
-    }
+
+	PrintBSPFileSizes();
 
 #undef dplane_t // this allow us to temporarily access the raw data directly without the layer of indirection
 #undef g_dplanes

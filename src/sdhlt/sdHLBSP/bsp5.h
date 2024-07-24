@@ -47,7 +47,6 @@
 #define DEFAULT_NOCLIPNODEMERGE	false
 #define DEFAULT_LEAKONLY        false
 #define DEFAULT_WATERVIS        false
-#define DEFAULT_CHART           true //seedee
 #define DEFAULT_INFO            true
 
 
@@ -286,7 +285,6 @@ extern bool     g_notjunc;
 extern bool		g_nobrink;
 extern bool		g_noclipnodemerge;
 extern bool     g_watervis;
-extern bool     g_chart;
 extern bool     g_estimate;
 extern int      g_maxnode_size;
 extern int      g_subdivide_size;

@@ -35,7 +35,6 @@
 #define DEFAULT_ONLYENTS    false
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP     true
-#define DEFAULT_CHART       true //seedee
 #define DEFAULT_INFO        true
 
 #define FLOOR_Z 0.7 // Quake default
@@ -251,7 +250,6 @@ extern void		InitDefaultHulls ();
 //=============================================================================
 // csg.c
 
-extern bool     g_chart;
 extern bool     g_onlyents;
 extern bool     g_wadtextures;
 extern bool     g_skyclip;

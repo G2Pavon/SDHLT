@@ -13,7 +13,6 @@ BoundingBox     world_bounds;
      
 bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlyents"
 bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
-bool            g_chart = DEFAULT_CHART;                // show chart "-chart"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
 bool            g_info = DEFAULT_INFO;                  // "-info" ?
@@ -838,8 +837,6 @@ void WriteBSP(const char* const name)
 
     UnparseEntities();
     ConvertHintToEmpty(); // this is ridiculous. --vluzacn
-    if (g_chart)
-        PrintBSPFileSizes();
     WriteBSPFile(path);
 }
 
@@ -1064,7 +1061,6 @@ static void     Usage() // prints out usage sheet
 	Log("    -wadconfig name  : use the old wad configuration approach (select a group from wad.cfg)\n");
     Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
-    Log("    -chart           : display bsp statitics\n");
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
 #ifdef SYSTEM_WIN32
@@ -1130,7 +1126,6 @@ static void     Settings() // prints out settings sheet
 
     Log("verbose               [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer             [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
-    Log("chart                 [ %7s ] [ %7s ]\n", g_chart ? "on" : "off", DEFAULT_CHART ? "on" : "off");
     Log("estimate              [ %7s ] [ %7s ]\n", g_estimate ? "on" : "off", DEFAULT_ESTIMATE ? "on" : "off");
     Log("max texture memory    [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 	Log("max lighting memory   [ %7d ] [ %7d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA);
@@ -1289,10 +1284,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-noinfo"))
         {
             g_info = false;
-        }
-        else if (!strcasecmp(argv[i], "-chart"))
-        {
-            g_chart = true;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {

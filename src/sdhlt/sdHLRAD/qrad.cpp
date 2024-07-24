@@ -118,7 +118,6 @@ bool g_drawnudge = false;
 
 // Cosine of smoothing angle(in radians)
 float           g_coring = DEFAULT_CORING;                 // Light threshold to force to blackness(minimizes lightmaps)
-bool            g_chart = DEFAULT_CHART;
 bool            g_estimate = DEFAULT_ESTIMATE;
 bool            g_info = DEFAULT_INFO;
 
@@ -2520,7 +2519,6 @@ static void     Usage()
     Log("    -dump           : Dumps light patches to a file for hlrad debugging info\n\n");
     Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata
-    Log("    -chart          : display bsp statitics\n");
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
 #ifdef SYSTEM_WIN32
@@ -2612,7 +2610,6 @@ static void     Settings()
 
     Log("verbose              [ %17s ] [ %17s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer            [ %17d ] [ %17d ]\n", g_developer, DEFAULT_DEVELOPER);
-    Log("chart                [ %17s ] [ %17s ]\n", g_chart ? "on" : "off", DEFAULT_CHART ? "on" : "off");
     Log("estimate             [ %17s ] [ %17s ]\n", g_estimate ? "on" : "off", DEFAULT_ESTIMATE ? "on" : "off");
     Log("max texture memory   [ %17d ] [ %17d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 		Log("max lighting memory  [ %17d ] [ %17d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA); //lightdata
@@ -3257,10 +3254,6 @@ int             main(const int argc, char** argv)
         {
             g_incremental = true;
         }
-        else if (!strcasecmp(argv[i], "-chart"))
-        {
-            g_chart = true;
-        }
         else if (!strcasecmp(argv[i], "-low"))
         {
             g_threadpriority = eThreadPriorityLow;
@@ -3812,9 +3805,8 @@ int             main(const int argc, char** argv)
 	DeleteOpaqueNodes ();
 
 	EmbedLightmapInTextures ();
-    if (g_chart)
-        PrintBSPFileSizes();
 
+	PrintBSPFileSizes();
     WriteBSPFile(g_source);
 
     end = I_FloatTime();
