@@ -225,7 +225,6 @@ extern void		FillInside (node_t* node);
 
 //=============================================================================
 // misc functions
-extern void     GetParamsFromEnt(entity_t* mapent);
 
 extern face_t*  AllocFace();
 extern void     FreeFace(face_t* f);

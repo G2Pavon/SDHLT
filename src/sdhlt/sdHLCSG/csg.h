@@ -285,8 +285,6 @@ extern void     FreeFace(bface_t* f);
 extern bface_t* CopyFaceList(bface_t* f);
 extern void     FreeFaceList(bface_t* f);
 
-extern void     GetParamsFromEnt(entity_t* mapent);
-
 
 //=============================================================================
 // brushunion.c

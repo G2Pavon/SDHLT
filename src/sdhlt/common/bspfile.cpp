@@ -1328,9 +1328,6 @@ epair_t*        ParseEpair()
  * ================
  */
 
-// AJM: each tool should have its own version of GetParamsFromEnt which parseentity calls
-extern void     GetParamsFromEnt(entity_t* mapent);
-
 bool            ParseEntity()
 {
     epair_t*        e;
@@ -1369,11 +1366,6 @@ bool            ParseEntity()
         mapent->epairs = e;
     }
 
-    if (!strcmp(ValueForKey(mapent, "classname"), "info_compile_parameters"))
-    {
-        Log("Map entity info_compile_parameters detected, using compile settings\n");
-        GetParamsFromEnt(mapent);
-    }
 	// ugly code
 	if (!strncmp(ValueForKey (mapent, "classname"), "light", 5) && *ValueForKey (mapent, "_tex"))
 	{

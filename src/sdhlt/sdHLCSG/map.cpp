@@ -934,15 +934,6 @@ bool            ParseMapEntity()
 		sprintf (versionstring, "ZHLT " ZHLT_VERSIONSTRING " " HACK_VERSIONSTRING " (%s)", __DATE__);
 		SetKeyValue (mapent, "compiler", versionstring);
 	}
-    
-
-
-    if (!strcmp(ValueForKey(mapent, "classname"), "info_compile_parameters"))
-    {
-        GetParamsFromEnt(mapent);
-    }
-
-
 
     GetVectorForKey(mapent, "origin", mapent->origin);
 
