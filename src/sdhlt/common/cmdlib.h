@@ -21,7 +21,7 @@
 
 #define SDHLT_VERSIONSTRING "v1.2.0"
 
-#if !defined (SDHLCSG) && !defined (SDHLBSP) && !defined (SDHLVIS) && !defined (SDHLRAD) && !defined (SDRIPENT) //seedee
+#if !defined (SDHLCSG) && !defined (SDHLBSP) && !defined (SDHLVIS) && !defined (SDHLRAD) //seedee
 #error "You must define one of these in the settings of each project: SDHLCSG, SDHLBSP, SDHLVIS, SDHLRAD, SDRIPENT. The most likely cause is that you didn't load the project from the .sln file."
 #endif
 #if !defined (VERSION_32BIT) && !defined (VERSION_64BIT) && !defined (VERSION_LINUX) && !defined (VERSION_OTHER) //--vluzacn
@@ -50,10 +50,6 @@
 
 // ZHLT_* features are spread across more than one tool. Hence, changing
 //      one of these settings probably means recompiling the whole set
-
-	#ifdef SYSTEM_WIN32
-#define RIPENT_PAUSE //--vluzacn
-	#endif
 
 // tool specific settings below only mean a recompile of the tool affected
 

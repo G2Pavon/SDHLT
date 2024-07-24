@@ -11,8 +11,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdHLRAD", "sdHLRAD\sdHLRAD.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdHLVIS", "sdHLVIS\sdHLVIS.vcxproj", "{76051CAC-5741-AF85-0C95-3A214F58D9AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdRIPENT", "sdRIPENT\sdRIPENT.vcxproj", "{B057E5AD-13AF-2277-D7E0-2A7A16A9340F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|Win32 = Release|Win32

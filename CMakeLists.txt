@@ -174,22 +174,6 @@ set(VIS_HEADERS
 )
 
 #================
-# RIPENT
-#================
-
-set(RIPENT_DIR ${SDHLT_DIR}/sdRIPENT)
-
-set(RIPENT_SOURCES
-    ${COMMON_SOURCES}
-    ${RIPENT_DIR}/ripent.cpp
-)
-
-set(RIPENT_HEADERS
-    ${COMMON_HEADERS}
-    ${RIPENT_DIR}/ripent.h
-)
-
-#================
 # Include
 #================
 
@@ -248,19 +232,13 @@ add_executable(BSP ${BSP_SOURCES} ${BSP_HEADERS})
 add_executable(CSG ${CSG_SOURCES} ${CSG_HEADERS})
 add_executable(RAD ${RAD_SOURCES} ${RAD_HEADERS})
 add_executable(VIS ${VIS_SOURCES} ${VIS_HEADERS})
-add_executable(RIPENT ${RIPENT_SOURCES} ${RIPENT_HEADERS})
 
 set_target_properties(BSP CSG RAD VIS
     PROPERTIES
         PREFIX ${SDHLT_PREFIX}${SDHLT_GAME_PREFIX}
-)
-set_target_properties(RIPENT
-    PROPERTIES
-        PREFIX ${SDHLT_PREFIX}
 )
 
 target_compile_definitions(BSP PRIVATE SDHLBSP DOUBLEVEC_T)
 target_compile_definitions(CSG PRIVATE SDHLCSG DOUBLEVEC_T)
 target_compile_definitions(RAD PRIVATE SDHLRAD)
 target_compile_definitions(VIS PRIVATE SDHLVIS)
-target_compile_definitions(RIPENT PRIVATE SDRIPENT)
