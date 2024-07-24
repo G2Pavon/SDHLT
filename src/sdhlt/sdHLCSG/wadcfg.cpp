@@ -85,35 +85,3 @@ void LoadWadconfig (const char *filename, const char *configname)
 	free (file); // should not be freed because it is still being used as script buffer
 	//Log ("Using custom wadfile configuration: '%s' (with %i wad%s)\n", configname, wadPathsFound, wadPathsFound > 1 ? "s" : "");
 }
-void LoadWadcfgfile (const char *filename)
-{
-	Log ("Loading %s\n", filename);
-	Log ("------------\n");
-	int wadPathsCount = 0;
-	int wadFileSize;
-	char *wadFile;
-	wadFileSize = LoadFile (filename, &wadFile);
-	ParseFromMemory (wadFile, wadFileSize);
-	while (GetToken (true)) //Loop through file
-	{
-		bool include = false;
-		if (!strcasecmp (g_token, "include")) //If line starts with include (or contains?)
-		{
-			Log ("include ");
-			include = true;
-			if (!GetToken (true))
-			{
-				Error ("parsing '%s': unexpected end of file.", filename);
-			}
-		}
-		Log ("\"%s\"\n", g_token);
-		if (g_iNumWadPaths >= MAX_WADPATHS)
-		{
-			Error ("parsing '%s': too many wad files.", filename);
-		}
-		wadPathsCount++;
-		PushWadPath (g_token, !include);
-	}
-	free (wadFile); // should not be freed because it is still being used as script buffer
-	//Log ("Using custom wadfile configuration: '%s' (with %i wad%s)\n", filename, count, count > 1 ? "s" : "");
-}

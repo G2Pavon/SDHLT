@@ -290,9 +290,7 @@ void            CalculateBrushUnions(int brushnum);
 // hullfile.cpp
 extern vec3_t   g_hull_size[NUM_HULLS][2];
 
-extern const char *g_wadcfgfile;
 extern const char *g_wadconfigname;
-extern void LoadWadcfgfile (const char *filename);
 extern void LoadWadconfig (const char *filename, const char *configname);
 
 //============================================================================

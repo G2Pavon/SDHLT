@@ -41,7 +41,6 @@
 //   -wadautodetect
 //   -nowadtextures
 //   -wadinclude #
-//   -wadcfgfile #
 // 
 // HLBSP:
 //   -maxnodesize #
