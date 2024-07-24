@@ -348,22 +348,6 @@ static void Collapse( CVertex *u, CVertex *v )
 	}
 }
 
-static void AddVertex( List<vector> &vert )
-{
-	for( int i = 0; i < vert.num; i++ )
-	{
-		CVertex *v = new CVertex( vert[i], i );
-	}
-}
-
-static void AddFaces( List<triset> &tri )
-{
-	for( int i = 0; i < tri.num; i++ )
-	{
-		CTriangle *t = new CTriangle( vertices[tri[i].v[0]], vertices[tri[i].v[1]], vertices[tri[i].v[2]] );
-	}
-}
-
 static CVertex *MinimumCostEdge( void )
 {
 	// Find the edge that when collapsed will affect model the least.
@@ -387,8 +371,6 @@ static CVertex *MinimumCostEdge( void )
 
 void ProgressiveMesh( List<vector> &vert, List<triset> &tri, List<int> &map, List<int> &permutation )
 {
-	AddVertex( vert );  // put input data into our data structures
-	AddFaces( tri );
 
 	ComputeAllEdgeCollapseCosts();	// cache all edge collapse costs
 	permutation.SetSize( vertices.num );	// allocate space

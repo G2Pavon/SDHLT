@@ -1571,8 +1571,7 @@ static void		LoadOpaqueEntities()
 	int modelnum, entnum;
 
 	for (modelnum = 0; modelnum < g_nummodels; modelnum++) //Loop through brush models
-	{
-		dmodel_t *model = &g_dmodels[modelnum]; //Get current model
+    {
 		char stringmodel[16];
 		sprintf (stringmodel, "*%i", modelnum); //Model number to string
 
@@ -2556,8 +2555,6 @@ static void ExtendLightmapBuffer ()
 // =====================================================================================
 static void     RadWorld()
 {
-    unsigned        i;
-    unsigned        j;
 
     MakeBackplanes();
     MakeParents(0, -1);

@@ -1483,10 +1483,7 @@ static light_flag_t SetSampleFromST(vec_t* const point,
 }
 static void		CalcPoints(lightinfo_t* l)
 {
-	const int       facenum = l->surfnum;
-	const dface_t*  f = g_dfaces + facenum;
-	const dplane_t* p = getPlaneFromFace (f);
-	const vec_t*    face_delta = g_face_offset[facenum];
+    const int       facenum = l->surfnum;
 	const eModelLightmodes lightmode = g_face_lightmode[facenum];
 	const int       h = l->texsize[1] + 1;
 	const int       w = l->texsize[0] + 1;
@@ -3486,8 +3483,7 @@ void            BuildFacelights(const int facenum)
     int             lightmapwidth;
     int             lightmapheight;
     int             size;
-	vec3_t			spot2, normal2;
-	vec3_t			delta;
+    vec3_t			spot2, normal2;
 	byte			pvs2[(MAX_MAP_LEAFS + 7) / 8];
 	int				thisoffset2 = -1, lastoffset2 = -1;
 
@@ -4115,7 +4111,6 @@ void            PrecompLightmapOffsets()
     facelight_t*    fl;
     int             lightstyles;
 
-    int             i; //LRC
 	patch_t*        patch; //LRC
 
     g_lightdatasize = 0;
@@ -4848,7 +4843,7 @@ void            FinalLightFace(const int facenum)
 			Log ("Error.\n");
 	}
     int             i, j, k;
-    vec3_t          lb, v;
+    vec3_t          lb;
     facelight_t*    fl;
     sample_t*       samp;
     float           minlight;

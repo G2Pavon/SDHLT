@@ -182,9 +182,7 @@ void            MakeScales(const int threadnum)
     float           trans;
     patch_t*        patch;
     patch_t*        patch2;
-    float           send;
     vec3_t          origin;
-    vec_t           area;
     const vec_t*    normal1;
     const vec_t*    normal2;
 
@@ -210,14 +208,12 @@ void            MakeScales(const int threadnum)
         patch->iIndex = 0;
         patch->iData = 0;
 
-
         tIndex = tIndex_All;
         tData = tData_All;
 
         VectorCopy(patch->origin, origin);
         normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
 
-        area = patch->area;
 		vec3_t backorigin;
 		vec3_t backnormal;
 		if (patch->translucent_b)
@@ -450,9 +446,7 @@ void            MakeRGBScales(const int threadnum)
     float           trans_one;
     patch_t*        patch;
     patch_t*        patch2;
-    float           send;
     vec3_t          origin;
-    vec_t           area;
     const vec_t*    normal1;
     const vec_t*    normal2;
 
@@ -484,7 +478,6 @@ void            MakeRGBScales(const int threadnum)
         VectorCopy(patch->origin, origin);
         normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
 
-        area = patch->area;
 		vec3_t backorigin;
 		vec3_t backnormal;
 		if (patch->translucent_b)

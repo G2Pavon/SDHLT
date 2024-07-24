@@ -29,6 +29,8 @@
 #endif
 #define dplane_t plane_t
 #define g_dplanes g_mapplanes
+
+
 typedef struct
 {
 	vec3_t			normal;

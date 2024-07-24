@@ -1007,13 +1007,10 @@ vec_t WindingDist (const winding_t *w[2])
 void	MaxDistVis(int unused)
 {
 	int i, j, k, m;
-	int a, b, c, d;
+    int a, b;
 	leaf_t	*l;
 	leaf_t	*tl;
-	plane_t	*boundary = NULL;
-	vec3_t delta;
-
-	float new_dist;
+    plane_t	*boundary = NULL;
 
 	unsigned offset_l;
 	unsigned bit_l;

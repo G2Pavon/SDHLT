@@ -675,9 +675,7 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 		// partition the points using the best splitter
 		{
 			const int splitaxis = bestnode->bestsplitter.axis;
-			const int splitdist = bestnode->bestsplitter.dist;
-			const int numpoints = bestnode->numpoints;
-			unsigned char (*points)[CQ_DIM] = bestnode->refpoints;
+            const int splitdist = bestnode->bestsplitter.dist;
 
 			unsigned char (*left)[CQ_DIM];
 			unsigned char (*right)[CQ_DIM];

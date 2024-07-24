@@ -4,8 +4,7 @@
 #include <windows.h> //--vluzacn
 #endif
 
-static FILE*    out[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)  
-static FILE*    out_view[NUM_HULLS];
+static FILE*    out[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)
 static FILE*    out_detailbrush[NUM_HULLS];
 static int      c_outfaces;
 static int      c_csgfaces;
@@ -1054,7 +1053,7 @@ static void     CheckForNoClip() // marks the noclip flag on any brushes that do
 
 static void     ProcessModels()
 {
-    int             i, j, type;
+    int             i, j;
     int             placed;
     int             first, contents;
     brush_t         temp;
