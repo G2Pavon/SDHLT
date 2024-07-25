@@ -53,7 +53,6 @@
 #define DEFAULT_STUDIOSHADOW        true //seedee
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
-#define DEFAULT_DUMPPATCHES         false
 #define DEFAULT_AMBIENT_RED         0.0
 #define DEFAULT_AMBIENT_GREEN       0.0
 #define DEFAULT_AMBIENT_BLUE        0.0

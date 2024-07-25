@@ -85,7 +85,6 @@ void Usage(ProgramType programType)
             Log("    -lights file    : Manually specify a lights.rad file to use\n");
             Log("    -noskyfix       : Disable light_environment being global\n");
             Log("    -incremental    : Use or create an incremental transfer list file\n\n");
-            Log("    -dump           : Dumps light patches to a file for hlrad debugging info\n\n");
             Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
             Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
             Log("    -low | -high    : run program an altered priority level\n");

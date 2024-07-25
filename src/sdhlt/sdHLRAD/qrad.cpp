@@ -62,8 +62,6 @@ vec_t           g_direct_scale = DEFAULT_DLIGHT_SCALE;
 
 unsigned        g_numbounce = DEFAULT_BOUNCE;              // 3; /* Originally this was 8 */
 
-static bool     g_dumppatches = DEFAULT_DUMPPATCHES;
-
 vec3_t          g_ambient = { DEFAULT_AMBIENT_RED, DEFAULT_AMBIENT_GREEN, DEFAULT_AMBIENT_BLUE };
 vec_t			g_limitthreshold = DEFAULT_LIMITTHRESHOLD;
 bool			g_drawoverload = false;
@@ -2180,12 +2178,6 @@ static void     BounceLight()
         else
         	{NamedRunThreadsOn(g_num_patches, g_estimate, GatherLight);}
         CollectLight();
-
-        if (g_dumppatches)
-        {
-            sprintf(name, "bounce%u.txt", i);
-            WriteWorld(name);
-        }
     }
 	for (i = 0; i < g_num_patches; i++)
 	{
@@ -2574,7 +2566,6 @@ static void     Settings()
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
     Log("sky lighting fix     [ %17s ] [ %17s ]\n", g_sky_lighting_fix ? "on" : "off", DEFAULT_SKY_LIGHTING_FIX ? "on" : "off");
     Log("incremental          [ %17s ] [ %17s ]\n", g_incremental ? "on" : "off", DEFAULT_INCREMENTAL ? "on" : "off");
-    Log("dump                 [ %17s ] [ %17s ]\n", g_dumppatches ? "on" : "off", DEFAULT_DUMPPATCHES ? "on" : "off");
 
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2864,11 +2855,7 @@ int             main(const int argc, char** argv)
 
     for (i = 1; i < argc; i++)
     {
-        if (!strcasecmp(argv[i], "-dump"))
-        {
-            g_dumppatches = true;
-        }
-		else if (!strcasecmp(argv[i], "-console"))
+		if (!strcasecmp(argv[i], "-console"))
 		{
 #ifndef SYSTEM_WIN32
 			Warning("The option '-console #' is only valid for Windows.");
