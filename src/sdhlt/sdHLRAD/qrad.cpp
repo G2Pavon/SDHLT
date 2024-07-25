@@ -62,7 +62,6 @@ vec_t           g_direct_scale = DEFAULT_DLIGHT_SCALE;
 
 unsigned        g_numbounce = DEFAULT_BOUNCE;              // 3; /* Originally this was 8 */
 
-vec3_t          g_ambient = { DEFAULT_AMBIENT_RED, DEFAULT_AMBIENT_GREEN, DEFAULT_AMBIENT_BLUE };
 vec_t			g_limitthreshold = DEFAULT_LIMITTHRESHOLD;
 bool			g_drawoverload = false;
 
@@ -2475,10 +2474,6 @@ static void     Settings()
 	Log("pre-25th anniversary [ %17s ] [ %17s ]\n", g_pre25update ? "on" : "off", DEFAULT_PRE25UPDATE ? "on" : "off");
     Log("oversampling (-extra)[ %17s ] [ %17s ]\n", g_extra ? "on" : "off", DEFAULT_EXTRA ? "on" : "off");
     Log("bounces              [ %17d ] [ %17d ]\n", g_numbounce, DEFAULT_BOUNCE);
-
-    safe_snprintf(buf1, sizeof(buf1), "%1.3f %1.3f %1.3f", g_ambient[0], g_ambient[1], g_ambient[2]);
-    safe_snprintf(buf2, sizeof(buf2), "%1.3f %1.3f %1.3f", DEFAULT_AMBIENT_RED, DEFAULT_AMBIENT_GREEN, DEFAULT_AMBIENT_BLUE);
-    Log("ambient light        [ %17s ] [ %17s ]\n", buf1, buf2);
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
     Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
@@ -2965,19 +2960,6 @@ int             main(const int argc, char** argv)
             else
             {
                 Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-ambient"))
-        {
-            if (i + 3 < argc)
-            {
-                g_ambient[0] = (float)atof(argv[++i]) * 128;
-                g_ambient[1] = (float)atof(argv[++i]) * 128;
-                g_ambient[2] = (float)atof(argv[++i]) * 128;
-            }
-            else
-            {
-                Error("expected three color values after '-ambient'\n");
             }
         }
         else if (!strcasecmp(argv[i], "-limiter"))

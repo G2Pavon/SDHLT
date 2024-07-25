@@ -3789,25 +3789,6 @@ void            BuildFacelights(const int facenum)
 				);
 		}
 	}
-
-    // add an ambient term if desired
-    if (g_ambient[0] || g_ambient[1] || g_ambient[2])
-    {
-		for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
-		{
-			if (f_styles[j] == 0)
-			{
-				s = fl_samples[j];
-                for (i = 0; i < l.numsurfpt; i++, s++)
-                {
-                    VectorAdd(s->light, g_ambient, s->light);
-                }
-                break;
-            }
-        }
-
-    }
-
     // add circus lighting for finding black lightmaps
     if (g_circus)
     {

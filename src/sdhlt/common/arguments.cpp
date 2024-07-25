@@ -63,7 +63,6 @@ void Usage(ProgramType programType)
             Log("    -pre25          : Optimize compile for pre-Half-Life 25th anniversary update.\n");
             Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
             Log("    -bounce #       : Set number of radiosity bounces\n");
-            Log("    -ambient r g b  : Set ambient world light (0.0 to 1.0, r g b)\n");
             Log("    -limiter #      : Set light clipping threshold (-1=None)\n");
             Log("    -circus         : Enable 'circus' mode for locating unlit lightmaps\n");
             Log("    -nospread       : Disable sunlight spread angles for this compile\n");
