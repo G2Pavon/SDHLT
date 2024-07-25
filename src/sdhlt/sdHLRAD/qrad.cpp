@@ -3010,19 +3010,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-#ifdef ZHLT_NETVIS
-        else if (!strcasecmp(argv[i], "-client"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_clientid = atoi(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
-        }
-#endif
 		else if (!strcasecmp (argv[i], "-fast"))
 		{
 			g_fastmode = true;
@@ -3623,7 +3610,6 @@ int             main(const int argc, char** argv)
 	ExtractFilePath(g_Mapname, temp);	// skip mapname
 	ExtractFilePath(temp, g_Wadpath);
     StripExtension(g_Mapname);
-    OpenLog(g_clientid);
     atexit(CloseLog);
     ThreadSetDefault();
     ThreadSetPriority(g_threadpriority);

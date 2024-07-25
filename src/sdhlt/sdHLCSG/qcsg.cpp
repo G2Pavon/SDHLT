@@ -1242,8 +1242,7 @@ int             main(const int argc, char** argv)
 
     ResetTmpFiles();
 
-    ResetErrorLog();                                       
-    OpenLog(g_clientid);                  
+    ResetErrorLog();                       
     atexit(CloseLog);                       
     LogStart(argcold, argvold);
 	{

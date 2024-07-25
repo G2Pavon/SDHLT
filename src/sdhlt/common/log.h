@@ -20,9 +20,6 @@ extern char     g_Wadpath[_MAX_PATH]; //seedee
 
 #define DEFAULT_LOG         true
 
-extern unsigned long g_clientid;                           // Client id of this program
-extern unsigned long g_nextclientid;                       // Client id of next client to spawn from this server
-
 //
 // log.c Functions
 //
@@ -32,7 +29,6 @@ extern void     ResetLog();
 extern void     ResetErrorLog();
 extern void     CheckForErrorLog();
 
-extern void CDECL OpenLog(int clientid);
 extern void CDECL CloseLog();
 extern void     WriteLog(const char* const message);
 

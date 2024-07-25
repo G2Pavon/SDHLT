@@ -1500,19 +1500,6 @@ int             main(const int argc, char** argv)
         {
             g_noinsidefill = true;
         }
-#ifdef ZHLT_NETVIS
-        else if (!strcasecmp(argv[i], "-client"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_clientid = atoi(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
-        }
-#endif
         else if (!strcasecmp(argv[i], "-leakonly"))
         {
             g_bLeakOnly = true;
@@ -1649,7 +1636,6 @@ int             main(const int argc, char** argv)
     safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
     FlipSlashes(g_Mapname);
     StripExtension(g_Mapname);
-    OpenLog(g_clientid);
     atexit(CloseLog);
     ThreadSetDefault();
     ThreadSetPriority(g_threadpriority);

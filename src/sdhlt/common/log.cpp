@@ -2,13 +2,6 @@
 #include "config.h"
 #endif
 
-#ifdef ZHLT_NETVIS
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-#endif
-
 #ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,10 +10,6 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
-
-#ifdef ZHLT_NETVIS
-#include "../netvis/c2cpp.h"
 #endif
 
 #include "cmdlib.h"
@@ -40,9 +29,6 @@ char*           g_Program = "Uninitialized variable ::g_Program";
 char            g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";
 char            g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
 
-
-unsigned long   g_clientid = 0;
-unsigned long   g_nextclientid = 0;
 
 static FILE*    CompileLog = NULL;
 static bool     fatal = false;
@@ -171,56 +157,6 @@ void            LogError(const char* const message)
 				fprintf (conout, Localize ("ERROR: Could not open error logfile %s"), logfilename);
 				fflush (conout);
 			}
-        }
-    }
-}
-
-void CDECL      OpenLog(const int clientid)
-{
-    char            logfilename[_MAX_PATH];
-
-#ifdef ZHLT_NETVIS
-#ifdef SYSTEM_WIN32
-    if (clientid)
-    {
-        char            computername[MAX_COMPUTERNAME_LENGTH + 1];
-        unsigned long   size = sizeof(computername);
-
-        if (!GetComputerName(computername, &size))
-        {
-            safe_strncpy(computername, "unknown", sizeof(computername));
-        }
-        safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
-    }
-    else
-#endif
-#ifdef SYSTEM_POSIX
-    if (clientid)
-    {
-        char            computername[_MAX_PATH];
-        unsigned long   size = sizeof(computername);
-
-        if (gethostname(computername, size))
-        {
-            safe_strncpy(computername, "unknown", sizeof(computername));
-        }
-        safe_snprintf(logfilename, _MAX_PATH, "%s-%s-%d.log", g_Mapname, computername, clientid);
-    }
-#endif
-#endif
-    {
-        safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
-    }
-    CompileLog = fopen(logfilename, "a");
-
-    if (!CompileLog)
-    {
-        fprintf(stderr, Localize ("ERROR: Could not open logfile %s"), logfilename);
-        fflush(stderr);
-        if (twice)
-        {
-            fprintf (conout, Localize ("ERROR: Could not open logfile %s"), logfilename);
-            fflush (conout);
         }
     }
 }

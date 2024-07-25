@@ -72,9 +72,6 @@ typedef struct
     byte*           mightsee;
     unsigned        nummightsee;
     int             numcansee;
-#ifdef ZHLT_NETVIS
-    int             fromclient;                            // which client did this come from
-#endif
     UINT32          zone;                                  // Which zone is this portal a member of
 } portal_t;
 
@@ -201,11 +198,5 @@ extern void		MaxDistVis(int threadnum);
 
 extern void     PortalFlow(portal_t* p);
 extern void     CalcAmbientSounds();
-
-#ifdef ZHLT_NETVIS
-#include "packet.h"
-#include "c2cpp.h"
-#include "NetvisSession.h"
-#endif
 
 #endif //      byte            fullportal[MAX_PORTALS/8];              // bit string  HLVIS_H__

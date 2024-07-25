@@ -616,14 +616,7 @@ void            PortalFlow(portal_t* p)
         ((long*)data.pstack_head.mightsee)[i] = ((long*)p->mightsee)[i];
     }
     RecursiveLeafFlow(p->leaf, &data, &data.pstack_head);
-
-#ifdef ZHLT_NETVIS
-    p->fromclient = g_clientid;
-#endif
     p->status = stat_done;
-#ifdef ZHLT_NETVIS
-    Flag_VIS_DONE_PORTAL(g_visportalindex);
-#endif
 }
 
 // =====================================================================================
@@ -685,16 +678,11 @@ void            BasePortalVis(int unused)
     byte            portalsee[PORTALSEE_SIZE];
     const int       portalsize = (g_numportals * 2);
 
-#ifdef ZHLT_NETVIS
-    {
-        i = unused;
-#else
     while (1)
     {
         i = GetThreadWork();
         if (i == -1)
             break;
-#endif
         p = g_portals + i;
 
         p->mightsee = (byte*)calloc(1, g_bitbytes);
