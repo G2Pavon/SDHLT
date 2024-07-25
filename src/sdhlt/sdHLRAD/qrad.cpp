@@ -75,7 +75,6 @@ char            g_vismatfile[_MAX_PATH] = "";
 bool            g_incremental = DEFAULT_INCREMENTAL;
 float           g_indirect_sun = DEFAULT_INDIRECT_SUN;
 bool            g_extra = DEFAULT_EXTRA;
-bool            g_texscale = DEFAULT_TEXSCALE;
 
 float           g_smoothing_threshold;
 float           g_smoothing_value = DEFAULT_SMOOTHING_VALUE;
@@ -975,32 +974,24 @@ static vec_t    getScale(const patch_t* const patch)
 {
     dface_t*        f = g_dfaces + patch->faceNumber;
     texinfo_t*      tx = &g_texinfo[f->texinfo];
+	const dplane_t*	faceplane = getPlaneFromFace (f);
+	vec3_t			vecs_perpendicular[2];
+	vec_t			scale[2];
+	vec_t			dot;
+	
+	// snap texture "vecs" to faceplane without affecting texture alignment
+	for (int x = 0; x < 2; x++)
+	{
+		dot = DotProduct (faceplane->normal, tx->vecs[x]);
+		VectorMA (tx->vecs[x], -dot, faceplane->normal, vecs_perpendicular[x]);
+	}
+	
+	scale[0] = 1 / qmax (NORMAL_EPSILON, VectorLength (vecs_perpendicular[0]));
+	scale[1] = 1 / qmax (NORMAL_EPSILON, VectorLength (vecs_perpendicular[1]));
 
-    if (g_texscale)
-    {
-		const dplane_t*	faceplane = getPlaneFromFace (f);
-		vec3_t			vecs_perpendicular[2];
-		vec_t			scale[2];
-		vec_t			dot;
-		
-		// snap texture "vecs" to faceplane without affecting texture alignment
-		for (int x = 0; x < 2; x++)
-		{
-			dot = DotProduct (faceplane->normal, tx->vecs[x]);
-			VectorMA (tx->vecs[x], -dot, faceplane->normal, vecs_perpendicular[x]);
-		}
-		
-		scale[0] = 1 / qmax (NORMAL_EPSILON, VectorLength (vecs_perpendicular[0]));
-		scale[1] = 1 / qmax (NORMAL_EPSILON, VectorLength (vecs_perpendicular[1]));
+	// don't care about the angle between vecs[0] and vecs[1] (given the length of "vecs", smaller angle = larger texel area), because gridplanes will have the same angle (also smaller angle = larger patch area)
 
-		// don't care about the angle between vecs[0] and vecs[1] (given the length of "vecs", smaller angle = larger texel area), because gridplanes will have the same angle (also smaller angle = larger patch area)
-
-		return sqrt (scale[0] * scale[1]);
-    }
-    else
-    {
-        return 1.0;
-    }
+	return sqrt (scale[0] * scale[1]);
 }
 
 // =====================================================================================
@@ -2519,8 +2510,6 @@ static void     Settings()
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CORING);
     Log("coring threshold     [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
-
-    Log("texscale             [ %17s ] [ %17s ]\n", g_texscale ? "on" : "off", DEFAULT_TEXSCALE ? "on" : "off");
     Log("patch subdividing    [ %17s ] [ %17s ]\n", g_subdivide ? "on" : "off", DEFAULT_SUBDIVIDE ? "on" : "off");
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_chop);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CHOP);
@@ -2948,10 +2937,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        else if (!strcasecmp(argv[i], "-notexscale"))
-        {
-            g_texscale = false;
         }
         else if (!strcasecmp(argv[i], "-nosubdivide"))
         {

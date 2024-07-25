@@ -58,7 +58,6 @@
 // 188 is the fullbright threshold for Goldsrc before 25th anniversary, regardless of the brightness and gamma settings in the graphic options. This is no longer necessary
 // However, hlrad can only control the light values of each single light style. So the final in-game brightness may exceed 188 if you have set a high value in the "custom appearance" of the light, or if the face receives light from different styles.
 #define DEFAULT_LIMITTHRESHOLD		255.0 // We override to 188 with pre25 argument. //seedee
-#define DEFAULT_TEXSCALE            true
 #define DEFAULT_CHOP                64.0
 #define DEFAULT_TEXCHOP             32.0
 #define DEFAULT_LIGHTSCALE          2.0 //1.0 //vluzacn

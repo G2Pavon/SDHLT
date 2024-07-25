@@ -73,7 +73,6 @@ void Usage(ProgramType programType)
             Log("    -smooth2 #      : Set smoothing threshold between different textures\n");
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
-            Log("    -notexscale     : Do not scale radiosity patches with texture scale\n");
             Log("    -coring #       : Set lighting threshold before blackness\n");
             Log("    -dlight #       : Set direct lighting threshold\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
