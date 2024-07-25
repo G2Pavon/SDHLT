@@ -840,58 +840,70 @@ static void     MarkEntForNoclip(entity_t*  ent)
     }
 }
 
+static void CheckForNoClip() {
 
-static void     CheckForNoClip() // marks the noclip flag on any brushes that dont need clipnode generation, eg. func_illusionaries
-{
-    int             i;
-    entity_t*       ent;
-
-    char            entclassname[MAX_KEY]; 
-    int             spawnflags;
-	int				count = 0;
-
-    if (!g_bClipNazi) 
+    if (!g_bClipNazi)
         return; // NO CLIP FOR YOU!!!
 
-    for (i = 0; i < g_numentities; i++)
-    {
-        if (!g_entities[i].numbrushes) 
-            continue; // not a model
+    int count = 0;
+    for (int i = 0; i < g_numentities; i++) {
+        entity_t* ent = &g_entities[i];
 
-        if (!i) 
-            continue; // dont waste our time with worldspawn
+        if (!ent->numbrushes || i == 0)// Skip entities that are not models or worldspawn
+            continue;
 
-        ent = &g_entities[i];
-
+        char entclassname[MAX_KEY];
         strcpy_s(entclassname, ValueForKey(ent, "classname"));
-        spawnflags = atoi(ValueForKey(ent, "spawnflags"));
-		int skin = IntForKey(ent, "skin"); //vluzacn
+        int spawnflags = atoi(ValueForKey(ent, "spawnflags"));
+        int skin = IntForKey(ent, "skin"); //vluzacn
 
-		if ((skin != -16) &&
-			(
-				!strcmp(entclassname, "env_bubbles")
-				|| !strcmp(entclassname, "func_illusionary")
-				|| (spawnflags & 8) && 
-				(   /* NOTE: func_doors as far as i can tell may need clipnodes for their
-							player collision detection, so for now, they stay out of it. */
-					!strcmp(entclassname, "func_train")
-					|| !strcmp(entclassname, "func_door")
-					|| !strcmp(entclassname, "func_water")
-					|| !strcmp(entclassname, "func_door_rotating")
-					|| !strcmp(entclassname, "func_pendulum")
-					|| !strcmp(entclassname, "func_train")
-					|| !strcmp(entclassname, "func_tracktrain")
-					|| !strcmp(entclassname, "func_vehicle")
-				)
-				|| (skin != 0) && (!strcmp(entclassname, "func_door") || !strcmp(entclassname, "func_water"))
-				|| (spawnflags & 2) && (!strcmp(entclassname, "func_conveyor"))
-				|| (spawnflags & 1) && (!strcmp(entclassname, "func_rot_button"))
-				|| (spawnflags & 64) && (!strcmp(entclassname, "func_rotating"))
-			))
-		{
-			MarkEntForNoclip(ent);
-			count++;
-		}
+        bool markForNoclip = false;
+
+        if (skin != -16) {
+            if (strcmp(entclassname, "env_bubbles") == 0 || strcmp(entclassname, "func_illusionary") == 0) {
+                markForNoclip = true;
+            } 
+            else if (spawnflags & 8) // Pasable flag
+            {
+                if (strcmp(entclassname, "func_train") == 0 || 
+                    strcmp(entclassname, "func_door") == 0 ||
+                    strcmp(entclassname, "func_water") == 0 ||
+                    strcmp(entclassname, "func_door_rotating") == 0 ||
+                    strcmp(entclassname, "func_pendulum") == 0 ||
+                    strcmp(entclassname, "func_tracktrain") == 0 ||
+                    strcmp(entclassname, "func_vehicle") == 0) {
+                    markForNoclip = true;
+                }
+            } 
+            else if (skin != 0) 
+            {
+                if (strcmp(entclassname, "func_water") == 0) { // Removed func_door
+                    markForNoclip = true;
+                }
+            } 
+            else if (spawnflags & 2) // Not solid flag
+            {
+                if (strcmp(entclassname, "func_conveyor") == 0) {
+                    markForNoclip = true;
+                }
+            } 
+            else if (spawnflags & 1) // Not solid flag
+            {
+                if (strcmp(entclassname, "func_rot_button") == 0) {
+                    markForNoclip = true;
+                }
+            } 
+            else if (spawnflags & 64) // Not solid flag
+            {
+                if (strcmp(entclassname, "func_rotating") == 0) {
+                    markForNoclip = true;
+                }
+            }
+        }
+        if (markForNoclip) {
+            MarkEntForNoclip(ent);
+            count++;
+        }
     }
     Log("%i entities discarded from clipping hulls\n", count);
 }
