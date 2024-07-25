@@ -2,7 +2,7 @@
 
 vec_t           g_BrushUnionThreshold = DEFAULT_BRUSH_UNION_THRESHOLD;
 
-static Winding* NewWindingFromPlane(const brushhull_t* const hull, const int planenum)
+static Winding* NewWindingFromPlane(const BrushHull* const hull, const int planenum)
 {
     Winding*        winding;
     Winding*        front;
@@ -58,7 +58,7 @@ static void     AddFaceToList(bface_t** head, bface_t* newface)
     }
 }
 
-static int      NumberOfHullFaces(const brushhull_t* const hull)
+static int      NumberOfHullFaces(const BrushHull* const hull)
 {
     int             x;
     bface_t*        face;
@@ -76,7 +76,7 @@ static int      NumberOfHullFaces(const brushhull_t* const hull)
 }
 
 // Returns false if union of brushes is obviously zero
-static void     AddPlaneToUnion(brushhull_t* hull, const int planenum)
+static void     AddPlaneToUnion(BrushHull* hull, const int planenum)
 {
     bool            need_new_face = false;
 
@@ -160,7 +160,7 @@ static void     AddPlaneToUnion(brushhull_t* hull, const int planenum)
     }
 }
 
-static vec_t    CalculateSolidVolume(const brushhull_t* const hull)
+static vec_t    CalculateSolidVolume(const BrushHull* const hull)
 {
     // calculate polyhedron origin
     // subdivide face winding into triangles
@@ -203,7 +203,7 @@ static vec_t    CalculateSolidVolume(const brushhull_t* const hull)
     return volume;
 }
 
-static void     DumpHullWindings(const brushhull_t* const hull)
+static void     DumpHullWindings(const BrushHull* const hull)
 {
     int             x = 0;
     bface_t*        face;
@@ -214,7 +214,7 @@ static void     DumpHullWindings(const brushhull_t* const hull)
     }
 }
 
-static bool     isInvalidHull(const brushhull_t* const hull)
+static bool     isInvalidHull(const BrushHull* const hull)
 {
     int             x = 0;
     bface_t*        face;
@@ -249,8 +249,8 @@ void            CalculateBrushUnions(const int brushnum)
     int             bn, hull;
     brush_t*        b1;
     brush_t*        b2;
-    brushhull_t*    bh1;
-    brushhull_t*    bh2;
+    BrushHull*    bh1;
+    BrushHull*    bh2;
     entity_t*       e;
 
     b1 = &g_mapbrushes[brushnum];
@@ -279,7 +279,7 @@ void            CalculateBrushUnions(const int brushnum)
             }
 
             {
-                brushhull_t     union_hull;
+                BrushHull     union_hull;
                 bface_t*        face;
 
                 union_hull.bounds = bh1->bounds;

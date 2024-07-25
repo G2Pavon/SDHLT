@@ -120,7 +120,7 @@ const char* GetClipTypeString(cliptype ct)
 //  Called to add any and all clip hull planes by the new ExpandBrush.
 // =====================================================================================
 
-void AddHullPlane(brushhull_t* hull, const vec_t* const normal, const vec_t* const origin, const bool check_planenum)
+void AddHullPlane(BrushHull* hull, const vec_t* const normal, const vec_t* const origin, const bool check_planenum)
 {
 	int planenum = FindIntPlane(normal,origin);
 	//check to see if this plane is already in the brush (optional to speed
@@ -178,7 +178,7 @@ void AddHullPlane(brushhull_t* hull, const vec_t* const normal, const vec_t* con
 //     cliptype          simple    precise     legacy normalized   smallest
 //     clipnodecount        971       1089       1202       1232       1000
 
-void ExpandBrushWithHullBrush (const brush_t *brush, const brushhull_t *hull0, const hullbrush_t *hb, brushhull_t *hull)
+void ExpandBrushWithHullBrush (const brush_t *brush, const BrushHull *hull0, const hullbrush_t *hb, BrushHull *hull)
 {
 	const hullbrushface_t *hbf;
 	const hullbrushedge_t *hbe;
@@ -427,7 +427,7 @@ void ExpandBrush(brush_t* brush, const int hullnum)
 	//for looping through the faces and constructing the hull
 	bface_t* current_face;
 	plane_t* current_plane;
-	brushhull_t* hull;
+	BrushHull* hull;
 	vec3_t	origin, normal;
 
 	//for non-axial bevel testing
@@ -701,7 +701,7 @@ void ExpandBrush(brush_t* brush, const int hullnum)
 // =====================================================================================
 //  MakeHullFaces
 // =====================================================================================
-void SortSides (brushhull_t *h)
+void SortSides (BrushHull *h)
 {
 	int numsides;
 	bface_t **sides;
@@ -758,7 +758,7 @@ void SortSides (brushhull_t *h)
 	free (isused);
 	free (sorted);
 }
-void            MakeHullFaces(const brush_t* const b, brushhull_t *h)
+void            MakeHullFaces(const brush_t* const b, BrushHull *h)
 {
     bface_t*        f;
     bface_t*        f2;

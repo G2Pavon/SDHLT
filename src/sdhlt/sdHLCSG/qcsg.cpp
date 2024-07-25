@@ -283,7 +283,7 @@ void            FreeFaceList(bface_t* f)
 }
 
 
-static bface_t* CopyFacesToOutside(brushhull_t* bh) // Make a copy of all the faces of the brush, so they can be chewed up by other brushes.
+static bface_t* CopyFacesToOutside(BrushHull* bh) // Make a copy of all the faces of the brush, so they can be chewed up by other brushes.
 { // All of the faces start on the outside list. As other brushes take bites out of the faces, the fragments are moved to the  inside list, so they can be freed when they are determined to be completely enclosed in solid.
     bface_t*        f;
     bface_t*        newf;
@@ -308,8 +308,8 @@ static void     CSGBrush(int brushnum)
     int             hull;
     brush_t*        b1;
     brush_t*        b2;
-    brushhull_t*    bh1;
-    brushhull_t*    bh2;
+    BrushHull*    bh1;
+    BrushHull*    bh2;
     int             bn;
     bool            overwrite;
     bface_t*        f;
@@ -1015,7 +1015,7 @@ static void     SetModelCenters(int entitynum)
 static void     BoundWorld()
 {
     int             i;
-    brushhull_t*    h;
+    BrushHull*    h;
 
     world_bounds.reset();
 

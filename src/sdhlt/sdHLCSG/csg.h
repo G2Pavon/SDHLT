@@ -117,11 +117,20 @@ typedef struct bface_s
 // NUM_HULLS should be no larger than MAX_MAP_HULLS
 #define NUM_HULLS 4
 
-typedef struct
-{
-    BoundingBox     bounds;
-    bface_t*        faces;
-} brushhull_t;
+class BrushHull {
+public:
+    BoundingBox bounds;
+    bface_t* faces;
+
+    // constructor
+    BrushHull() : faces(nullptr) {}
+
+    // destructor
+    ~BrushHull() {
+        // ...
+    }
+};
+
 
 typedef struct brush_s
 {
@@ -144,7 +153,7 @@ typedef struct brush_s
 	char *			hullshapes[NUM_HULLS]; // might be NULL
 
     int             contents;
-    brushhull_t     hulls[NUM_HULLS];
+    BrushHull     hulls[NUM_HULLS];
 } brush_t;
 
 typedef struct
