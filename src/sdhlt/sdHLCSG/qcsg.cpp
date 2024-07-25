@@ -17,10 +17,6 @@ cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
 bool            g_bClipNazi = DEFAULT_CLIPNAZI;         // "-noclipeconomy"
 
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-bool g_noutf8 = DEFAULT_NOUTF8;
-#endif
-
 bface_t*        NewFaceFromFace(const bface_t* const in) // Duplicates the non point information of a face, used by SplitFace
 {
     bface_t*        newf;

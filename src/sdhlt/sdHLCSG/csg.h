@@ -42,9 +42,6 @@
 #define DEFAULT_CLIPNAZI    false
 
 #define DEFAULT_RESETLOG true
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-#define DEFAULT_NOUTF8 false
-#endif
 
 // AJM: added in
 #define UNLESS(a)  if (!(a))
@@ -245,10 +242,6 @@ extern bool     g_bClipNazi;
 typedef enum{clip_smallest,clip_normalized,clip_simple,clip_precise,clip_legacy} cliptype;
 extern cliptype g_cliptype;
 extern const char*	GetClipTypeString(cliptype);
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-extern bool g_noutf8;
-#endif
 
 extern vec_t    g_BrushUnionThreshold;
 
