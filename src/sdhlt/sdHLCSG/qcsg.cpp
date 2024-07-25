@@ -1103,300 +1103,300 @@ int             main(const int argc, char** argv)
 		char ** argv;
 		ParseParamFile (argcold, argvold, argc, argv);
 		{
-	if (InitConsole (argc, argv) < 0)
-		Usage();
-    if (argc == 1)
-        Usage();
+            if (InitConsole (argc, argv) < 0)
+                Usage();
+            if (argc == 1)
+                Usage();
 
-	InitDefaultHulls ();
+            InitDefaultHulls ();
 
-    for (i = 1; i < argc; i++) // detect argv
-    {
-        if (!strcasecmp(argv[i], "-threads"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
+            for (i = 1; i < argc; i++) // detect argv
             {
-                g_numthreads = atoi(argv[++i]);
-                if (g_numthreads < 1)
+                if (!strcasecmp(argv[i], "-threads"))
                 {
-                    Log("Expected value of at least 1 for '-threads'\n");
+                    if (i + 1 < argc)	//added "1" .--vluzacn
+                    {
+                        g_numthreads = atoi(argv[++i]);
+                        if (g_numthreads < 1)
+                        {
+                            Log("Expected value of at least 1 for '-threads'\n");
+                            Usage();
+                        }
+                    }
+                    else
+                    {
+                        Usage();
+                    }
+                }
+
+                else if (!strcasecmp(argv[i], "-worldextent"))
+                {
+                    g_iWorldExtent = atoi(argv[++i]);
+                }
+
+                else if (!strcasecmp(argv[i], "-console"))
+                {
+        #ifndef SYSTEM_WIN32
+                    Warning("The option '-console #' is only valid for Windows.");
+        #endif
+                    if (i + 1 < argc)
+                        ++i;
+                    else
+                        Usage();
+                }
+                else if (!strcasecmp(argv[i], "-low"))
+                {
+                    g_threadpriority = eThreadPriorityLow;
+                }
+                else if (!strcasecmp(argv[i], "-high"))
+                {
+                    g_threadpriority = eThreadPriorityHigh;
+                }
+                else if (!strcasecmp(argv[i], "-noskyclip"))
+                {
+                    g_skyclip = false;
+                }
+                else if (!strcasecmp(argv[i], "-clipeconomy"))
+                {
+                    g_bClipNazi = true;
+                }
+
+                else if (!strcasecmp(argv[i], "-cliptype"))
+                {
+                    if (i + 1 < argc)	//added "1" .--vluzacn
+                    {
+                        ++i;
+                        if(!strcasecmp(argv[i],"smallest"))
+                        { g_cliptype = clip_smallest; }
+                        else if(!strcasecmp(argv[i],"normalized"))
+                        { g_cliptype = clip_normalized; }
+                        else if(!strcasecmp(argv[i],"simple"))
+                        { g_cliptype = clip_simple; }
+                        else if(!strcasecmp(argv[i],"precise"))
+                        { g_cliptype = clip_precise; }
+                        else if(!strcasecmp(argv[i],"legacy"))
+                        { g_cliptype = clip_legacy; }
+                    }
+                    else
+                    {
+                        Log("Error: -cliptype: incorrect usage of parameter\n");
+                        Usage();
+                    }
+                }
+                else if (!strcasecmp(argv[i], "-texdata"))
+                {
+                    if (i + 1 < argc)	//added "1" .--vluzacn
+                    {
+                        int             x = atoi(argv[++i]) * 1024;
+
+                        //if (x > g_max_map_miptex) //--vluzacn
+                        {
+                            g_max_map_miptex = x;
+                        }
+                    }
+                    else
+                    {
+                        Usage();
+                    }
+                }
+                else if (!strcasecmp(argv[i], "-lightdata"))
+                {
+                    if (i + 1 < argc)	//added "1" .--vluzacn
+                    {
+                        int             x = atoi(argv[++i]) * 1024;
+
+                        {//if (x > g_max_map_lightdata) //--vluzacn
+                            g_max_map_lightdata = x;
+                        }
+                    }
+                    else
+                    {
+                        Usage();
+                    }
+                }
+                else if (argv[i][0] == '-')
+                {
+                    Log("Unknown option \"%s\"\n", argv[i]);
+                    Usage();
+                }
+                else if (!mapname_from_arg)
+                {
+                    mapname_from_arg = argv[i];
+                }
+                else
+                {
+                    Log("Unknown option \"%s\"\n", argv[i]);
                     Usage();
                 }
             }
-            else
+
+            if (!mapname_from_arg)
             {
+                Log("No mapfile specified\n");
                 Usage();
             }
-        }
 
-        else if (!strcasecmp(argv[i], "-worldextent"))
-        {
-            g_iWorldExtent = atoi(argv[++i]);
-        }
+            safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH); // handle mapname
+            FlipSlashes(g_Mapname);
+            StripExtension(g_Mapname);
 
-		else if (!strcasecmp(argv[i], "-console"))
-		{
-#ifndef SYSTEM_WIN32
-			Warning("The option '-console #' is only valid for Windows.");
-#endif
-			if (i + 1 < argc)
-				++i;
-			else
-				Usage();
-		}
-        else if (!strcasecmp(argv[i], "-low"))
-        {
-            g_threadpriority = eThreadPriorityLow;
-        }
-        else if (!strcasecmp(argv[i], "-high"))
-        {
-            g_threadpriority = eThreadPriorityHigh;
-        }
-        else if (!strcasecmp(argv[i], "-noskyclip"))
-        {
-            g_skyclip = false;
-        }
-        else if (!strcasecmp(argv[i], "-clipeconomy"))
-        {
-            g_bClipNazi = true;
-        }
+            ResetTmpFiles();
 
-		else if (!strcasecmp(argv[i], "-cliptype"))
-		{
-			if (i + 1 < argc)	//added "1" .--vluzacn
-			{
-				++i;
-				if(!strcasecmp(argv[i],"smallest"))
-				{ g_cliptype = clip_smallest; }
-				else if(!strcasecmp(argv[i],"normalized"))
-				{ g_cliptype = clip_normalized; }
-				else if(!strcasecmp(argv[i],"simple"))
-				{ g_cliptype = clip_simple; }
-				else if(!strcasecmp(argv[i],"precise"))
-				{ g_cliptype = clip_precise; }
-				else if(!strcasecmp(argv[i],"legacy"))
-				{ g_cliptype = clip_legacy; }
-			}
-            else
+            ResetErrorLog();                       
+            atexit(CloseLog);                       
+            LogStart(argcold, argvold);
             {
-                Log("Error: -cliptype: incorrect usage of parameter\n");
-                Usage();
-            }
-		}
-        else if (!strcasecmp(argv[i], "-texdata"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                int             x = atoi(argv[++i]) * 1024;
-
-                //if (x > g_max_map_miptex) //--vluzacn
+                int			 i;
+                Log("Arguments: ");
+                for (i = 1; i < argc; i++)
                 {
-                    g_max_map_miptex = x;
+                    if (strchr(argv[i], ' '))
+                    {
+                        Log("\"%s\" ", argv[i]);
+                    }
+                    else
+                    {
+                        Log("%s ", argv[i]);
+                    }
+                }
+                Log("\n");
+            }
+        #ifdef PLATFORM_CAN_CALC_EXTENT
+            hlassume (CalcFaceExtents_test (), assume_first);
+        #endif
+            atexit(CSGCleanup); // AJM
+            dtexdata_init();                        
+            atexit(dtexdata_free);
+
+            start = I_FloatTime(); // START CSG
+
+            safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
+            FlipSlashes(name);
+            DefaultExtension(name, ".map");                  // might be .reg
+            LoadMapFile(name);
+            ThreadSetDefault();                    
+            ThreadSetPriority(g_threadpriority);  
+            Settings();
+
+
+        #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
+            int count = 0;
+            for (i = 0; i < g_numentities; i++)
+            {
+                entity_t *ent = &g_entities[i];
+                const char *value;
+                char *newvalue;
+
+                if (strcmp (ValueForKey (ent, "classname"), "game_text"))
+                {
+                    continue;
+                }
+
+                value = ValueForKey (ent, "message");
+                if (*value)
+                {
+                    newvalue = ANSItoUTF8 (value);
+                    if (strcmp (newvalue, value))
+                    {
+                        SetKeyValue (ent, "message", newvalue);
+                        count++;
+                    }
+                    free (newvalue);
                 }
             }
-            else
+            if (count)
             {
-                Usage();
+                Log ("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
             }
-        }
-        else if (!strcasecmp(argv[i], "-lightdata"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                int             x = atoi(argv[++i]) * 1024;
+        #endif
 
-                {//if (x > g_max_map_lightdata) //--vluzacn
-                    g_max_map_lightdata = x;
+            Log("Loading mapfile wad configuration by default\n");
+            GetUsedWads();
+            Log("\n");
+
+            CheckForNoClip(); 
+
+            NamedRunThreadsOnIndividual(g_nummapbrushes, g_estimate, CreateBrush); // createbrush
+            CheckFatal();
+
+            BoundWorld(); // boundworld
+
+            for (i = 0; i < g_numentities; i++) 
+            {
+                SetModelCenters (i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
+            }
+            for (i = 0; i < NUM_HULLS; i++) // open hull files
+            {
+                char            name[_MAX_PATH];
+
+                safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
+
+                out[i] = fopen(name, "w");
+
+                if (!out[i]) 
+                    Error("Couldn't open %s", name);
+                safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
+                out_detailbrush[i] = fopen(name, "w");
+                if (!out_detailbrush[i])
+                    Error("Couldn't open %s", name);
+            }
+            {
+                FILE			*f;
+                char			name[_MAX_PATH];
+                safe_snprintf (name, _MAX_PATH, "%s.hsz", g_Mapname);
+                f = fopen (name, "w");
+                if (!f)
+                    Error("Couldn't open %s", name);
+                float x1,y1,z1;
+                float x2,y2,z2;
+                for (i = 0; i < NUM_HULLS; i++)
+                {
+                    x1 = g_hull_size[i][0][0];
+                    y1 = g_hull_size[i][0][1];
+                    z1 = g_hull_size[i][0][2];
+                    x2 = g_hull_size[i][1][0];
+                    y2 = g_hull_size[i][1][1];
+                    z2 = g_hull_size[i][1][2];
+                    fprintf (f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
                 }
+                fclose (f);
             }
-            else
+
+            ProcessModels();
+
+            for (i = 0; i < NUM_HULLS; i++) // close hull files 
             {
-                Usage();
+                fclose(out[i]);
+                fclose (out_detailbrush[i]);
             }
-        }
-        else if (argv[i][0] == '-')
-        {
-            Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
-        }
-        else if (!mapname_from_arg)
-        {
-            mapname_from_arg = argv[i];
-        }
-        else
-        {
-            Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
-        }
-    }
 
-    if (!mapname_from_arg)
-    {
-        Log("No mapfile specified\n");
-        Usage();
-    }
+            EmitPlanes();
 
-    safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH); // handle mapname
-    FlipSlashes(g_Mapname);
-    StripExtension(g_Mapname);
+            WriteBSP(g_Mapname);
 
-    ResetTmpFiles();
-
-    ResetErrorLog();                       
-    atexit(CloseLog);                       
-    LogStart(argcold, argvold);
-	{
-		int			 i;
-		Log("Arguments: ");
-		for (i = 1; i < argc; i++)
-		{
-			if (strchr(argv[i], ' '))
-			{
-				Log("\"%s\" ", argv[i]);
-			}
-			else
-			{
-				Log("%s ", argv[i]);
-			}
-		}
-		Log("\n");
-	}
-#ifdef PLATFORM_CAN_CALC_EXTENT
-	hlassume (CalcFaceExtents_test (), assume_first);
-#endif
-    atexit(CSGCleanup); // AJM
-    dtexdata_init();                        
-    atexit(dtexdata_free);
-
-    start = I_FloatTime(); // START CSG
-
-    safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
-	FlipSlashes(name);
-    DefaultExtension(name, ".map");                  // might be .reg
-    LoadMapFile(name);
-    ThreadSetDefault();                    
-    ThreadSetPriority(g_threadpriority);  
-    Settings();
-
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-    int count = 0;
-    for (i = 0; i < g_numentities; i++)
-    {
-        entity_t *ent = &g_entities[i];
-        const char *value;
-        char *newvalue;
-
-        if (strcmp (ValueForKey (ent, "classname"), "game_text"))
-        {
-            continue;
-        }
-
-        value = ValueForKey (ent, "message");
-        if (*value)
-        {
-            newvalue = ANSItoUTF8 (value);
-            if (strcmp (newvalue, value))
+        #if 0 // AJM: debug
+            Log("\n---------------------------------------\n"
+                "Map Plane Usage:\n"
+                "  #  normal             origin             dist   type\n"
+                "    (   x,    y,    z) (   x,    y,    z) (     )\n"
+                );
+            for (i = 0; i < g_nummapplanes; i++)
             {
-                SetKeyValue (ent, "message", newvalue);
-                count++;
+                plane_t* p = &g_mapplanes[i];
+
+                Log(
+                "%3i (%4.0f, %4.0f, %4.0f) (%4.0f, %4.0f, %4.0f) (%5.0f) %i\n",
+                i,     
+                p->normal[1], p->normal[2], p->normal[3],
+                p->origin[1], p->origin[2], p->origin[3],
+                p->dist,
+                p->type
+                );
             }
-            free (newvalue);
-        }
-    }
-    if (count)
-    {
-        Log ("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
-    }
-#endif
-
-    Log("Loading mapfile wad configuration by default\n");
-    GetUsedWads();
-    Log("\n");
-
-    CheckForNoClip(); 
-
-    NamedRunThreadsOnIndividual(g_nummapbrushes, g_estimate, CreateBrush); // createbrush
-    CheckFatal();
-
-    BoundWorld(); // boundworld
-
-    for (i = 0; i < g_numentities; i++) 
-    {
-        SetModelCenters (i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
-    }
-    for (i = 0; i < NUM_HULLS; i++) // open hull files
-    {
-        char            name[_MAX_PATH];
-
-        safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
-
-        out[i] = fopen(name, "w");
-
-        if (!out[i]) 
-            Error("Couldn't open %s", name);
-		safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
-		out_detailbrush[i] = fopen(name, "w");
-		if (!out_detailbrush[i])
-			Error("Couldn't open %s", name);
-    }
-	{
-		FILE			*f;
-		char			name[_MAX_PATH];
-		safe_snprintf (name, _MAX_PATH, "%s.hsz", g_Mapname);
-		f = fopen (name, "w");
-		if (!f)
-			Error("Couldn't open %s", name);
-		float x1,y1,z1;
-		float x2,y2,z2;
-		for (i = 0; i < NUM_HULLS; i++)
-		{
-			x1 = g_hull_size[i][0][0];
-			y1 = g_hull_size[i][0][1];
-			z1 = g_hull_size[i][0][2];
-			x2 = g_hull_size[i][1][0];
-			y2 = g_hull_size[i][1][1];
-			z2 = g_hull_size[i][1][2];
-			fprintf (f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
-		}
-		fclose (f);
-	}
-
-    ProcessModels();
-
-    for (i = 0; i < NUM_HULLS; i++) // close hull files 
-	{
-        fclose(out[i]);
-		fclose (out_detailbrush[i]);
-	}
-
-    EmitPlanes();
-
-    WriteBSP(g_Mapname);
-
-#if 0 // AJM: debug
-    Log("\n---------------------------------------\n"
-        "Map Plane Usage:\n"
-        "  #  normal             origin             dist   type\n"
-        "    (   x,    y,    z) (   x,    y,    z) (     )\n"
-        );
-    for (i = 0; i < g_nummapplanes; i++)
-    {
-        plane_t* p = &g_mapplanes[i];
-
-        Log(
-        "%3i (%4.0f, %4.0f, %4.0f) (%4.0f, %4.0f, %4.0f) (%5.0f) %i\n",
-        i,     
-        p->normal[1], p->normal[2], p->normal[3],
-        p->origin[1], p->origin[2], p->origin[3],
-        p->dist,
-        p->type
-        );
-    }
-    Log("---------------------------------------\n\n");
-#endif
-    end = I_FloatTime(); // elapsed time
-    LogTimeElapsed(end - start);
+            Log("---------------------------------------\n\n");
+        #endif
+            end = I_FloatTime(); // elapsed time
+            LogTimeElapsed(end - start);
 
 		}
 	}

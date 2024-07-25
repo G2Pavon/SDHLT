@@ -966,196 +966,190 @@ int             main(const int argc, char** argv)
 		int argc;
 		char ** argv;
 		ParseParamFile (argcold, argvold, argc, argv);
-		{
-	if (InitConsole (argc, argv) < 0)
-		Usage();
-    if (argc == 1)
-    {
-        Usage();
-    }
-
-    for (i = 1; i < argc; i++)
-    {
-        if (!strcasecmp(argv[i], "-threads"))
+        if (InitConsole (argc, argv) < 0)
+            Usage();
+        if (argc == 1)
         {
-            if (i + 1 < argc)	//added "1" .--vluzacn
+            Usage();
+        }
+        for (i = 1; i < argc; i++)
+        {
+            if (!strcasecmp(argv[i], "-threads"))
             {
-                g_numthreads = atoi(argv[++i]);
-                if (g_numthreads < 1)
+                if (i + 1 < argc)	//added "1" .--vluzacn
                 {
-                    Log("Expected value of at least 1 for '-threads'\n");
+                    g_numthreads = atoi(argv[++i]);
+                    if (g_numthreads < 1)
+                    {
+                        Log("Expected value of at least 1 for '-threads'\n");
+                        Usage();
+                    }
+                }
+                else
+                {
                     Usage();
                 }
             }
-            else
+            else if (!strcasecmp(argv[i], "-console"))
             {
-                Usage();
+    #ifndef SYSTEM_WIN32
+                Warning("The option '-console #' is only valid for Windows.");
+    #endif
+                if (i + 1 < argc)
+                    ++i;
+                else
+                    Usage();
             }
-        }
-
-		else if (!strcasecmp(argv[i], "-console"))
-		{
-#ifndef SYSTEM_WIN32
-			Warning("The option '-console #' is only valid for Windows.");
-#endif
-			if (i + 1 < argc)
-				++i;
-			else
-				Usage();
-		}
-        else if (!strcasecmp(argv[i], "-fast"))
-        {
-            Log("g_fastvis = true\n");
-            g_fastvis = true;
-        }
-        else if (!strcasecmp(argv[i], "-full"))
-        {
-            g_fullvis = true;
-        }
-        else if (!strcasecmp(argv[i], "-nofixprt"))
-        {
-            g_nofixprt = true;
-        }
-        else if (!strcasecmp(argv[i], "-low"))
-        {
-            g_threadpriority = eThreadPriorityLow;
-        }
-        else if (!strcasecmp(argv[i], "-high"))
-        {
-            g_threadpriority = eThreadPriorityHigh;
-        }
-        else if (!strcasecmp(argv[i], "-texdata"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
+            else if (!strcasecmp(argv[i], "-fast"))
             {
-                int             x = atoi(argv[++i]) * 1024;
-
-                //if (x > g_max_map_miptex) //--vluzacn
+                Log("g_fastvis = true\n");
+                g_fastvis = true;
+            }
+            else if (!strcasecmp(argv[i], "-full"))
+            {
+                g_fullvis = true;
+            }
+            else if (!strcasecmp(argv[i], "-nofixprt"))
+            {
+                g_nofixprt = true;
+            }
+            else if (!strcasecmp(argv[i], "-low"))
+            {
+                g_threadpriority = eThreadPriorityLow;
+            }
+            else if (!strcasecmp(argv[i], "-high"))
+            {
+                g_threadpriority = eThreadPriorityHigh;
+            }
+            else if (!strcasecmp(argv[i], "-texdata"))
+            {
+                if (i + 1 < argc)	//added "1" .--vluzacn
                 {
-                    g_max_map_miptex = x;
+                    int             x = atoi(argv[++i]) * 1024;
+
+                    //if (x > g_max_map_miptex) //--vluzacn
+                    {
+                        g_max_map_miptex = x;
+                    }
+                }
+                else
+                {
+                    Usage();
                 }
             }
-            else
+            else if (!strcasecmp(argv[i], "-lightdata")) //lightdata
             {
-                Usage();
-            }
-        }
-        else if (!strcasecmp(argv[i], "-lightdata")) //lightdata
-        {
-            if (i + 1 < argc) //--vluzacn
-            {
-                int             x = atoi(argv[++i]) * 1024;
-
-                //if (x > g_max_map_lightdata) //--vluzacn
+                if (i + 1 < argc) //--vluzacn
                 {
-                    g_max_map_lightdata = x; //--vluzacn
+                    int             x = atoi(argv[++i]) * 1024;
+
+                    //if (x > g_max_map_lightdata) //--vluzacn
+                    {
+                        g_max_map_lightdata = x; //--vluzacn
+                    }
+                }
+                else
+                {
+                    Usage();
                 }
             }
+            // AJM: MVD
+            else if(!strcasecmp(argv[i], "-maxdistance"))
+            {
+                if(i + 1 < argc)	//added "1" .--vluzacn
+                {
+                    g_maxdistance = abs(atoi(argv[++i]));
+                }
+                else
+                {
+                    Usage();
+                }
+            }
+    /*		else if(!strcasecmp(argv[i], "-postcompile"))
+            {
+                g_postcompile = true;
+            }*/
+            else if (argv[i][0] == '-')
+            {
+                Log("Unknown option \"%s\"", argv[i]);
+                Usage();
+            }
+            else if (!mapname_from_arg)
+            {
+                mapname_from_arg = argv[i];
+            }
             else
             {
+                Log("Unknown option \"%s\"\n", argv[i]);
                 Usage();
             }
         }
 
+        if (!mapname_from_arg)
+        {
+            Log("No mapfile specified\n");
+            Usage();
+        }
+
+        safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
+        FlipSlashes(g_Mapname);
+        StripExtension(g_Mapname);
+        atexit(CloseLog);
+        ThreadSetDefault();
+        ThreadSetPriority(g_threadpriority);
+        LogStart(argcold, argvold);
+        {
+            int			 i;
+            Log("Arguments: ");
+            for (i = 1; i < argc; i++)
+            {
+                if (strchr(argv[i], ' '))
+                {
+                    Log("\"%s\" ", argv[i]);
+                }
+                else
+                {
+                    Log("%s ", argv[i]);
+                }
+            }
+            Log("\n");
+        }
+        CheckForErrorLog();
         
-        // AJM: MVD
-		else if(!strcasecmp(argv[i], "-maxdistance"))
-		{
-			if(i + 1 < argc)	//added "1" .--vluzacn
-			{
-				g_maxdistance = abs(atoi(argv[++i]));
-			}
-			else
-			{
-				Usage();
-			}
-		}
-/*		else if(!strcasecmp(argv[i], "-postcompile"))
-		{
-			g_postcompile = true;
-		}*/
+    #ifdef PLATFORM_CAN_CALC_EXTENT
+        hlassume (CalcFaceExtents_test (), assume_first);
+    #endif
+        dtexdata_init();
+        atexit(dtexdata_free);
+        // END INIT
 
-        else if (argv[i][0] == '-')
+        // BEGIN VIS
+        start = I_FloatTime();
+
+        safe_strncpy(source, g_Mapname, _MAX_PATH);
+        safe_strncat(source, ".bsp", _MAX_PATH);
+        safe_strncpy(portalfile, g_Mapname, _MAX_PATH);
+        safe_strncat(portalfile, ".prt", _MAX_PATH);
+        LoadBSPFile(source);
+        ParseEntities();
+        int i;
+        for (i = 0; i < g_numentities; i++)
         {
-            Log("Unknown option \"%s\"", argv[i]);
-            Usage();
-        }
-        else if (!mapname_from_arg)
-        {
-            mapname_from_arg = argv[i];
-        }
-        else
-        {
-            Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
-        }
-    }
-    if (!mapname_from_arg)
-    {
-        Log("No mapfile specified\n");
-        Usage();
-    }
-
-    safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
-    FlipSlashes(g_Mapname);
-    StripExtension(g_Mapname);
-    atexit(CloseLog);
-    ThreadSetDefault();
-    ThreadSetPriority(g_threadpriority);
-    LogStart(argcold, argvold);
-	{
-		int			 i;
-		Log("Arguments: ");
-		for (i = 1; i < argc; i++)
-		{
-			if (strchr(argv[i], ' '))
-			{
-				Log("\"%s\" ", argv[i]);
-			}
-			else
-			{
-				Log("%s ", argv[i]);
-			}
-		}
-		Log("\n");
-	}
-    CheckForErrorLog();
-	
-#ifdef PLATFORM_CAN_CALC_EXTENT
-	hlassume (CalcFaceExtents_test (), assume_first);
-#endif
-    dtexdata_init();
-    atexit(dtexdata_free);
-    // END INIT
-
-    // BEGIN VIS
-    start = I_FloatTime();
-
-    safe_strncpy(source, g_Mapname, _MAX_PATH);
-    safe_strncat(source, ".bsp", _MAX_PATH);
-    safe_strncpy(portalfile, g_Mapname, _MAX_PATH);
-    safe_strncat(portalfile, ".prt", _MAX_PATH);
-    LoadBSPFile(source);
-    ParseEntities();
-	{
-		int i;
-		for (i = 0; i < g_numentities; i++)
-		{
             const char* current_entity_classname = ValueForKey (&g_entities[i], "classname");
 
-			if (!strcmp (current_entity_classname, "info_overview_point")
+            if (!strcmp (current_entity_classname, "info_overview_point")
                 )
-			{
-				if (g_overview_count < g_overview_max)
-				{
-					vec3_t p;
-					GetVectorForKey (&g_entities[i], "origin", p);
-					VectorCopy (p, g_overview[g_overview_count].origin);
-					g_overview[g_overview_count].visleafnum = VisLeafnumForPoint (p);
-					g_overview[g_overview_count].reverse = IntForKey (&g_entities[i], "reverse");
-					g_overview_count++;
-				}
-			}
+            {
+                if (g_overview_count < g_overview_max)
+                {
+                    vec3_t p;
+                    GetVectorForKey (&g_entities[i], "origin", p);
+                    VectorCopy (p, g_overview[g_overview_count].origin);
+                    g_overview[g_overview_count].visleafnum = VisLeafnumForPoint (p);
+                    g_overview[g_overview_count].reverse = IntForKey (&g_entities[i], "reverse");
+                    g_overview_count++;
+                }
+            }
 
             else if (!strcmp (current_entity_classname, "info_portal"))
             {
@@ -1203,36 +1197,33 @@ int             main(const int argc, char** argv)
                     g_room_count++;
                 }
             }
-		}
-	}
-    LoadPortalsByFilename(portalfile);
+        }
+        LoadPortalsByFilename(portalfile);
 
-#   if ZHLT_ZONES
-        g_Zones = MakeZones();
-        AssignPortalsToZones();
-#   endif
+    #   if ZHLT_ZONES
+            g_Zones = MakeZones();
+            AssignPortalsToZones();
+    #   endif
 
-    Settings();
-    g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
+        Settings();
+        g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
 
-    CalcVis();
-    g_visdatasize = vismap_p - g_dvisdata;
-    Log("g_visdatasize:%i  compressed from %i\n", g_visdatasize, originalvismapsize);
+        CalcVis();
+        g_visdatasize = vismap_p - g_dvisdata;
+        Log("g_visdatasize:%i  compressed from %i\n", g_visdatasize, originalvismapsize);
 
-    if (!g_nofixprt) //seedee
-    {
-        FixPrt(portalfile);
+        if (!g_nofixprt) //seedee
+        {
+            FixPrt(portalfile);
+        }
+        PrintBSPFileSizes();
+        WriteBSPFile(source);
+
+        end = I_FloatTime();
+        LogTimeElapsed(end - start);
+
+        free(g_uncompressed);
+        // END VIS
     }
-
-    PrintBSPFileSizes();
-    WriteBSPFile(source);
-
-    end = I_FloatTime();
-    LogTimeElapsed(end - start);
-
-    free(g_uncompressed);
-    // END VIS
-	}
-
     return 0;
 }
