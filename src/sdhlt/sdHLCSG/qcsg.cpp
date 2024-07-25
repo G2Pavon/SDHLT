@@ -20,9 +20,6 @@ cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
 bool            g_bClipNazi = DEFAULT_CLIPNAZI;         // "-noclipeconomy"
 
-bool            g_bWadAutoDetect = DEFAULT_WADAUTODETECT; // "-nowadautodetect"
-
-
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
@@ -1040,7 +1037,6 @@ static void     Usage() // prints out usage sheet
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
     Log("    -nowadtextures   : Include all used textures into bsp\n");
-    Log("    -wadinclude file : Include specific wad or directory into bsp\n");
     
     Log("    -clipeconomy     : turn clipnode economy mode on\n");
 
@@ -1056,8 +1052,6 @@ static void     Usage() // prints out usage sheet
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
 #endif
-
-    Log("    -nowadautodetect : Disable auto-detection of wadfiles\n");
     Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
     Log("    mapfile          : The mapfile to compile\n\n");
 
@@ -1229,10 +1223,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
 		}
-        else if (!strcasecmp(argv[i], "-nowadautodetect"))
-        { 
-            g_bWadAutoDetect = false;
-        }
         else if (!strcasecmp(argv[i], "-nowadtextures"))
         {
             g_wadtextures = false;
@@ -1380,11 +1370,6 @@ int             main(const int argc, char** argv)
   {
     Log("Loading mapfile wad configuration by default\n");
     GetUsedWads();
-
-    if (!g_bWadAutoDetect)
-    {
-        Warning("Unused textures will not be excluded\n");
-    }
     Log("\n");
   }
     if (g_onlyents) // if onlyents, just grab the entites and resave

@@ -42,9 +42,6 @@
 
 #define DEFAULT_CLIPNAZI    false
 
-#define DEFAULT_WADAUTODETECT true //Already true in settings.cfg, why not here? //seedee
-
-
 #define DEFAULT_RESETLOG true
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 #define DEFAULT_NOUTF8 false
@@ -277,11 +274,6 @@ void            CalculateBrushUnions(int brushnum);
 //============================================================================
 // hullfile.cpp
 extern vec3_t   g_hull_size[NUM_HULLS][2];
-
-//============================================================================
-// autowad.cpp      AJM
-
-extern bool     g_bWadAutoDetect; 
 
 
 //============================================================================

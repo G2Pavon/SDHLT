@@ -591,7 +591,7 @@ void            WriteMiptex()
         for (i = 0; i < nTexFiles; i++)
         {
             wadpath_t* currentwad = texwadpathes[i];
-            if (currentwad->usedbymap && (currentwad->usedtextures > 0 || !g_bWadAutoDetect))
+            if (currentwad->usedbymap && currentwad->usedtextures > 0)
             {
                 char tmp[_MAX_PATH];
                 ExtractFile(currentwad->path, tmp);
@@ -603,7 +603,7 @@ void            WriteMiptex()
         for (i = 0; i < nTexFiles; i++)
         {
             wadpath_t* currentwad = texwadpathes[i];
-            if (!currentwad->usedbymap && (currentwad->usedtextures > 0 || !g_bWadAutoDetect))
+            if (!currentwad->usedbymap && currentwad->usedtextures > 0)
             {
                 includedWads.push_back(currentwad);
             }
