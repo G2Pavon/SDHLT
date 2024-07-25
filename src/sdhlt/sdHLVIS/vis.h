@@ -29,8 +29,6 @@
 #define DEFAULT_INFO        true
 #define DEFAULT_ESTIMATE    true
 #define DEFAULT_FASTVIS     false
-#define DEFAULT_NETVIS_PORT 21212
-#define DEFAULT_NETVIS_RATE 60
 
 #define	MAX_PORTALS	32768
 

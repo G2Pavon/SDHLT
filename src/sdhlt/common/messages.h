@@ -49,7 +49,6 @@ typedef enum
     // vis
     assume_LEAF_PORTAL_SAW_INTO_LEAF,
     assume_MAX_PORTALS_ON_LEAF,
-    assume_VALID_NETVIS_STATE,
 
     // qrad
     assume_MAX_TEXLIGHTS,
