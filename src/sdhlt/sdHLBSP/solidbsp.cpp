@@ -1693,10 +1693,6 @@ node_t*         SolidBSP(const surfchain_t* const surfhead,
 	{
 		Log("SolidBSP [hull %d] ",g_hullnum);
 	}
-	else
-	{
-	    Verbose("----- SolidBSP -----\n");
-	}
 
     headnode = AllocNode();
     headnode->surfaces = surfhead->surfaces;

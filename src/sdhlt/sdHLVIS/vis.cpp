@@ -345,10 +345,7 @@ static void     LeafThread(int unused)
         {
             return;
         }
-
         PortalFlow(p);
-
-        Verbose("portal:%4i  mightsee:%4i  cansee:%4i\n", (int)(p - g_portals), p->nummightsee, p->numcansee);
     }
 }
 #endif //!ZHLT_NETVIS
@@ -548,7 +545,6 @@ static void     LeafFlow(const int leafnum)
     //
     // compress the bit string
     //
-    Verbose("leaf %4i : %4i visible\n", leafnum, numvis);
     totalvis += numvis;
 
 	byte buffer2[MAX_MAP_LEAFS / 8];
@@ -1107,7 +1103,6 @@ static void     Usage()
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
 	Log("    -maxdistance #  : Alter the maximum distance for visibility\n");
-    Log("    -verbose        : compile with verbose messages\n");
     Log("    -dev #          : compile with developer message\n\n");
     Log("    mapfile         : The mapfile to compile\n\n");
 
@@ -1145,7 +1140,6 @@ static void     Settings()
         Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("verbose             [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer           [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 
@@ -1447,10 +1441,6 @@ int             main(const int argc, char** argv)
             {
                 Usage();
             }
-        }
-        else if (!strcasecmp(argv[i], "-verbose"))
-        {
-            g_verbose = true;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {

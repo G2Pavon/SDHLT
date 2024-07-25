@@ -30,11 +30,9 @@ extern char     g_Mapname[_MAX_PATH];
 extern char     g_Wadpath[_MAX_PATH]; //seedee
 
 #define DEFAULT_DEVELOPER   DEVELOPER_LEVEL_ALWAYS
-#define DEFAULT_VERBOSE     false
 #define DEFAULT_LOG         true
 
 extern developer_level_t g_developer;
-extern bool          g_verbose;
 extern unsigned long g_clientid;                           // Client id of this program
 extern unsigned long g_nextclientid;                       // Client id of next client to spawn from this server
 
@@ -65,7 +63,6 @@ extern const char * Localize (const char *s);
 extern void LoadLangFile (const char *name, const char *programpath);
 extern int InitConsole(int argc, char **argv);
 extern void CDECL FORMAT_PRINTF(1,2) PrintConsole(const char* const message, ...);
-extern void CDECL FORMAT_PRINTF(1,2) Verbose(const char* const message, ...);
 extern void CDECL FORMAT_PRINTF(1,2) Log(const char* const message, ...);
 extern void CDECL FORMAT_PRINTF(1,2) Error(const char* const error, ...);
 extern void CDECL FORMAT_PRINTF(2,3) Fatal(assume_msgs msgid, const char* const error, ...);

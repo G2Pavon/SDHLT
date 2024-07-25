@@ -557,7 +557,6 @@ void            WriteMiptex()
         AddAnimatingTextures();
     }
     end = I_FloatTime();
-    Verbose("TEX_InitFromWad & AddAnimatingTextures elapsed time = %ldms\n", (long)(end - start));
 
     start = I_FloatTime();
     {
@@ -580,7 +579,6 @@ void            WriteMiptex()
         }
     }
     end = I_FloatTime();
-    Verbose("FindTextures elapsed time = %ldms\n", (long)(end - start));
 
 	// Now we have filled lumpinfo for each miptex and the number of used textures for each wad.
 	{
@@ -665,7 +663,6 @@ void            WriteMiptex()
 		texmap_clear ();
     }
     end = I_FloatTime();
-    Verbose("qsort(miptex) elapsed time = %ldms\n", (long)(end - start));
 
     start = I_FloatTime();
     {
@@ -756,7 +753,6 @@ void            WriteMiptex()
     }
     end = I_FloatTime();
     Log("Texture usage: %1.2f/%1.2f MB)\n", (float)totaltexsize / (1024 * 1024), (float)g_max_map_miptex / (1024 * 1024));
-    Verbose("LoadLump() elapsed time: %ldms\n", (long)(end - start));
 }
 
 // =====================================================================================

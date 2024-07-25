@@ -586,8 +586,6 @@ void            BeginBSPFile()
 // =====================================================================================
 void            FinishBSPFile()
 {
-    Verbose("--- FinishBSPFile ---\n");
-
 	if (g_dmodels[0].visleafs > MAX_MAP_LEAFS_ENGINE)
 	{
 		Warning ("Number of world leaves(%d) exceeded MAX_MAP_LEAFS(%d)\nIf you encounter problems when running your map, consider this the most likely cause.\n", g_dmodels[0].visleafs, MAX_MAP_LEAFS_ENGINE);

@@ -41,7 +41,6 @@ char            g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";
 char            g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
 
 developer_level_t g_developer = DEFAULT_DEVELOPER;
-bool            g_verbose = DEFAULT_VERBOSE;
 
 unsigned long   g_clientid = 0;
 unsigned long   g_nextclientid = 0;
@@ -424,26 +423,6 @@ void CDECL FORMAT_PRINTF(1,2)      Warning(const char* const warning, ...)
 
     safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize ("Warning: "), message);
     WriteLog(message2);
-}
-
-// =====================================================================================
-//  Verbose
-//      Same as log but only prints when in verbose mode
-// =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      Verbose(const char* const warning, ...)
-{
-    if (g_verbose)
-    {
-        char            message[MAX_MESSAGE];
-
-        va_list         argptr;
-
-        va_start(argptr, warning);
-        vsnprintf(message, MAX_MESSAGE, Localize (warning), argptr);
-        va_end(argptr);
-
-        WriteLog(message);
-    }
 }
 
 // =====================================================================================

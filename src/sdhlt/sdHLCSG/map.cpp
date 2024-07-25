@@ -1078,11 +1078,5 @@ void            LoadMapFile(const char* const filename)
     hlassume(num_engine_entities < MAX_ENGINE_ENTITIES, assume_MAX_ENGINE_ENTITIES);
 
     CheckFatal();
-
-    Verbose("Load map:%s\n", filename);
-    Verbose("%5i brushes\n", g_nummapbrushes);
-    Verbose("%5i map entities \n", g_numentities - num_engine_entities);
-    Verbose("%5i engine entities\n", num_engine_entities);
-
     // AJM: added in 
 }

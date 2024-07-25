@@ -255,8 +255,6 @@ void            MergeAll(surface_t* surfhead)
     int             mergefaces;
     face_t*         f;
 
-    Verbose("---- MergeAll ----\n");
-
     mergefaces = 0;
     for (surf = surfhead; surf; surf = surf->next)
     {
@@ -266,6 +264,4 @@ void            MergeAll(surface_t* surfhead)
             mergefaces++;
         }
     }
-
-    Verbose("%i mergefaces\n", mergefaces);
 }

@@ -888,12 +888,9 @@ static surfchain_t* ReadSurfs(FILE* file)
 
         if (!strcasecmp(GetTextureByNumber(g_texinfo), "skip"))
         {
-            Verbose("ReadSurfs (line %i): skipping a surface", line);
-
             for (i = 0; i < numpoints; i++)
             {
                 line++;
-                //Verbose("skipping line %d", line);
                 r = fscanf(file, "%lf %lf %lf\n", &v[0], &v[1], &v[2]);
                 if (r != 3)
                 {
@@ -1269,7 +1266,6 @@ static void     Usage()
 
 	Log("    -viewportal    : Show portal boundaries in 'mapname_portal.pts' file\n");
 
-    Log("    -verbose       : compile with verbose messages\n");
     Log("    -dev #         : compile with developer message\n\n");
     Log("    mapfile        : The mapfile to compile\n\n");
 
@@ -1296,7 +1292,6 @@ static void     Settings()
         Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("verbose             [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer           [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 
@@ -1557,10 +1552,6 @@ int             main(const int argc, char** argv)
             {
                 Usage();
             }
-        }
-        else if (!strcasecmp(argv[i], "-verbose"))
-        {
-            g_verbose = true;
         }
         else if (!strcasecmp(argv[i], "-leakonly"))
         {

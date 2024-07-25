@@ -1956,11 +1956,6 @@ static void     GatherLight(int threadnum)
 						}
 						VectorAdd(adds[addstyle], v, adds[addstyle]);
 					}
-					else
-					{
-						Verbose("GatherLight, v (%4.3f %4.3f %4.3f)@(%4.3f %4.3f %4.3f)\n",
-							v[0], v[1], v[2], patch->origin[0], patch->origin[1], patch->origin[2]);
-					}
 				}
                 //LRC (ends)
             }
@@ -2116,11 +2111,6 @@ static void     GatherRGBLight(int threadnum)
 								continue;
 						}
 						VectorAdd(adds[addstyle], v, adds[addstyle]);
-					}
-					else
-					{
-						Verbose("GatherLight, v (%4.3f %4.3f %4.3f)@(%4.3f %4.3f %4.3f)\n",
-							v[0], v[1], v[2], patch->origin[0], patch->origin[1], patch->origin[2]);
 					}
 				}
                 //LRC (ends)
@@ -2464,10 +2454,6 @@ static void     RadWorld()
 	FreeTriangulations ();
 
     NamedRunThreadsOnIndividual(g_numfaces, g_estimate, FinalLightFace);
-	if (g_maxdiscardedlight > 0.01)
-	{
-		Verbose ("Maximum brightness loss (too many light styles on a face) = %f @(%f, %f, %f)\n", g_maxdiscardedlight, g_maxdiscardedpos[0], g_maxdiscardedpos[1], g_maxdiscardedpos[2]);
-	}
 	MdlLightHack ();
 	ReduceLightmap();
 	if (g_lightdatasize == 0)
@@ -2520,7 +2506,6 @@ static void     Usage()
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
-    Log("    -verbose        : compile with verbose messages\n");
     Log("    -dev #          : compile with developer message\n\n");
 
     // ------------------------------------------------------------------------
@@ -2595,7 +2580,6 @@ static void     Settings()
         Log("threads              [ %17d ] [ %17d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("verbose              [ %17s ] [ %17s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer            [ %17d ] [ %17d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory   [ %17d ] [ %17d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 		Log("max lighting memory  [ %17d ] [ %17d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA); //lightdata
@@ -3042,10 +3026,6 @@ int             main(const int argc, char** argv)
             {
                 Usage();
             }
-        }
-        else if (!strcasecmp(argv[i], "-verbose"))
-        {
-            g_verbose = true;
         }
         else if (!strcasecmp(argv[i], "-threads"))
         {

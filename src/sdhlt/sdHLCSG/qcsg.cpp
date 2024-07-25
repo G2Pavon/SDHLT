@@ -1031,10 +1031,6 @@ static void     BoundWorld()
         }
         world_bounds.add(h->bounds);
     }
-
-    Verbose("World bounds: (%i %i %i) to (%i %i %i)\n",
-            (int)world_bounds.m_Mins[0], (int)world_bounds.m_Mins[1], (int)world_bounds.m_Mins[2],
-            (int)world_bounds.m_Maxs[0], (int)world_bounds.m_Maxs[1], (int)world_bounds.m_Maxs[2]);
 }
 
 
@@ -1057,7 +1053,6 @@ static void     Usage() // prints out usage sheet
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
-    Log("    -verbose         : compile with verbose messages\n");
 
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
@@ -1094,7 +1089,6 @@ static void     Settings() // prints out settings sheet
         Log("threads               [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("verbose               [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer             [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory    [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 	Log("max lighting memory   [ %7d ] [ %7d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA);
@@ -1226,10 +1220,6 @@ int             main(const int argc, char** argv)
             {
                 Usage();
             }
-        }
-        else if (!strcasecmp(argv[i], "-verbose"))
-        {
-            g_verbose = true;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {
@@ -1396,7 +1386,6 @@ int             main(const int argc, char** argv)
     safe_strncpy(name, mapname_from_arg, _MAX_PATH); // make a copy of the nap name
 	FlipSlashes(name);
     DefaultExtension(name, ".map");                  // might be .reg
-    Verbose("Loading map file\n");
     LoadMapFile(name);
     ThreadSetDefault();                    
     ThreadSetPriority(g_threadpriority);  
@@ -1469,8 +1458,6 @@ int             main(const int argc, char** argv)
 
     BoundWorld(); // boundworld
 
-    Verbose("%5i map planes\n", g_nummapplanes);
-
     for (i = 0; i < g_numentities; i++) 
     {
         SetModelCenters (i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
@@ -1513,9 +1500,6 @@ int             main(const int argc, char** argv)
 	}
 
     ProcessModels();
-
-    Verbose("%5i csg faces\n", c_csgfaces);
-    Verbose("%5i used faces\n", c_outfaces);
 
     for (i = 0; i < NUM_HULLS; i++) // close hull files 
 	{
