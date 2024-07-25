@@ -63,7 +63,6 @@ vec_t           g_direct_scale = DEFAULT_DLIGHT_SCALE;
 unsigned        g_numbounce = DEFAULT_BOUNCE;              // 3; /* Originally this was 8 */
 
 vec_t			g_limitthreshold = DEFAULT_LIMITTHRESHOLD;
-bool			g_drawoverload = false;
 
 float           g_lightscale = DEFAULT_LIGHTSCALE;
 float           g_dlight_threshold = DEFAULT_DLIGHT_THRESHOLD;  // was DIRECT_LIGHT constant
@@ -2973,10 +2972,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawoverload"))
-		{
-			g_drawoverload = true;
-		}
         else if (!strcasecmp(argv[i], "-lights"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn

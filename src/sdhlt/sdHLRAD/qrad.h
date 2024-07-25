@@ -390,7 +390,6 @@ extern bool		g_fastmode;
 extern bool     g_extra;
 extern vec_t    g_direct_scale;
 extern vec_t	g_limitthreshold;
-extern bool		g_drawoverload;
 extern unsigned g_numbounce;
 extern float    g_qgamma;
 extern float    g_indirect_sun;
