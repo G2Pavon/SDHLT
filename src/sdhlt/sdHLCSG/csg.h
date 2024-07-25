@@ -32,7 +32,6 @@
 #endif
 
 #define DEFAULT_BRUSH_UNION_THRESHOLD 0.0f
-#define DEFAULT_ONLYENTS    false
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP     true
 
@@ -236,7 +235,6 @@ extern void		InitDefaultHulls ();
 //=============================================================================
 // csg.c
 
-extern bool     g_onlyents;
 extern bool     g_skyclip;
 extern bool     g_estimate;               
 

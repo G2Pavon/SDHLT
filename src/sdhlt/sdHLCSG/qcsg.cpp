@@ -10,8 +10,6 @@ static int      c_outfaces;
 static int      c_csgfaces;
 BoundingBox     world_bounds;
 
-     
-bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlyents"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
 
@@ -822,11 +820,7 @@ void WriteBSP(const char* const name)
 	ReuseModel();
     SetLightStyles();
 
-    if (!g_onlyents)
-        WriteMiptex();
-	if (g_onlyents)
-		LoadWadValue ();
-
+    WriteMiptex();
     UnparseEntities();
     ConvertHintToEmpty(); // this is ridiculous. --vluzacn
     WriteBSPFile(path);
@@ -1035,10 +1029,8 @@ static void     Usage() // prints out usage sheet
 
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
-    Log("    -nowadtextures   : Include all used textures into bsp\n");
     Log("    -clipeconomy     : turn clipnode economy mode on\n");
 	Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
-    Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
     Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
@@ -1095,8 +1087,6 @@ static void     Settings() // prints out settings sheet
     Log("clipnode economy mode [ %7s ] [ %7s ]\n", g_bClipNazi       ? "on" : "off", DEFAULT_CLIPNAZI     ? "on" : "off");
 
 	Log("clip hull type        [ %7s ] [ %7s ]\n", GetClipTypeString(g_cliptype), GetClipTypeString(DEFAULT_CLIPTYPE));
-
-    Log("onlyents              [ %7s ] [ %7s ]\n", g_onlyents        ? "on" : "off", DEFAULT_ONLYENTS     ? "on" : "off");
     Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("convert game_text     [ %7s ] [ %7s ]\n", !g_noutf8? "on" : "off", !DEFAULT_NOUTF8? "on" : "off");
@@ -1181,10 +1171,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-noskyclip"))
         {
             g_skyclip = false;
-        }
-        else if (!strcasecmp(argv[i], "-onlyents"))
-        {
-            g_onlyents = true;
         }
         else if (!strcasecmp(argv[i], "-clipeconomy"))
         {
@@ -1276,8 +1262,7 @@ int             main(const int argc, char** argv)
     FlipSlashes(g_Mapname);
     StripExtension(g_Mapname);
 
-    if (!g_onlyents) // onlyents
-        ResetTmpFiles();
+    ResetTmpFiles();
 
     ResetErrorLog();                                       
     OpenLog(g_clientid);                  
@@ -1352,24 +1337,10 @@ int             main(const int argc, char** argv)
 		}
 	}
 #endif
-  if (!g_onlyents)
-  {
+
     Log("Loading mapfile wad configuration by default\n");
     GetUsedWads();
     Log("\n");
-  }
-    if (g_onlyents) // if onlyents, just grab the entites and resave
-    {
-        char            out[_MAX_PATH];
-
-        safe_snprintf(out, _MAX_PATH, "%s.bsp", g_Mapname);
-        LoadBSPFile(out);
-        WriteBSP(g_Mapname); // Write it all back out again.
-
-        end = I_FloatTime();
-        LogTimeElapsed(end - start);
-        return 0;
-    }
 
     CheckForNoClip(); 
 
