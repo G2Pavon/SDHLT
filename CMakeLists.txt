@@ -104,7 +104,6 @@ set(CSG_SOURCES
     ${CSG_DIR}/map.cpp
     ${CSG_DIR}/qcsg.cpp
     ${CSG_DIR}/textures.cpp
-    ${CSG_DIR}/wadcfg.cpp
     ${CSG_DIR}/wadpath.cpp
 )
 

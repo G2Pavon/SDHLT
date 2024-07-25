@@ -290,17 +290,11 @@ void            CalculateBrushUnions(int brushnum);
 // hullfile.cpp
 extern vec3_t   g_hull_size[NUM_HULLS][2];
 
-extern const char *g_wadconfigname;
-extern void LoadWadconfig (const char *filename, const char *configname);
-
 //============================================================================
 // autowad.cpp      AJM
 
 extern bool     g_bWadAutoDetect; 
 
-
-//=============================================================================
-// properties.cpp
 
 //============================================================================
 #endif//HLCSG_H__

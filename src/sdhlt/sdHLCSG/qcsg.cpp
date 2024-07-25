@@ -16,7 +16,6 @@ bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
 bool            g_info = DEFAULT_INFO;                  // "-info" ?
-const char*		g_wadconfigname = NULL;
 
 cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
@@ -1055,7 +1054,6 @@ static void     Usage() // prints out usage sheet
 
     Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
-	Log("    -wadconfig name  : use the old wad configuration approach (select a group from wad.cfg)\n");
     Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
     Log("    -low | -high     : run program an altered priority level\n");
@@ -1149,9 +1147,7 @@ static void     Settings() // prints out settings sheet
 	Log("clip hull type        [ %7s ] [ %7s ]\n", GetClipTypeString(g_cliptype), GetClipTypeString(DEFAULT_CLIPTYPE));
 
     Log("onlyents              [ %7s ] [ %7s ]\n", g_onlyents        ? "on" : "off", DEFAULT_ONLYENTS     ? "on" : "off");
-    Log("wadtextures           [ %7s ] [ %7s ]\n", g_wadtextures     ? "on" : "off", DEFAULT_WADTEXTURES  ? "on" : "off");
     Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
-	Log("wad.cfg config name   [ %7s ] [ %7s ]\n", g_wadconfigname? g_wadconfigname: "None", "None");
     {   // calc union threshold
         char            brush_union[10];
         char            default_brush_union[10];
@@ -1379,17 +1375,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-		else if (!strcasecmp (argv[i], "-wadconfig"))
-		{
-			if (i + 1 < argc)
-			{
-				g_wadconfigname = argv[++i];
-			}
-			else
-			{
-				Usage ();
-			}
-		}
         else if (!strcasecmp(argv[i], "-scale"))
         {
             if (i + 1 < argc)
@@ -1512,24 +1497,8 @@ int             main(const int argc, char** argv)
 #endif
   if (!g_onlyents)
   {
-	if (g_wadconfigname) //If wadconfig had a name provided //seedee
-	{
-        char exePath[_MAX_PATH];
-        char wadCfgPath[_MAX_PATH];
-#ifdef SYSTEM_WIN32 //Get exe path
-        GetModuleFileName(NULL, exePath, _MAX_PATH);
-#else //Fallback
-        safe_strncpy(exePath, argv[0], _MAX_PATH);
-#endif
-        ExtractFilePath(exePath, wadCfgPath);
-        safe_strncat(wadCfgPath, "wad.cfg", _MAX_PATH);
-        LoadWadconfig(wadCfgPath, g_wadconfigname);
-	}
-	else
-	{
-		Log("Loading mapfile wad configuration by default\n");
-		GetUsedWads();
-	}
+    Log("Loading mapfile wad configuration by default\n");
+    GetUsedWads();
 
     if (!g_bWadAutoDetect)
     {

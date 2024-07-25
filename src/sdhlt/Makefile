@@ -101,7 +101,6 @@ HLCSG_CPPFILES = \
 			sdHLCSG/map.cpp \
 			sdHLCSG/qcsg.cpp \
 			sdHLCSG/textures.cpp \
-			sdHLCSG/wadcfg.cpp \
 			sdHLCSG/wadpath.cpp \
 
 HLCSG_INCLUDEDIRS = \
