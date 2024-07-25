@@ -1178,10 +1178,6 @@ int             main(const int argc, char** argv)
         {
             g_threadpriority = eThreadPriorityHigh;
         }
-        else if (!strcasecmp(argv[i], "-skyclip"))
-        {
-            g_skyclip = true;
-        }
         else if (!strcasecmp(argv[i], "-noskyclip"))
         {
             g_skyclip = false;
