@@ -81,7 +81,6 @@
 #define DEFAULT_SKY_LIGHTING_FIX    true
 #define DEFAULT_CIRCUS              false
 #define DEFAULT_CORING				0.01
-#define DEFAULT_SUBDIVIDE           true
 #define DEFAULT_INFO                true
 #define DEFAULT_ALLOW_OPAQUES       true
 #define DEFAULT_ALLOW_SPREAD		true

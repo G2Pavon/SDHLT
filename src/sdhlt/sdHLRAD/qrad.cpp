@@ -120,7 +120,6 @@ bool            g_estimate = DEFAULT_ESTIMATE;
 
 
 // Patch creation and subdivision criteria
-bool            g_subdivide = DEFAULT_SUBDIVIDE;
 vec_t           g_chop = DEFAULT_CHOP;
 vec_t           g_texchop = DEFAULT_TEXCHOP;
 
@@ -1237,21 +1236,18 @@ static void     MakePatchForFace(const int fn, Winding* w, int style
 
             patch->winding->getBounds(mins, maxs);
 
-            if (g_subdivide)
-            {
-                vec_t           amt;
-                vec_t           length;
-                vec3_t          delta;
+			vec_t           amt;
+			vec_t           length;
+			vec3_t          delta;
 
-                VectorSubtract(maxs, mins, delta);
-                length = VectorLength(delta);
-				amt = patch->chop;
+			VectorSubtract(maxs, mins, delta);
+			length = VectorLength(delta);
+			amt = patch->chop;
 
-                if (length > amt)
-                {
-					SubdividePatch(patch);
-                }
-            }
+			if (length > amt)
+			{
+				SubdividePatch(patch);
+			}
         }
     }
 }
@@ -2510,7 +2506,6 @@ static void     Settings()
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CORING);
     Log("coring threshold     [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
-    Log("patch subdividing    [ %17s ] [ %17s ]\n", g_subdivide ? "on" : "off", DEFAULT_SUBDIVIDE ? "on" : "off");
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_chop);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CHOP);
     Log("chop value           [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2932,17 +2927,6 @@ int             main(const int argc, char** argv)
                 {
                     Log("Warning: texchop values below 16 are not recommended.");
                 }
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-nosubdivide"))
-        {
-            if (i < argc)
-            {
-                g_subdivide = false;
             }
             else
             {
