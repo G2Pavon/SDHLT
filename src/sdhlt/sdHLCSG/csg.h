@@ -45,7 +45,6 @@
 #define DEFAULT_WADAUTODETECT true //Already true in settings.cfg, why not here? //seedee
 
 
-#define DEFAULT_SCALESIZE -1.0 //dont scale
 #define DEFAULT_RESETLOG true
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 #define DEFAULT_NOUTF8 false
@@ -253,7 +252,6 @@ typedef enum{clip_smallest,clip_normalized,clip_simple,clip_precise,clip_legacy}
 extern cliptype g_cliptype;
 extern const char*	GetClipTypeString(cliptype);
 
-extern vec_t g_scalesize;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 extern bool g_noutf8;
 #endif

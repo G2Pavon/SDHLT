@@ -23,7 +23,6 @@ bool            g_bClipNazi = DEFAULT_CLIPNAZI;         // "-noclipeconomy"
 bool            g_bWadAutoDetect = DEFAULT_WADAUTODETECT; // "-nowadautodetect"
 
 
-vec_t g_scalesize = DEFAULT_SCALESIZE;
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 bool g_noutf8 = DEFAULT_NOUTF8;
 #endif
@@ -1116,28 +1115,6 @@ static void     Settings() // prints out settings sheet
 
     Log("onlyents              [ %7s ] [ %7s ]\n", g_onlyents        ? "on" : "off", DEFAULT_ONLYENTS     ? "on" : "off");
     Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
-    {   // calc union threshold
-        char            brush_union[10];
-        char            default_brush_union[10];
-
-        safe_snprintf(brush_union, sizeof(brush_union), "%3.3f", g_BrushUnionThreshold);
-        safe_snprintf(default_brush_union, sizeof(default_brush_union), "%3.3f", DEFAULT_BRUSH_UNION_THRESHOLD);
-        Log("brush union threshold [ %7s ] [ %7s ]\n", brush_union, default_brush_union);
-    }
-    {
-        char            buf1[10];
-        char            buf2[10];
-
-		if (g_scalesize > 0)
-			safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_scalesize);
-		else
-			strcpy (buf1, "None");
-		if (DEFAULT_SCALESIZE > 0)
-			safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_SCALESIZE);
-		else
-			strcpy (buf2, "None");
-        Log("map scaling           [ %7s ] [ %7s ]\n", buf1, buf2);
-    }
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("convert game_text     [ %7s ] [ %7s ]\n", !g_noutf8? "on" : "off", !DEFAULT_NOUTF8? "on" : "off");
 #endif
@@ -1302,17 +1279,6 @@ int             main(const int argc, char** argv)
                 {//if (x > g_max_map_lightdata) //--vluzacn
                     g_max_map_lightdata = x;
                 }
-            }
-            else
-            {
-                Usage();
-            }
-        }
-        else if (!strcasecmp(argv[i], "-scale"))
-        {
-            if (i + 1 < argc)
-            {
-                g_scalesize = atof(argv[++i]);
             }
             else
             {

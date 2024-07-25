@@ -716,15 +716,10 @@ bool            ParseMapEntity()
 	}
 	if (strcmp (ValueForKey (mapent, "classname"), "info_hullshape")) // info_hullshape is not affected by '-scale'
 	{
-		bool ent_move_b = false, ent_scale_b = false, ent_gscale_b = false;
+		bool ent_move_b = false, ent_scale_b = false;
 		vec3_t ent_move = {0,0,0}, ent_scale_origin = {0,0,0};
-		vec_t ent_scale = 1, ent_gscale = 1;
+		vec_t ent_scale = 1;
 
-		if (g_scalesize > 0)
-		{
-			ent_gscale_b = true;
-			ent_gscale = g_scalesize;
-		}
 		double v[4] = {0,0,0,0};
 		if (*ValueForKey (mapent, "zhlt_transform"))
 		{
@@ -752,7 +747,7 @@ bool            ParseMapEntity()
 		}
 		GetVectorForKey (mapent, "origin", ent_scale_origin);
 
-		if (ent_move_b || ent_scale_b || ent_gscale_b)
+		if (ent_move_b || ent_scale_b)
 		{
 			if (g_nMapFileVersion < 220 || g_brushsides[0].td.txcommand != 0)
 			{
@@ -780,11 +775,6 @@ bool            ParseMapEntity()
 							if (ent_move_b)
 							{
 								VectorAdd (point, ent_move, point);
-
-							}
-							if (ent_gscale_b)
-							{
-								VectorScale (point, ent_gscale, point);
 							}
 						}
 						// note that  tex->vecs = td.vects.valve.Axis / td.vects.valve.scale
@@ -856,33 +846,12 @@ bool            ParseMapEntity()
 								zeroscale = true;
 							}
 						}
-						if (ent_gscale_b)
-						{
-							side->td.vects.valve.scale[0] *= ent_gscale;
-							side->td.vects.valve.scale[1] *= ent_gscale;
-						}
 						if (zeroscale)
 						{
 							Error ("Entity %i, Brush %i: invalid texture scale.\n", 
 								brush->originalentitynum, brush->originalbrushnum
 								);
 						}
-					}
-				}
-				if (ent_gscale_b)
-				{
-					if (*ValueForKey (mapent, "origin"))
-					{
-						double v[3];
-						int origin[3];
-						char string[MAXTOKEN];
-						int i;
-						GetVectorForKey (mapent, "origin", v);
-						VectorScale (v, ent_gscale, v);
-						for (i=0; i<3; ++i)
-							origin[i] = (int)(v[i]>=0? v[i]+0.5: v[i]-0.5);
-						safe_snprintf(string, MAXTOKEN, "%d %d %d", origin[0], origin[1], origin[2]);
-						SetKeyValue (mapent, "origin", string);
 					}
 				}
 				{
@@ -901,11 +870,6 @@ bool            ParseMapEntity()
 							if (ent_move_b)
 							{
 								VectorAdd (point, ent_move, point);
-
-							}
-							if (ent_gscale_b)
-							{
-								VectorScale (point, ent_gscale, point);
 							}
 						}
 						char string[MAXTOKEN];
