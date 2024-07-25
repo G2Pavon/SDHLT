@@ -12,7 +12,6 @@ BoundingBox     world_bounds;
 
      
 bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlyents"
-bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
 
@@ -1037,18 +1036,14 @@ static void     Usage() // prints out usage sheet
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
     Log("    -nowadtextures   : Include all used textures into bsp\n");
-    
     Log("    -clipeconomy     : turn clipnode economy mode on\n");
-
 	Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
-
     Log("    -onlyents        : do an entity update from .map to .bsp\n");
     Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
     Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
-
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
 #endif
@@ -1195,7 +1190,6 @@ int             main(const int argc, char** argv)
         {
             g_onlyents = true;
         }
-
         else if (!strcasecmp(argv[i], "-clipeconomy"))
         {
             g_bClipNazi = true;
@@ -1223,10 +1217,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
 		}
-        else if (!strcasecmp(argv[i], "-nowadtextures"))
-        {
-            g_wadtextures = false;
-        }
         else if (!strcasecmp(argv[i], "-texdata"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn

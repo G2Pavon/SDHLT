@@ -180,10 +180,7 @@ bool            TEX_InitFromWad()
 	for (i = 0; i < g_iNumWadPaths; i++) // loop through all wadpaths in map
 	{
         currentwad = g_pWadPaths[i];
-		if (!g_wadtextures) //If -nowadtextures used
-		{
-			currentwad->usedbymap = false;
-		}
+		currentwad->usedbymap = false; //-nowadtextures
 	}
 
     pszWadroot = getenv("WADROOT");

@@ -237,7 +237,6 @@ extern void		InitDefaultHulls ();
 // csg.c
 
 extern bool     g_onlyents;
-extern bool     g_wadtextures;
 extern bool     g_skyclip;
 extern bool     g_estimate;               
 
