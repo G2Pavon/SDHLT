@@ -32,8 +32,6 @@ typedef struct
 
 } lumpinfo_t;
 
-std::deque< std::string > g_WadInclude;
-
 static int      nummiptex = 0;
 static lumpinfo_t miptex[MAX_MAP_TEXTURES];
 static int      nTexLumps = 0;
@@ -185,13 +183,6 @@ bool            TEX_InitFromWad()
 		if (!g_wadtextures) //If -nowadtextures used
 		{
 			currentwad->usedbymap = false;
-		}
-		for (WadInclude_i it = g_WadInclude.begin (); it != g_WadInclude.end (); it++) //Check -wadinclude list
-		{
-			if (stristr (currentwad->path, it->c_str ()))
-			{
-				currentwad->usedbymap = false;
-			}
 		}
 	}
 

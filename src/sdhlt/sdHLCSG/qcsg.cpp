@@ -1084,20 +1084,6 @@ static void     Usage() // prints out usage sheet
 }
 
 
-static void     DumpWadinclude() //prints out the wadinclude list
-{
-    Log("Wadinclude list\n");
-    Log("---------------\n");
-    WadInclude_i it;
-
-    for (it = g_WadInclude.begin(); it != g_WadInclude.end(); it++)
-    {
-        Log("%s\n", it->c_str());
-    }
-    Log("---------------\n\n");
-}
-
-
 static void     Settings() // prints out settings sheet
 {
     char*           tmp;
@@ -1205,8 +1191,6 @@ int             main(const int argc, char** argv)
 		Usage();
     if (argc == 1)
         Usage();
-
-    g_WadInclude.push_back("sdhlt.wad"); // Hard coded list of -wadinclude files, used for HINT texture brushes so lazy
 
 	InitDefaultHulls ();
 
@@ -1332,17 +1316,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-nowadtextures"))
         {
             g_wadtextures = false;
-        }
-        else if (!strcasecmp(argv[i], "-wadinclude"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_WadInclude.push_back(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
         }
         else if (!strcasecmp(argv[i], "-texdata"))
         {
@@ -1504,7 +1477,6 @@ int             main(const int argc, char** argv)
     {
         Warning("Unused textures will not be excluded\n");
     }
-    DumpWadinclude();
     Log("\n");
   }
     if (g_onlyents) // if onlyents, just grab the entites and resave
