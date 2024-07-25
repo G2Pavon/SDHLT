@@ -1103,7 +1103,6 @@ static void     Usage()
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
 	Log("    -maxdistance #  : Alter the maximum distance for visibility\n");
-    Log("    -dev #          : compile with developer message\n\n");
     Log("    mapfile         : The mapfile to compile\n\n");
 
 #ifdef ZHLT_NETVIS
@@ -1140,7 +1139,6 @@ static void     Settings()
         Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("developer           [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 
     Log("max vis distance    [ %7d ] [ %7d ]\n", g_maxdistance, DEFAULT_MAXDISTANCE_RANGE);
@@ -1430,17 +1428,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-nofixprt"))
         {
             g_nofixprt = true;
-        }
-        else if (!strcasecmp(argv[i], "-dev"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_developer = (developer_level_t)atoi(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
         }
         else if (!strcasecmp(argv[i], "-low"))
         {

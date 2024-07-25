@@ -130,13 +130,11 @@ bool            q_exists(const char* const filename)
 
     if (!f)
     {
-        IfDebug(Developer(DEVELOPER_LEVEL_SPAM, "Checking for existance of file %s (failed)\n", filename));
         return false;
     }
     else
     {
         fclose(f);
-        IfDebug(Developer(DEVELOPER_LEVEL_SPAM, "Checking for existance of file %s (success)\n", filename));
         return true;
     }
 }

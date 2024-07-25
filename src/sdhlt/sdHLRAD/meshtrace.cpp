@@ -424,8 +424,5 @@ bool TraceMesh :: DoTrace( void )
 			}
 		}
 	}
-
-//	Developer( DEVELOPER_LEVEL_MESSAGE, "total %i checks for %s\n", checkcount, areanodes ? "tree" : "brute force" );
-
 	return m_bHitTriangle;
 }

@@ -94,11 +94,6 @@ void            SubdivideFace(face_t* f, face_t** prevptr)
             plane.dist = (mins + g_subdivide_size - TEXTURE_STEP) / v; //plane.dist = (mins + g_subdivide_size - 16) / v; //--vluzacn
             next = f->next;
             SplitFace(f, &plane, &front, &back);
-            if (!front || !back)
-            {
-                Developer(DEVELOPER_LEVEL_SPAM, "SubdivideFace: didn't split the %d-sided polygon @(%.0f,%.0f,%.0f)",
-                        f->numpoints, f->pts[0][0], f->pts[0][1], f->pts[0][2]);
-            }
 			f = next;
 			if (front)
 			{
@@ -177,7 +172,6 @@ static void     InitHash()
 	hash_numslots[1] = (int)floor (size[1] / scale);
 	while (hash_numslots[0] * hash_numslots[1] > NUM_HASH)
 	{
-		Developer (DEVELOPER_LEVEL_WARNING, "hash_numslots[0] * hash_numslots[1] > NUM_HASH");
 		hash_numslots[0]--;
 		hash_numslots[1]--;
 	}

@@ -62,19 +62,16 @@ int             GetThreadWork()
 
     if (dispatch > workcount)
     {
-        Developer(DEVELOPER_LEVEL_ERROR, "dispatch > workcount!!!\n");
         ThreadUnlock();
         return -1;
     }
     if (dispatch == workcount)
     {
-        Developer(DEVELOPER_LEVEL_MESSAGE, "dispatch == workcount, work is complete\n");
         ThreadUnlock();
         return -1;
     }
     if (dispatch < 0)
     {
-        Developer(DEVELOPER_LEVEL_ERROR, "negative dispatch!!!\n");
         ThreadUnlock();
         return -1;
     }
@@ -334,10 +331,6 @@ void            RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction fu
     threaded = true;
     q_entry = func;
 
-    if (workcount < dispatch)
-    {
-        Developer(DEVELOPER_LEVEL_ERROR, "RunThreadsOn: Workcount(%i) < dispatch(%i)\n", workcount, dispatch);
-    }
     hlassume(workcount >= dispatch, assume_BadWorkcount);
 
     //
@@ -368,7 +361,6 @@ void            RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction fu
             // Process any inserts in lpMsgBuf.
             // ...
             // Display the string.
-            Developer(DEVELOPER_LEVEL_ERROR, "CreateThread #%d [%08X] failed : %s\n", i, threadhandle[i], lpMsgBuf);
             Fatal(assume_THREAD_ERROR, "Unable to create thread #%d", i);
             // Free the buffer.
             LocalFree(lpMsgBuf);
@@ -390,7 +382,6 @@ void            RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction fu
             // Process any inserts in lpMsgBuf.
             // ...
             // Display the string.
-            Developer(DEVELOPER_LEVEL_ERROR, "ResumeThread #%d [%08X] failed : %s\n", i, threadhandle[i], lpMsgBuf);
             Fatal(assume_THREAD_ERROR, "Unable to start thread #%d", i);
             // Free the buffer.
             LocalFree(lpMsgBuf);
@@ -401,7 +392,6 @@ void            RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction fu
     // Wait for threads to complete
     for (i = 0; i < g_numthreads; i++)
     {
-        Developer(DEVELOPER_LEVEL_MESSAGE, "WaitForSingleObject on thread #%d [%08X]\n", i, threadhandle[i]);
         WaitForSingleObject(threadhandle[i], INFINITE);
     }
     threads_UninitCrit();

@@ -84,25 +84,7 @@ void FreeIntersectTest (intersecttest_t *t)
 	free (t->clipplanes);
 	free (t);
 }
-void AddFaceForVertexNormal_printerror (const int edgeabs, const int edgeend, dface_t *const f)
-{
-	if (DEVELOPER_LEVEL_WARNING <= g_developer)
-	{
-		int i, e;
-		Log ("AddFaceForVertexNormal - bad face:\n");
-		Log (" edgeabs=%d edgeend=%d\n", edgeabs, edgeend);
-		for (i = 0; i < f->numedges; i++)
-		{
-			e = g_dsurfedges[f->firstedge + i];
-			edgeshare_t *es = &g_edgeshare[abs(e)];
-			int v0 = g_dedges[abs(e)].v[0], v1 = g_dedges[abs(e)].v[1];
-			Log (" e=%d v0=%d(%f,%f,%f) v1=%d(%f,%f,%f) share0=%li share1=%li\n", e,
-				v0, g_dvertexes[v0].point[0], g_dvertexes[v0].point[1], g_dvertexes[v0].point[2],
-				v1, g_dvertexes[v1].point[0], g_dvertexes[v1].point[1], g_dvertexes[v1].point[2],
-				(es->faces[0]==NULL? -1: es->faces[0]-g_dfaces), (es->faces[1]==NULL? -1: es->faces[1]-g_dfaces));
-		}
-	}
-}
+
 int AddFaceForVertexNormal (const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, dface_t *const f, dface_t *&fnext, vec_t &angle, vec3_t &normal)
 // Must guarantee these faces will form a loop or a chain, otherwise will result in endless loop.
 //
@@ -141,7 +123,6 @@ int AddFaceForVertexNormal (const int edgeabs, int &edgeabsnext, const int edgee
 	}
 	if (count1 != 1 || count2 != 1)
 	{
-		AddFaceForVertexNormal_printerror (edgeabs, edgeend, f);
 		return -1;
 	}
 	int vnum11, vnum12, vnum21, vnum22;
@@ -166,7 +147,6 @@ int AddFaceForVertexNormal (const int edgeabs, int &edgeabsnext, const int edgee
 	}
 	else
 	{
-		AddFaceForVertexNormal_printerror (edgeabs, edgeend, f);
 		return -1;
 	}
 	VectorNormalize(vec1);
@@ -183,7 +163,6 @@ int AddFaceForVertexNormal (const int edgeabs, int &edgeabsnext, const int edgee
 		fnext = es->faces[0];
 	else
 	{
-		AddFaceForVertexNormal_printerror (edgeabs, edgeend, f);
 		return -1;
 	}
 	return 0;
@@ -364,7 +343,6 @@ void            PairEdges()
 						VectorClear (e->interface_normal);
 
 						dvertex_t *dv = &g_dvertexes[g_dedges[abs(k)].v[0]];
-						Developer (DEVELOPER_LEVEL_MEGASPAM, "TranslateTexToTex failed on face %d and %d @(%f,%f,%f)", (int)(e->faces[0] - g_dfaces), (int)(e->faces[1] - g_dfaces), dv->point[0], dv->point[1], dv->point[2]);
 					}
 				}
             }
@@ -390,7 +368,6 @@ void            PairEdges()
 				vec3_t errorpos;
 				VectorCopy (g_dvertexes[g_dedges[edgeabs].v[0]].point, errorpos);
 				VectorAdd (errorpos, g_face_offset[e->faces[0] - g_dfaces], errorpos);
-				Developer (DEVELOPER_LEVEL_WARNING, "PairEdges: invalid edge at (%f,%f,%f)", errorpos[0], errorpos[1], errorpos[2]);
 				VectorCopy(edgenormal, e->vertex_normal[0]);
 				VectorCopy(edgenormal, e->vertex_normal[1]);
 			}
@@ -419,12 +396,10 @@ void            PairEdges()
 							count++;
 							if (r == -1)
 							{
-								Developer (DEVELOPER_LEVEL_WARNING, "PairEdges: face edges mislink at (%f,%f,%f)", errorpos[0], errorpos[1], errorpos[2]);
 								break;
 							}
 							if (count >= 100)
 							{
-								Developer (DEVELOPER_LEVEL_WARNING, "PairEdges: faces mislink at (%f,%f,%f)", errorpos[0], errorpos[1], errorpos[2]);
 								break;
 							}
 							if (DotProduct (normal, p0->normal) <= NORMAL_EPSILON || DotProduct(normal, p1->normal) <= NORMAL_EPSILON)
@@ -446,7 +421,6 @@ void            PairEdges()
 							if (fcurrent != e->faces[0] && fcurrent != e->faces[1] &&
 								(TestFaceIntersect (test0, fcurrent - g_dfaces) || TestFaceIntersect (test1, fcurrent - g_dfaces)))
 							{
-								Developer (DEVELOPER_LEVEL_WARNING, "Overlapping faces around corner (%f,%f,%f)\n", errorpos[0], errorpos[1], errorpos[2]);
 								break;
 							}
 							angles += angle;
@@ -481,7 +455,6 @@ void            PairEdges()
 					if (angles < NORMAL_EPSILON)
 					{
 						VectorCopy(edgenormal, e->vertex_normal[edgeend]);
-						Developer (DEVELOPER_LEVEL_WARNING, "PairEdges: no valid faces at (%f,%f,%f)", errorpos[0], errorpos[1], errorpos[2]);
 					}
 					else
 					{
@@ -1042,7 +1015,6 @@ void ChopFrag (samplefrag_t *frag)
 		e->ratio = (*m_inverse).v[2][2];
 		if (e->ratio <= NORMAL_EPSILON || (1 / e->ratio) <= NORMAL_EPSILON)
 		{
-			Developer (DEVELOPER_LEVEL_SPAM, "TranslateTexToTex failed on face %d and %d @(%f,%f,%f)", frag->facenum, e->nextfacenum, dv1->point[0], dv1->point[1], dv1->point[2]);
 			continue;
 		}
 
@@ -1098,7 +1070,6 @@ static samplefrag_t *GrowSingleFrag (const samplefraginfo_t *info, samplefrag_t 
 		double len = VectorLength (frag->myrect.planes[x].normal);
 		if (!len)
 		{
-			Developer (DEVELOPER_LEVEL_MEGASPAM, "couldn't translate sample boundaries on face %d", frag->facenum);
 			free (frag);
 			return NULL;
 		}
@@ -4571,12 +4542,7 @@ int MLH_CopyLight (const vec3_t from, const vec3_t to)
 				if (mlto.face[i].style[k].exist && mlfrom.face[0].style[k].exist)
 				{
 					VectorCopy (mlfrom.face[0].sample[0].style[k],mlto.face[i].sample[j].style[k]);
-					Developer (DEVELOPER_LEVEL_SPAM, "Mdl Light Hack: face (%d) sample (%d) style (%d) position (%f,%f,%f)\n",
-						mlto.face[i].num, mlto.face[i].sample[j].num, k, 
-						mlto.face[i].sample[j].pos[0], mlto.face[i].sample[j].pos[1], mlto.face[i].sample[j].pos[2]);
 				}
-	Developer (DEVELOPER_LEVEL_MESSAGE, "Mdl Light Hack: %d sample light copied from (%f,%f,%f) to (%f,%f,%f)\n", 
-		count, mlfrom.floor[0], mlfrom.floor[1], mlfrom.floor[2], mlto.floor[0], mlto.floor[1], mlto.floor[2]);
 	return count;
 }
 

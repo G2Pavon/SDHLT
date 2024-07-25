@@ -446,8 +446,6 @@ static bool     PlacePatchInside(patch_t* patch)
 	{
 		VectorMA (center, PATCH_HUNT_OFFSET, plane->normal, patch->origin);
 		patch->flags = ePatchFlagOutside;
-		Developer(DEVELOPER_LEVEL_FLUFF, "Patch @ (%4.3f %4.3f %4.3f) outside world\n",
-				  patch->origin[0], patch->origin[1], patch->origin[2]);
 		return false;
 	}
 }
@@ -809,7 +807,6 @@ void ReadCustomChopValue()
 		mapent = &g_entities[k];
 		if (strcmp(ValueForKey(mapent, "classname"), "info_chopscale"))
 			continue;
-		Developer (DEVELOPER_LEVEL_MESSAGE, "info_chopscale entity detected.\n");
 		for (i = 0; i < num; i++)
 		{
 			const char *texname = ((miptex_t*)(g_dtexdata+((dmiptexlump_t*)g_dtexdata)->dataofs[i]))->name;
@@ -822,7 +819,6 @@ void ReadCustomChopValue()
 				if (atof (ep->value) <= 0)
 					continue;
 				chopscales[i] = atof (ep->value);
-				Developer (DEVELOPER_LEVEL_MESSAGE, "info_chopscale: %s = %f\n", texname, chopscales[i]);
 			}
 		}
 	}
@@ -850,7 +846,6 @@ void ReadCustomSmoothValue()
 		mapent = &g_entities[k];
 		if (strcmp(ValueForKey(mapent, "classname"), "info_smoothvalue"))
 			continue;
-		Developer (DEVELOPER_LEVEL_MESSAGE, "info_smoothvalue entity detected.\n");
 		for (i = 0; i < num; i++)
 		{
 			const char *texname = ((miptex_t*)(g_dtexdata+((dmiptexlump_t*)g_dtexdata)->dataofs[i]))->name;
@@ -861,7 +856,6 @@ void ReadCustomSmoothValue()
 				if (!strcasecmp (ep->key, "origin"))
 					continue;
 				g_smoothvalues[i] = cos(atof (ep->value) * (Q_PI / 180.0));
-				Developer (DEVELOPER_LEVEL_MESSAGE, "info_smoothvalue: %s = %f\n", texname, atof (ep->value));
 			}
 		}
 	}
@@ -884,7 +878,6 @@ void ReadTranslucentTextures()
 		mapent = &g_entities[k];
 		if (strcmp(ValueForKey(mapent, "classname"), "info_translucent"))
 			continue;
-		Developer (DEVELOPER_LEVEL_MESSAGE, "info_translucent entity detected.\n");
 		for (i = 0; i < num; i++)
 		{
 			const char *texname = ((miptex_t*)(g_dtexdata+((dmiptexlump_t*)g_dtexdata)->dataofs[i]))->name;
@@ -914,7 +907,6 @@ void ReadTranslucentTextures()
 				g_translucenttextures[i][0] = r;
 				g_translucenttextures[i][1] = g;
 				g_translucenttextures[i][2] = b;
-				Developer (DEVELOPER_LEVEL_MESSAGE, "info_translucent: %s = %f %f %f\n", texname, r, g, b);
 			}
 		}
 	}
@@ -946,7 +938,6 @@ void ReadLightingCone ()
 		mapent = &g_entities[k];
 		if (strcmp(ValueForKey(mapent, "classname"), "info_angularfade"))
 			continue;
-		Developer (DEVELOPER_LEVEL_MESSAGE, "info_angularfade entity detected.\n");
 		for (i = 0; i < num; i++)
 		{
 			const char *texname = ((miptex_t*)(g_dtexdata+((dmiptexlump_t*)g_dtexdata)->dataofs[i]))->name;
@@ -976,7 +967,6 @@ void ReadLightingCone ()
 				scale *= DefaultScaleForPower (power);
 				g_lightingconeinfo[i][0] = power;
 				g_lightingconeinfo[i][1] = scale;
-				Developer (DEVELOPER_LEVEL_MESSAGE, "info_angularfade: %s = %f %f\n", texname, power, scale);
 			}
 		}
 	}
@@ -1113,7 +1103,6 @@ static void     MakePatchForFace(const int fn, Winding* w, int style
 
         if (numpoints < 3)                                 // WTF! (Actually happens in real-world maps too)
         {
-            Developer(DEVELOPER_LEVEL_WARNING, "Face %d only has %d points on winding\n", fn, numpoints);
             return;
         }
         if (numpoints > MAX_POINTS_ON_WINDING)
@@ -1270,16 +1259,7 @@ static void     MakePatchForFace(const int fn, Winding* w, int style
 
                 if (length > amt)
                 {
-                    if (patch->area < 1.0)
-                    {
-                        Developer(DEVELOPER_LEVEL_WARNING,
-                                  "Patch at (%4.3f %4.3f %4.3f) (face %d) tiny area (%4.3f) not subdividing \n",
-                                  patch->origin[0], patch->origin[1], patch->origin[2], patch->faceNumber, patch->area);
-                    }
-                    else
-                    {
-                        SubdividePatch(patch);
-                    }
+					SubdividePatch(patch);
                 }
             }
         }
@@ -2506,7 +2486,6 @@ static void     Usage()
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
-    Log("    -dev #          : compile with developer message\n\n");
 
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2580,7 +2559,6 @@ static void     Settings()
         Log("threads              [ %17d ] [ %17d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("developer            [ %17d ] [ %17d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory   [ %17d ] [ %17d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 		Log("max lighting memory  [ %17d ] [ %17d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA); //lightdata
 
@@ -3010,17 +2988,6 @@ int             main(const int argc, char** argv)
                     Log("Unexpectedly large value (>1000) for '-bounce'\n");
                     Usage();
                 }
-            }
-            else
-            {
-                Usage();
-            }
-        }
-        else if (!strcasecmp(argv[i], "-dev"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_developer = (developer_level_t)atoi(argv[++i]);
             }
             else
             {

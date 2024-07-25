@@ -29,7 +29,6 @@ static Winding* NewWindingFromPlane(const brushhull_t* const hull, const int pla
         }
         else
         {
-            Developer(DEVELOPER_LEVEL_ERROR, "NewFaceFromPlane returning NULL");
             return NULL;
         }
     }
@@ -183,14 +182,11 @@ static vec_t    CalculateSolidVolume(const brushhull_t* const hull)
 
         face->w->getCenter(facemid);
         VectorAdd(midpoint, facemid, midpoint);
-        Developer(DEVELOPER_LEVEL_MESSAGE, "Midpoint for face %d is %f %f %f\n", x, facemid[0], facemid[1], facemid[2]);
     }
 
     inverse = 1.0 / x;
 
     VectorScale(midpoint, inverse, midpoint);
-
-    Developer(DEVELOPER_LEVEL_MESSAGE, "Midpoint for hull is %f %f %f\n", midpoint[0], midpoint[1], midpoint[2]);
 
     for (face = hull->faces; face; face = face->next, x++)
     {
@@ -204,8 +200,6 @@ static vec_t    CalculateSolidVolume(const brushhull_t* const hull)
         volume += area * dist / 3.0;
     }
 
-    Developer(DEVELOPER_LEVEL_MESSAGE, "Volume for brush is %f\n", volume);
-
     return volume;
 }
 
@@ -216,9 +210,7 @@ static void     DumpHullWindings(const brushhull_t* const hull)
 
     for (face = hull->faces; face; face = face->next)
     {
-        Developer(DEVELOPER_LEVEL_MEGASPAM, "Winding %d\n", x++);
         face->w->Print();
-        Developer(DEVELOPER_LEVEL_MEGASPAM, "\n");
     }
 }
 
@@ -286,8 +278,6 @@ void            CalculateBrushUnions(const int brushnum)
                 continue;                                  // different contents, ignore
             }
 
-            Developer(DEVELOPER_LEVEL_SPAM, "Processing hull %d brush %d and brush %d\n", hull, brushnum, bn);
-
             {
                 brushhull_t     union_hull;
                 bface_t*        face;
@@ -306,19 +296,6 @@ void            CalculateBrushUnions(const int brushnum)
                 {
                     continue;
                 }
-
-                if (g_developer >= DEVELOPER_LEVEL_MESSAGE)
-                {
-                    Log("\nUnion windings\n");
-                    DumpHullWindings(&union_hull);
-
-                    Log("\nBrush %d windings\n", brushnum);
-                    DumpHullWindings(bh1);
-
-                    Log("\nBrush %d windings\n", bn);
-                    DumpHullWindings(bh2);
-                }
-
 
                 {
                     vec_t           volume_brush_1;
@@ -340,14 +317,14 @@ void            CalculateBrushUnions(const int brushnum)
                     volume_ratio_1 = volume_brush_union / volume_brush_1;
                     volume_ratio_2 = volume_brush_union / volume_brush_2;
 
-                    if ((volume_ratio_1 > g_BrushUnionThreshold) || (g_developer >= DEVELOPER_LEVEL_MESSAGE))
+                    if (volume_ratio_1 > g_BrushUnionThreshold)
                     {
                         volume_ratio_1 *= 100.0;
                         Warning("Entity %d : Brush %d intersects with brush %d by %2.3f percent", 
 							b1->originalentitynum, b1->originalbrushnum, b2->originalbrushnum, 
 							volume_ratio_1);
                     }
-                    if ((volume_ratio_2 > g_BrushUnionThreshold) || (g_developer >= DEVELOPER_LEVEL_MESSAGE))
+                    if (volume_ratio_2 > g_BrushUnionThreshold)
                     {
                         volume_ratio_2 *= 100.0;
                         Warning("Entity %d : Brush %d intersects with brush %d by %2.3f percent", 

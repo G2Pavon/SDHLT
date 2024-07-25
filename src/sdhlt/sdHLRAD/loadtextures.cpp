@@ -297,7 +297,6 @@ void LoadTextureFromWad (radtexture_t *tex, const miptex_t *header)
 		found = (lumpinfo_t *)bsearch (&temp, wad->lumpinfos, wad->numlumps, sizeof (lumpinfo_t), lump_sorter_by_name);
 		if (found)
 		{
-			Developer (DEVELOPER_LEVEL_MESSAGE, "Texture '%s': found in '%s'.\n", tex->name, wad->path);
 			if (found->type != 67 || found->compression != 0)
 				continue;
 			if (found->disksize < (int)sizeof (miptex_t) || found->filepos < 0 || found->filepos + found->disksize > wad->filesize)
@@ -316,7 +315,6 @@ void LoadTextureFromWad (radtexture_t *tex, const miptex_t *header)
 				free (mt);
 				continue;
 			}
-			Developer (DEVELOPER_LEVEL_MESSAGE, "Texture '%s': name '%s', width %d, height %d.\n", tex->name, mt->name, mt->width, mt->height);
 			if (strcasecmp (mt->name, tex->name))
 			{
 				Warning("Texture '%s': texture name '%s' differs from its reference name '%s' in '%s'.", tex->name, mt->name, tex->name, wad->path);
@@ -363,8 +361,6 @@ void LoadTextures ()
 			miptex_t *mt = (miptex_t *)&g_dtexdata[offset];
 			if (mt->offsets[0])
 			{
-				Developer (DEVELOPER_LEVEL_MESSAGE, "Texture '%s': found in '%s'.\n", mt->name, g_source);
-				Developer (DEVELOPER_LEVEL_MESSAGE, "Texture '%s': name '%s', width %d, height %d.\n", mt->name, mt->name, mt->width, mt->height);
 				LoadTexture (tex, mt, size);
 			}
 			else
@@ -396,8 +392,6 @@ void LoadTextures ()
 			}
 			VectorScale (total, 1.0 / (double)(tex->width * tex->height), total);
 			VectorCopy (total, tex->reflectivity);
-			Developer (DEVELOPER_LEVEL_MESSAGE, "Texture '%s': reflectivity is (%f,%f,%f).\n",
-				tex->name, tex->reflectivity[0], tex->reflectivity[1], tex->reflectivity[2]);
 			if (VectorMaximum (tex->reflectivity) > 1.0 + NORMAL_EPSILON)
 			{
 				Warning ("Texture '%s': reflectivity (%f,%f,%f) greater than 1.0.", tex->name, tex->reflectivity[0], tex->reflectivity[1], tex->reflectivity[2]);
@@ -1071,7 +1065,6 @@ void EmbedLightmapInTextures ()
 		{
 			Log ("\n");
 			Log ("Embed Lightmap : ");
-			Developer (DEVELOPER_LEVEL_MESSAGE, "\n");
 			logged = true;
 		}
 
@@ -1467,7 +1460,6 @@ void EmbedLightmapInTextures ()
 		NewTextures_PushTexture (miptexsize, miptex);
 		count++;
 		count_bytes += miptexsize;
-		Developer (DEVELOPER_LEVEL_MESSAGE, "Created texture '%s' for face (texture %s) at (%4.3f %4.3f %4.3f)\n", miptex->name, texname, g_face_centroids[i][0], g_face_centroids[i][1], g_face_centroids[i][2]);
 
 		free (miptex);
 

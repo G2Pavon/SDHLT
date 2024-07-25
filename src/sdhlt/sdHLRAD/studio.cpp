@@ -12,7 +12,6 @@ void LoadStudioModel( const char *modelname, const vec3_t origin, const vec3_t a
 {
 	if( num_models >= MAX_MODELS )
 	{
-		Developer( DEVELOPER_LEVEL_ERROR, "LoadStudioModel: MAX_MODELS exceeded\n" );
 		return;
 	}
 	model_t *m = &models[num_models];
@@ -128,7 +127,6 @@ void LoadStudioModels( void )
 
 			if( !model || !*model )
 			{
-				Developer( DEVELOPER_LEVEL_WARNING, "env_static has empty model field\n" );
 				continue;
 			}
 		}

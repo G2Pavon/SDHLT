@@ -131,9 +131,6 @@ bool CMeshDesc :: InitMeshBuild( const char *debug_name, int numTriangles )
 	}
 	else if( numTriangles >= 32768 )
 		Warning( "%s have too many triangles (%i)\n", m_debugName, numTriangles );
-	else if( numTriangles >= 16384 )
-		Developer( DEVELOPER_LEVEL_WARNING, "%s have too many triangles (%i)\n", m_debugName, numTriangles );
-
 	if( numTriangles >= 256 )
 		has_tree = true;	// too many triangles invoke to build AABB tree
 	else has_tree = false;
@@ -492,7 +489,6 @@ bool CMeshDesc :: StudioConstructMesh( model_t *pModel )
 
 	if( !phdr || phdr->numbones < 1 )
 	{
-		Developer( DEVELOPER_LEVEL_ERROR, "StudioConstructMesh: bad model header\n" );
 		return false;
 	}
 
@@ -508,7 +504,6 @@ bool CMeshDesc :: StudioConstructMesh( model_t *pModel )
 	// sanity check
 	if( pseqdesc->seqgroup != 0 )
 	{
-		Developer( DEVELOPER_LEVEL_ERROR, "StudioConstructMesh: bad sequence group (must be 0)\n" );
 		return false;
 	}
 
@@ -665,9 +660,6 @@ bool CMeshDesc :: StudioConstructMesh( model_t *pModel )
 		free( m_verts ); // don't keep this because different submodels may have difference count of vertices
 	}
 
-	if( numTris != ( numElems / 3 ))
-		Developer( DEVELOPER_LEVEL_ERROR, "StudioConstructMesh: mismatch triangle count (%i should be %i)\n", (numElems / 3), numTris );
-
 	// member trace mode
 	m_mesh.trace_mode = pModel->trace_mode;
 
@@ -743,8 +735,6 @@ bool CMeshDesc :: StudioConstructMesh( model_t *pModel )
 
 		ExtractFileBase( pModel->name, mdlname );
 
-		if( numVerts != verts_reduced )
-			Developer( DEVELOPER_LEVEL_MESSAGE, "Model %s simplified ( verts %i -> %i, tris %i -> %i )\n", mdlname, numVerts, verts_reduced, numTris, tris_reduced );
 	}
 	else
 	{
@@ -774,7 +764,6 @@ bool CMeshDesc :: StudioConstructMesh( model_t *pModel )
 
 	if( !FinishMeshBuild( ))
 	{
-		Developer( DEVELOPER_LEVEL_ERROR, "StudioConstructMesh: failed to build mesh from %s\n", pModel->name );
 		return false;
 	}
 	profile.stop();
@@ -790,7 +779,6 @@ bool CMeshDesc :: AddMeshTrinagle( const mvert_t triangle[3], mstudiotexture_t *
 
 	if( m_mesh.numfacets >= m_iNumTris )
 	{
-		Developer( DEVELOPER_LEVEL_ERROR, "AddMeshTriangle: %s overflow (%i >= %i)\n", m_debugName, m_mesh.numfacets, m_iNumTris );
 		return false;
 	}
 
@@ -977,7 +965,6 @@ bool CMeshDesc :: FinishMeshBuild( void )
 	if( m_mesh.numfacets <= 0 )
 	{
 		FreeMesh();
-		Developer( DEVELOPER_LEVEL_ERROR, "FinishMeshBuild: failed to build triangle mesh (no sides)\n" );
 		return false;
 	}
 	int i;
@@ -1008,9 +995,6 @@ bool CMeshDesc :: FinishMeshBuild( void )
 		m_mesh.facets[i].indices = (uint *)buffer;
 		buffer += (sizeof( uint ) * facets[i].numplanes);
 	}
-
-	if( buffer != bufend )
-		Developer( DEVELOPER_LEVEL_ERROR, "FinishMeshBuild: memory representation error! %x != %x\n", buffer, bufend );
 
 	// copy planes into mesh array (probably aligned block)
 	for( i = 0; i < m_mesh.numplanes; i++ )
@@ -1046,11 +1030,6 @@ bool CMeshDesc :: FinishMeshBuild( void )
 	FreeMeshBuild();
 
 	mesh_size = sizeof( m_mesh ) + memsize;
-#if 0
-	Developer( DEVELOPER_LEVEL_ALWAYS, "FinishMesh: %s %i k", m_debugName, ( mesh_size / 1024 ));
-	Developer( DEVELOPER_LEVEL_ALWAYS, " (planes reduced from %i to %i)", m_iTotalPlanes, m_mesh.numplanes );
-	Developer( DEVELOPER_LEVEL_ALWAYS, "\n" );
-#endif
 	return true;
 }
 

@@ -1057,12 +1057,7 @@ static void     Usage() // prints out usage sheet
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
 #endif
 
-    Log("    -dev #           : compile with developer message\n\n");
-
-
     Log("    -nowadautodetect : Disable auto-detection of wadfiles\n");
-
-	Log("    -scale #         : Scale the world. Use at your own risk.\n");
     Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
     Log("    mapfile          : The mapfile to compile\n\n");
 
@@ -1088,7 +1083,6 @@ static void     Settings() // prints out settings sheet
         Log("threads               [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
 
-    Log("developer             [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
     Log("max texture memory    [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 	Log("max lighting memory   [ %7d ] [ %7d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA);
 
@@ -1187,17 +1181,6 @@ int             main(const int argc, char** argv)
 			else
 				Usage();
 		}
-        else if (!strcasecmp(argv[i], "-dev"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_developer = (developer_level_t)atoi(argv[++i]);
-            }
-            else
-            {
-                Usage();
-            }
-        }
         else if (!strcasecmp(argv[i], "-low"))
         {
             g_threadpriority = eThreadPriorityLow;

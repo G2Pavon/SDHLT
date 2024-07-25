@@ -9,17 +9,6 @@
 #include "mathtypes.h"
 #include "messages.h"
 
-typedef enum
-{
-    DEVELOPER_LEVEL_ALWAYS,
-    DEVELOPER_LEVEL_ERROR,
-    DEVELOPER_LEVEL_WARNING,
-    DEVELOPER_LEVEL_MESSAGE,
-    DEVELOPER_LEVEL_FLUFF,
-    DEVELOPER_LEVEL_SPAM,
-    DEVELOPER_LEVEL_MEGASPAM
-}
-developer_level_t;
 
 //
 // log.c globals
@@ -29,10 +18,8 @@ extern char*    g_Program;
 extern char     g_Mapname[_MAX_PATH];
 extern char     g_Wadpath[_MAX_PATH]; //seedee
 
-#define DEFAULT_DEVELOPER   DEVELOPER_LEVEL_ALWAYS
 #define DEFAULT_LOG         true
 
-extern developer_level_t g_developer;
 extern unsigned long g_clientid;                           // Client id of this program
 extern unsigned long g_nextclientid;                       // Client id of next client to spawn from this server
 
@@ -50,8 +37,6 @@ extern void CDECL CloseLog();
 extern void     WriteLog(const char* const message);
 
 extern void     CheckFatal();
-
-extern void CDECL FORMAT_PRINTF(2,3) Developer(developer_level_t level, const char* const message, ...);
 
 #ifdef _DEBUG
 #define IfDebug(x) (x)
