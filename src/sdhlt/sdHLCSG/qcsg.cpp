@@ -1036,9 +1036,6 @@ static void     Usage() // prints out usage sheet
     Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
-#endif
     Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
     Log("    mapfile          : The mapfile to compile\n\n");
 
@@ -1053,7 +1050,6 @@ static void     Settings() // prints out settings sheet
     Log("\nCurrent %s Settings\n", g_Program);
     Log("Name                 |  Setting  |  Default\n"
         "---------------------|-----------|-------------------------\n");
-
     // ZHLT Common Settings
     if (DEFAULT_NUMTHREADS == -1)
     {
@@ -1063,10 +1059,8 @@ static void     Settings() // prints out settings sheet
     {
         Log("threads               [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
-
     Log("max texture memory    [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 	Log("max lighting memory   [ %7d ] [ %7d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA);
-
     switch (g_threadpriority)
     {
     case eThreadPriorityNormal:
@@ -1082,17 +1076,11 @@ static void     Settings() // prints out settings sheet
     }
     Log("priority              [ %7s ] [ %7s ]\n", tmp, "Normal");
     Log("\n");
-
     // HLCSG Specific Settings
     Log("clipnode economy mode [ %7s ] [ %7s ]\n", g_bClipNazi       ? "on" : "off", DEFAULT_CLIPNAZI     ? "on" : "off");
-
 	Log("clip hull type        [ %7s ] [ %7s ]\n", GetClipTypeString(g_cliptype), GetClipTypeString(DEFAULT_CLIPTYPE));
     Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-	Log("convert game_text     [ %7s ] [ %7s ]\n", !g_noutf8? "on" : "off", !DEFAULT_NOUTF8? "on" : "off");
-#endif
     Log("world extent          [ %7d ] [ %7d ]\n", g_iWorldExtent, 65536);
-
     Log("\n");
 }
 
@@ -1230,12 +1218,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-		else if (!strcasecmp (argv[i], "-notextconvert"))
-		{
-			g_noutf8 = true;
-		}
-#endif
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);
@@ -1303,39 +1285,34 @@ int             main(const int argc, char** argv)
 
 
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-	if (!g_noutf8)
-	{
-		int count = 0;
+    int count = 0;
+    for (i = 0; i < g_numentities; i++)
+    {
+        entity_t *ent = &g_entities[i];
+        const char *value;
+        char *newvalue;
 
-		for (i = 0; i < g_numentities; i++)
-		{
-			entity_t *ent = &g_entities[i];
-			const char *value;
-			char *newvalue;
+        if (strcmp (ValueForKey (ent, "classname"), "game_text"))
+        {
+            continue;
+        }
 
-			if (strcmp (ValueForKey (ent, "classname"), "game_text"))
-			{
-				continue;
-			}
-
-			value = ValueForKey (ent, "message");
-			if (*value)
-			{
-				newvalue = ANSItoUTF8 (value);
-				if (strcmp (newvalue, value))
-				{
-					SetKeyValue (ent, "message", newvalue);
-					count++;
-				}
-				free (newvalue);
-			}
-		}
-
-		if (count)
-		{
-			Log ("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
-		}
-	}
+        value = ValueForKey (ent, "message");
+        if (*value)
+        {
+            newvalue = ANSItoUTF8 (value);
+            if (strcmp (newvalue, value))
+            {
+                SetKeyValue (ent, "message", newvalue);
+                count++;
+            }
+            free (newvalue);
+        }
+    }
+    if (count)
+    {
+        Log ("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
+    }
 #endif
 
     Log("Loading mapfile wad configuration by default\n");
