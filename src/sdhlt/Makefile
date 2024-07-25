@@ -51,6 +51,7 @@ COMMON_CPPFILES = \
 			common/scriplib.cpp \
 			common/threads.cpp \
 			common/winding.cpp \
+			common/arguments.cpp \
 
 COMMON_INCLUDEDIRS = \
 			template \
@@ -73,6 +74,7 @@ COMMON_INCLUDEFILES = \
 			common/threads.h \
 			common/win32fix.h \
 			common/winding.h \
+			common/arguments.h \
 
 COMMON_DEFINITIONS = \
 			VERSION_LINUX \

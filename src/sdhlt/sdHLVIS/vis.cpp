@@ -13,6 +13,7 @@
 */
 
 #include "vis.h"
+#include "arguments.h"
 #ifdef SYSTEM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -673,25 +674,6 @@ static void     LoadPortalsByFilename(const char* const filename)
 }
 
 // =====================================================================================
-//  Usage
-// =====================================================================================
-static void     Usage()
-{
-    Banner();
-    Log("\n-= %s Options =-\n\n", g_Program);
-	Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
-    Log("    -full           : Full vis\n");
-    Log("    -fast           : Fast vis\n\n");
-    Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
-    Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata //--vluzacn
-    Log("    -low | -high    : run program an altered priority level\n");
-    Log("    -threads #      : manually specify the number of threads to run\n");
-	Log("    -maxdistance #  : Alter the maximum distance for visibility\n");
-    Log("    mapfile         : The mapfile to compile\n\n");
-    exit(1);
-}
-
-// =====================================================================================
 //  Settings
 // =====================================================================================
 static void     Settings()
@@ -776,10 +758,10 @@ int             main(const int argc, char** argv)
 		char ** argv;
 		ParseParamFile (argcold, argvold, argc, argv);
         if (InitConsole (argc, argv) < 0)
-            Usage();
+            Usage(PROGRAM_VIS);
         if (argc == 1)
         {
-            Usage();
+            Usage(PROGRAM_VIS);
         }
         for (i = 1; i < argc; i++)
         {
@@ -791,12 +773,12 @@ int             main(const int argc, char** argv)
                     if (g_numthreads < 1)
                     {
                         Log("Expected value of at least 1 for '-threads'\n");
-                        Usage();
+                        Usage(PROGRAM_VIS);
                     }
                 }
                 else
                 {
-                    Usage();
+                    Usage(PROGRAM_VIS);
                 }
             }
             else if (!strcasecmp(argv[i], "-console"))
@@ -807,7 +789,7 @@ int             main(const int argc, char** argv)
                 if (i + 1 < argc)
                     ++i;
                 else
-                    Usage();
+                    Usage(PROGRAM_VIS);
             }
             else if (!strcasecmp(argv[i], "-fast"))
             {
@@ -839,7 +821,7 @@ int             main(const int argc, char** argv)
                 }
                 else
                 {
-                    Usage();
+                    Usage(PROGRAM_VIS);
                 }
             }
             else if (!strcasecmp(argv[i], "-lightdata")) //lightdata
@@ -855,7 +837,7 @@ int             main(const int argc, char** argv)
                 }
                 else
                 {
-                    Usage();
+                    Usage(PROGRAM_VIS);
                 }
             }
             // AJM: MVD
@@ -867,13 +849,13 @@ int             main(const int argc, char** argv)
                 }
                 else
                 {
-                    Usage();
+                    Usage(PROGRAM_VIS);
                 }
             }
             else if (argv[i][0] == '-')
             {
                 Log("Unknown option \"%s\"", argv[i]);
-                Usage();
+                Usage(PROGRAM_VIS);
             }
             else if (!mapname_from_arg)
             {
@@ -882,14 +864,14 @@ int             main(const int argc, char** argv)
             else
             {
                 Log("Unknown option \"%s\"\n", argv[i]);
-                Usage();
+                Usage(PROGRAM_VIS);
             }
         }
 
         if (!mapname_from_arg)
         {
             Log("No mapfile specified\n");
-            Usage();
+            Usage(PROGRAM_VIS);
         }
 
         safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);

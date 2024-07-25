@@ -20,6 +20,7 @@
 #include <string>
 
 #include "qrad.h"
+#include "arguments.h"
 
 
 /*
@@ -2444,97 +2445,6 @@ static void     RadWorld()
 	ExtendLightmapBuffer (); // expand the size of lightdata array (for a few KB) to ensure that game engine reads within its valid range
 }
 
-// =====================================================================================
-//  Usage
-// =====================================================================================
-static void     Usage()
-{
-    Banner();
-
-    Log("\n-= %s Options =-\n\n", g_Program);
-	Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
-	Log("    -waddir folder  : Search this folder for wad files.\n");
-	Log("    -fast           : Fast rad\n");
-	Log("    -vismatrix value: Set vismatrix method to normal, sparse or off.\n");
-	Log("    -pre25          : Optimize compile for pre-Half-Life 25th anniversary update.\n");
-    Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
-    Log("    -bounce #       : Set number of radiosity bounces\n");
-    Log("    -ambient r g b  : Set ambient world light (0.0 to 1.0, r g b)\n");
-    Log("    -limiter #      : Set light clipping threshold (-1=None)\n");
-    Log("    -circus         : Enable 'circus' mode for locating unlit lightmaps\n");
-	Log("    -nospread       : Disable sunlight spread angles for this compile\n");
-    Log("    -nopaque        : Disable the opaque zhlt_lightflags for this compile\n\n");
-	Log("    -nostudioshadow : Disable opaque studiomodels, ignore zhlt_studioshadow for this compile\n\n");
-    Log("    -smooth #       : Set smoothing threshold for blending (in degrees)\n");
-	Log("    -smooth2 #      : Set smoothing threshold between different textures\n");
-    Log("    -chop #         : Set radiosity patch size for normal textures\n");
-    Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
-    Log("    -notexscale     : Do not scale radiosity patches with texture scale\n");
-    Log("    -coring #       : Set lighting threshold before blackness\n");
-    Log("    -dlight #       : Set direct lighting threshold\n");
-    Log("    -nolerp         : Disable radiosity interpolation, nearest point instead\n\n");
-    Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
-	Log("    -texlightgap #  : Set global gap distance for texlights\n");
-    Log("    -scale #        : Set global light scaling value\n");
-    Log("    -gamma #        : Set global gamma value\n\n");
-    Log("    -sky #          : Set ambient sunlight contribution in the shade outside\n");
-    Log("    -lights file    : Manually specify a lights.rad file to use\n");
-    Log("    -noskyfix       : Disable light_environment being global\n");
-    Log("    -incremental    : Use or create an incremental transfer list file\n\n");
-    Log("    -dump           : Dumps light patches to a file for hlrad debugging info\n\n");
-    Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
-    Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata
-    Log("    -low | -high    : run program an altered priority level\n");
-    Log("    -threads #      : manually specify the number of threads to run\n");
-
-    // ------------------------------------------------------------------------
-    // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-
-    // AJM: we dont need this extra crap
-    //Log("-= Unofficial features added by Adam Foster (afoster@compsoc.man.ac.uk) =-\n\n");
-    Log("   -colourgamma r g b  : Sets different gamma values for r, g, b\n" );
-    Log("   -colourscale r g b  : Sets different lightscale values for r, g ,b\n" );
-    Log("   -colourjitter r g b : Adds noise, independent colours, for dithering\n");
-    Log("   -jitter r g b       : Adds noise, monochromatic, for dithering\n");
-    //Log("-= End of unofficial features! =-\n\n" );
-
-    // ------------------------------------------------------------------------  
-    
-    Log("   -customshadowwithbounce : Enables custom shadows with bounce light\n");
-    Log("   -rgbtransfers           : Enables RGB Transfers (for custom shadows)\n\n");
-
-	Log("   -minlight #    : Minimum final light (integer from 0 to 255)\n");
-	{
-		int i;
-	Log("   -compress #    : compress tranfer (");
-		for (i=0; i<float_type_count; i++)
-			Log (" %d=%s", i, float_type_string[i]);
-		Log(" )\n");
-	Log("   -rgbcompress # : compress rgbtranfer (");
-		for (i=0; i<vector_type_count; i++)
-			Log (" %d=%s", i, vector_type_string[i]);
-		Log(" )\n");
-	}
-	Log("   -softsky #     : Smooth skylight.(0=off 1=on)\n");
-	Log("   -depth #       : Thickness of translucent objects.\n");
-	Log("   -blockopaque # : Remove the black areas around opaque entities.(0=off 1=on)\n");
-	Log("   -notextures    : Don't load textures.\n");
-	Log("   -texreflectgamma # : Gamma that relates reflectivity to texture color bits.\n");
-	Log("   -texreflectscale # : Reflectivity for 255-white texture.\n");
-	Log("   -blur #        : Enlarge lightmap sample to blur the lightmap.\n");
-	Log("   -noemitterrange: Don't fix pointy texlights.\n");
-	Log("   -nobleedfix    : Don't fix wall bleeding problem for large blur value.\n");
-	Log("   -drawpatch     : Export light patch positions to file 'mapname_patch.pts'.\n");
-	Log("   -drawsample x y z r    : Export light sample positions in an area to file 'mapname_sample.pts'.\n");
-	Log("   -drawedge      : Export smooth edge positions to file 'mapname_edge.pts'.\n");
-	Log("   -drawlerp      : Show bounce light triangulation status.\n");
-	Log("   -drawnudge     : Show nudged samples.\n");
-	Log("   -drawoverload  : Highlight fullbright spots\n");
-
-    Log("    mapfile       : The mapfile to compile\n\n");
-
-    exit(1);
-}
 
 // =====================================================================================
 //  Settings
@@ -2948,9 +2858,9 @@ int             main(const int argc, char** argv)
 		ParseParamFile (argcold, argvold, argc, argv);
 		{
 	if (InitConsole (argc, argv) < 0)
-		Usage();
+		Usage(PROGRAM_RAD);
     if (argc == 1)
-        Usage();
+        Usage(PROGRAM_RAD);
 
     for (i = 1; i < argc; i++)
     {
@@ -2966,7 +2876,7 @@ int             main(const int argc, char** argv)
 			if (i + 1 < argc)
 				++i;
 			else
-				Usage();
+				Usage(PROGRAM_RAD);
 		}
 		else if (!strcasecmp(argv[i], "-extra"))
         {
@@ -2986,12 +2896,12 @@ int             main(const int argc, char** argv)
                 if (g_numbounce > 1000)
                 {
                     Log("Unexpectedly large value (>1000) for '-bounce'\n");
-                    Usage();
+                    Usage(PROGRAM_RAD);
                 }
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-threads"))
@@ -3002,12 +2912,12 @@ int             main(const int argc, char** argv)
                 if (g_numthreads < 1)
                 {
                     Log("Expected value of at least 1 for '-threads'\n");
-                    Usage();
+                    Usage(PROGRAM_RAD);
                 }
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
 		else if (!strcasecmp (argv[i], "-fast"))
@@ -3026,7 +2936,7 @@ int             main(const int argc, char** argv)
                 if (g_chop < 1)
                 {
                     Log("expected value greater than 1 for '-chop'\n");
-                    Usage();
+                    Usage(PROGRAM_RAD);
                 }
                 if (g_chop < 32)
                 {
@@ -3035,7 +2945,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-texchop"))
@@ -3046,7 +2956,7 @@ int             main(const int argc, char** argv)
                 if (g_texchop < 1)
                 {
                     Log("expected value greater than 1 for '-texchop'\n");
-                    Usage();
+                    Usage(PROGRAM_RAD);
                 }
                 if (g_texchop < 32)
                 {
@@ -3055,7 +2965,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-notexscale"))
@@ -3070,7 +2980,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-scale"))
@@ -3088,7 +2998,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-fade"))
@@ -3099,12 +3009,12 @@ int             main(const int argc, char** argv)
                 if (g_fade < 0.0)
                 {
                     Log("-fade must be a positive number\n");
-                    Usage();
+                    Usage(PROGRAM_RAD);
                 }
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-ambient"))
@@ -3128,7 +3038,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
 		else if (!strcasecmp(argv[i], "-drawoverload"))
@@ -3143,7 +3053,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-circus"))
@@ -3181,7 +3091,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-dlight"))
@@ -3192,7 +3102,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-sky"))
@@ -3203,7 +3113,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-smooth"))
@@ -3214,7 +3124,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
 		else if (!strcasecmp(argv[i], "-smooth2"))
@@ -3225,7 +3135,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
         else if (!strcasecmp(argv[i], "-coring"))
@@ -3236,7 +3146,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-texdata"))
@@ -3252,7 +3162,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
         else if (!strcasecmp(argv[i], "-lightdata")) //lightdata
@@ -3268,7 +3178,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
 		else if (!strcasecmp (argv[i], "-vismatrix"))
@@ -3295,7 +3205,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage (PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-nospread"))
@@ -3315,7 +3225,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
         }
 
@@ -3396,7 +3306,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_RAD);
             }
 		}
 
@@ -3410,7 +3320,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
 
@@ -3422,7 +3332,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-nostudioshadow"))
@@ -3445,7 +3355,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-drawedge"))
@@ -3467,11 +3377,11 @@ int             main(const int argc, char** argv)
 			{
 				g_transfer_compress_type = (float_type)atoi(argv[++i]);
 				if (g_transfer_compress_type < 0 || g_transfer_compress_type >= float_type_count)
-					Usage();
+					Usage(PROGRAM_RAD);
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-rgbcompress"))
@@ -3480,11 +3390,11 @@ int             main(const int argc, char** argv)
 			{
 				g_rgbtransfer_compress_type = (vector_type)atoi(argv[++i]);
 				if (g_rgbtransfer_compress_type < 0 || g_rgbtransfer_compress_type >= vector_type_count)
-					Usage();
+					Usage(PROGRAM_RAD);
 			}
 			else
 			{
-				Usage();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-depth"))
@@ -3495,7 +3405,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-blockopaque"))
@@ -3506,7 +3416,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-waddir"))
@@ -3517,7 +3427,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-notextures"))
@@ -3532,7 +3442,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-texreflectscale"))
@@ -3543,7 +3453,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-blur"))
@@ -3554,7 +3464,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp (argv[i], "-noemitterrange"))
@@ -3573,7 +3483,7 @@ int             main(const int argc, char** argv)
 			}
 			else
 			{
-				Usage ();
+				Usage(PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-pre25")) //Pre25 should be after everything else to override
@@ -3584,7 +3494,7 @@ int             main(const int argc, char** argv)
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
+            Usage(PROGRAM_RAD);
         }
         else if (!mapname_from_arg)
         {
@@ -3593,14 +3503,14 @@ int             main(const int argc, char** argv)
         else
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
+            Usage(PROGRAM_RAD);
         }
     }
 
     if (!mapname_from_arg)
     {
         Log("No mapname specified\n");
-        Usage();
+        Usage(PROGRAM_RAD);
     }
 
     g_smoothing_threshold = (float)cos(g_smoothing_value * (Q_PI / 180.0));

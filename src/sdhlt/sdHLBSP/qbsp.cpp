@@ -16,6 +16,7 @@
 #endif
 
 #include "bsp5.h"
+#include "arguments.h"
 
 /*
 
@@ -1210,41 +1211,6 @@ static bool     ProcessModel()
 }
 
 // =====================================================================================
-//  Usage
-// =====================================================================================
-static void     Usage()
-{
-    Banner();
-
-    Log("\n-= %s Options =-\n\n", g_Program);
-	Log("    -console #     : Set to 0 to turn off the pop-up console (default is 1)\n");
-    Log("    -leakonly      : Run BSP only enough to check for LEAKs\n");
-    Log("    -subdivide #   : Sets the face subdivide size\n");
-    Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
-    Log("    -notjunc       : Don't break edges on t-junctions     (not for final runs)\n");
-	Log("    -nobrink       : Don't smooth brinks                  (not for final runs)\n");
-    Log("    -nofill        : Don't fill outside (will mask LEAKs) (not for final runs)\n");
-	Log("    -noinsidefill  : Don't fill empty spaces\n");
-	Log("    -noopt         : Don't optimize planes on BSP write   (not for final runs)\n");
-	Log("    -noclipnodemerge: Don't optimize clipnodes\n");
-    Log("    -texdata #     : Alter maximum texture memory limit (in kb)\n");
-    Log("    -lightdata #   : Alter maximum lighting memory limit (in kb)\n");
-    Log("    -low | -high   : run program an altered priority level\n");
-    Log("    -threads #     : manually specify the number of threads to run\n");
-
-    Log("    -nonulltex     : Don't strip NULL faces\n");
-
-
-	Log("    -nohull2       : Don't generate hull 2 (the clipping hull for large monsters and pushables)\n");
-
-	Log("    -viewportal    : Show portal boundaries in 'mapname_portal.pts' file\n");
-
-    Log("    mapfile        : The mapfile to compile\n\n");
-
-    exit(1);
-}
-
-// =====================================================================================
 //  Settings
 // =====================================================================================
 static void     Settings()
@@ -1447,10 +1413,10 @@ int             main(const int argc, char** argv)
 		ParseParamFile (argcold, argvold, argc, argv);
 		{
 	if (InitConsole (argc, argv) < 0)
-		Usage();
+		Usage(PROGRAM_BSP);
     // if we dont have any command line argvars, print out usage and die
     if (argc == 1)
-        Usage();
+        Usage(PROGRAM_BSP);
 
     // check command line args
     for (i = 1; i < argc; i++)
@@ -1464,12 +1430,12 @@ int             main(const int argc, char** argv)
                 if (g_numthreads < 1)
                 {
                     Log("Expected value of at least 1 for '-threads'\n");
-                    Usage();
+                    Usage(PROGRAM_BSP);
                 }
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_BSP);
             }
         }
 		else if (!strcasecmp(argv[i], "-console"))
@@ -1480,7 +1446,7 @@ int             main(const int argc, char** argv)
 			if (i + 1 < argc)
 				++i;
 			else
-				Usage();
+				Usage(PROGRAM_BSP);
 		}
         else if (!strcasecmp(argv[i], "-notjunc"))
         {
@@ -1545,7 +1511,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_BSP);
             }
         }
         else if (!strcasecmp(argv[i], "-maxnodesize"))
@@ -1570,7 +1536,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_BSP);
             }
         }
 		else if (!strcasecmp (argv[i], "-viewportal"))
@@ -1590,7 +1556,7 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_BSP);
             }
         }
         else if (!strcasecmp(argv[i], "-lightdata"))
@@ -1606,13 +1572,13 @@ int             main(const int argc, char** argv)
             }
             else
             {
-                Usage();
+                Usage(PROGRAM_BSP);
             }
         }
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
+            Usage(PROGRAM_BSP);
         }
         else if (!mapname_from_arg)
         {
@@ -1621,14 +1587,14 @@ int             main(const int argc, char** argv)
         else
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage();
+            Usage(PROGRAM_BSP);
         }
     }
 
     if (!mapname_from_arg)
     {
         Log("No mapfile specified\n");
-        Usage();
+        Usage(PROGRAM_BSP);
     }
 
     safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);

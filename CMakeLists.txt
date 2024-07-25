@@ -44,6 +44,7 @@ set(COMMON_SOURCES
     ${COMMON_DIR}/scriplib.cpp
     ${COMMON_DIR}/threads.cpp
     ${COMMON_DIR}/winding.cpp
+    ${COMMON_DIR}/arguments.cpp
 )
 
 set(COMMON_HEADERS
@@ -63,6 +64,7 @@ set(COMMON_HEADERS
     ${COMMON_DIR}/threads.h
     ${COMMON_DIR}/win32fix.h
     ${COMMON_DIR}/winding.h
+    ${COMMON_DIR}/arguments.h
 )
 
 #================

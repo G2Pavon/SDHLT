@@ -1,4 +1,6 @@
 #include "csg.h" 
+#include "arguments.h"
+
 #ifdef SYSTEM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h> //--vluzacn
@@ -1031,26 +1033,6 @@ static void     BoundWorld()
 }
 
 
-static void     Usage() // prints out usage sheet
-{
-    Banner(); // TODO: Call banner from main CSG process? 
-
-    Log("\n-= %s Options =-\n\n", g_Program);
-	Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
-    Log("    -clipeconomy     : turn clipnode economy mode on\n");
-	Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
-    Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
-    Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
-    Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
-    Log("    -low | -high     : run program an altered priority level\n");
-    Log("    -threads #       : manually specify the number of threads to run\n");
-    Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
-    Log("    mapfile          : The mapfile to compile\n\n");
-
-    exit(1);
-}
-
-
 static void     Settings() // prints out settings sheet
 {
     char*           tmp;
@@ -1116,9 +1098,9 @@ int             main(const int argc, char** argv)
 		ParseParamFile (argcold, argvold, argc, argv);
 		{
             if (InitConsole (argc, argv) < 0)
-                Usage();
+                Usage(PROGRAM_CSG);
             if (argc == 1)
-                Usage();
+                Usage(PROGRAM_CSG);
 
             InitDefaultHulls ();
 
@@ -1132,12 +1114,12 @@ int             main(const int argc, char** argv)
                         if (g_numthreads < 1)
                         {
                             Log("Expected value of at least 1 for '-threads'\n");
-                            Usage();
+                            Usage(PROGRAM_CSG);
                         }
                     }
                     else
                     {
-                        Usage();
+                        Usage(PROGRAM_CSG);
                     }
                 }
 
@@ -1154,7 +1136,7 @@ int             main(const int argc, char** argv)
                     if (i + 1 < argc)
                         ++i;
                     else
-                        Usage();
+                        Usage(PROGRAM_CSG);
                 }
                 else if (!strcasecmp(argv[i], "-low"))
                 {
@@ -1192,7 +1174,7 @@ int             main(const int argc, char** argv)
                     else
                     {
                         Log("Error: -cliptype: incorrect usage of parameter\n");
-                        Usage();
+                        Usage(PROGRAM_CSG);
                     }
                 }
                 else if (!strcasecmp(argv[i], "-texdata"))
@@ -1208,7 +1190,7 @@ int             main(const int argc, char** argv)
                     }
                     else
                     {
-                        Usage();
+                        Usage(PROGRAM_CSG);
                     }
                 }
                 else if (!strcasecmp(argv[i], "-lightdata"))
@@ -1223,13 +1205,13 @@ int             main(const int argc, char** argv)
                     }
                     else
                     {
-                        Usage();
+                        Usage(PROGRAM_CSG);
                     }
                 }
                 else if (argv[i][0] == '-')
                 {
                     Log("Unknown option \"%s\"\n", argv[i]);
-                    Usage();
+                    Usage(PROGRAM_CSG);
                 }
                 else if (!mapname_from_arg)
                 {
@@ -1238,14 +1220,14 @@ int             main(const int argc, char** argv)
                 else
                 {
                     Log("Unknown option \"%s\"\n", argv[i]);
-                    Usage();
+                    Usage(PROGRAM_CSG);
                 }
             }
 
             if (!mapname_from_arg)
             {
                 Log("No mapfile specified\n");
-                Usage();
+                Usage(PROGRAM_CSG);
             }
 
             safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH); // handle mapname
@@ -1370,28 +1352,6 @@ int             main(const int argc, char** argv)
             EmitPlanes();
 
             WriteBSP(g_Mapname);
-
-        #if 0 // AJM: debug
-            Log("\n---------------------------------------\n"
-                "Map Plane Usage:\n"
-                "  #  normal             origin             dist   type\n"
-                "    (   x,    y,    z) (   x,    y,    z) (     )\n"
-                );
-            for (i = 0; i < g_nummapplanes; i++)
-            {
-                plane_t* p = &g_mapplanes[i];
-
-                Log(
-                "%3i (%4.0f, %4.0f, %4.0f) (%4.0f, %4.0f, %4.0f) (%5.0f) %i\n",
-                i,     
-                p->normal[1], p->normal[2], p->normal[3],
-                p->origin[1], p->origin[2], p->origin[3],
-                p->dist,
-                p->type
-                );
-            }
-            Log("---------------------------------------\n\n");
-        #endif
             end = I_FloatTime(); // elapsed time
             LogTimeElapsed(end - start);
 
