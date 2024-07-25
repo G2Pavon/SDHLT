@@ -428,6 +428,21 @@ void            LogStart(int argc, char** argv)
     LogArgs(argc, argv);
 }
 
+void LogArguments(int argc, char **argv) 
+{
+    int i;
+    printf("Arguments: ");
+    for (i = 1; i < argc; i++) {
+        if (strchr(argv[i], ' ')) {
+            printf("\"%s\" ", argv[i]);
+        } else {
+            printf("%s ", argv[i]);
+        }
+    }
+    printf("\n");
+}
+
+
 // =====================================================================================
 //  LogEnd
 // =====================================================================================

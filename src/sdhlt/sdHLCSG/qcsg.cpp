@@ -1245,22 +1245,7 @@ int             main(const int argc, char** argv)
             ResetErrorLog();                       
             atexit(CloseLog);                       
             LogStart(argcold, argvold);
-            {
-                int			 i;
-                Log("Arguments: ");
-                for (i = 1; i < argc; i++)
-                {
-                    if (strchr(argv[i], ' '))
-                    {
-                        Log("\"%s\" ", argv[i]);
-                    }
-                    else
-                    {
-                        Log("%s ", argv[i]);
-                    }
-                }
-                Log("\n");
-            }
+            LogArguments(argc, argv);
         #ifdef PLATFORM_CAN_CALC_EXTENT
             hlassume (CalcFaceExtents_test (), assume_first);
         #endif

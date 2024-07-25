@@ -52,6 +52,7 @@ extern void CDECL FORMAT_PRINTF(1,2) Warning(const char* const warning, ...);
 extern void CDECL FORMAT_PRINTF(1,2) PrintOnce(const char* const message, ...);
 
 extern void     LogStart(const int argc, char** argv);
+extern void     LogArguments(int argc, char **argv);
 extern void     LogEnd();
 extern void     Banner();
 
