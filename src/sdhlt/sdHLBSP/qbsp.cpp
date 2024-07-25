@@ -995,7 +995,7 @@ static brush_t *ReadBrushes (FILE *file)
 
 
 // =====================================================================================
-//  ProcessModel
+//  ProcessModel (model a.k.a brush entities)
 // =====================================================================================
 static bool     ProcessModel()
 {
@@ -1017,8 +1017,6 @@ static bool     ProcessModel()
     int modnum = g_nummodels;
     model = &g_dmodels[modnum];
     g_nummodels++;
-
-//    Log("ProcessModel: %i (%i f)\n", modnum, model->numfaces);
 
 	g_hullnum = 0; //vluzacn
 	VectorFill (model->mins, 99999);

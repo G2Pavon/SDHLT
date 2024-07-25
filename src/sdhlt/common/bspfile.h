@@ -377,7 +377,7 @@ typedef struct epair_s
     char*           key;
     char*           value;
 }
-epair_t;
+epair_t; // alias used for declare a var like 'epair_t myEntPropety' instead of 'struct epair_s myEntProperty'
 
 typedef struct
 {
