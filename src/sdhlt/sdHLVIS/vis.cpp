@@ -26,9 +26,6 @@
 #endif
 
 #include <string>
-#include <fstream> //FixPrt
-#include <vector> //FixPrt
-#include <iostream> //FixPrt
 
 /*
 
@@ -61,7 +58,6 @@ unsigned        g_bitlongs;
 
 bool            g_fastvis = DEFAULT_FASTVIS;
 bool            g_fullvis = DEFAULT_FULLVIS;
-bool            g_nofixprt = DEFAULT_NOFIXPRT;                   //seedee
 bool            g_estimate = DEFAULT_ESTIMATE;
 
 // AJM: MVD
@@ -152,8 +148,6 @@ static portal_t* GetNextPortal()
     ThreadUnlock();
     return p;
 }
-
-
 
 
 // =====================================================================================
@@ -340,7 +334,6 @@ static void     LeafFlow(const int leafnum)
 // =====================================================================================
 static void     CalcPortalVis()
 {
-    // g_fastvis just uses mightsee for a very loose bound
     if (g_fastvis)
     {
         int             i;
@@ -396,86 +389,60 @@ static void     CalcVis()
 	// Remove this file
 	unlink(visdatafile);
 
-/*    if(g_postcompile)
-	{
-		if(!g_maxdistance)
-		{
-			Error("Must use -maxdistance parameter with -postcompile");
-		}
+    NamedRunThreadsOn(g_numportals * 2, g_estimate, BasePortalVis);
 
-		// Decompress everything so we can edit it
-		DecompressAll();
-		
-		NamedRunThreadsOn(g_portalleafs, g_estimate, PostMaxDistVis);
+    // First do a normal VIS, save to file, then redo MaxDistVis
 
-		// Recompress it
-		CompressAll();
-	}
-	else
-	{*/
-//		InitVisBlock();
-//		SetupVisBlockLeafs();
+    CalcPortalVis();
 
-		NamedRunThreadsOn(g_numportals * 2, g_estimate, BasePortalVis);
-
-//		if(g_numvisblockers)
-//			NamedRunThreadsOn(g_numvisblockers, g_estimate, BlockVis);
-
-		// First do a normal VIS, save to file, then redo MaxDistVis
-
-		CalcPortalVis();
-
-        // Add additional leaves to the uncompressed vis.
-        for (i = 0; i < g_portalleafs; i++)
+    // Add additional leaves to the uncompressed vis.
+    for (i = 0; i < g_portalleafs; i++)
+    {
+        if (!g_leafinfos[i].additional_leaves.empty())
         {
-            if (!g_leafinfos[i].additional_leaves.empty())
+            for (int leaf : g_leafinfos[i].additional_leaves)
             {
-                for (int leaf : g_leafinfos[i].additional_leaves)
-                {
-                    LeafFlowNeighborAddLeaf(i, leaf, g_leafinfos[i].neighbor);
-                    leaf_flow_add_exclude.clear();
-                }
+                LeafFlowNeighborAddLeaf(i, leaf, g_leafinfos[i].neighbor);
+                leaf_flow_add_exclude.clear();
             }
         }
+    }
 
-		//
-		// assemble the leaf vis lists by oring and compressing the portal lists
-		//
-		for (i = 0; i < g_portalleafs; i++)
-		{
-	        LeafFlow(i);
-	    }
+    //
+    // assemble the leaf vis lists by oring and compressing the portal lists
+    //
+    for (i = 0; i < g_portalleafs; i++)
+    {
+        LeafFlow(i);
+    }
 
-		Log("average leafs visible: %i\n", totalvis / g_portalleafs);
+    Log("average leafs visible: %i\n", totalvis / g_portalleafs);
 
-		if(g_maxdistance)
-		{
-			totalvis = 0;
-			
-			Log("saving visdata to %s...\n", visdatafile);
-			SaveVisData(visdatafile);
+    if(g_maxdistance)
+    {
+        totalvis = 0;
+        
+        Log("saving visdata to %s...\n", visdatafile);
+        SaveVisData(visdatafile);
 
-			// We need to reset the uncompressed variable and portal visbits
-			free(g_uncompressed);
-			g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
+        // We need to reset the uncompressed variable and portal visbits
+        free(g_uncompressed);
+        g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
 
-			vismap_p = g_dvisdata;
+        vismap_p = g_dvisdata;
 
-			// We don't need to run BasePortalVis again			
-			NamedRunThreadsOn(g_portalleafs, g_estimate, MaxDistVis);
+        // We don't need to run BasePortalVis again			
+        NamedRunThreadsOn(g_portalleafs, g_estimate, MaxDistVis);
 
-			// No need to run this - MaxDistVis now writes directly to visbits after the initial VIS
-			//CalcPortalVis();
-		
-			for (i = 0; i < g_portalleafs; i++)
-			{
-			    LeafFlow(i);
-			}
-
-
-			Log("average maxdistance leafs visible: %i\n", totalvis / g_portalleafs);
-		}
-//	}
+        // No need to run this - MaxDistVis now writes directly to visbits after the initial VIS
+        //CalcPortalVis();
+    
+        for (i = 0; i < g_portalleafs; i++)
+        {
+            LeafFlow(i);
+        }
+        Log("average maxdistance leafs visible: %i\n", totalvis / g_portalleafs);
+    }
 }
 
 
@@ -711,12 +678,10 @@ static void     LoadPortalsByFilename(const char* const filename)
 static void     Usage()
 {
     Banner();
-
     Log("\n-= %s Options =-\n\n", g_Program);
 	Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
     Log("    -full           : Full vis\n");
     Log("    -fast           : Fast vis\n\n");
-    Log("    -nofixprt       : Disables optimization of portal file for import to J.A.C.K. map editor\n\n"); //seedee
     Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata //--vluzacn
     Log("    -low | -high    : run program an altered priority level\n");
@@ -735,7 +700,6 @@ static void     Settings()
 
     Log("\n-= Current %s Settings =-\n", g_Program);
     Log("Name               |  Setting  |  Default\n" "-------------------|-----------|-------------------------\n");
-
     // ZHLT Common Settings
     if (DEFAULT_NUMTHREADS == -1)
     {
@@ -745,12 +709,8 @@ static void     Settings()
     {
         Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
     }
-
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
-
     Log("max vis distance    [ %7d ] [ %7d ]\n", g_maxdistance, DEFAULT_MAXDISTANCE_RANGE);
-	//Log("max dist only       [ %7s ] [ %7s ]\n", g_postcompile ? "on" : "off", DEFAULT_POST_COMPILE ? "on" : "off");
-
     switch (g_threadpriority)
     {
     case eThreadPriorityNormal:
@@ -765,12 +725,9 @@ static void     Settings()
         break;
     }
     Log("priority            [ %7s ] [ %7s ]\n", tmp, "Normal");
-    Log("\n");
-
     // HLVIS Specific Settings
     Log("fast vis            [ %7s ] [ %7s ]\n", g_fastvis ? "on" : "off", DEFAULT_FASTVIS ? "on" : "off");
     Log("full vis            [ %7s ] [ %7s ]\n", g_fullvis ? "on" : "off", DEFAULT_FULLVIS ? "on" : "off");
-    Log("nofixprt            [ %7s ] [ %7s ]\n", g_nofixprt ? "on" : "off", DEFAULT_NOFIXPRT ? "on" : "off");
     Log("\n\n");
 }
 
@@ -799,104 +756,7 @@ int        VisLeafnumForPoint(const vec3_t point)
 
     return -nodenum - 2;
 }
-// seedee
-// =====================================================================================
-//  FixPrt
-//      Imports portal file to vector, erases vis cache lines, overwrites portal file
-// =====================================================================================
-void FixPrt(const char* portalfile)
-{
-    Log("\nReading portal file '%s'\n", portalfile);
 
-    std::vector<std::string> prtVector;
-    std::ifstream inputFileStream{ portalfile }; //Import from .prt file
-
-    int portalFileLines;
-    int optimizedPortalFileLines;
-
-    if (!inputFileStream) //If import fails
-    {
-        Log("Failed reading portal file '%s', skipping optimization for J.A.C.K. map editor\n", portalfile);
-        return;
-    }
-
-    std::string strInput;
-
-    while (std::getline(inputFileStream, strInput)) //While there are still lines to read
-    {
-        if (strInput.size() > 0) //If line is not empty add to vector
-            prtVector.push_back(strInput);
-    }
-    inputFileStream.close();
-
-    portalFileLines = prtVector.size(); //Count lines before optimization
-
-    auto itPortalCoords = std::find_if(
-        prtVector.begin(),
-        prtVector.end(),
-        [](const std::string& s)
-        {
-            return s.find('(') != std::string::npos; //Point iterator to the first string that contains portal coordinates, which has a bracket
-        });
-
-    bool skipFix = false;
-
-    if (prtVector[1] == "0") //If portal count on line 2 is 0
-    {
-        Log("Number of portals in file is 0\n");
-        skipFix = true;
-    }
-    if (itPortalCoords == prtVector.end()) //If it didn't find any line containing an opening bracket (the portal coordinates)
-    {
-        Log("No portal coordinates detected in file\n");
-        skipFix = true;
-    }
-    if (itPortalCoords == prtVector.begin()) //If the first line contains an opening bracket (possible portal coordinates)
-    {
-        Log("Unexpected possible portal coordinates at line 1\n");
-        skipFix = true;
-    }
-    if (skipFix)
-    {
-        Log("Skipping optimization for J.A.C.K. map editor\n");
-        return;
-    }
-    prtVector.erase( //Deletes from string 3 until string before portal coordinates
-        prtVector.begin() + 2,
-        itPortalCoords);
-
-    optimizedPortalFileLines = prtVector.size(); //Count lines after optimization
-
-    Log("Reduced %i lines to %i\n", portalFileLines, optimizedPortalFileLines);
-
-    //Print contents of vector
-    /*
-    for (std::string& line : prtVector)
-        Log("%s\n", line.c_str());
-    */
-
-    std::ofstream outputFileStream; //Output to .prt file
-
-    outputFileStream.open(portalfile);
-
-    if (outputFileStream.is_open())
-    {
-        for (int i = 0; i < prtVector.size(); ++i)
-        {
-            outputFileStream << prtVector[i] << "\n"; //Print each string as a new line
-        }
-        outputFileStream.close();
-
-        Log("Optimization for J.A.C.K. map editor successful, writing portal file '%s'\n", portalfile);
-    }
-    else //If open fails
-    {
-        Log("Failed writing portal file '%s', skipping optimization for J.A.C.K. map editor\n", portalfile);
-        return;
-    }
-
-    return;
-}
 // =====================================================================================
 //  main
 // =====================================================================================
@@ -957,10 +817,6 @@ int             main(const int argc, char** argv)
             else if (!strcasecmp(argv[i], "-full"))
             {
                 g_fullvis = true;
-            }
-            else if (!strcasecmp(argv[i], "-nofixprt"))
-            {
-                g_nofixprt = true;
             }
             else if (!strcasecmp(argv[i], "-low"))
             {
@@ -1134,11 +990,6 @@ int             main(const int argc, char** argv)
         CalcVis();
         g_visdatasize = vismap_p - g_dvisdata;
         Log("g_visdatasize:%i  compressed from %i\n", g_visdatasize, originalvismapsize);
-
-        if (!g_nofixprt) //seedee
-        {
-            FixPrt(portalfile);
-        }
         PrintBSPFileSizes();
         WriteBSPFile(source);
 

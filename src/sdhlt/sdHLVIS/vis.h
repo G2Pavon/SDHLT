@@ -25,7 +25,6 @@
 
 
 #define DEFAULT_FULLVIS     false
-#define DEFAULT_NOFIXPRT    false
 #define DEFAULT_INFO        true
 #define DEFAULT_ESTIMATE    true
 #define DEFAULT_FASTVIS     false
