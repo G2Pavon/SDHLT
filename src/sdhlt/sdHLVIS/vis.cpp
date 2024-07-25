@@ -79,10 +79,6 @@ int             g_room_count = 0;
 
 static int      totalvis = 0;
 
-#if ZHLT_ZONES
-Zones*          g_Zones;
-#endif
-
 // =====================================================================================
 //  PlaneFromWinding
 // =====================================================================================
@@ -709,53 +705,6 @@ static void     LoadPortalsByFilename(const char* const filename)
     free(file_image);
 }
 
-
-#if ZHLT_ZONES
-// =====================================================================================
-//  AssignPortalsToZones
-// =====================================================================================
-static void     AssignPortalsToZones()
-{
-    hlassert(g_Zones != NULL);
-
-    UINT32 count = 0;
-
-    portal_t* p;
-    UINT32 x;
-
-    UINT32 tmp[20];
-    memset(tmp, 0, sizeof(tmp));
-
-    UINT32 numportals = g_numportals * 2;
-    for (x=0, p=g_portals; x<numportals; x++, p++)
-    {
-        BoundingBox bounds;
-        winding_t* w = p->winding;
-        UINT32 numpoints = w->numpoints;
-
-        UINT32 y;
-
-        for (y=0; y<numpoints; y++)
-        {
-            bounds.add(w->points[y]);
-        }
-
-        p->zone = g_Zones->getZoneFromBounds(bounds);
-        tmp[p->zone]++;
-        if (p->zone)
-        {
-            count++;
-        }
-    }
-
-    for (x=0; x<15; x++)
-    {
-        Log("Zone %2u : %u\n", x, tmp[x]);
-    }
-    Log("%u of %u portals were contained in func_vis zones\n", count, numportals);
-}
-#endif
-
 // =====================================================================================
 //  Usage
 // =====================================================================================
@@ -1179,12 +1128,6 @@ int             main(const int argc, char** argv)
             }
         }
         LoadPortalsByFilename(portalfile);
-
-    #   if ZHLT_ZONES
-            g_Zones = MakeZones();
-            AssignPortalsToZones();
-    #   endif
-
         Settings();
         g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
 

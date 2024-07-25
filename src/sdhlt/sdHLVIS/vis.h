@@ -14,8 +14,8 @@
 #include "bspfile.h"
 #include "threads.h"
 #include "filelib.h"
+#include "winding.h"
 
-#include "zones.h"
 #include "cmdlinecfg.h"
 
 #include <vector>
@@ -72,7 +72,6 @@ typedef struct
     byte*           mightsee;
     unsigned        nummightsee;
     int             numcansee;
-    UINT32          zone;                                  // Which zone is this portal a member of
 } portal_t;
 
 typedef struct seperating_plane_s
@@ -187,8 +186,6 @@ extern unsigned g_bitbytes;
 extern unsigned g_bitlongs;
 
 extern volatile int g_vislocalpercent;
-
-extern Zones*          g_Zones;
 
 extern void     BasePortalVis(int threadnum);
 

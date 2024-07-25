@@ -146,7 +146,6 @@ HLVIS_CPPFILES = \
 			$(COMMON_CPPFILES) \
 			sdHLVIS/flow.cpp \
 			sdHLVIS/vis.cpp \
-			sdHLVIS/zones.cpp \
 
 HLVIS_INCLUDEDIRS = \
 			$(COMMON_INCLUDEDIRS) \
@@ -155,7 +154,6 @@ HLVIS_INCLUDEDIRS = \
 HLVIS_INCLUDEFILES = \
 			$(COMMON_INCLUDEFILES) \
 			sdHLVIS/vis.h \
-			sdHLVIS/zones.h \
 
 HLVIS_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
