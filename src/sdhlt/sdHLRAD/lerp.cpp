@@ -2,8 +2,6 @@
 #include <vector>
 #include <algorithm>
 
-int             g_lerp_enabled = DEFAULT_LERP_ENABLED;
-
 struct interpolation_t
 {
 	struct Point
@@ -797,29 +795,26 @@ void InterpolateSampleLight (const vec3_t position, int surface, int numstyles, 
 	// Calculate local interpolations and their weights
 	localweights.resize (0);
 	localinterps.resize (0);
-	if (g_lerp_enabled)
+	for (i = 0; i < (int)ft->neighbors.size (); i++) // for this face and each of its neighbors
 	{
-		for (i = 0; i < (int)ft->neighbors.size (); i++) // for this face and each of its neighbors
+		ft2 = g_facetriangulations[ft->neighbors[i]];
+		for (j = 0; j < (int)ft2->localtriangulations.size (); j++) // for each patch on that face
 		{
-			ft2 = g_facetriangulations[ft->neighbors[i]];
-			for (j = 0; j < (int)ft2->localtriangulations.size (); j++) // for each patch on that face
+			lt = ft2->localtriangulations[j];
+			if (!CalcAdaptedSpot (lt, position, surface, spot))
 			{
-				lt = ft2->localtriangulations[j];
-				if (!CalcAdaptedSpot (lt, position, surface, spot))
-				{
-					continue;
-				}
-				if (!CalcWeight (lt, spot, &weight))
-				{
-					continue;
-				}
-				interp = new interpolation_t;
-				interp->points.reserve (4);
-				CalcInterpolation (lt, spot, interp);
-
-				localweights.push_back (weight);
-				localinterps.push_back (interp);
+				continue;
 			}
+			if (!CalcWeight (lt, spot, &weight))
+			{
+				continue;
+			}
+			interp = new interpolation_t;
+			interp->points.reserve (4);
+			CalcInterpolation (lt, spot, interp);
+
+			localweights.push_back (weight);
+			localinterps.push_back (interp);
 		}
 	}
 	
@@ -1085,12 +1080,6 @@ static void GatherPatches (localtriangulation_t *lt, const facetriangulation_t *
 	std::vector< localtriangulation_t::Wedge > points;
 	std::vector< std::pair< vec_t, int > > angles;
 	vec_t angle;
-
-	if (!g_lerp_enabled)
-	{
-		lt->sortedwedges.resize (0);
-		return;
-	}
 
 	points.resize (0);
 	for (i = 0; i < (int)lt->neighborfaces.size (); i++)

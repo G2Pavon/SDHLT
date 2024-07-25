@@ -2518,8 +2518,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_coring);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CORING);
     Log("coring threshold     [ %17s ] [ %17s ]\n", buf1, buf2);
-    Log("patch interpolation  [ %17s ] [ %17s ]\n", g_lerp_enabled ? "on" : "off", DEFAULT_LERP_ENABLED ? "on" : "off");
-
     Log("\n");
 
     Log("texscale             [ %17s ] [ %17s ]\n", g_texscale ? "on" : "off", DEFAULT_TEXSCALE ? "on" : "off");
@@ -2911,10 +2909,6 @@ int             main(const int argc, char** argv)
 		{
 			g_fastmode = true;
 		}
-        else if (!strcasecmp(argv[i], "-nolerp"))
-        {
-             g_lerp_enabled  = false;
-        }
         else if (!strcasecmp(argv[i], "-chop"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn

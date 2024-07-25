@@ -76,7 +76,6 @@ void Usage(ProgramType programType)
             Log("    -notexscale     : Do not scale radiosity patches with texture scale\n");
             Log("    -coring #       : Set lighting threshold before blackness\n");
             Log("    -dlight #       : Set direct lighting threshold\n");
-            Log("    -nolerp         : Disable radiosity interpolation, nearest point instead\n\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
             Log("    -texlightgap #  : Set global gap distance for texlights\n");
             Log("    -scale #        : Set global light scaling value\n");

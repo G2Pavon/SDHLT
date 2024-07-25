@@ -49,7 +49,6 @@
 #define DEFAULT_PRE25UPDATE         false
 #define DEFAULT_FASTMODE			false
 #define DEFAULT_METHOD eMethodSparseVismatrix
-#define DEFAULT_LERP_ENABLED        true
 #define DEFAULT_STUDIOSHADOW        true //seedee
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
@@ -387,7 +386,6 @@ extern unsigned g_num_patches;
 extern float    g_lightscale;
 extern float    g_dlight_threshold;
 extern float    g_coring;
-extern int      g_lerp_enabled;
 
 extern void     MakeShadowSplits();
 
