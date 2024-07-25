@@ -142,13 +142,7 @@
 	#define DEFAULT_EMBEDLIGHTMAP_RESOLUTION 1
 	#define DEFAULT_TEXLIGHTGAP 0.0
 
-
-#ifdef SYSTEM_WIN32
-#define DEFAULT_ESTIMATE    false
-#endif
-#ifdef SYSTEM_POSIX
 #define DEFAULT_ESTIMATE    true
-#endif
 
 // Ideally matches what is in the FGD :)
 #define SPAWNFLAG_NOBLEEDADJUST    (1 << 0)

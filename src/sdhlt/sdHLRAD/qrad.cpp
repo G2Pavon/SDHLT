@@ -2521,12 +2521,6 @@ static void     Usage()
     Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n"); //lightdata
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
-#ifdef SYSTEM_WIN32
-    Log("    -estimate       : display estimated time during compile\n");
-#endif
-#ifdef SYSTEM_POSIX
-    Log("    -noestimate     : Do not display continuous compile time estimates\n");
-#endif
     Log("    -verbose        : compile with verbose messages\n");
     Log("    -noinfo         : Do not show tool configuration information\n");
     Log("    -dev #          : compile with developer message\n\n");
@@ -2610,7 +2604,6 @@ static void     Settings()
 
     Log("verbose              [ %17s ] [ %17s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer            [ %17d ] [ %17d ]\n", g_developer, DEFAULT_DEVELOPER);
-    Log("estimate             [ %17s ] [ %17s ]\n", g_estimate ? "on" : "off", DEFAULT_ESTIMATE ? "on" : "off");
     Log("max texture memory   [ %17d ] [ %17d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 		Log("max lighting memory  [ %17d ] [ %17d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA); //lightdata
 
@@ -3081,18 +3074,6 @@ int             main(const int argc, char** argv)
                 Usage();
             }
         }
-#ifdef SYSTEM_WIN32
-        else if (!strcasecmp(argv[i], "-estimate"))
-        {
-            g_estimate = true;
-        }
-#endif
-#ifdef SYSTEM_POSIX
-        else if (!strcasecmp(argv[i], "-noestimate"))
-        {
-            g_estimate = false;
-        }
-#endif
 #ifdef ZHLT_NETVIS
         else if (!strcasecmp(argv[i], "-client"))
         {

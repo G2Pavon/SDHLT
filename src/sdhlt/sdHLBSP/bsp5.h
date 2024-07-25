@@ -49,14 +49,7 @@
 #define DEFAULT_WATERVIS        false
 #define DEFAULT_INFO            true
 
-
-#ifdef SYSTEM_WIN32
-#define DEFAULT_ESTIMATE        false
-#endif
-
-#ifdef SYSTEM_POSIX
 #define DEFAULT_ESTIMATE        true
-#endif
 
 
 #define	MAXEDGES			48                 // 32

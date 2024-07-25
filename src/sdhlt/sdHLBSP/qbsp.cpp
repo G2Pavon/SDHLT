@@ -1262,12 +1262,6 @@ static void     Usage()
     Log("    -lightdata #   : Alter maximum lighting memory limit (in kb)\n");
     Log("    -low | -high   : run program an altered priority level\n");
     Log("    -threads #     : manually specify the number of threads to run\n");
-#ifdef SYSTEM_WIN32
-    Log("    -estimate      : display estimated time during compile\n");
-#endif
-#ifdef SYSTEM_POSIX
-    Log("    -noestimate    : do not display continuous compile time estimates\n");
-#endif
 
     Log("    -nonulltex     : Don't strip NULL faces\n");
 
@@ -1309,7 +1303,6 @@ static void     Settings()
 
     Log("verbose             [ %7s ] [ %7s ]\n", g_verbose ? "on" : "off", DEFAULT_VERBOSE ? "on" : "off");
     Log("developer           [ %7d ] [ %7d ]\n", g_developer, DEFAULT_DEVELOPER);
-    Log("estimate            [ %7s ] [ %7s ]\n", g_estimate ? "on" : "off", DEFAULT_ESTIMATE ? "on" : "off");
     Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
 
     switch (g_threadpriority)
@@ -1544,21 +1537,6 @@ int             main(const int argc, char** argv)
         {
             g_noinsidefill = true;
         }
-
-#ifdef SYSTEM_WIN32
-        else if (!strcasecmp(argv[i], "-estimate"))
-        {
-            g_estimate = true;
-        }
-#endif
-
-#ifdef SYSTEM_POSIX
-        else if (!strcasecmp(argv[i], "-noestimate"))
-        {
-            g_estimate = false;
-        }
-#endif
-
 #ifdef ZHLT_NETVIS
         else if (!strcasecmp(argv[i], "-client"))
         {
