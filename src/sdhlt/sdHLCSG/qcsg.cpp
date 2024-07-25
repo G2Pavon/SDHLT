@@ -15,7 +15,6 @@ bool            g_onlyents = DEFAULT_ONLYENTS;          // onlyents mode "-onlye
 bool            g_wadtextures = DEFAULT_WADTEXTURES;    // "-nowadtextures"
 bool            g_skyclip = DEFAULT_SKYCLIP;            // no sky clipping "-noskyclip"
 bool            g_estimate = DEFAULT_ESTIMATE;          // progress estimates "-estimate"
-bool            g_info = DEFAULT_INFO;                  // "-info" ?
 
 cliptype		g_cliptype = DEFAULT_CLIPTYPE;			// "-cliptype <value>"
 
@@ -1059,7 +1058,6 @@ static void     Usage() // prints out usage sheet
     Log("    -low | -high     : run program an altered priority level\n");
     Log("    -threads #       : manually specify the number of threads to run\n");
     Log("    -verbose         : compile with verbose messages\n");
-    Log("    -noinfo          : Do not show tool configuration information\n");
 
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 	Log("    -notextconvert   : don't convert game_text message from Windows ANSI to UTF8 format\n");
@@ -1081,9 +1079,6 @@ static void     Usage() // prints out usage sheet
 static void     Settings() // prints out settings sheet
 {
     char*           tmp;
-
-    if (!g_info)
-        return; 
 
     Log("\nCurrent %s Settings\n", g_Program);
     Log("Name                 |  Setting  |  Default\n"
@@ -1235,10 +1230,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-verbose"))
         {
             g_verbose = true;
-        }
-        else if (!strcasecmp(argv[i], "-noinfo"))
-        {
-            g_info = false;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {

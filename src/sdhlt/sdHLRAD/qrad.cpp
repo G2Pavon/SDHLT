@@ -119,7 +119,6 @@ bool g_drawnudge = false;
 // Cosine of smoothing angle(in radians)
 float           g_coring = DEFAULT_CORING;                 // Light threshold to force to blackness(minimizes lightmaps)
 bool            g_estimate = DEFAULT_ESTIMATE;
-bool            g_info = DEFAULT_INFO;
 
 
 // Patch creation and subdivision criteria
@@ -2522,7 +2521,6 @@ static void     Usage()
     Log("    -low | -high    : run program an altered priority level\n");
     Log("    -threads #      : manually specify the number of threads to run\n");
     Log("    -verbose        : compile with verbose messages\n");
-    Log("    -noinfo         : Do not show tool configuration information\n");
     Log("    -dev #          : compile with developer message\n\n");
 
     // ------------------------------------------------------------------------
@@ -2582,11 +2580,6 @@ static void     Settings()
     char*           tmp;
     char            buf1[1024];
     char            buf2[1024];
-
-    if (!g_info)
-    {
-        return;
-    }
 
     Log("\n-= Current %s Settings =-\n", g_Program);
     Log("Name                | Setting             | Default\n"
@@ -3053,10 +3046,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-verbose"))
         {
             g_verbose = true;
-        }
-        else if (!strcasecmp(argv[i], "-noinfo"))
-        {
-            g_info = false;
         }
         else if (!strcasecmp(argv[i], "-threads"))
         {

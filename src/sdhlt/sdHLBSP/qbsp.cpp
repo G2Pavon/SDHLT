@@ -62,7 +62,6 @@ bool			g_noinsidefill = DEFAULT_NOINSIDEFILL;
 bool            g_notjunc = DEFAULT_NOTJUNC;
 bool			g_nobrink = DEFAULT_NOBRINK;
 bool            g_estimate = DEFAULT_ESTIMATE;  // estimate mode "-estimate"
-bool            g_info = DEFAULT_INFO;
 bool            g_bLeakOnly = DEFAULT_LEAKONLY; // leakonly mode "-leakonly"
 bool            g_bLeaked = false;
 int             g_subdivide_size = DEFAULT_SUBDIVIDE_SIZE;
@@ -1271,7 +1270,6 @@ static void     Usage()
 	Log("    -viewportal    : Show portal boundaries in 'mapname_portal.pts' file\n");
 
     Log("    -verbose       : compile with verbose messages\n");
-    Log("    -noinfo        : Do not show tool configuration information\n");
     Log("    -dev #         : compile with developer message\n\n");
     Log("    mapfile        : The mapfile to compile\n\n");
 
@@ -1284,9 +1282,6 @@ static void     Usage()
 static void     Settings()
 {
     char*           tmp;
-
-    if (!g_info)
-        return;
 
     Log("\nCurrent %s Settings\n", g_Program);
     Log("Name               |  Setting  |  Default\n" "-------------------|-----------|-------------------------\n");
@@ -1566,10 +1561,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-verbose"))
         {
             g_verbose = true;
-        }
-        else if (!strcasecmp(argv[i], "-noinfo"))
-        {
-            g_info = false;
         }
         else if (!strcasecmp(argv[i], "-leakonly"))
         {

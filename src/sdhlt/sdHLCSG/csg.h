@@ -35,7 +35,6 @@
 #define DEFAULT_ONLYENTS    false
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP     true
-#define DEFAULT_INFO        true
 
 #define FLOOR_Z 0.7 // Quake default
 #define DEFAULT_CLIPTYPE clip_simple //clip_legacy //--vluzacn

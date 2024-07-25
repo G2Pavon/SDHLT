@@ -66,7 +66,6 @@ bool            g_fastvis = DEFAULT_FASTVIS;
 bool            g_fullvis = DEFAULT_FULLVIS;
 bool            g_nofixprt = DEFAULT_NOFIXPRT;                   //seedee
 bool            g_estimate = DEFAULT_ESTIMATE;
-bool            g_info = DEFAULT_INFO;
 
 // AJM: MVD
 unsigned int	g_maxdistance = DEFAULT_MAXDISTANCE_RANGE;
@@ -1109,7 +1108,6 @@ static void     Usage()
     Log("    -threads #      : manually specify the number of threads to run\n");
 	Log("    -maxdistance #  : Alter the maximum distance for visibility\n");
     Log("    -verbose        : compile with verbose messages\n");
-    Log("    -noinfo         : Do not show tool configuration information\n");
     Log("    -dev #          : compile with developer message\n\n");
     Log("    mapfile         : The mapfile to compile\n\n");
 
@@ -1133,11 +1131,6 @@ static void     Usage()
 static void     Settings()
 {
     char*           tmp;
-
-    if (!g_info)
-    {
-        return; 
-    }
 
     Log("\n-= Current %s Settings =-\n", g_Program);
     Log("Name               |  Setting  |  Default\n" "-------------------|-----------|-------------------------\n");
@@ -1458,11 +1451,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-verbose"))
         {
             g_verbose = true;
-        }
-
-        else if (!strcasecmp(argv[i], "-noinfo"))
-        {
-            g_info = false;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {
