@@ -57,7 +57,6 @@ void Usage(ProgramType programType)
             Log(" %s.exe <mapname.map> -argument", g_Program);
             Log("\n %s Arguments :\n\n", g_Program);
             Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
-            Log("    -pre25          : Optimize compile for pre-Half-Life 25th anniversary update.\n");
             Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
             Log("    -bounce #       : Set number of radiosity bounces\n");
             Log("    -limiter #      : Set light clipping threshold (-1=None)\n");

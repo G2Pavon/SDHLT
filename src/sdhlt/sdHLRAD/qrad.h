@@ -46,7 +46,6 @@
 #endif
 #include <string>
 
-#define DEFAULT_PRE25UPDATE         false
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
 // 188 is the fullbright threshold for Goldsrc before 25th anniversary, regardless of the brightness and gamma settings in the graphic options. This is no longer necessary

@@ -29,7 +29,6 @@
  * every surface must be divided into at least two g_patches each axis
  */
 
-bool            g_pre25update = DEFAULT_PRE25UPDATE;
 
 vec_t           g_fade = DEFAULT_FADE;
 
@@ -2225,7 +2224,6 @@ static void     Settings()
     }
     Log("priority             [ %17s ] [ %17s ]\n", tmp, "Normal");
     Log("\n");
-	Log("pre-25th anniversary [ %17s ] [ %17s ]\n", g_pre25update ? "on" : "off", DEFAULT_PRE25UPDATE ? "on" : "off");
     Log("oversampling (-extra)[ %17s ] [ %17s ]\n", g_extra ? "on" : "off", DEFAULT_EXTRA ? "on" : "off");
     Log("bounces              [ %17d ] [ %17d ]\n", g_numbounce, DEFAULT_BOUNCE);
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
@@ -2531,11 +2529,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-pre25")) //Pre25 should be after everything else to override
-		{
-			g_pre25update = true;
-            g_limitthreshold = 188.0;
-		}
         else if (argv[i][0] == '-')
         {
             Log("Unknown option \"%s\"\n", argv[i]);
