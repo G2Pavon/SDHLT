@@ -31,7 +31,7 @@ public:
         memset(this, 0, sizeof(*this));
     }
 
-// Construction
+    // Construction
 public:
     TimeCounter()
     {
@@ -46,4 +46,4 @@ protected:
     double accum;
 };
 
-#endif//TIMECOUNTER_H__
+#endif // TIMECOUNTER_H__

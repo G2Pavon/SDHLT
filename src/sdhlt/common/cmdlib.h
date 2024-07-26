@@ -5,10 +5,10 @@
 #pragma once
 #endif
 
-//#define MODIFICATIONS_STRING "Submit detailed bug reports to (zoner@gearboxsoftware.com)\n"
-//#define MODIFICATIONS_STRING "Submit detailed bug reports to (merlinis@bigpond.net.au)\n"
-//#define MODIFICATIONS_STRING "Submit detailed bug reports to (amckern@yahoo.com)\n"
-//#define MODIFICATIONS_STRING "Submit detailed bug reports to (vluzacn@163.com)\n" //--vluzacn
+// #define MODIFICATIONS_STRING "Submit detailed bug reports to (zoner@gearboxsoftware.com)\n"
+// #define MODIFICATIONS_STRING "Submit detailed bug reports to (merlinis@bigpond.net.au)\n"
+// #define MODIFICATIONS_STRING "Submit detailed bug reports to (amckern@yahoo.com)\n"
+// #define MODIFICATIONS_STRING "Submit detailed bug reports to (vluzacn@163.com)\n" //--vluzacn
 #define MODIFICATIONS_STRING "Submit detailed bug reports to (github.com/seedee/SDHLT/issues)\n"
 
 #ifdef _DEBUG
@@ -21,10 +21,10 @@
 
 #define SDHLT_VERSIONSTRING "v1.2.0"
 
-#if !defined (SDHLCSG) && !defined (SDHLBSP) && !defined (SDHLVIS) && !defined (SDHLRAD) //seedee
+#if !defined(SDHLCSG) && !defined(SDHLBSP) && !defined(SDHLVIS) && !defined(SDHLRAD) // seedee
 #error "You must define one of these in the settings of each project: SDHLCSG, SDHLBSP, SDHLVIS, SDHLRAD. The most likely cause is that you didn't load the project from the .sln file."
 #endif
-#if !defined (VERSION_32BIT) && !defined (VERSION_64BIT) && !defined (VERSION_LINUX) && !defined (VERSION_OTHER) //--vluzacn
+#if !defined(VERSION_32BIT) && !defined(VERSION_64BIT) && !defined(VERSION_LINUX) && !defined(VERSION_OTHER) //--vluzacn
 #error "You must define one of these in the settings of each project: VERSION_32BIT, VERSION_64BIT, VERSION_LINUX, VERSION_OTHER. The most likely cause is that you didn't load the project from the .sln file."
 #endif
 
@@ -53,18 +53,18 @@
 
 // tool specific settings below only mean a recompile of the tool affected
 
-	#ifdef SYSTEM_WIN32
+#ifdef SYSTEM_WIN32
 #define HLCSG_GAMETEXTMESSAGE_UTF8 //--vluzacn
-	#endif
+#endif
 
 //=====================================================================
 
-#if _MSC_VER <1400
-#define strcpy_s strcpy //--vluzacn
+#if _MSC_VER < 1400
+#define strcpy_s strcpy   //--vluzacn
 #define sprintf_s sprintf //--vluzacn
 #endif
 #if _MSC_VER >= 1400
-#pragma warning(disable: 4996)
+#pragma warning(disable : 4996)
 #endif
 
 #ifdef __MINGW32__
@@ -87,15 +87,14 @@
 #include "mathtypes.h"
 
 #ifdef SYSTEM_WIN32
-#pragma warning(disable: 4127)                      // conditional expression is constant
-#pragma warning(disable: 4115)                      // named type definition in parentheses
-#pragma warning(disable: 4244)                      // conversion from 'type' to type', possible loss of data
+#pragma warning(disable : 4127) // conditional expression is constant
+#pragma warning(disable : 4115) // named type definition in parentheses
+#pragma warning(disable : 4244) // conversion from 'type' to type', possible loss of data
 // AJM
-#pragma warning(disable: 4786)                      // identifier was truncated to '255' characters in the browser information
-#pragma warning(disable: 4305)                      // truncation from 'const double' to 'float'
-#pragma warning(disable: 4800)                     // forcing value to bool 'true' or 'false' (performance warning)
+#pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
+#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
+#pragma warning(disable : 4800) // forcing value to bool 'true' or 'false' (performance warning)
 #endif
-
 
 #ifdef STDC_HEADERS
 #include <stdio.h>
@@ -118,49 +117,49 @@
 #endif
 
 #ifdef SYSTEM_WIN32
-#define SYSTEM_SLASH_CHAR  '\\'
-#define SYSTEM_SLASH_STR   "\\"
+#define SYSTEM_SLASH_CHAR '\\'
+#define SYSTEM_SLASH_STR "\\"
 #endif
 #ifdef SYSTEM_POSIX
-#define SYSTEM_SLASH_CHAR  '/'
-#define SYSTEM_SLASH_STR   "/"
+#define SYSTEM_SLASH_CHAR '/'
+#define SYSTEM_SLASH_STR "/"
 #endif
 
 // the dec offsetof macro doesn't work very well...
-#define myoffsetof(type,identifier) ((size_t)&((type*)0)->identifier)
-#define sizeofElement(type,identifier) (sizeof((type*)0)->identifier)
+#define myoffsetof(type, identifier) ((size_t) & ((type *)0)->identifier)
+#define sizeofElement(type, identifier) (sizeof((type *)0)->identifier)
 
 #ifdef SYSTEM_POSIX
-extern char*    strupr(char* string);
-extern char*    strlwr(char* string);
+extern char *strupr(char *string);
+extern char *strlwr(char *string);
 #endif
-extern const char* stristr(const char* const string, const char* const substring);
-extern bool CDECL FORMAT_PRINTF(3,4) safe_snprintf(char* const dest, const size_t count, const char* const args, ...);
-extern bool     safe_strncpy(char* const dest, const char* const src, const size_t count);
-extern bool     safe_strncat(char* const dest, const char* const src, const size_t count);
-extern bool     TerminatedString(const char* buffer, const int size);
+extern const char *stristr(const char *const string, const char *const substring);
+extern bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...);
+extern bool safe_strncpy(char *const dest, const char *const src, const size_t count);
+extern bool safe_strncat(char *const dest, const char *const src, const size_t count);
+extern bool TerminatedString(const char *buffer, const int size);
 
-extern char*    FlipSlashes(char* string);
+extern char *FlipSlashes(char *string);
 
-extern double   I_FloatTime();
+extern double I_FloatTime();
 
-extern int      CheckParm(char* check);
+extern int CheckParm(char *check);
 
-extern void     DefaultExtension(char* path, const char* extension);
-extern void     DefaultPath(char* path, char* basepath);
-extern void     StripFilename(char* path);
-extern void     StripExtension(char* path);
+extern void DefaultExtension(char *path, const char *extension);
+extern void DefaultPath(char *path, char *basepath);
+extern void StripFilename(char *path);
+extern void StripExtension(char *path);
 
-extern void     ExtractFile(const char* const path, char* dest);
-extern void     ExtractFilePath(const char* const path, char* dest);
-extern void     ExtractFileBase(const char* const path, char* dest);
-extern void     ExtractFileExtension(const char* const path, char* dest);
+extern void ExtractFile(const char *const path, char *dest);
+extern void ExtractFilePath(const char *const path, char *dest);
+extern void ExtractFileBase(const char *const path, char *dest);
+extern void ExtractFileExtension(const char *const path, char *dest);
 
-extern short    BigShort(short l);
-extern short    LittleShort(short l);
-extern int      BigLong(int l);
-extern int      LittleLong(int l);
-extern float    BigFloat(float l);
-extern float    LittleFloat(float l);
+extern short BigShort(short l);
+extern short LittleShort(short l);
+extern int BigLong(int l);
+extern int LittleLong(int l);
+extern float BigFloat(float l);
+extern float LittleFloat(float l);
 
-#endif //CMDLIB_H__
+#endif // CMDLIB_H__

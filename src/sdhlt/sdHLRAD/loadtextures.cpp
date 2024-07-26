@@ -38,21 +38,19 @@ typedef struct wadfile_s
 wadfile_t *g_wadfiles = NULL;
 bool g_wadfiles_opened;
 
-static int CDECL lump_sorter_by_name (const void *lump1, const void *lump2)
+static int CDECL lump_sorter_by_name(const void *lump1, const void *lump2)
 {
 	lumpinfo_t *plump1 = (lumpinfo_t *)lump1;
 	lumpinfo_t *plump2 = (lumpinfo_t *)lump2;
-	return strcasecmp (plump1->name, plump2->name);
+	return strcasecmp(plump1->name, plump2->name);
 }
 
-void OpenWadFile (const char *name
-	, bool fullpath = false
-	)
+void OpenWadFile(const char *name, bool fullpath = false)
 {
 	int i;
 	wadfile_t *wad;
-	wad = (wadfile_t *)malloc (sizeof (wadfile_t));
-	hlassume (wad != NULL, assume_NoMemory);
+	wad = (wadfile_t *)malloc(sizeof(wadfile_t));
+	hlassume(wad != NULL, assume_NoMemory);
 	{
 		wadfile_t **pos;
 		for (pos = &g_wadfiles; *pos; pos = &(*pos)->next)
@@ -60,62 +58,62 @@ void OpenWadFile (const char *name
 		wad->next = *pos;
 		*pos = wad;
 	}
-   if (fullpath)
-   {
-	safe_snprintf (wad->path, _MAX_PATH, "%s", name);
-	wad->file = fopen (wad->path, "rb");
-	if (!wad->file)
+	if (fullpath)
 	{
-		Error ("Couldn't open %s", wad->path);
-	}
-   }
-   else
-   {
-	waddir_t *dir;
-	for (dir = g_waddirs; dir; dir = dir->next)
-	{
-		safe_snprintf (wad->path, _MAX_PATH, "%s\\%s", dir->path, name);
-		wad->file = fopen (wad->path, "rb");
-		if (wad->file)
+		safe_snprintf(wad->path, _MAX_PATH, "%s", name);
+		wad->file = fopen(wad->path, "rb");
+		if (!wad->file)
 		{
-			break;
+			Error("Couldn't open %s", wad->path);
 		}
 	}
-	if (!dir)
+	else
 	{
-		Fatal (assume_COULD_NOT_LOCATE_WAD, "Could not locate wad file %s", name);
-		return;
+		waddir_t *dir;
+		for (dir = g_waddirs; dir; dir = dir->next)
+		{
+			safe_snprintf(wad->path, _MAX_PATH, "%s\\%s", dir->path, name);
+			wad->file = fopen(wad->path, "rb");
+			if (wad->file)
+			{
+				break;
+			}
+		}
+		if (!dir)
+		{
+			Fatal(assume_COULD_NOT_LOCATE_WAD, "Could not locate wad file %s", name);
+			return;
+		}
 	}
-   }
-	Log ("Using Wadfile: %s\n", wad->path);
-	wad->filesize = q_filelength (wad->file);
+	Log("Using Wadfile: %s\n", wad->path);
+	wad->filesize = q_filelength(wad->file);
 	struct
 	{
 		char identification[4];
 		int numlumps;
 		int infotableofs;
 	} wadinfo;
-	if (wad->filesize < (int)sizeof (wadinfo))
+	if (wad->filesize < (int)sizeof(wadinfo))
 	{
-		Error ("Invalid wad file '%s'.", wad->path);
+		Error("Invalid wad file '%s'.", wad->path);
 	}
-	SafeRead (wad->file, &wadinfo, sizeof (wadinfo));
-	wadinfo.numlumps  = LittleLong(wadinfo.numlumps);
+	SafeRead(wad->file, &wadinfo, sizeof(wadinfo));
+	wadinfo.numlumps = LittleLong(wadinfo.numlumps);
 	wadinfo.infotableofs = LittleLong(wadinfo.infotableofs);
-	if (strncmp (wadinfo.identification, "WAD2", 4) && strncmp (wadinfo.identification, "WAD3", 4))
-		Error ("%s isn't a Wadfile!", wad->path);
+	if (strncmp(wadinfo.identification, "WAD2", 4) && strncmp(wadinfo.identification, "WAD3", 4))
+		Error("%s isn't a Wadfile!", wad->path);
 	wad->numlumps = wadinfo.numlumps;
-	if (wad->numlumps < 0 || wadinfo.infotableofs < 0 || wadinfo.infotableofs + wad->numlumps * (int)sizeof (lumpinfo_t) > wad->filesize)
+	if (wad->numlumps < 0 || wadinfo.infotableofs < 0 || wadinfo.infotableofs + wad->numlumps * (int)sizeof(lumpinfo_t) > wad->filesize)
 	{
-		Error ("Invalid wad file '%s'.", wad->path);
+		Error("Invalid wad file '%s'.", wad->path);
 	}
-	wad->lumpinfos = (lumpinfo_t *)malloc (wad->numlumps * sizeof (lumpinfo_t));
-	hlassume (wad->lumpinfos != NULL, assume_NoMemory);
-    if (fseek (wad->file, wadinfo.infotableofs, SEEK_SET))
-		Error ("File read failure: %s", wad->path);
+	wad->lumpinfos = (lumpinfo_t *)malloc(wad->numlumps * sizeof(lumpinfo_t));
+	hlassume(wad->lumpinfos != NULL, assume_NoMemory);
+	if (fseek(wad->file, wadinfo.infotableofs, SEEK_SET))
+		Error("File read failure: %s", wad->path);
 	for (i = 0; i < wad->numlumps; i++)
 	{
-		SafeRead (wad->file, &wad->lumpinfos[i], sizeof (lumpinfo_t));
+		SafeRead(wad->file, &wad->lumpinfos[i], sizeof(lumpinfo_t));
 		if (!TerminatedString(wad->lumpinfos[i].name, 16))
 		{
 			wad->lumpinfos[i].name[16 - 1] = 0;
@@ -125,65 +123,65 @@ void OpenWadFile (const char *name
 		wad->lumpinfos[i].disksize = LittleLong(wad->lumpinfos[i].disksize);
 		wad->lumpinfos[i].size = LittleLong(wad->lumpinfos[i].size);
 	}
-	qsort (wad->lumpinfos, wad->numlumps, sizeof (lumpinfo_t), lump_sorter_by_name);
+	qsort(wad->lumpinfos, wad->numlumps, sizeof(lumpinfo_t), lump_sorter_by_name);
 }
 
-void TryOpenWadFiles ()
+void TryOpenWadFiles()
 {
 	if (!g_wadfiles_opened)
 	{
 		g_wadfiles_opened = true;
 		char filename[_MAX_PATH];
 		safe_snprintf(filename, _MAX_PATH, "%s.wa_", g_Mapname);
-	   if (q_exists (filename))
-	   {
-		OpenWadFile (filename, true);
-	   }
-	   else
-	   {
-		Warning ("Couldn't open %s", filename);
-		Log ("Opening wad files from directories:\n");
-		if (!g_waddirs)
+		if (q_exists(filename))
 		{
-			Warning ("No wad directories have been set.");
+			OpenWadFile(filename, true);
 		}
 		else
 		{
-			waddir_t *dir;
-			for (dir = g_waddirs; dir; dir = dir->next)
+			Warning("Couldn't open %s", filename);
+			Log("Opening wad files from directories:\n");
+			if (!g_waddirs)
 			{
-				Log ("  %s\n", dir->path);
-			}
-		}
-		const char *value = ValueForKey (&g_entities[0], "wad");
-		char path[MAX_VAL];
-		int i, j;
-		for (i = 0, j = 0; i < strlen(value) + 1; i++)
-		{
-			if (value[i] == ';' || value[i] == '\0')
-			{
-				path[j] = '\0';
-				if (path[0])
-				{
-					char name[MAX_VAL];
-					ExtractFile (path, name);
-					DefaultExtension (name, ".wad");
-					OpenWadFile (name);
-				}
-				j = 0;
+				Warning("No wad directories have been set.");
 			}
 			else
 			{
-				path[j] = value[i];
-				j++;
+				waddir_t *dir;
+				for (dir = g_waddirs; dir; dir = dir->next)
+				{
+					Log("  %s\n", dir->path);
+				}
+			}
+			const char *value = ValueForKey(&g_entities[0], "wad");
+			char path[MAX_VAL];
+			int i, j;
+			for (i = 0, j = 0; i < strlen(value) + 1; i++)
+			{
+				if (value[i] == ';' || value[i] == '\0')
+				{
+					path[j] = '\0';
+					if (path[0])
+					{
+						char name[MAX_VAL];
+						ExtractFile(path, name);
+						DefaultExtension(name, ".wad");
+						OpenWadFile(name);
+					}
+					j = 0;
+				}
+				else
+				{
+					path[j] = value[i];
+					j++;
+				}
 			}
 		}
-	   }
-		CheckFatal ();
+		CheckFatal();
 	}
 }
 
-void TryCloseWadFiles ()
+void TryCloseWadFiles()
 {
 	if (g_wadfiles_opened)
 	{
@@ -192,26 +190,26 @@ void TryCloseWadFiles ()
 		for (wadfile = g_wadfiles; wadfile; wadfile = next)
 		{
 			next = wadfile->next;
-			free (wadfile->lumpinfos);
-			fclose (wadfile->file);
-			free (wadfile);
+			free(wadfile->lumpinfos);
+			fclose(wadfile->file);
+			free(wadfile);
 		}
 		g_wadfiles = NULL;
 	}
 }
 
-void DefaultTexture (radtexture_t *tex, const char *name)
+void DefaultTexture(radtexture_t *tex, const char *name)
 {
 	int i;
 	tex->width = 16;
 	tex->height = 16;
-	strcpy (tex->name, name);
+	strcpy(tex->name, name);
 	tex->name[16 - 1] = '\0';
-	tex->canvas = (byte *)malloc (tex->width * tex->height);
-	hlassume (tex->canvas != NULL, assume_NoMemory);
+	tex->canvas = (byte *)malloc(tex->width * tex->height);
+	hlassume(tex->canvas != NULL, assume_NoMemory);
 	for (i = 0; i < 256; i++)
 	{
-		VectorFill (tex->palette[i], 0x80);
+		VectorFill(tex->palette[i], 0x80);
 	}
 	for (i = 0; i < tex->width * tex->height; i++)
 	{
@@ -219,173 +217,173 @@ void DefaultTexture (radtexture_t *tex, const char *name)
 	}
 }
 
-void LoadTexture (radtexture_t *tex, const miptex_t *mt, int size)
+void LoadTexture(radtexture_t *tex, const miptex_t *mt, int size)
 {
 	int i, j;
 	const miptex_t *header = mt;
 	const byte *data = (const byte *)mt;
 	tex->width = header->width;
 	tex->height = header->height;
-	strcpy (tex->name, header->name);
+	strcpy(tex->name, header->name);
 	tex->name[16 - 1] = '\0';
 	if (tex->width <= 0 || tex->height <= 0 ||
 		tex->width % (2 * 1 << (MIPLEVELS - 1)) != 0 || tex->height % (2 * (1 << (MIPLEVELS - 1))) != 0)
 	{
-		Error ("Texture '%s': dimension (%dx%d) is not multiple of %d.", tex->name, tex->width, tex->height, 2 * (1 << (MIPLEVELS - 1)));
+		Error("Texture '%s': dimension (%dx%d) is not multiple of %d.", tex->name, tex->width, tex->height, 2 * (1 << (MIPLEVELS - 1)));
 	}
 	int mipsize;
 	for (mipsize = 0, i = 0; i < MIPLEVELS; i++)
 	{
-		if ((int)mt->offsets[i] != (int)sizeof (miptex_t) + mipsize)
+		if ((int)mt->offsets[i] != (int)sizeof(miptex_t) + mipsize)
 		{
-			Error ("Texture '%s': unexpected miptex offset.", tex->name);
+			Error("Texture '%s': unexpected miptex offset.", tex->name);
 		}
 		mipsize += (tex->width >> i) * (tex->height >> i);
 	}
-	if (size < (int)sizeof (miptex_t) + mipsize + 2 + 256 * 3)
+	if (size < (int)sizeof(miptex_t) + mipsize + 2 + 256 * 3)
 	{
-		Error ("Texture '%s': no enough data.", tex->name);
+		Error("Texture '%s': no enough data.", tex->name);
 	}
-	if (*(unsigned short *)&data[sizeof (miptex_t) + mipsize] != 256)
+	if (*(unsigned short *)&data[sizeof(miptex_t) + mipsize] != 256)
 	{
-		Error ("Texture '%s': palette size is not 256.", tex->name);
+		Error("Texture '%s': palette size is not 256.", tex->name);
 	}
-	tex->canvas = (byte *)malloc (tex->width * tex->height);
-	hlassume (tex->canvas != NULL, assume_NoMemory);
+	tex->canvas = (byte *)malloc(tex->width * tex->height);
+	hlassume(tex->canvas != NULL, assume_NoMemory);
 	for (i = 0; i < tex->height; i++)
 	{
 		for (j = 0; j < tex->width; j++)
 		{
-			tex->canvas[i * tex->width + j] = data[sizeof (miptex_t) + i * tex->width + j];
+			tex->canvas[i * tex->width + j] = data[sizeof(miptex_t) + i * tex->width + j];
 		}
 	}
 	for (i = 0; i < 256; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
-			tex->palette[i][j] = data[sizeof (miptex_t) + mipsize + 2 + i * 3 + j];
+			tex->palette[i][j] = data[sizeof(miptex_t) + mipsize + 2 + i * 3 + j];
 		}
 	}
 }
 
-void LoadTextureFromWad (radtexture_t *tex, const miptex_t *header)
+void LoadTextureFromWad(radtexture_t *tex, const miptex_t *header)
 {
 	tex->width = header->width;
 	tex->height = header->height;
-	strcpy (tex->name, header->name);
+	strcpy(tex->name, header->name);
 	tex->name[16 - 1] = '\0';
 	wadfile_t *wad;
 	for (wad = g_wadfiles; wad; wad = wad->next)
 	{
 		lumpinfo_t temp, *found;
-		strcpy (temp.name, tex->name);
-		found = (lumpinfo_t *)bsearch (&temp, wad->lumpinfos, wad->numlumps, sizeof (lumpinfo_t), lump_sorter_by_name);
+		strcpy(temp.name, tex->name);
+		found = (lumpinfo_t *)bsearch(&temp, wad->lumpinfos, wad->numlumps, sizeof(lumpinfo_t), lump_sorter_by_name);
 		if (found)
 		{
 			if (found->type != 67 || found->compression != 0)
 				continue;
-			if (found->disksize < (int)sizeof (miptex_t) || found->filepos < 0 || found->filepos + found->disksize > wad->filesize)
+			if (found->disksize < (int)sizeof(miptex_t) || found->filepos < 0 || found->filepos + found->disksize > wad->filesize)
 			{
-				Warning ("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
+				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
 				continue;
 			}
-			miptex_t *mt = (miptex_t *)malloc (found->disksize);
-			hlassume (mt != NULL, assume_NoMemory);
-			if (fseek (wad->file, found->filepos, SEEK_SET))
-				Error ("File read failure");
-			SafeRead (wad->file, mt, found->disksize);
+			miptex_t *mt = (miptex_t *)malloc(found->disksize);
+			hlassume(mt != NULL, assume_NoMemory);
+			if (fseek(wad->file, found->filepos, SEEK_SET))
+				Error("File read failure");
+			SafeRead(wad->file, mt, found->disksize);
 			if (!TerminatedString(mt->name, 16))
 			{
 				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
-				free (mt);
+				free(mt);
 				continue;
 			}
-			if (strcasecmp (mt->name, tex->name))
+			if (strcasecmp(mt->name, tex->name))
 			{
 				Warning("Texture '%s': texture name '%s' differs from its reference name '%s' in '%s'.", tex->name, mt->name, tex->name, wad->path);
 			}
-			LoadTexture (tex, mt, found->disksize);
-			free (mt);
+			LoadTexture(tex, mt, found->disksize);
+			free(mt);
 			break;
 		}
 	}
 	if (!wad)
 	{
-		Warning ("Texture '%s': texture is not found in wad files.", tex->name);
-		DefaultTexture (tex, tex->name);
+		Warning("Texture '%s': texture is not found in wad files.", tex->name);
+		DefaultTexture(tex, tex->name);
 		return;
 	}
 }
 
-void LoadTextures ()
+void LoadTextures()
 {
-	Log ("Load Textures:\n");
-	g_numtextures = g_texdatasize? ((dmiptexlump_t *)g_dtexdata)->nummiptex: 0;
-	g_textures = (radtexture_t *)malloc (g_numtextures * sizeof (radtexture_t));
-	hlassume (g_textures != NULL, assume_NoMemory);
+	Log("Load Textures:\n");
+	g_numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	g_textures = (radtexture_t *)malloc(g_numtextures * sizeof(radtexture_t));
+	hlassume(g_textures != NULL, assume_NoMemory);
 	int i;
 	for (i = 0; i < g_numtextures; i++)
 	{
 		int offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
 		int size = g_texdatasize - offset;
 		radtexture_t *tex = &g_textures[i];
-		if (offset < 0 || size < (int)sizeof (miptex_t))
+		if (offset < 0 || size < (int)sizeof(miptex_t))
 		{
-			Warning ("Invalid texture data in '%s'.", g_source);
-			DefaultTexture (tex, "");
+			Warning("Invalid texture data in '%s'.", g_source);
+			DefaultTexture(tex, "");
 		}
 		else
 		{
 			miptex_t *mt = (miptex_t *)&g_dtexdata[offset];
 			if (mt->offsets[0])
 			{
-				LoadTexture (tex, mt, size);
+				LoadTexture(tex, mt, size);
 			}
 			else
 			{
-				TryOpenWadFiles ();
-				LoadTextureFromWad (tex, mt);
+				TryOpenWadFiles();
+				LoadTextureFromWad(tex, mt);
 			}
 		}
 		{
 			vec3_t total;
-			VectorClear (total);
+			VectorClear(total);
 			for (int j = 0; j < tex->width * tex->height; j++)
 			{
 				vec3_t reflectivity;
 				if (tex->name[0] == '{' && tex->canvas[j] == 0xFF)
 				{
-					VectorFill (reflectivity, 0.0);
+					VectorFill(reflectivity, 0.0);
 				}
 				else
 				{
-					VectorScale (tex->palette[tex->canvas[j]], 1.0/255.0, reflectivity);
+					VectorScale(tex->palette[tex->canvas[j]], 1.0 / 255.0, reflectivity);
 					for (int k = 0; k < 3; k++)
 					{
-						reflectivity[k] = pow (reflectivity[k], 1.76f); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
+						reflectivity[k] = pow(reflectivity[k], 1.76f); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 					}
-					VectorScale (reflectivity, 0.7f, reflectivity);
+					VectorScale(reflectivity, 0.7f, reflectivity);
 				}
-				VectorAdd (total, reflectivity, total);
+				VectorAdd(total, reflectivity, total);
 			}
-			VectorScale (total, 1.0 / (double)(tex->width * tex->height), total);
-			VectorCopy (total, tex->reflectivity);
-			if (VectorMaximum (tex->reflectivity) > 1.0 + NORMAL_EPSILON)
+			VectorScale(total, 1.0 / (double)(tex->width * tex->height), total);
+			VectorCopy(total, tex->reflectivity);
+			if (VectorMaximum(tex->reflectivity) > 1.0 + NORMAL_EPSILON)
 			{
-				Warning ("Texture '%s': reflectivity (%f,%f,%f) greater than 1.0.", tex->name, tex->reflectivity[0], tex->reflectivity[1], tex->reflectivity[2]);
+				Warning("Texture '%s': reflectivity (%f,%f,%f) greater than 1.0.", tex->name, tex->reflectivity[0], tex->reflectivity[1], tex->reflectivity[2]);
 			}
 		}
 	}
-	Log ("%i textures referenced\n", g_numtextures);
-	TryCloseWadFiles ();
+	Log("%i textures referenced\n", g_numtextures);
+	TryCloseWadFiles();
 }
-
 
 // color quantization algorithm
 
 #define CQ_DIM 3
 
-template<class T, class T2, class T3> inline void CQ_VectorSubtract (const T a[CQ_DIM], const T2 b[CQ_DIM], T3 c[CQ_DIM])
+template <class T, class T2, class T3>
+inline void CQ_VectorSubtract(const T a[CQ_DIM], const T2 b[CQ_DIM], T3 c[CQ_DIM])
 {
 	for (int x = 0; x < CQ_DIM; x++)
 	{
@@ -393,7 +391,8 @@ template<class T, class T2, class T3> inline void CQ_VectorSubtract (const T a[C
 	}
 }
 
-template<class T, class T2, class T3> inline void CQ_VectorAdd (const T a[CQ_DIM], const T2 b[CQ_DIM], T3 c[CQ_DIM])
+template <class T, class T2, class T3>
+inline void CQ_VectorAdd(const T a[CQ_DIM], const T2 b[CQ_DIM], T3 c[CQ_DIM])
 {
 	for (int x = 0; x < CQ_DIM; x++)
 	{
@@ -401,7 +400,8 @@ template<class T, class T2, class T3> inline void CQ_VectorAdd (const T a[CQ_DIM
 	}
 }
 
-template<class T, class T2> inline void CQ_VectorScale (const T a[CQ_DIM], const T2 b, T c[CQ_DIM])
+template <class T, class T2>
+inline void CQ_VectorScale(const T a[CQ_DIM], const T2 b, T c[CQ_DIM])
 {
 	for (int x = 0; x < CQ_DIM; x++)
 	{
@@ -409,7 +409,8 @@ template<class T, class T2> inline void CQ_VectorScale (const T a[CQ_DIM], const
 	}
 }
 
-template<class T, class T2> inline void CQ_VectorCopy (const T a[CQ_DIM], T2 b[CQ_DIM])
+template <class T, class T2>
+inline void CQ_VectorCopy(const T a[CQ_DIM], T2 b[CQ_DIM])
 {
 	for (int x = 0; x < CQ_DIM; x++)
 	{
@@ -417,7 +418,8 @@ template<class T, class T2> inline void CQ_VectorCopy (const T a[CQ_DIM], T2 b[C
 	}
 }
 
-template<class T> inline void CQ_VectorClear (T a[CQ_DIM])
+template <class T>
+inline void CQ_VectorClear(T a[CQ_DIM])
 {
 	for (int x = 0; x < CQ_DIM; x++)
 	{
@@ -425,7 +427,8 @@ template<class T> inline void CQ_VectorClear (T a[CQ_DIM])
 	}
 }
 
-template<class T> inline T CQ_DotProduct (const T a[CQ_DIM], const T b[CQ_DIM])
+template <class T>
+inline T CQ_DotProduct(const T a[CQ_DIM], const T b[CQ_DIM])
 {
 	T dot = (T)0;
 	for (int x = 0; x < CQ_DIM; x++)
@@ -440,8 +443,7 @@ typedef struct
 	int axis;
 	int dist;
 	double numpoints[2];
-}
-cq_splitter_t; // partition the space into { point: point[axis] < dist } and { point: point[axis] >= dist }
+} cq_splitter_t; // partition the space into { point: point[axis] < dist } and { point: point[axis] >= dist }
 
 typedef struct cq_node_s
 {
@@ -456,8 +458,7 @@ typedef struct cq_node_s
 	bool needsplit;
 	cq_splitter_t bestsplitter;
 	double splitpriority;
-}
-cq_node_t; // a cuboid region; the root node is the entire cube whose size is 255
+} cq_node_t; // a cuboid region; the root node is the entire cube whose size is 255
 
 typedef struct cq_searchnode_s
 {
@@ -468,17 +469,16 @@ typedef struct cq_searchnode_s
 	int planedist;
 
 	int result;
-}
-cq_searchnode_t;
+} cq_searchnode_t;
 
-static void CQ_SelectPartition (cq_node_t *node)
+static void CQ_SelectPartition(cq_node_t *node)
 {
-	CQ_VectorClear (node->centerofpoints);
+	CQ_VectorClear(node->centerofpoints);
 	for (int i = 0; i < node->numpoints; i++)
 	{
-		CQ_VectorAdd (node->centerofpoints, node->refpoints[i], node->centerofpoints);
+		CQ_VectorAdd(node->centerofpoints, node->refpoints[i], node->centerofpoints);
 	}
-	CQ_VectorScale (node->centerofpoints, 1 / (double)node->numpoints, node->centerofpoints);
+	CQ_VectorScale(node->centerofpoints, 1 / (double)node->numpoints, node->centerofpoints);
 
 	node->needsplit = false;
 	for (int k = 0; k < CQ_DIM; k++)
@@ -491,28 +491,28 @@ static void CQ_SelectPartition (cq_node_t *node)
 		double bucketsums[256][CQ_DIM];
 		int bucketsizes[256];
 
-		const unsigned char (*nodepoints)[CQ_DIM] = node->refpoints;
+		const unsigned char(*nodepoints)[CQ_DIM] = node->refpoints;
 		const int nodenumpoints = node->numpoints;
 
-		memset (bucketsums, 0, 256 * sizeof (double [CQ_DIM]));
-		memset (bucketsizes, 0, 256 * sizeof (int));
+		memset(bucketsums, 0, 256 * sizeof(double[CQ_DIM]));
+		memset(bucketsizes, 0, 256 * sizeof(int));
 		for (int i = 0; i < nodenumpoints; i++)
 		{
 			int j = nodepoints[i][k];
 			bucketsizes[j]++;
-			CQ_VectorAdd (bucketsums[j], nodepoints[i], bucketsums[j]);
+			CQ_VectorAdd(bucketsums[j], nodepoints[i], bucketsums[j]);
 		}
-		
+
 		int min = 256;
 		int max = -1;
 		count = 0;
-		CQ_VectorClear (sum);
+		CQ_VectorClear(sum);
 		for (int j = 0; j < 256; j++)
 		{
 			counts[j] = count;
-			CQ_VectorCopy (sum, sums[j]);
+			CQ_VectorCopy(sum, sums[j]);
 			count += bucketsizes[j];
-			CQ_VectorAdd (sum, bucketsums[j], sum);
+			CQ_VectorAdd(sum, bucketsums[j], sum);
 			if (bucketsizes[j] > 0)
 			{
 				if (j < min)
@@ -527,21 +527,20 @@ static void CQ_SelectPartition (cq_node_t *node)
 		}
 		if (max < min)
 		{
-			Error ("CQ_SelectPartition: internal error");
+			Error("CQ_SelectPartition: internal error");
 		}
 		// sweep along the axis and find the plane that maximize square error reduction
 		for (int j = min + 1; j < max + 1; j++)
 		{
 			double priority = 0; // the decrease in total square deviation
-			priority -= CQ_DotProduct (sum, sum) / count;
-			priority += CQ_DotProduct (sums[j], sums[j]) / counts[j];
+			priority -= CQ_DotProduct(sum, sum) / count;
+			priority += CQ_DotProduct(sums[j], sums[j]) / counts[j];
 			double remain[CQ_DIM];
-			CQ_VectorSubtract (sum, sums[j], remain); // sums and counts are precise (have no round-off error)
-			priority += CQ_DotProduct (remain, remain) / (count - counts[j]);
+			CQ_VectorSubtract(sum, sums[j], remain); // sums and counts are precise (have no round-off error)
+			priority += CQ_DotProduct(remain, remain) / (count - counts[j]);
 			if (node->needsplit == false ||
 				priority > node->splitpriority + 0.1 ||
-				priority >= node->splitpriority - 0.1
-				&& fabs (counts[j] - count / 2) < fabs (node->bestsplitter.numpoints[0] - count / 2))
+				priority >= node->splitpriority - 0.1 && fabs(counts[j] - count / 2) < fabs(node->bestsplitter.numpoints[0] - count / 2))
 			{
 				node->needsplit = true;
 				node->splitpriority = priority;
@@ -554,22 +553,22 @@ static void CQ_SelectPartition (cq_node_t *node)
 	}
 }
 
-static cq_searchnode_t *CQ_AllocSearchTree (int maxcolors)
+static cq_searchnode_t *CQ_AllocSearchTree(int maxcolors)
 {
 	cq_searchnode_t *searchtree;
-	searchtree = (cq_searchnode_t *)malloc ((2 * maxcolors - 1) * sizeof (cq_searchnode_t));
-	hlassume (searchtree != NULL, assume_NoMemory);
+	searchtree = (cq_searchnode_t *)malloc((2 * maxcolors - 1) * sizeof(cq_searchnode_t));
+	hlassume(searchtree != NULL, assume_NoMemory);
 	return searchtree;
 }
 
-static void CQ_FreeSearchTree (cq_searchnode_t *searchtree)
+static void CQ_FreeSearchTree(cq_searchnode_t *searchtree)
 {
-	free (searchtree);
+	free(searchtree);
 }
 
-static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DIM],
-					   int maxcolors, unsigned char (*colors_out)[CQ_DIM], int &numcolors_out,
-					   cq_searchnode_t *searchtree_out) //[2 * maxcolors - 1]
+static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM],
+							 int maxcolors, unsigned char (*colors_out)[CQ_DIM], int &numcolors_out,
+							 cq_searchnode_t *searchtree_out) //[2 * maxcolors - 1]
 {
 	if (numpoints <= 0 || maxcolors <= 0)
 	{
@@ -577,17 +576,17 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 		return;
 	}
 
-	unsigned char (*pointarray)[CQ_DIM];
-	pointarray = (unsigned char (*)[CQ_DIM])malloc (numpoints * sizeof (unsigned char [CQ_DIM]));
-	hlassume (pointarray != NULL, assume_NoMemory);
-	memcpy (pointarray, points, numpoints * sizeof (unsigned char [CQ_DIM]));
+	unsigned char(*pointarray)[CQ_DIM];
+	pointarray = (unsigned char(*)[CQ_DIM])malloc(numpoints * sizeof(unsigned char[CQ_DIM]));
+	hlassume(pointarray != NULL, assume_NoMemory);
+	memcpy(pointarray, points, numpoints * sizeof(unsigned char[CQ_DIM]));
 
 	cq_node_t *n;
 	cq_searchnode_t *s;
 	int numnodes = 0;
 	int maxnodes = 2 * maxcolors - 1;
-	cq_node_t *nodes = (cq_node_t *)malloc (maxnodes * sizeof (cq_node_t));
-	hlassume (nodes != NULL, assume_NoMemory);
+	cq_node_t *nodes = (cq_node_t *)malloc(maxnodes * sizeof(cq_node_t));
+	hlassume(nodes != NULL, assume_NoMemory);
 
 	n = &nodes[0];
 	numnodes++;
@@ -596,7 +595,7 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 	n->parentnode = NULL;
 	n->numpoints = numpoints;
 	n->refpoints = pointarray;
-	CQ_SelectPartition (n);
+	CQ_SelectPartition(n);
 
 	for (int i = 1; i < maxcolors; i++)
 	{
@@ -631,7 +630,7 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 			numnodes++;
 			if (numnodes > maxnodes)
 			{
-				Error ("CQ_CreatePalette: internal error");
+				Error("CQ_CreatePalette: internal error");
 			}
 
 			bestnode->childrennode[k] = n;
@@ -644,10 +643,10 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 		// partition the points using the best splitter
 		{
 			const int splitaxis = bestnode->bestsplitter.axis;
-            const int splitdist = bestnode->bestsplitter.dist;
+			const int splitdist = bestnode->bestsplitter.dist;
 
-			unsigned char (*left)[CQ_DIM];
-			unsigned char (*right)[CQ_DIM];
+			unsigned char(*left)[CQ_DIM];
+			unsigned char(*right)[CQ_DIM];
 			left = &bestnode->refpoints[0];
 			right = &bestnode->refpoints[bestnode->numpoints - 1];
 			while (1)
@@ -665,13 +664,13 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 					break;
 				}
 				unsigned char tmp[CQ_DIM];
-				CQ_VectorCopy (*left, tmp);
-				CQ_VectorCopy (*right, *left);
-				CQ_VectorCopy (tmp, *right);
+				CQ_VectorCopy(*left, tmp);
+				CQ_VectorCopy(*right, *left);
+				CQ_VectorCopy(tmp, *right);
 			}
 			if (right != left - 1)
 			{
-				Error ("CQ_CreatePalette: internal error");
+				Error("CQ_CreatePalette: internal error");
 			}
 
 			bestnode->childrennode[0]->numpoints = left - bestnode->refpoints;
@@ -681,17 +680,17 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 			if (bestnode->childrennode[0]->numpoints <= 0 ||
 				bestnode->childrennode[0]->numpoints != bestnode->bestsplitter.numpoints[0])
 			{
-				Error ("CQ_CreatePalette: internal error");
+				Error("CQ_CreatePalette: internal error");
 			}
 			if (bestnode->childrennode[1]->numpoints <= 0 ||
 				bestnode->childrennode[1]->numpoints != bestnode->bestsplitter.numpoints[1])
 			{
-				Error ("CQ_CreatePalette: internal error");
+				Error("CQ_CreatePalette: internal error");
 			}
 		}
 
-		CQ_SelectPartition (bestnode->childrennode[0]);
-		CQ_SelectPartition (bestnode->childrennode[1]);
+		CQ_SelectPartition(bestnode->childrennode[0]);
+		CQ_SelectPartition(bestnode->childrennode[1]);
 	}
 
 	for (int i = 0; i < numnodes; i++)
@@ -720,8 +719,8 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 		s->result = numcolors_out;
 		for (int k = 0; k < CQ_DIM; k++)
 		{
-			int val = (int)floor (n->centerofpoints[k] + 0.5 + 0.00001);
-			val = qmax (0, qmin (val, 255));
+			int val = (int)floor(n->centerofpoints[k] + 0.5 + 0.00001);
+			val = qmax(0, qmin(val, 255));
 			colors_out[numcolors_out][k] = val;
 		}
 		numcolors_out++;
@@ -742,16 +741,16 @@ static void CQ_CreatePalette (int numpoints, const unsigned char (*points)[CQ_DI
 
 	if (2 * numcolors_out - 1 != numnodes)
 	{
-		Error ("CQ_CreatePalette: internal error");
+		Error("CQ_CreatePalette: internal error");
 	}
 
-	free (pointarray);
-	free (nodes);
+	free(pointarray);
+	free(nodes);
 }
 
-static void CQ_MapPoint_r (int *bestdist, int *best,
-					cq_searchnode_t *node, const unsigned char (*colors)[CQ_DIM],
-					const unsigned char point[CQ_DIM], int searchradius)
+static void CQ_MapPoint_r(int *bestdist, int *best,
+						  cq_searchnode_t *node, const unsigned char (*colors)[CQ_DIM],
+						  const unsigned char point[CQ_DIM], int searchradius)
 {
 	while (!node->isleafnode)
 	{
@@ -766,8 +765,8 @@ static void CQ_MapPoint_r (int *bestdist, int *best,
 		}
 		else
 		{
-			CQ_MapPoint_r (bestdist, best, node->childrennode[0], colors, point, searchradius);
-			CQ_MapPoint_r (bestdist, best, node->childrennode[1], colors, point, searchradius);
+			CQ_MapPoint_r(bestdist, best, node->childrennode[0], colors, point, searchradius);
+			CQ_MapPoint_r(bestdist, best, node->childrennode[1], colors, point, searchradius);
 			return;
 		}
 	}
@@ -786,11 +785,11 @@ static void CQ_MapPoint_r (int *bestdist, int *best,
 	}
 }
 
-static int CQ_MapPoint (const unsigned char point[CQ_DIM], const unsigned char (*colors)[CQ_DIM], int numcolors, cq_searchnode_t *searchtree)
+static int CQ_MapPoint(const unsigned char point[CQ_DIM], const unsigned char (*colors)[CQ_DIM], int numcolors, cq_searchnode_t *searchtree)
 {
 	if (numcolors <= 0)
 	{
-		Error ("CQ_MapPoint: internal error");
+		Error("CQ_MapPoint: internal error");
 	}
 
 	cq_searchnode_t *node;
@@ -798,7 +797,7 @@ static int CQ_MapPoint (const unsigned char point[CQ_DIM], const unsigned char (
 	int best;
 	int searchradius;
 
-	for (node = searchtree; !node->isleafnode; )
+	for (node = searchtree; !node->isleafnode;)
 	{
 		node = node->childrennode[point[node->planeaxis] >= node->planedist];
 	}
@@ -809,8 +808,8 @@ static int CQ_MapPoint (const unsigned char point[CQ_DIM], const unsigned char (
 		bestdist += (colors[best][k] - point[k]) * (colors[best][k] - point[k]);
 	}
 
-	searchradius = (int)ceil(sqrt ((double)bestdist) + 0.1);
-	CQ_MapPoint_r (&bestdist, &best, searchtree, colors, point, searchradius);
+	searchradius = (int)ceil(sqrt((double)bestdist) + 0.1);
+	CQ_MapPoint_r(&bestdist, &best, searchtree, colors, point, searchradius);
 	return best;
 }
 
@@ -824,26 +823,26 @@ static int g_newtextures_num = 0;
 static byte *g_newtextures_data[RADTEXTURES_MAX];
 static int g_newtextures_size[RADTEXTURES_MAX];
 
-int NewTextures_GetCurrentMiptexIndex ()
+int NewTextures_GetCurrentMiptexIndex()
 {
 	dmiptexlump_t *texdata = (dmiptexlump_t *)g_dtexdata;
 	return texdata->nummiptex + g_newtextures_num;
 }
 
-void NewTextures_PushTexture (int size, void *data)
+void NewTextures_PushTexture(int size, void *data)
 {
 	if (g_newtextures_num >= RADTEXTURES_MAX)
 	{
-		Error ("the number of textures created by hlrad has exceeded its internal limit(%d).", (int)RADTEXTURES_MAX);
+		Error("the number of textures created by hlrad has exceeded its internal limit(%d).", (int)RADTEXTURES_MAX);
 	}
-	g_newtextures_data[g_newtextures_num] = (byte *)malloc (size);
-	hlassume (g_newtextures_data[g_newtextures_num] != NULL, assume_NoMemory);
-	memcpy (g_newtextures_data[g_newtextures_num], data, size);
+	g_newtextures_data[g_newtextures_num] = (byte *)malloc(size);
+	hlassume(g_newtextures_data[g_newtextures_num] != NULL, assume_NoMemory);
+	memcpy(g_newtextures_data[g_newtextures_num], data, size);
 	g_newtextures_size[g_newtextures_num] = size;
 	g_newtextures_num++;
 }
 
-void NewTextures_Write ()
+void NewTextures_Write()
 {
 	if (!g_newtextures_num)
 	{
@@ -856,8 +855,8 @@ void NewTextures_Write ()
 	byte *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
 	int datasize = (g_dtexdata + g_texdatasize) - dataaddr;
 	byte *newdataaddr = (byte *)&texdata->dataofs[texdata->nummiptex + g_newtextures_num];
-	hlassume (g_texdatasize + (newdataaddr - dataaddr) <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
-	memmove (newdataaddr, dataaddr, datasize);
+	hlassume(g_texdatasize + (newdataaddr - dataaddr) <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
+	memmove(newdataaddr, dataaddr, datasize);
 	g_texdatasize += newdataaddr - dataaddr;
 	for (i = 0; i < texdata->nummiptex; i++)
 	{
@@ -868,11 +867,11 @@ void NewTextures_Write ()
 		texdata->dataofs[i] += newdataaddr - dataaddr;
 	}
 
-	hlassume (texdata->nummiptex + g_newtextures_num < MAX_MAP_TEXTURES, assume_MAX_MAP_TEXTURES);
+	hlassume(texdata->nummiptex + g_newtextures_num < MAX_MAP_TEXTURES, assume_MAX_MAP_TEXTURES);
 	for (i = 0; i < g_newtextures_num; i++)
 	{
-		hlassume (g_texdatasize + g_newtextures_size[i] <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
-		memcpy (g_dtexdata + g_texdatasize, g_newtextures_data[i], g_newtextures_size[i]);
+		hlassume(g_texdatasize + g_newtextures_size[i] <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
+		memcpy(g_dtexdata + g_texdatasize, g_newtextures_data[i], g_newtextures_size[i]);
 		texdata->dataofs[texdata->nummiptex + i] = g_texdatasize;
 		g_texdatasize += g_newtextures_size[i];
 	}
@@ -880,12 +879,12 @@ void NewTextures_Write ()
 
 	for (int i = 0; i < g_newtextures_num; i++)
 	{
-		free (g_newtextures_data[i]);
+		free(g_newtextures_data[i]);
 	}
 	g_newtextures_num = 0;
 }
 
-static unsigned int Hash (int size, void *data)
+static unsigned int Hash(int size, void *data)
 {
 	unsigned int hash = 0;
 	for (int i = 0; i < size; i++)
@@ -895,11 +894,11 @@ static unsigned int Hash (int size, void *data)
 	return hash;
 }
 
-static void GetLightInt (dface_t *face, const int texsize[2], int ix, int iy, vec3_t &light)
+static void GetLightInt(dface_t *face, const int texsize[2], int ix, int iy, vec3_t &light)
 {
-	ix = qmax (0, qmin (ix, texsize[0]));
-	iy = qmax (0, qmin (iy, texsize[1]));
-	VectorClear (light);
+	ix = qmax(0, qmin(ix, texsize[0]));
+	iy = qmax(0, qmin(iy, texsize[1]));
+	VectorClear(light);
 	if (face->lightofs < 0)
 	{
 		return;
@@ -909,44 +908,44 @@ static void GetLightInt (dface_t *face, const int texsize[2], int ix, int iy, ve
 		byte *samples = &g_dlightdata[face->lightofs + k * (texsize[0] + 1) * (texsize[1] + 1) * 3];
 		if (face->styles[k] == 0)
 		{
-			VectorAdd (light, &samples[(iy * (texsize[0] + 1) + ix) * 3], light);
+			VectorAdd(light, &samples[(iy * (texsize[0] + 1) + ix) * 3], light);
 		}
 	}
 }
 
-static void GetLight (dface_t *face, const int texsize[2], double x, double y, vec3_t &light)
+static void GetLight(dface_t *face, const int texsize[2], double x, double y, vec3_t &light)
 {
 	int ix, iy;
 	double dx, dy;
-	ix = (int)floor (x);
-	iy = (int)floor (y);
+	ix = (int)floor(x);
+	iy = (int)floor(y);
 	dx = x - ix;
-	dx = qmax (0, qmin (dx, 1));
+	dx = qmax(0, qmin(dx, 1));
 	dy = y - iy;
-	dy = qmax (0, qmin (dy, 1));
-	
+	dy = qmax(0, qmin(dy, 1));
+
 	// do bilinear interpolation
 	vec3_t light00, light10, light01, light11;
-	GetLightInt (face, texsize, ix, iy, light00);
-	GetLightInt (face, texsize, ix + 1, iy, light10);
-	GetLightInt (face, texsize, ix, iy + 1, light01);
-	GetLightInt (face, texsize, ix + 1, iy + 1, light11);
+	GetLightInt(face, texsize, ix, iy, light00);
+	GetLightInt(face, texsize, ix + 1, iy, light10);
+	GetLightInt(face, texsize, ix, iy + 1, light01);
+	GetLightInt(face, texsize, ix + 1, iy + 1, light11);
 	vec3_t light0, light1;
-	VectorScale (light00, 1 - dy, light0);
-	VectorMA (light0, dy, light01, light0);
-	VectorScale (light10, 1 - dy, light1);
-	VectorMA (light1, dy, light11, light1);
-	VectorScale (light0, 1 - dx, light);
-	VectorMA (light, dx, light1, light);
+	VectorScale(light00, 1 - dy, light0);
+	VectorMA(light0, dy, light01, light0);
+	VectorScale(light10, 1 - dy, light1);
+	VectorMA(light1, dy, light11, light1);
+	VectorScale(light0, 1 - dx, light);
+	VectorMA(light, dx, light1, light);
 }
 
-static bool GetValidTextureName (int miptex, char name[16])
+static bool GetValidTextureName(int miptex, char name[16])
 {
-	int numtextures = g_texdatasize? ((dmiptexlump_t *)g_dtexdata)->nummiptex: 0;
+	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
 	int offset;
 	int size;
 	miptex_t *mt;
-	
+
 	if (miptex < 0 || miptex >= numtextures)
 	{
 		return false;
@@ -954,20 +953,20 @@ static bool GetValidTextureName (int miptex, char name[16])
 	offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[miptex];
 	size = g_texdatasize - offset;
 	if (offset < 0 || g_dtexdata + offset < (byte *)&((dmiptexlump_t *)g_dtexdata)->dataofs[numtextures] ||
-		size < (int)sizeof (miptex_t))
+		size < (int)sizeof(miptex_t))
 	{
 		return false;
 	}
 
 	mt = (miptex_t *)&g_dtexdata[offset];
-	safe_strncpy (name, mt->name, 16);
+	safe_strncpy(name, mt->name, 16);
 
-	if (strcmp (name, mt->name))
+	if (strcmp(name, mt->name))
 	{
 		return false;
 	}
-	
-	if (strlen (name) >= 5 && !strncasecmp (&name[1], "_rad", 4))
+
+	if (strlen(name) >= 5 && !strncasecmp(&name[1], "_rad", 4))
 	{
 		return false;
 	}
@@ -975,7 +974,7 @@ static bool GetValidTextureName (int miptex, char name[16])
 	return true;
 }
 
-void EmbedLightmapInTextures ()
+void EmbedLightmapInTextures()
 {
 	if (!g_lightdatasize)
 	{
@@ -997,7 +996,7 @@ void EmbedLightmapInTextures ()
 	for (i = 0; i < g_numfaces; i++)
 	{
 		dface_t *f = &g_dfaces[i];
-		
+
 		if (f->lightofs == -1) // some faces don't have lightmap
 		{
 			continue;
@@ -1006,12 +1005,12 @@ void EmbedLightmapInTextures ()
 		{
 			continue;
 		}
-		
+
 		entity_t *ent = g_face_entity[i];
 		int originaltexinfonum = f->texinfo;
 		texinfo_t *originaltexinfo = &g_texinfo[originaltexinfonum];
 		char texname[16];
-		if (!GetValidTextureName (originaltexinfo->miptex, texname))
+		if (!GetValidTextureName(originaltexinfo->miptex, texname))
 		{
 			continue;
 		}
@@ -1021,20 +1020,19 @@ void EmbedLightmapInTextures ()
 		{
 			continue;
 		}
-		if (!strncmp (texname, "sky", 3)
-			|| originaltexinfo->flags & TEX_SPECIAL) // skip special surfaces
+		if (!strncmp(texname, "sky", 3) || originaltexinfo->flags & TEX_SPECIAL) // skip special surfaces
 		{
 			continue;
 		}
-		if (!IntForKey (ent, "zhlt_embedlightmap"))
+		if (!IntForKey(ent, "zhlt_embedlightmap"))
 		{
 			continue;
 		}
 
 		if (!logged)
 		{
-			Log ("\n");
-			Log ("Embed Lightmap : ");
+			Log("\n");
+			Log("Embed Lightmap : ");
 			logged = true;
 		}
 
@@ -1042,32 +1040,32 @@ void EmbedLightmapInTextures ()
 		vec_t denominator = DEFAULT_EMBEDLIGHTMAP_DENOMINATOR;
 		vec_t gamma = DEFAULT_EMBEDLIGHTMAP_GAMMA;
 		int resolution = DEFAULT_EMBEDLIGHTMAP_RESOLUTION;
-		if (IntForKey (ent, "zhlt_embedlightmapresolution"))
+		if (IntForKey(ent, "zhlt_embedlightmapresolution"))
 		{
-			resolution = IntForKey (ent, "zhlt_embedlightmapresolution");
+			resolution = IntForKey(ent, "zhlt_embedlightmapresolution");
 			if (resolution <= 0 || resolution > TEXTURE_STEP || ((resolution - 1) & resolution) != 0)
 			{
-				Error ("resolution cannot be %d; valid values are 1, 2, 4 ... %d.", resolution, (int)TEXTURE_STEP);
+				Error("resolution cannot be %d; valid values are 1, 2, 4 ... %d.", resolution, (int)TEXTURE_STEP);
 			}
 		}
 
 		// calculate texture size and allocate memory for all miplevels
 
 		int texturesize[2];
-		float (*texture)[5]; // red, green, blue and alpha channel; the last one is number of samples
-		byte (*texturemips[MIPLEVELS])[4]; // red, green, blue and alpha channel
+		float(*texture)[5];				  // red, green, blue and alpha channel; the last one is number of samples
+		byte(*texturemips[MIPLEVELS])[4]; // red, green, blue and alpha channel
 		int s, t;
 		int texmins[2];
 		int texmaxs[2];
 		int texsize[2]; // texturesize = (texsize + 1) * TEXTURE_STEP
 		int side[2];
 
-		GetFaceExtents (i, texmins, texmaxs);
+		GetFaceExtents(i, texmins, texmaxs);
 		texsize[0] = texmaxs[0] - texmins[0];
 		texsize[1] = texmaxs[1] - texmins[1];
 		if (texsize[0] < 0 || texsize[1] < 0 || texsize[0] > MAX_SURFACE_EXTENT || texsize[1] > MAX_SURFACE_EXTENT)
 		{
-			Warning ("skipped a face with bad surface extents @ (%4.3f %4.3f %4.3f)", g_face_centroids[i][0], g_face_centroids[i][1], g_face_centroids[i][2]);
+			Warning("skipped a face with bad surface extents @ (%4.3f %4.3f %4.3f)", g_face_centroids[i][0], g_face_centroids[i][1], g_face_centroids[i][2]);
 			continue;
 		}
 
@@ -1093,12 +1091,12 @@ void EmbedLightmapInTextures ()
 			}
 			side[k] = (texturesize[k] * resolution - texsize[k] * TEXTURE_STEP) / 2;
 		}
-		texture = (float (*)[5])malloc (texturesize[0] * texturesize[1] * sizeof (float [5]));
-		hlassume (texture != NULL, assume_NoMemory);
+		texture = (float(*)[5])malloc(texturesize[0] * texturesize[1] * sizeof(float[5]));
+		hlassume(texture != NULL, assume_NoMemory);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
-			texturemips[miplevel] = (byte (*)[4])malloc ((texturesize[0] >> miplevel) * (texturesize[1] >> miplevel) * sizeof (byte [4]));
-			hlassume (texturemips[miplevel] != NULL, assume_NoMemory);
+			texturemips[miplevel] = (byte(*)[4])malloc((texturesize[0] >> miplevel) * (texturesize[1] >> miplevel) * sizeof(byte[4]));
+			hlassume(texturemips[miplevel] != NULL, assume_NoMemory);
 		}
 
 		// calculate the texture
@@ -1107,8 +1105,8 @@ void EmbedLightmapInTextures ()
 		{
 			for (s = 0; s < texturesize[0]; s++)
 			{
-				float (*dest)[5] = &texture[t * texturesize[0] + s];
-				VectorFill (*dest, 0);
+				float(*dest)[5] = &texture[t * texturesize[0] + s];
+				VectorFill(*dest, 0);
 				(*dest)[3] = 0;
 				(*dest)[4] = 0;
 			}
@@ -1124,7 +1122,7 @@ void EmbedLightmapInTextures ()
 				byte src_color[3];
 				double dest_s, dest_t;
 				int dest_is, dest_it;
-				float (*dest)[5];
+				float(*dest)[5];
 				double light_s, light_t;
 				vec3_t light;
 
@@ -1141,37 +1139,37 @@ void EmbedLightmapInTextures ()
 					dest_s = s_vec / resolution + 0.5;
 					dest_t = t_vec / resolution + 0.5;
 				}
-				dest_s = dest_s - texturesize[0] * floor (dest_s / texturesize[0]);
-				dest_t = dest_t - texturesize[1] * floor (dest_t / texturesize[1]);
-				dest_is = (int)floor (dest_s); // dest_is = dest_s % texturesize[0]
-				dest_it = (int)floor (dest_t); // dest_it = dest_t % texturesize[1]
-				dest_is = qmax (0, qmin (dest_is, texturesize[0] - 1));
-				dest_it = qmax (0, qmin (dest_it, texturesize[1] - 1));
+				dest_s = dest_s - texturesize[0] * floor(dest_s / texturesize[0]);
+				dest_t = dest_t - texturesize[1] * floor(dest_t / texturesize[1]);
+				dest_is = (int)floor(dest_s); // dest_is = dest_s % texturesize[0]
+				dest_it = (int)floor(dest_t); // dest_it = dest_t % texturesize[1]
+				dest_is = qmax(0, qmin(dest_is, texturesize[0] - 1));
+				dest_it = qmax(0, qmin(dest_it, texturesize[1] - 1));
 				dest = &texture[dest_it * texturesize[0] + dest_is];
 
 				src_s = s_vec;
 				src_t = t_vec;
-				src_s = src_s - tex->width * floor (src_s / tex->width);
-				src_t = src_t - tex->height * floor (src_t / tex->height);
-				src_is = (int)floor (src_s); // src_is = src_s % tex->width
-				src_it = (int)floor (src_t); // src_it = src_t % tex->height
-				src_is = qmax (0, qmin (src_is, tex->width - 1));
-				src_it = qmax (0, qmin (src_it, tex->height - 1));
+				src_s = src_s - tex->width * floor(src_s / tex->width);
+				src_t = src_t - tex->height * floor(src_t / tex->height);
+				src_is = (int)floor(src_s); // src_is = src_s % tex->width
+				src_it = (int)floor(src_t); // src_it = src_t % tex->height
+				src_is = qmax(0, qmin(src_is, tex->width - 1));
+				src_it = qmax(0, qmin(src_it, tex->height - 1));
 				src_index = tex->canvas[src_it * tex->width + src_is];
-				VectorCopy (tex->palette[src_index], src_color);
+				VectorCopy(tex->palette[src_index], src_color);
 
 				// get light from the center of the destination pixel
 				light_s = (s_vec + resolution * (dest_is + 0.5 - dest_s)) / TEXTURE_STEP - texmins[0];
 				light_t = (t_vec + resolution * (dest_it + 0.5 - dest_t)) / TEXTURE_STEP - texmins[1];
-				GetLight (f, texsize, light_s, light_t, light);
+				GetLight(f, texsize, light_s, light_t, light);
 
 				(*dest)[4] += 1;
 				if (!(texname[0] == '{' && src_index == 255))
 				{
 					for (k = 0; k < 3; k++)
 					{
-						float v = src_color[k] * pow (light[k] / denominator, gamma);
-						(*dest)[k] += 255 * qmax (0, qmin (v, 255));
+						float v = src_color[k] * pow(light[k] / denominator, gamma);
+						(*dest)[k] += 255 * qmax(0, qmin(v, 255));
 					}
 					(*dest)[3] += 255;
 				}
@@ -1181,27 +1179,27 @@ void EmbedLightmapInTextures ()
 		{
 			for (s = 0; s < texturesize[0]; s++)
 			{
-				float (*src)[5] = &texture[t * texturesize[0] + s];
-				byte (*dest)[4] = &texturemips[0][t * texturesize[0] + s];
+				float(*src)[5] = &texture[t * texturesize[0] + s];
+				byte(*dest)[4] = &texturemips[0][t * texturesize[0] + s];
 
 				if ((*src)[4] == 0) // no samples (outside face range?)
 				{
-					VectorFill (*dest, 0);
+					VectorFill(*dest, 0);
 					(*dest)[3] = 255;
 				}
 				else
 				{
 					if ((*src)[3] / (*src)[4] <= 0.4 * 255) // transparent
 					{
-						VectorFill (*dest, 0);
+						VectorFill(*dest, 0);
 						(*dest)[3] = 0;
 					}
 					else // normal
 					{
 						for (j = 0; j < 3; j++)
 						{
-							int val = (int)floor ((*src)[j] / (*src)[3] + 0.5);
-							(*dest)[j] = qmax (0, qmin (val, 255));
+							int val = (int)floor((*src)[j] / (*src)[3] + 0.5);
+							(*dest)[j] = qmax(0, qmin(val, 255));
 						}
 						(*dest)[3] = 255;
 					}
@@ -1215,8 +1213,8 @@ void EmbedLightmapInTextures ()
 			{
 				for (s = 0; s < (texturesize[0] >> miplevel); s++)
 				{
-					byte (*src[4])[4];
-					byte (*dest)[4];
+					byte(*src[4])[4];
+					byte(*dest)[4];
 					double average[4];
 
 					dest = &texturemips[miplevel][t * (texturesize[0] >> miplevel) + s];
@@ -1225,7 +1223,7 @@ void EmbedLightmapInTextures ()
 					src[2] = &texturemips[miplevel - 1][(2 * t + 1) * (texturesize[0] >> (miplevel - 1)) + (2 * s)];
 					src[3] = &texturemips[miplevel - 1][(2 * t + 1) * (texturesize[0] >> (miplevel - 1)) + (2 * s + 1)];
 
-					VectorClear (average);
+					VectorClear(average);
 					average[3] = 0;
 					for (k = 0; k < 4; k++)
 					{
@@ -1238,15 +1236,15 @@ void EmbedLightmapInTextures ()
 
 					if (average[3] / 4 <= 0.4 * 255)
 					{
-						VectorClear (*dest);
+						VectorClear(*dest);
 						(*dest)[3] = 0;
 					}
 					else
 					{
 						for (j = 0; j < 3; j++)
 						{
-							int val = (int)floor (average[j] / average[3] + 0.5);
-							(*dest)[j] = qmax (0, qmin (val, 255));
+							int val = (int)floor(average[j] / average[3] + 0.5);
+							(*dest)[j] = qmax(0, qmin(val, 255));
 						}
 						(*dest)[3] = 255;
 					}
@@ -1257,20 +1255,20 @@ void EmbedLightmapInTextures ()
 		// create its palette
 
 		byte palette[256][3];
-		cq_searchnode_t *palettetree = CQ_AllocSearchTree (256);
+		cq_searchnode_t *palettetree = CQ_AllocSearchTree(256);
 		int paletteoffset;
 		int palettenumcolors;
 
 		{
 			int palettemaxcolors;
 			int numsamplepoints;
-			unsigned char (*samplepoints)[3];
+			unsigned char(*samplepoints)[3];
 
 			if (texname[0] == '{')
 			{
 				paletteoffset = 0;
 				palettemaxcolors = 255;
-				VectorCopy (tex->palette[255], palette[255]); // the transparency color
+				VectorCopy(tex->palette[255], palette[255]); // the transparency color
 			}
 			/*else if (texname[0] == '!')
 			{
@@ -1287,34 +1285,34 @@ void EmbedLightmapInTextures ()
 				palettemaxcolors = 256;
 			}
 
-			samplepoints = (unsigned char (*)[3])malloc (texturesize[0] * texturesize[1] * sizeof (unsigned char [3]));
-			hlassume (samplepoints != NULL, assume_NoMemory);
+			samplepoints = (unsigned char(*)[3])malloc(texturesize[0] * texturesize[1] * sizeof(unsigned char[3]));
+			hlassume(samplepoints != NULL, assume_NoMemory);
 			numsamplepoints = 0;
 			for (t = 0; t < texturesize[1]; t++)
 			{
 				for (s = 0; s < texturesize[0]; s++)
 				{
-					byte (*src)[4] = &texturemips[0][t * texturesize[0] + s];
+					byte(*src)[4] = &texturemips[0][t * texturesize[0] + s];
 					if ((*src)[3] > 0)
 					{
-						VectorCopy (*src, samplepoints[numsamplepoints]);
+						VectorCopy(*src, samplepoints[numsamplepoints]);
 						numsamplepoints++;
 					}
 				}
 			}
 
-			CQ_CreatePalette (numsamplepoints, samplepoints, palettemaxcolors, &palette[paletteoffset], palettenumcolors, palettetree);
+			CQ_CreatePalette(numsamplepoints, samplepoints, palettemaxcolors, &palette[paletteoffset], palettenumcolors, palettetree);
 			for (j = palettenumcolors; j < palettemaxcolors; j++)
 			{
-				VectorClear (palette[paletteoffset + j]);
+				VectorClear(palette[paletteoffset + j]);
 			}
 
-			free (samplepoints);
+			free(samplepoints);
 		}
 
 		// emit a texinfo
 
-		hlassume (g_numtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
+		hlassume(g_numtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
 		f->texinfo = g_numtexinfo;
 		texinfo_t *info = &g_texinfo[g_numtexinfo];
 		g_numtexinfo++;
@@ -1325,29 +1323,29 @@ void EmbedLightmapInTextures ()
 			// apply a scale and a shift over the original vectors
 			for (k = 0; k < 2; k++)
 			{
-				VectorScale (info->vecs[k], 1.0 / resolution, info->vecs[k]);
+				VectorScale(info->vecs[k], 1.0 / resolution, info->vecs[k]);
 				info->vecs[k][3] = info->vecs[k][3] / resolution + 0.5;
 			}
 		}
-		info->miptex = NewTextures_GetCurrentMiptexIndex ();
+		info->miptex = NewTextures_GetCurrentMiptexIndex();
 
 		// emit a texture
 
 		int miptexsize;
-		
-		miptexsize = (int)sizeof (miptex_t);
+
+		miptexsize = (int)sizeof(miptex_t);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptexsize += (texturesize[0] >> miplevel) * (texturesize[1] >> miplevel);
 		}
 		miptexsize += 2 + 256 * 3 + 2;
-		miptex_t *miptex = (miptex_t *)malloc (miptexsize);
-		hlassume (miptex != NULL, assume_NoMemory);
+		miptex_t *miptex = (miptex_t *)malloc(miptexsize);
+		hlassume(miptex != NULL, assume_NoMemory);
 
-		memset (miptex, 0, sizeof (miptex_t));
+		memset(miptex, 0, sizeof(miptex_t));
 		miptex->width = texturesize[0];
 		miptex->height = texturesize[1];
-		byte *p = (byte *)miptex + sizeof (miptex_t);
+		byte *p = (byte *)miptex + sizeof(miptex_t);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptex->offsets[miplevel] = p - (byte *)miptex;
@@ -1355,14 +1353,14 @@ void EmbedLightmapInTextures ()
 			{
 				for (int s = 0; s < (texturesize[0] >> miplevel); s++)
 				{
-					byte (*src)[4] = &texturemips[miplevel][t * (texturesize[0] >> miplevel) + s];
+					byte(*src)[4] = &texturemips[miplevel][t * (texturesize[0] >> miplevel) + s];
 					if ((*src)[3] > 0)
 					{
 						if (palettenumcolors)
 						{
 							unsigned char point[3];
-							VectorCopy (*src, point);
-							*p = paletteoffset + CQ_MapPoint (point, &palette[paletteoffset], palettenumcolors, palettetree);
+							VectorCopy(*src, point);
+							*p = paletteoffset + CQ_MapPoint(point, &palette[paletteoffset], palettenumcolors, palettetree);
 						}
 						else // this should never happen
 						{
@@ -1379,18 +1377,18 @@ void EmbedLightmapInTextures ()
 		}
 		*(short *)p = 256;
 		p += 2;
-		memcpy (p, palette, 256 * 3);
+		memcpy(p, palette, 256 * 3);
 		p += 256 * 3;
 		*(short *)p = 0;
 		p += 2;
 		if (p != (byte *)miptex + miptexsize)
 		{
-			Error ("EmbedLightmapInTextures: internal error");
+			Error("EmbedLightmapInTextures: internal error");
 		}
 
 		if (texname[0] == '{')
 		{
-			strcpy (miptex->name, "{_rad");
+			strcpy(miptex->name, "{_rad");
 		}
 		/*else if (texname[0] == '!')
 		{
@@ -1398,11 +1396,11 @@ void EmbedLightmapInTextures ()
 		}*/
 		else
 		{
-			strcpy (miptex->name, "__rad");
+			strcpy(miptex->name, "__rad");
 		}
 		if (originaltexinfonum < 0 || originaltexinfonum > 99999)
 		{
-			Error ("EmbedLightmapInTextures: internal error: texinfo out of range");
+			Error("EmbedLightmapInTextures: internal error: texinfo out of range");
 		}
 		miptex->name[5] = '0' + (originaltexinfonum / 10000) % 10; // store the original texinfo
 		miptex->name[6] = '0' + (originaltexinfonum / 1000) % 10;
@@ -1412,7 +1410,8 @@ void EmbedLightmapInTextures ()
 		char table[62];
 		for (int k = 0; k < 62; k++)
 		{
-			table[k] = k >= 36? 'a' + (k - 36): k >= 10? 'A' + (k - 10): '0' + k; // same order as the ASCII table
+			table[k] = k >= 36 ? 'a' + (k - 36) : k >= 10 ? 'A' + (k - 10)
+														  : '0' + k; // same order as the ASCII table
 		}
 		miptex->name[10] = '\0';
 		miptex->name[11] = '\0';
@@ -1420,32 +1419,31 @@ void EmbedLightmapInTextures ()
 		miptex->name[13] = '\0';
 		miptex->name[14] = '\0';
 		miptex->name[15] = '\0';
-		unsigned int hash = Hash (miptexsize, miptex);
+		unsigned int hash = Hash(miptexsize, miptex);
 		miptex->name[10] = table[(hash / 62 / 62) % 52 + 10];
 		miptex->name[11] = table[(hash / 62) % 62];
 		miptex->name[12] = table[(hash) % 62];
 		miptex->name[13] = table[(count / 62) % 62];
 		miptex->name[14] = table[(count) % 62];
 		miptex->name[15] = '\0';
-		NewTextures_PushTexture (miptexsize, miptex);
+		NewTextures_PushTexture(miptexsize, miptex);
 		count++;
 		count_bytes += miptexsize;
 
-		free (miptex);
+		free(miptex);
 
-		CQ_FreeSearchTree (palettetree);
-		
-		free (texture);
+		CQ_FreeSearchTree(palettetree);
+
+		free(texture);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
-			free (texturemips[miplevel]);
+			free(texturemips[miplevel]);
 		}
 	}
-	NewTextures_Write (); // update texdata now
+	NewTextures_Write(); // update texdata now
 
 	if (logged)
 	{
-		Log ("added %d texinfos and textures (%d bytes)\n", count, count_bytes);
+		Log("added %d texinfos and textures (%d bytes)\n", count, count_bytes);
 	}
 }
-

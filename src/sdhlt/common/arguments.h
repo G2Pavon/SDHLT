@@ -1,6 +1,7 @@
 #include "log.h"
 
-typedef enum {
+typedef enum
+{
     PROGRAM_CSG,
     PROGRAM_BSP,
     PROGRAM_VIS,

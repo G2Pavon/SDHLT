@@ -25,27 +25,26 @@
 
 #include "scriplib.h"
 
-char*           g_Program = "Uninitialized variable ::g_Program";
-char            g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";
-char            g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
+char *g_Program = "Uninitialized variable ::g_Program";
+char g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";
+char g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
 
-
-static FILE*    CompileLog = NULL;
-static bool     fatal = false;
+static FILE *CompileLog = NULL;
+static bool fatal = false;
 
 bool twice = false;
 bool useconsole = false;
 FILE *conout = NULL;
 
-int				g_lang_count = 0;
-const int		g_lang_max = 1024;
-char*			g_lang[g_lang_max][2];
+int g_lang_count = 0;
+const int g_lang_max = 1024;
+char *g_lang[g_lang_max][2];
 
 ////////
 
-void            ResetTmpFiles()
+void ResetTmpFiles()
 {
-    char            filename[_MAX_PATH];
+    char filename[_MAX_PATH];
 
     safe_snprintf(filename, _MAX_PATH, "%s.bsp", g_Mapname);
     _unlink(filename);
@@ -99,44 +98,44 @@ void            ResetTmpFiles()
     _unlink(filename);
 }
 
-void            ResetLog()
+void ResetLog()
 {
-        char            logfilename[_MAX_PATH];
+    char logfilename[_MAX_PATH];
 
-        safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
-        _unlink(logfilename);
+    safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
+    _unlink(logfilename);
 }
 
-void            ResetErrorLog()
+void ResetErrorLog()
 {
-        char            logfilename[_MAX_PATH];
+    char logfilename[_MAX_PATH];
 
-        safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
-        _unlink(logfilename);
+    safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
+    _unlink(logfilename);
 }
 
-void            CheckForErrorLog()
+void CheckForErrorLog()
 {
-    char            logfilename[_MAX_PATH];
+    char logfilename[_MAX_PATH];
 
     safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
     if (q_exists(logfilename))
     {
         Log(">> There was a problem compiling the map.\n"
             ">> Check the file %s.log for the cause.\n",
-                g_Mapname);
+            g_Mapname);
         exit(1);
     }
 }
 
 ///////
 
-void            LogError(const char* const message)
+void LogError(const char *const message)
 {
     if (CompileLog)
     {
-        char            logfilename[_MAX_PATH];
-        FILE*           ErrorLog = NULL;
+        char logfilename[_MAX_PATH];
+        FILE *ErrorLog = NULL;
 
         safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
         ErrorLog = fopen(logfilename, "a");
@@ -150,18 +149,18 @@ void            LogError(const char* const message)
         }
         else
         {
-            fprintf(stderr, Localize ("ERROR: Could not open error logfile %s"), logfilename);
+            fprintf(stderr, Localize("ERROR: Could not open error logfile %s"), logfilename);
             fflush(stderr);
-			if (twice)
-			{
-				fprintf (conout, Localize ("ERROR: Could not open error logfile %s"), logfilename);
-				fflush (conout);
-			}
+            if (twice)
+            {
+                fprintf(conout, Localize("ERROR: Could not open error logfile %s"), logfilename);
+                fflush(conout);
+            }
         }
     }
 }
 
-void CDECL      CloseLog()
+void CDECL CloseLog()
 {
     if (CompileLog)
     {
@@ -178,14 +177,14 @@ void CDECL      CloseLog()
 
 #ifdef SYSTEM_WIN32
 // AJM: fprintf/flush wasnt printing newline chars correctly (prefixed with \r) under win32
-//      due to the fact that those streams are in byte mode, so this function prefixes 
+//      due to the fact that those streams are in byte mode, so this function prefixes
 //      all \n with \r automatically.
 //      NOTE: system load may be more with this method, but there isnt that much logging going
 //      on compared to the time taken to compile the map, so its negligable.
-void            Safe_WriteLog(const char* const message)
+void Safe_WriteLog(const char *const message)
 {
-    const char* c;
-    
+    const char *c;
+
     if (!CompileLog)
         return;
 
@@ -206,32 +205,32 @@ void            Safe_WriteLog(const char* const message)
 }
 #endif
 
-void            WriteLog(const char* const message)
+void WriteLog(const char *const message)
 {
 
 #ifndef SYSTEM_WIN32
     if (CompileLog)
     {
-        fprintf(CompileLog, "%s", message); //fprintf(CompileLog, message); //--vluzacn
+        fprintf(CompileLog, "%s", message); // fprintf(CompileLog, message); //--vluzacn
         fflush(CompileLog);
     }
 #else
     Safe_WriteLog(message);
 #endif
 
-    fprintf(stdout, "%s", message); //fprintf(stdout, message); //--vluzacn
+    fprintf(stdout, "%s", message); // fprintf(stdout, message); //--vluzacn
     fflush(stdout);
-	if (twice)
-	{
-		fprintf (conout, "%s", message);
-		fflush (conout);
-	}
+    if (twice)
+    {
+        fprintf(conout, "%s", message);
+        fflush(conout);
+    }
 }
 
 // =====================================================================================
-//  CheckFatal 
+//  CheckFatal
 // =====================================================================================
-void            CheckFatal()
+void CheckFatal()
 {
     if (fatal)
     {
@@ -240,7 +239,7 @@ void            CheckFatal()
     }
 }
 
-#define MAX_ERROR   2048
+#define MAX_ERROR 2048
 #define MAX_WARNING 2048
 #define MAX_MESSAGE 2048
 
@@ -248,33 +247,33 @@ void            CheckFatal()
 //  Error
 //      for formatted error messages, fatals out
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
+void CDECL FORMAT_PRINTF(1, 2) Error(const char *const error, ...)
 {
-    char            message[MAX_ERROR];
-    char            message2[MAX_ERROR];
-    va_list         argptr;
-    
- /*#if defined( SYSTEM_WIN32 ) && !defined( __MINGW32__ ) && !defined( __BORLANDC__ )
-    {
-        char* wantint3 = getenv("WANTINT3");
-		if (wantint3)
-		{
-			if (atoi(wantint3))
-			{
-				__asm
-				{
-					int 3;
-				}
-			}
-		}
-    }
-#endif*/
+    char message[MAX_ERROR];
+    char message2[MAX_ERROR];
+    va_list argptr;
+
+    /*#if defined( SYSTEM_WIN32 ) && !defined( __MINGW32__ ) && !defined( __BORLANDC__ )
+       {
+           char* wantint3 = getenv("WANTINT3");
+           if (wantint3)
+           {
+               if (atoi(wantint3))
+               {
+                   __asm
+                   {
+                       int 3;
+                   }
+               }
+           }
+       }
+   #endif*/
 
     va_start(argptr, error);
-    vsnprintf(message, MAX_ERROR, Localize (error), argptr);
+    vsnprintf(message, MAX_ERROR, Localize(error), argptr);
     va_end(argptr);
 
-    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize ("Error: "), message);
+    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize("Error: "), message);
     WriteLog(message2);
     LogError(message2);
 
@@ -288,26 +287,26 @@ void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
 //      automatically appends an extra newline to the message
 //      This function sets a flag that the compile should abort before completing
 // =====================================================================================
-void CDECL FORMAT_PRINTF(2,3)      Fatal(assume_msgs msgid, const char* const warning, ...)
+void CDECL FORMAT_PRINTF(2, 3) Fatal(assume_msgs msgid, const char *const warning, ...)
 {
-    char            message[MAX_WARNING];
-    char            message2[MAX_WARNING];
+    char message[MAX_WARNING];
+    char message2[MAX_WARNING];
 
-    va_list         argptr;
+    va_list argptr;
 
     va_start(argptr, warning);
-    vsnprintf(message, MAX_WARNING, Localize (warning), argptr);
+    vsnprintf(message, MAX_WARNING, Localize(warning), argptr);
     va_end(argptr);
 
-    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize ("Error: "), message);
+    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize("Error: "), message);
     WriteLog(message2);
     LogError(message2);
 
     {
-        char            message[MAX_MESSAGE];
-        const MessageTable_t* msg = GetAssume(msgid);
+        char message[MAX_MESSAGE];
+        const MessageTable_t *msg = GetAssume(msgid);
 
-        safe_snprintf(message, MAX_MESSAGE, "%s\n%s%s\n%s%s\n", Localize (msg->title), Localize ("Description: "), Localize (msg->text), Localize ("Howto Fix: "), Localize (msg->howto));
+        safe_snprintf(message, MAX_MESSAGE, "%s\n%s%s\n%s%s\n", Localize(msg->title), Localize("Description: "), Localize(msg->text), Localize("Howto Fix: "), Localize(msg->howto));
         PrintOnce(message);
     }
 
@@ -318,12 +317,12 @@ void CDECL FORMAT_PRINTF(2,3)      Fatal(assume_msgs msgid, const char* const wa
 //  PrintOnce
 //      This function is only callable one time. Further calls will be ignored
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      PrintOnce(const char* const warning, ...)
+void CDECL FORMAT_PRINTF(1, 2) PrintOnce(const char *const warning, ...)
 {
-    char            message[MAX_WARNING];
-    char            message2[MAX_WARNING];
-    va_list         argptr;
-    static int      count = 0;
+    char message[MAX_WARNING];
+    char message2[MAX_WARNING];
+    va_list argptr;
+    static int count = 0;
 
     if (count > 0) // make sure it only gets called once
     {
@@ -332,10 +331,10 @@ void CDECL FORMAT_PRINTF(1,2)      PrintOnce(const char* const warning, ...)
     count++;
 
     va_start(argptr, warning);
-    vsnprintf(message, MAX_WARNING, Localize (warning), argptr);
+    vsnprintf(message, MAX_WARNING, Localize(warning), argptr);
     va_end(argptr);
 
-    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize ("Error: "), message);
+    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize("Error: "), message);
     WriteLog(message2);
     LogError(message2);
 }
@@ -345,18 +344,18 @@ void CDECL FORMAT_PRINTF(1,2)      PrintOnce(const char* const warning, ...)
 //      For formatted warning messages
 //      automatically appends an extra newline to the message
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      Warning(const char* const warning, ...)
+void CDECL FORMAT_PRINTF(1, 2) Warning(const char *const warning, ...)
 {
-    char            message[MAX_WARNING];
-    char            message2[MAX_WARNING];
+    char message[MAX_WARNING];
+    char message2[MAX_WARNING];
 
-    va_list         argptr;
+    va_list argptr;
 
     va_start(argptr, warning);
-    vsnprintf(message, MAX_WARNING, Localize (warning), argptr);
+    vsnprintf(message, MAX_WARNING, Localize(warning), argptr);
     va_end(argptr);
 
-    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize ("Warning: "), message);
+    safe_snprintf(message2, MAX_MESSAGE, "%s%s\n", Localize("Warning: "), message);
     WriteLog(message2);
 }
 
@@ -364,14 +363,14 @@ void CDECL FORMAT_PRINTF(1,2)      Warning(const char* const warning, ...)
 //  Log
 //      For formatted log output messages
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      Log(const char* const warning, ...)
+void CDECL FORMAT_PRINTF(1, 2) Log(const char *const warning, ...)
 {
-    char            message[MAX_MESSAGE];
+    char message[MAX_MESSAGE];
 
-    va_list         argptr;
+    va_list argptr;
 
     va_start(argptr, warning);
-    vsnprintf(message, MAX_MESSAGE, Localize (warning), argptr);
+    vsnprintf(message, MAX_MESSAGE, Localize(warning), argptr);
     va_end(argptr);
 
     WriteLog(message);
@@ -380,16 +379,16 @@ void CDECL FORMAT_PRINTF(1,2)      Log(const char* const warning, ...)
 // =====================================================================================
 //  LogArgs
 // =====================================================================================
-static void     LogArgs(int argc, char** argv)
+static void LogArgs(int argc, char **argv)
 {
-    int             i;
+    int i;
 
     Log("Command line: ");
     for (i = 0; i < argc; i++)
     {
         if (strchr(argv[i], ' '))
         {
-            Log("\"%s\" ", argv[i]); //Log("\"%s\"", argv[i]); //--vluzacn
+            Log("\"%s\" ", argv[i]); // Log("\"%s\"", argv[i]); //--vluzacn
         }
         else
         {
@@ -402,51 +401,53 @@ static void     LogArgs(int argc, char** argv)
 // =====================================================================================
 //  Banner
 // =====================================================================================
-void            Banner()
+void Banner()
 {
     Log("%s " SDHLT_VERSIONSTRING
 #ifndef VERSION_32BIT
-		" " PLATFORM_VERSIONSTRING
+        " " PLATFORM_VERSIONSTRING
 #endif
-		" (%s)\n", g_Program, __DATE__);
-    //Log("BUGGY %s (built: %s)\nUse at own risk.\n", g_Program, __DATE__);
+        " (%s)\n",
+        g_Program, __DATE__);
+    // Log("BUGGY %s (built: %s)\nUse at own risk.\n", g_Program, __DATE__);
 
     Log("seedee's Half-Life Compilation Tools\n"
         "Based on code modifications by Sean 'Zoner' Cavanaugh and Vluzacn\n"
-        "Based on Valve's version, modified with permission.\n"
-        MODIFICATIONS_STRING);
-
+        "Based on Valve's version, modified with permission.\n" MODIFICATIONS_STRING);
 }
 
 // =====================================================================================
 //  LogStart
 // =====================================================================================
-void            LogStart(int argc, char** argv)
+void LogStart(int argc, char **argv)
 {
     Banner();
     Log("-----  BEGIN  %s -----\n", g_Program);
     LogArgs(argc, argv);
 }
 
-void LogArguments(int argc, char **argv) 
+void LogArguments(int argc, char **argv)
 {
     int i;
     printf("Arguments: ");
-    for (i = 1; i < argc; i++) {
-        if (strchr(argv[i], ' ')) {
+    for (i = 1; i < argc; i++)
+    {
+        if (strchr(argv[i], ' '))
+        {
             printf("\"%s\" ", argv[i]);
-        } else {
+        }
+        else
+        {
             printf("%s ", argv[i]);
         }
     }
     printf("\n");
 }
 
-
 // =====================================================================================
 //  LogEnd
 // =====================================================================================
-void            LogEnd()
+void LogEnd()
 {
     Log("\n-----   END   %s -----\n\n\n\n", g_Program);
 }
@@ -455,14 +456,14 @@ void            LogEnd()
 //  hlassume
 //      my assume
 // =====================================================================================
-void            hlassume(bool exp, assume_msgs msgid)
+void hlassume(bool exp, assume_msgs msgid)
 {
     if (!exp)
     {
-        char            message[MAX_MESSAGE];
-        const MessageTable_t* msg = GetAssume(msgid);
+        char message[MAX_MESSAGE];
+        const MessageTable_t *msg = GetAssume(msgid);
 
-        safe_snprintf(message, MAX_MESSAGE, "%s\n%s%s\n%s%s\n", Localize (msg->title), Localize ("Description: "), Localize (msg->text), Localize ("Howto Fix: "), Localize (msg->howto));
+        safe_snprintf(message, MAX_MESSAGE, "%s\n%s%s\n%s%s\n", Localize(msg->title), Localize("Description: "), Localize(msg->text), Localize("Howto Fix: "), Localize(msg->howto));
         Error(message);
     }
 }
@@ -470,7 +471,7 @@ void            hlassume(bool exp, assume_msgs msgid)
 // =====================================================================================
 //  seconds_to_hhmm
 // =====================================================================================
-static void seconds_to_hhmm(unsigned int elapsed_time, unsigned& days, unsigned& hours, unsigned& minutes, unsigned& seconds)
+static void seconds_to_hhmm(unsigned int elapsed_time, unsigned &days, unsigned &hours, unsigned &minutes, unsigned &seconds)
 {
     seconds = elapsed_time % 60;
     elapsed_time /= 60;
@@ -515,184 +516,207 @@ void LogTimeElapsed(float elapsed_time)
 }
 
 #ifdef SYSTEM_WIN32
-void wait ()
+void wait()
 {
-	Sleep (1000);
+    Sleep(1000);
 }
-int InitConsole (int argc, char **argv)
+int InitConsole(int argc, char **argv)
 {
-	int i;
-	bool wrong = false;
-	twice = false;
-	useconsole = true;
-	for (i = 1; i < argc; ++i)
-	{
-		if (!strcasecmp (argv[i], "-console"))
-		{
-			if (i + 1 < argc)
-			{
-				if (!strcasecmp (argv[i+1], "0"))
-					useconsole = false;
-				else if (!strcasecmp (argv[i+1], "1"))
-					useconsole = true;
-				else
-					wrong = true;
-			}
-			else
-				wrong = true;
-		}
-	}
-	if (useconsole)
-		twice = AllocConsole ();
-	if (useconsole)
-	{
-		conout = fopen ("CONOUT$", "w");
-		if (!conout)
-		{
-			useconsole = false;
-			twice = false;
-			Warning ("Can not open 'CONOUT$'");
-			if (twice)
-				FreeConsole ();
-		}
-	}
-	if (twice)
-		atexit (&wait);
-	if (wrong)
-		return -1;
-	return 0;
+    int i;
+    bool wrong = false;
+    twice = false;
+    useconsole = true;
+    for (i = 1; i < argc; ++i)
+    {
+        if (!strcasecmp(argv[i], "-console"))
+        {
+            if (i + 1 < argc)
+            {
+                if (!strcasecmp(argv[i + 1], "0"))
+                    useconsole = false;
+                else if (!strcasecmp(argv[i + 1], "1"))
+                    useconsole = true;
+                else
+                    wrong = true;
+            }
+            else
+                wrong = true;
+        }
+    }
+    if (useconsole)
+        twice = AllocConsole();
+    if (useconsole)
+    {
+        conout = fopen("CONOUT$", "w");
+        if (!conout)
+        {
+            useconsole = false;
+            twice = false;
+            Warning("Can not open 'CONOUT$'");
+            if (twice)
+                FreeConsole();
+        }
+    }
+    if (twice)
+        atexit(&wait);
+    if (wrong)
+        return -1;
+    return 0;
 }
 #else
-int InitConsole (int argc, char **argv)
+int InitConsole(int argc, char **argv)
 {
-	twice = false;
-	useconsole = false;
-	return 0;
+    twice = false;
+    useconsole = false;
+    return 0;
 }
 #endif
-void CDECL FORMAT_PRINTF(1,2) PrintConsole(const char* const warning, ...)
+void CDECL FORMAT_PRINTF(1, 2) PrintConsole(const char *const warning, ...)
 {
-    char            message[MAX_MESSAGE];
+    char message[MAX_MESSAGE];
 
-    va_list         argptr;
+    va_list argptr;
 
     va_start(argptr, warning);
-//ZHLT_LANGFILE: don't call function Localize here because of performance issue
+    // ZHLT_LANGFILE: don't call function Localize here because of performance issue
     vsnprintf(message, MAX_MESSAGE, warning, argptr);
     va_end(argptr);
 
     if (useconsole)
-	{
-		fprintf (conout, "%s", message);
-		fflush (conout);
-	}
-	else
-	{
-		fprintf (stdout, "%s", message);
-	}
+    {
+        fprintf(conout, "%s", message);
+        fflush(conout);
+    }
+    else
+    {
+        fprintf(stdout, "%s", message);
+    }
 }
 
-int loadlangfileline (char *line, int n, FILE *f)
+int loadlangfileline(char *line, int n, FILE *f)
 {
-	int i = 0, c = 0;
-	bool special = false;
-	while (1)
-	{
-		c = fgetc (f);
-		if (c == '\r')
-			continue;
-		if (c == '\n' || c == EOF)
-			break;
-		if (c == '\\' && !special)
-		{
-			special = true;
-		}
-		else
-		{
-			if (special)
-			{
-				switch (c)
-				{
-				case 'n': c = '\n'; break;
-				case 't': c = '\t'; break;
-				case 'v': c = '\v'; break;
-				case 'b': c = '\b'; break;
-				case 'r': c = '\r'; break;
-				case 'f': c = '\f'; break;
-				case 'a': c = '\a'; break;
-				case '\\': c = '\\'; break;
-				case '?': c = '\?'; break;
-				case '\'': c = '\''; break;
-				case '"': c = '\"'; break;
-				default: break;
-				}
-			}
-			if (i < n - 1)
-				line[i++] = c;
-			else
-			{
-				Warning ("line too long in localization file");
-				break;
-			}
-			special = false;
-		}
-	}
-	line[i] = '\0';
-	if (c == EOF)
-		return 1;
-	return 0;
+    int i = 0, c = 0;
+    bool special = false;
+    while (1)
+    {
+        c = fgetc(f);
+        if (c == '\r')
+            continue;
+        if (c == '\n' || c == EOF)
+            break;
+        if (c == '\\' && !special)
+        {
+            special = true;
+        }
+        else
+        {
+            if (special)
+            {
+                switch (c)
+                {
+                case 'n':
+                    c = '\n';
+                    break;
+                case 't':
+                    c = '\t';
+                    break;
+                case 'v':
+                    c = '\v';
+                    break;
+                case 'b':
+                    c = '\b';
+                    break;
+                case 'r':
+                    c = '\r';
+                    break;
+                case 'f':
+                    c = '\f';
+                    break;
+                case 'a':
+                    c = '\a';
+                    break;
+                case '\\':
+                    c = '\\';
+                    break;
+                case '?':
+                    c = '\?';
+                    break;
+                case '\'':
+                    c = '\'';
+                    break;
+                case '"':
+                    c = '\"';
+                    break;
+                default:
+                    break;
+                }
+            }
+            if (i < n - 1)
+                line[i++] = c;
+            else
+            {
+                Warning("line too long in localization file");
+                break;
+            }
+            special = false;
+        }
+    }
+    line[i] = '\0';
+    if (c == EOF)
+        return 1;
+    return 0;
 }
-const char * Localize (const char *s)
+const char *Localize(const char *s)
 {
-	int i;
-	for (i=0; i<g_lang_count; i++)
-	{
-		if (!strcmp (g_lang[i][0], s))
-		{
-			return g_lang[i][1];
-		}
-	}
-	return s;
+    int i;
+    for (i = 0; i < g_lang_count; i++)
+    {
+        if (!strcmp(g_lang[i][0], s))
+        {
+            return g_lang[i][1];
+        }
+    }
+    return s;
 }
-void LoadLangFile (const char *name, const char *programpath)
+void LoadLangFile(const char *name, const char *programpath)
 {
-	char filepath[_MAX_PATH];
-	char line1[MAXTOKEN];
-	char line2[MAXTOKEN];
-	FILE *f = NULL;
-	if (!f)
-	{
-		strcpy (filepath, name);
-		f = fopen (filepath, "r");
-	}
-	if (!f)
-	{
-		ExtractFilePath (programpath, filepath);
-		strcat (filepath, name);
-		f = fopen (filepath, "r");
-	}
-	if (!f)
-	{
-		Warning ("can not open file: '%s'", name);
-		return;
-	}
-	while (1)
-	{
-		if (loadlangfileline (line1, MAXTOKEN, f) == 1)
-			break;
-		loadlangfileline (line2, MAXTOKEN, f);
-		if (g_lang_count < g_lang_max)
-		{
-			g_lang[g_lang_count][0] = strdup (line1);
-			g_lang[g_lang_count][1] = strdup (line2);
-			g_lang_count++;
-		}
-		else
-		{
-			Warning ("too many lines in localization file");
-			break;
-		}
-	}
-	fclose (f);
-	Log ("Localization file: '%s'\n", filepath);
+    char filepath[_MAX_PATH];
+    char line1[MAXTOKEN];
+    char line2[MAXTOKEN];
+    FILE *f = NULL;
+    if (!f)
+    {
+        strcpy(filepath, name);
+        f = fopen(filepath, "r");
+    }
+    if (!f)
+    {
+        ExtractFilePath(programpath, filepath);
+        strcat(filepath, name);
+        f = fopen(filepath, "r");
+    }
+    if (!f)
+    {
+        Warning("can not open file: '%s'", name);
+        return;
+    }
+    while (1)
+    {
+        if (loadlangfileline(line1, MAXTOKEN, f) == 1)
+            break;
+        loadlangfileline(line2, MAXTOKEN, f);
+        if (g_lang_count < g_lang_max)
+        {
+            g_lang[g_lang_count][0] = strdup(line1);
+            g_lang[g_lang_count][1] = strdup(line2);
+            g_lang_count++;
+        }
+        else
+        {
+            Warning("too many lines in localization file");
+            break;
+        }
+    }
+    fclose(f);
+    Log("Localization file: '%s'\n", filepath);
 }
