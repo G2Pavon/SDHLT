@@ -255,8 +255,10 @@ extern void     FreeFace(bface_t* f);
 
 extern bface_t* CopyFaceList(bface_t* f);
 extern void     FreeFaceList(bface_t* f);
-
-
+void HandleArgs(int argc, char** argv, const char*& mapname_from_arg);
+#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
+void ConvertGameTextMessages()
+#endif
 //=============================================================================
 // brushunion.c
 void            CalculateBrushUnions(int brushnum);
