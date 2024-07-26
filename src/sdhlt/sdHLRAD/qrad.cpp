@@ -48,8 +48,6 @@ static unsigned char (*newstyles)[MAXLIGHTMAPS];
 
 vec3_t          g_face_offset[MAX_MAP_FACES];              // for rotating bmodels
 
-vec_t           g_direct_scale = DEFAULT_DLIGHT_SCALE;
-
 unsigned        g_numbounce = DEFAULT_BOUNCE;              // 3; /* Originally this was 8 */
 
 vec_t			g_limitthreshold = DEFAULT_LIMITTHRESHOLD;
@@ -2338,9 +2336,6 @@ static void     Settings()
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
     Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
     Log("smoothing threshold 2[ %17s ] [ %17s ]\n", buf1, buf2);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_direct_scale);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_DLIGHT_SCALE);
-    Log("direct light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_chop);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CHOP);
@@ -2740,18 +2735,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-        else if (!strcasecmp(argv[i], "-dscale"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_direct_scale = (float)atof(argv[++i]);
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-
         // ------------------------------------------------------------------------
 	    // Changes by Adam Foster - afoster@compsoc.man.ac.uk
         else if (!strcasecmp(argv[i], "-colourgamma"))
@@ -3099,17 +3082,12 @@ int             main(const int argc, char** argv)
 			g_corings[style] = 0;
 		}
 	}
-	if (g_direct_scale != 1.0)
-	{
-		Warning ("dscale value should be 1.0 for final compile.\nIf you need to adjust the bounced light, use the '-texreflectscale' and '-texreflectgamma' options instead.");
-	}
 	if (g_colour_lightscale[0] != 2.0 || g_colour_lightscale[1] != 2.0 || g_colour_lightscale[2] != 2.0)
 	{
 		Warning ("light scale value should be 2.0 for final compile.\nValues other than 2.0 will result in incorrect interpretation of light_environment's brightness when the engine loads the map.");
 	}
 	if (g_drawlerp)
 	{
-		g_direct_scale = 0.0;
 	}
     
     if (!g_visdatasize)

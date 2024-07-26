@@ -57,7 +57,6 @@
 #define DEFAULT_CHOP                64.0
 #define DEFAULT_TEXCHOP             32.0
 #define DEFAULT_LIGHTSCALE          2.0 //1.0 //vluzacn
-#define DEFAULT_DLIGHT_SCALE        1.0 //2.0 //vluzacn
 #define DEFAULT_SMOOTHING2_VALUE	0
 
 
@@ -377,7 +376,6 @@ extern void     MakeShadowSplits();
 
 extern bool		g_fastmode;
 extern bool     g_extra;
-extern vec_t    g_direct_scale;
 extern vec_t	g_limitthreshold;
 extern unsigned g_numbounce;
 extern float    g_qgamma;

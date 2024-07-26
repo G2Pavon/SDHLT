@@ -4627,7 +4627,6 @@ void ScaleDirectLights ()
 			for (i = 0; i < fl->numsamples; i++)
 			{
 				samp = &fl->samples[k][i];
-				VectorScale (samp->light, g_direct_scale, samp->light);
 			}
 		}
 	}
