@@ -67,7 +67,6 @@ bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
-bool g_drawnudge = false;
 
 // Cosine of smoothing angle(in radians)
 bool            g_estimate = DEFAULT_ESTIMATE;
@@ -2571,11 +2570,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawnudge"))
-		{
-			g_drawnudge = true;
-		}
-
 		else if (!strcasecmp(argv[i], "-compress"))
 		{
 			if (i + 1 < argc)

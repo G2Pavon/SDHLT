@@ -3358,26 +3358,6 @@ void CalcLightmap (lightinfo_t *l, byte *styles)
 					}
 				}
 			}
-			if (g_drawnudge)
-			{
-				for (j = 0; j < ALLSTYLES && styles[j] != 255; j++)
-				{
-					if (blocked && styles[j] == 0)
-					{
-						sampled[j][0] = 200;
-						sampled[j][1] = 0;
-						sampled[j][2] = 0;
-					}
-					else if (nudged && styles[j] == 0) // we assume style 0 is always present
-					{
-						VectorFill (sampled[j], 100);
-					}
-					else
-					{
-						VectorClear (sampled[j]);
-					}
-				}
-			}
 		}
 	}
 }
@@ -3506,7 +3486,7 @@ void            BuildFacelights(const int facenum)
 		sizehalf = 0.5 * g_blur * l.lmcache_density;
 		subsamples = 0.0;
 		VectorCopy (l.lmcache_normal[s_center + l.lmcachewidth * t_center], centernormal);
-		if (g_bleedfix && !g_drawnudge)
+		if (g_bleedfix)
 		{
 			int s_origin = s_center;
 			int t_origin = t_center;
@@ -3569,7 +3549,7 @@ void            BuildFacelights(const int facenum)
 			{
 				weighting = (qmin (0.5, sizehalf - (s - s_center)) - qmax (-0.5, -sizehalf - (s - s_center)))
 					* (qmin (0.5, sizehalf - (t - t_center)) - qmax (-0.5, -sizehalf - (t - t_center)));
-				if (g_bleedfix && !g_drawnudge)
+				if (g_bleedfix)
 				{
 					int wallflags = sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
 					if (wallflags & (WALLFLAG_BLOCKED | WALLFLAG_SHADOWED))
