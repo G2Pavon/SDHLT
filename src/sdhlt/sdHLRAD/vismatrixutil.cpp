@@ -227,10 +227,6 @@ bool     CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t 
 				{
 					AddStyleToStyleArray (receiver, emitter, opaquestyle);
 				}
-            	if(g_customshadow_with_bouncelight)
-            	{
-            		VectorCopy(transparency, transparency_out);
-            	}
                 return true;
             }
         }

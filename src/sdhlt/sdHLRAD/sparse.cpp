@@ -168,10 +168,6 @@ static bool     CheckVisBitSparse(unsigned x, unsigned y
 
     if ((offset = IsVisbitInArray(x, y)) != -1)
     {
-    	if(g_customshadow_with_bouncelight)
-    	{
-    	     GetTransparency(a, b, transparency_out, next_index);
-    	}
         return s_vismatrix[x].row[offset].values & (1 << (y & 7));
     }
 
@@ -270,11 +266,6 @@ static void     TestPatchToFace(const unsigned patchnum, const int facenum, cons
 						AddStyleToStyleArray (m, patchnum, opaquestyle);
 						AddStyleToStyleArray (patchnum, m, opaquestyle);
 					}
-                                        
-                    if(g_customshadow_with_bouncelight && !VectorCompare(transparency, vec3_one) )
-                    {
-                    	AddTransparencyToRawArray(patchnum, m, transparency);
-                    }
 					uncompressedcolumn[m] = true;
                 }
             }

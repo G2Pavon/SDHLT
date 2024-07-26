@@ -71,14 +71,6 @@
 #define DEFAULT_EXTRA               false
 #define DEFAULT_INFO                true
 
-// ------------------------------------------------------------------------
-
-// O_o ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Changes by Jussi Kivilinna <hullu@unitedadmins.com> [http://hullu.xtragaming.com/]
-	// Transparency light support for bounced light(transfers) is extreamly slow 
-	// for 'vismatrix' and 'sparse' atm. 
-	// Only recommended to be used with 'nomatrix' mode
-	#define DEFAULT_CUSTOMSHADOW_WITH_BOUNCELIGHT false
 
 	// RGB Transfers support for HLRAD .. to be used with -customshadowwithbounce
 	#define DEFAULT_RGB_TRANSFERS false
@@ -371,8 +363,6 @@ extern unsigned      g_opaque_face_count; // opaque entity count //HLRAD_OPAQUE_
 extern unsigned      g_max_opaque_face_count;    // Current array maximum (used for reallocs)
 
 
-
-	extern bool	g_customshadow_with_bouncelight;
 	extern bool	g_rgb_transfers;
 	extern const vec3_t vec3_one;
 

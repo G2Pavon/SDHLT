@@ -62,7 +62,6 @@ bool            g_extra = DEFAULT_EXTRA;
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
-bool		g_customshadow_with_bouncelight = DEFAULT_CUSTOMSHADOW_WITH_BOUNCELIGHT;
 bool		g_rgb_transfers = DEFAULT_RGB_TRANSFERS;
 
 float		g_transtotal_hack = DEFAULT_TRANSTOTAL_HACK;
@@ -2357,8 +2356,6 @@ static void     Settings()
     // ------------------------------------------------------------------------
 
     Log("\n");
-    Log("custom shadows with bounce light\n"
-        "                     [ %17s ] [ %17s ]\n", g_customshadow_with_bouncelight ? "on" : "off", DEFAULT_CUSTOMSHADOW_WITH_BOUNCELIGHT ? "on" : "off");
     Log("rgb transfers        [ %17s ] [ %17s ]\n", g_rgb_transfers ? "on" : "off", DEFAULT_RGB_TRANSFERS ? "on" : "off"); 
 
 	Log("minimum final light  [ %17d ] [ %17d ]\n", (int)g_minlight, (int)DEFAULT_MINLIGHT);
@@ -2663,12 +2660,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        // ------------------------------------------------------------------------
-
-        else if (!strcasecmp(argv[i], "-customshadowwithbounce"))
-        {
-        	g_customshadow_with_bouncelight = true;
         }
         else if (!strcasecmp(argv[i], "-rgbtransfers"))
         {

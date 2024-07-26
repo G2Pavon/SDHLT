@@ -110,13 +110,6 @@ static void     TestPatchToFace(const unsigned patchnum, const int facenum, cons
 
                     // patchnum can see patch m
                     unsigned        bitset = bitpos + m;
-
-                    if(g_customshadow_with_bouncelight && !VectorCompare(transparency, vec3_one))
-					// zhlt3.4: if(g_customshadow_with_bouncelight && VectorCompare(transparency, vec3_one)) . --vluzacn
-                    {
-						AddTransparencyToRawArray(patchnum, m, transparency);
-                    }
-
 					ThreadLock (); //--vluzacn
                     s_vismatrix[bitset >> 3] |= 1 << (bitset & 7);
 					ThreadUnlock (); //--vluzacn
