@@ -172,6 +172,73 @@ static transfer_index_t* CompressTransferIndicies(const transfer_raw_index_t* tR
 #pragma warning(push)
 #pragma warning(disable: 4100)                             // unreferenced formal parameter
 #endif
+
+
+bool     CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out)
+{
+    patch_t*        emitpatch = &g_patches[emitter];
+
+    VectorFill(transparency_out, 1.0);
+
+    if (emitpatch)
+    {
+        const dplane_t* emitplane = getPlaneFromFaceNumber(emitpatch->faceNumber);
+
+        if (DotProduct(backorigin, emitplane->normal) > (PatchPlaneDist(emitpatch) + MINIMUM_PATCH_DISTANCE))
+        {
+
+            vec3_t transparency = {1.0,1.0,1.0};
+			int opaquestyle = -1;
+
+			vec3_t emitorigin;
+			vec3_t delta;
+			vec_t dist;
+			VectorSubtract (backorigin, emitpatch->origin, delta);
+			dist = VectorLength (delta);
+			if (dist < emitpatch->emitter_range - ON_EPSILON)
+			{
+				GetAlternateOrigin (backorigin, backnormal, emitpatch, emitorigin);
+			}
+			else
+			{
+				VectorCopy (emitpatch->origin, emitorigin);
+			}
+			if (DotProduct (emitorigin, backnormal) <= DotProduct (backorigin, backnormal) + MINIMUM_PATCH_DISTANCE)
+			{
+				return false;
+			}
+            if (TestLine(
+				backorigin, emitorigin
+				) != CONTENTS_EMPTY)
+			{
+				return false;
+			}
+            if (TestSegmentAgainstOpaqueList(
+				backorigin, emitorigin
+				, transparency
+				, opaquestyle
+				))
+			{
+				return false;
+			}
+
+            {
+				if (opaquestyle != -1)
+				{
+					AddStyleToStyleArray (receiver, emitter, opaquestyle);
+				}
+            	if(g_customshadow_with_bouncelight)
+            	{
+            		VectorCopy(transparency, transparency_out);
+            	}
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void            MakeScales(const int threadnum)
 {
     int             i;

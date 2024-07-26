@@ -33,16 +33,6 @@ bool            g_pre25update = DEFAULT_PRE25UPDATE;
 bool			g_fastmode = DEFAULT_FASTMODE;
 bool g_studioshadow = DEFAULT_STUDIOSHADOW;
 
-typedef enum
-{
-    eMethodVismatrix,
-    eMethodSparseVismatrix,
-    eMethodNoVismatrix
-}
-eVisMethods;
-
-eVisMethods		g_method = DEFAULT_METHOD;
-
 vec_t           g_fade = DEFAULT_FADE;
 
 patch_t*        g_face_patches[MAX_MAP_FACES];
@@ -2079,18 +2069,7 @@ static void     BounceLight()
 // =====================================================================================
 static void     CheckMaxPatches()
 {
-    switch (g_method)
-    {
-    case eMethodVismatrix:
-        hlassume(g_num_patches < MAX_VISMATRIX_PATCHES, assume_MAX_PATCHES); // should use "<=" instead. --vluzacn
-        break;
-    case eMethodSparseVismatrix:
-        hlassume(g_num_patches < MAX_SPARSE_VISMATRIX_PATCHES, assume_MAX_PATCHES);
-        break;
-    case eMethodNoVismatrix:
-        hlassume(g_num_patches < MAX_PATCHES, assume_MAX_PATCHES);
-        break;
-    }
+	hlassume(g_num_patches < MAX_SPARSE_VISMATRIX_PATCHES, assume_MAX_PATCHES);
 }
 
 // =====================================================================================
@@ -2098,18 +2077,7 @@ static void     CheckMaxPatches()
 // =====================================================================================
 static void     MakeScalesStub()
 {
-    switch (g_method)
-    {
-    case eMethodVismatrix:
-        MakeScalesVismatrix();
-        break;
-    case eMethodSparseVismatrix:
-        MakeScalesSparseVismatrix();
-        break;
-    case eMethodNoVismatrix:
-        MakeScalesNoVismatrix();
-        break;
-    }
+	MakeScalesSparseVismatrix(); // g_method = DEFAULT_METHOD = eMethodSparseVismatrix
 }
 
 // =====================================================================================
@@ -2366,10 +2334,6 @@ static void     Settings()
     Log("\n");
 
 	Log("fast rad             [ %17s ] [ %17s ]\n", g_fastmode? "on": "off", DEFAULT_FASTMODE? "on": "off");
-	Log("vismatrix algorithm  [ %17s ] [ %17s ]\n",
-		g_method == eMethodVismatrix? "Original": g_method == eMethodSparseVismatrix? "Sparse": g_method == eMethodNoVismatrix? "NoMatrix": "Unknown",
-		DEFAULT_METHOD == eMethodVismatrix? "Original": DEFAULT_METHOD == eMethodSparseVismatrix? "Sparse": DEFAULT_METHOD == eMethodNoVismatrix? "NoMatrix": "Unknown"
-		);
 	Log("pre-25th anniversary [ %17s ] [ %17s ]\n", g_pre25update ? "on" : "off", DEFAULT_PRE25UPDATE ? "on" : "off");
     Log("oversampling (-extra)[ %17s ] [ %17s ]\n", g_extra ? "on" : "off", DEFAULT_EXTRA ? "on" : "off");
     Log("bounces              [ %17d ] [ %17d ]\n", g_numbounce, DEFAULT_BOUNCE);
@@ -2781,33 +2745,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-vismatrix"))
-		{
-            if (i + 1 < argc)
-			{
-				const char *value = argv[++i];
-				if (!strcasecmp (value, "normal"))
-				{
-					g_method = eMethodVismatrix;
-				}
-				else if (!strcasecmp (value, "sparse"))
-				{
-					g_method = eMethodSparseVismatrix;
-				}
-				else if (!strcasecmp (value, "off"))
-				{
-					g_method = eMethodNoVismatrix;
-				}
-				else
-				{
-					Error ("Unknown vismatrix type: '%s'", value);
-				}
-			}
-			else
-			{
-				Usage (PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-nospread"))
 		{
 			g_allow_spread = false;

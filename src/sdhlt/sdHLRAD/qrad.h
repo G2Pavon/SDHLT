@@ -48,7 +48,6 @@
 
 #define DEFAULT_PRE25UPDATE         false
 #define DEFAULT_FASTMODE			false
-#define DEFAULT_METHOD eMethodSparseVismatrix
 #define DEFAULT_STUDIOSHADOW        true //seedee
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
@@ -504,14 +503,9 @@ extern void     CreateDirectLights();
 extern void     DeleteDirectLights();
 extern void     GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal); // added "const" --vluzacn
 
-typedef bool (*funcCheckVisBit) (unsigned, unsigned
-								 , vec3_t&
-								 , unsigned int&
-								 );
+typedef bool (*funcCheckVisBit) (unsigned, unsigned, vec3_t&, unsigned int&);
 extern funcCheckVisBit g_CheckVisBit;
-extern bool CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal
-								, vec3_t &transparency_out
-								);
+extern bool CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out);
 extern void	    MdlLightHack(void);
 
 // qradutil.c
@@ -538,9 +532,7 @@ extern bool		FindNearestPosition (int facenum, const Winding *texwinding, const 
 									);
 
 // makescales.c
-extern void     MakeScalesVismatrix();
 extern void     MakeScalesSparseVismatrix();
-extern void     MakeScalesNoVismatrix();
 
 // transfers.c
 extern size_t   g_total_transfer;

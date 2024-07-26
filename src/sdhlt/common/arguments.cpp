@@ -59,7 +59,6 @@ void Usage(ProgramType programType)
             Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
             Log("    -waddir folder  : Search this folder for wad files.\n");
             Log("    -fast           : Fast rad\n");
-            Log("    -vismatrix value: Set vismatrix method to normal, sparse or off.\n");
             Log("    -pre25          : Optimize compile for pre-Half-Life 25th anniversary update.\n");
             Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
             Log("    -bounce #       : Set number of radiosity bounces\n");
@@ -68,7 +67,6 @@ void Usage(ProgramType programType)
             Log("    -nospread       : Disable sunlight spread angles for this compile\n");
             Log("    -nopaque        : Disable the opaque zhlt_lightflags for this compile\n\n");
             Log("    -nostudioshadow : Disable opaque studiomodels, ignore zhlt_studioshadow for this compile\n\n");
-            Log("    -smooth2 #      : Set smoothing threshold between different textures\n");
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
