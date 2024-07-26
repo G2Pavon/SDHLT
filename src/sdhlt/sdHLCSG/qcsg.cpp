@@ -288,29 +288,29 @@ extern const char *ContentsToString(const contents_t type);
 static void CSGBrush(int brushnum)
 {
     int hull;
-    brush_t *b1;
-    brush_t *b2;
-    brushhull_t *bh1;
-    brushhull_t *bh2;
-    int bn;
-    bool overwrite;
-    bface_t *f;
-    bface_t *f2;
-    bface_t *next;
-    bface_t *outside;
-    entity_t *e;
-    vec_t area;
+    brush_t *brush1; // b1
+    brush_t *brush2; // b2
+    brushhull_t *brushHull1;
+    brushhull_t *brushHull2;
+    int brushNumber;
+    bool shouldOverwrite;
+    bface_t *face;  // f
+    bface_t *face2; // f2
+    bface_t *nextFace;
+    bface_t *outsideFaceList; // All of the faces start on the outside list
+    entity_t *entity;
+    vec_t faceArea;
 
-    b1 = &g_mapbrushes[brushnum];   // get brush info from the given brushnum that we can work with
-    e = &g_entities[b1->entitynum]; // get entity info from "
+    brush1 = &g_mapbrushes[brushnum];        // get brush info from the given brushnum that we can work with
+    entity = &g_entities[brush1->entitynum]; // get entity info from the given brushnum that we can work with
 
     for (hull = 0; hull < NUM_HULLS; hull++) // for each of the hulls
     {
-        bh1 = &b1->hulls[hull];
-        if (bh1->faces &&
-            (hull ? b1->clipnodedetaillevel : b1->detaillevel))
+        brushHull1 = &brush1->hulls[hull];
+        if (brushHull1->faces &&
+            (hull ? brush1->clipnodedetaillevel : brush1->detaillevel))
         {
-            switch (b1->contents)
+            switch (brush1->contents)
             {
             case CONTENTS_ORIGIN:
             case CONTENTS_BOUNDINGBOX:
@@ -319,89 +319,89 @@ static void CSGBrush(int brushnum)
                 break;
             default:
                 Error("Entity %i, Brush %i: %s brushes not allowed in detail\n",
-                      b1->originalentitynum, b1->originalbrushnum,
-                      ContentsToString((contents_t)b1->contents));
+                      brush1->originalentitynum, brush1->originalbrushnum,
+                      ContentsToString((contents_t)brush1->contents));
                 break;
             case CONTENTS_SOLID:
-                WriteDetailBrush(hull, bh1->faces);
+                WriteDetailBrush(hull, brushHull1->faces);
                 break;
             }
         }
 
-        outside = CopyFacesToOutside(bh1); // set outside to a copy of the brush's faces
-        overwrite = false;
-        if (b1->contents == CONTENTS_TOEMPTY)
+        outsideFaceList = CopyFacesToOutside(brushHull1); // set outside to a copy of the brush's faces
+        shouldOverwrite = false;
+        if (brush1->contents == CONTENTS_TOEMPTY)
         {
-            for (f = outside; f; f = f->next)
+            for (face = outsideFaceList; face; face = face->next)
             {
-                f->contents = CONTENTS_TOEMPTY;
-                f->backcontents = CONTENTS_TOEMPTY;
+                face->contents = CONTENTS_TOEMPTY;
+                face->backcontents = CONTENTS_TOEMPTY;
             }
         }
 
-        for (bn = 0; bn < e->numbrushes; bn++) // for each brush in entity e
+        for (brushNumber = 0; brushNumber < entity->numbrushes; brushNumber++) // for each brush in entity e
         {
-            if (e->firstbrush + bn == brushnum) // see if b2 needs to clip a chunk out of b1
+            if (entity->firstbrush + brushNumber == brushnum) // see if b2 needs to clip a chunk out of b1
             {
                 continue;
             }
-            overwrite = e->firstbrush + bn > brushnum;
+            shouldOverwrite = entity->firstbrush + brushNumber > brushnum;
 
-            b2 = &g_mapbrushes[e->firstbrush + bn];
-            bh2 = &b2->hulls[hull];
-            if (b2->contents == CONTENTS_TOEMPTY)
+            brush2 = &g_mapbrushes[entity->firstbrush + brushNumber];
+            brushHull2 = &brush2->hulls[hull];
+            if (brush2->contents == CONTENTS_TOEMPTY)
                 continue;
             if (
-                (hull ? (b2->clipnodedetaillevel - 0 > b1->clipnodedetaillevel + 0) : (b2->detaillevel - b2->chopdown > b1->detaillevel + b1->chopup)))
+                (hull ? (brush2->clipnodedetaillevel - 0 > brush1->clipnodedetaillevel + 0) : (brush2->detaillevel - brush2->chopdown > brush1->detaillevel + brush1->chopup)))
                 continue; // you can't chop
-            if (b2->contents == b1->contents &&
-                (hull ? (b2->clipnodedetaillevel != b1->clipnodedetaillevel) : (b2->detaillevel != b1->detaillevel)))
+            if (brush2->contents == brush1->contents &&
+                (hull ? (brush2->clipnodedetaillevel != brush1->clipnodedetaillevel) : (brush2->detaillevel != brush1->detaillevel)))
             {
-                overwrite =
-                    (hull ? (b2->clipnodedetaillevel < b1->clipnodedetaillevel) : (b2->detaillevel < b1->detaillevel));
+                shouldOverwrite =
+                    (hull ? (brush2->clipnodedetaillevel < brush1->clipnodedetaillevel) : (brush2->detaillevel < brush1->detaillevel));
             }
-            if (b2->contents == b1->contents && hull == 0 && b2->detaillevel == b1->detaillevel && b2->coplanarpriority != b1->coplanarpriority)
+            if (brush2->contents == brush1->contents && hull == 0 && brush2->detaillevel == brush1->detaillevel && brush2->coplanarpriority != brush1->coplanarpriority)
             {
-                overwrite = b2->coplanarpriority > b1->coplanarpriority;
+                shouldOverwrite = brush2->coplanarpriority > brush1->coplanarpriority;
             }
 
-            if (!bh2->faces)
+            if (!brushHull2->faces)
                 continue; // brush isn't in this hull
 
-            if (bh1->bounds.testDisjoint(bh2->bounds)) // check brush bounding box first. TODO: use boundingbox method instead
+            if (brushHull1->bounds.testDisjoint(brushHull2->bounds)) // check brush bounding box first. TODO: use boundingbox method instead
             {
                 continue;
             }
 
-            f = outside;
-            outside = NULL;
-            for (; f; f = next) // divide faces by the planes of the b2 to find which. Fragments are inside
+            face = outsideFaceList;
+            outsideFaceList = NULL;
+            for (; face; face = nextFace) // divide faces by the planes of the b2 to find which. Fragments are inside
             {
-                next = f->next;
-                if (bh2->bounds.testDisjoint(f->bounds)) // check face bounding box first
-                {                                        // this face doesn't intersect brush2's bbox
-                    f->next = outside;
-                    outside = f;
+                nextFace = face->next;
+                if (brushHull2->bounds.testDisjoint(face->bounds)) // check face bounding box first
+                {                                                  // this face doesn't intersect brush2's bbox
+                    face->next = outsideFaceList;
+                    outsideFaceList = face;
                     continue;
                 }
                 if (
-                    (hull ? (b2->clipnodedetaillevel > b1->clipnodedetaillevel) : (b2->detaillevel > b1->detaillevel)))
+                    (hull ? (brush2->clipnodedetaillevel > brush1->clipnodedetaillevel) : (brush2->detaillevel > brush1->detaillevel)))
                 {
-                    const char *texname = GetTextureByNumber_CSG(f->texinfo);
-                    if (f->texinfo == -1 || !strncasecmp(texname, "SKIP", 4) || !strncasecmp(texname, "HINT", 4) || !strncasecmp(texname, "SOLIDHINT", 9) || !strncasecmp(texname, "BEVELHINT", 9))
+                    const char *texname = GetTextureByNumber_CSG(face->texinfo);
+                    if (face->texinfo == -1 || !strncasecmp(texname, "SKIP", 4) || !strncasecmp(texname, "HINT", 4) || !strncasecmp(texname, "SOLIDHINT", 9) || !strncasecmp(texname, "BEVELHINT", 9))
                     { // should not nullify the fragment inside detail brush
-                        f->next = outside;
-                        outside = f;
+                        face->next = outsideFaceList;
+                        outsideFaceList = face;
                         continue;
                     }
                 }
 
-                Winding *w = new Winding(*f->w); // throw pieces on the front sides of the planes into the outside list, return the remains on the inside, find the fragment inside brush2
-                for (f2 = bh2->faces; f2; f2 = f2->next)
+                Winding *w = new Winding(*face->w); // throw pieces on the front sides of the planes into the outside list, return the remains on the inside, find the fragment inside brush2
+                for (face2 = brushHull2->faces; face2; face2 = face2->next)
                 {
-                    if (f->planenum == f2->planenum)
+                    if (face->planenum == face2->planenum)
                     {
-                        if (!overwrite) // face plane is outside brush2
+                        if (!shouldOverwrite) // face plane is outside brush2
                         {
                             w->m_NumPoints = 0;
                             break;
@@ -411,13 +411,13 @@ static void CSGBrush(int brushnum)
                             continue;
                         }
                     }
-                    if (f->planenum == (f2->planenum ^ 1))
+                    if (face->planenum == (face2->planenum ^ 1))
                     {
                         continue;
                     }
                     Winding *fw;
                     Winding *bw;
-                    w->Clip(f2->plane->normal, f2->plane->dist, &fw, &bw);
+                    w->Clip(face2->plane->normal, face2->plane->dist, &fw, &bw);
                     if (fw)
                     {
                         delete fw;
@@ -435,9 +435,9 @@ static void CSGBrush(int brushnum)
                 }
                 if (w->m_NumPoints) // do real split
                 {
-                    for (f2 = bh2->faces; f2; f2 = f2->next)
+                    for (face2 = brushHull2->faces; face2; face2 = face2->next)
                     {
-                        if (f->planenum == f2->planenum || f->planenum == (f2->planenum ^ 1))
+                        if (face->planenum == face2->planenum || face->planenum == (face2->planenum ^ 1))
                         {
                             continue;
                         }
@@ -445,7 +445,7 @@ static void CSGBrush(int brushnum)
                         int x;
                         for (x = 0; x < w->m_NumPoints; x++)
                         {
-                            vec_t dist = DotProduct(w->m_Points[x], f2->plane->normal) - f2->plane->dist;
+                            vec_t dist = DotProduct(w->m_Points[x], face2->plane->normal) - face2->plane->dist;
                             if (dist >= -ON_EPSILON * 4) // only estimate
                             {
                                 valid++;
@@ -455,25 +455,25 @@ static void CSGBrush(int brushnum)
                         {
                             Winding *fw;
                             Winding *bw;
-                            f->w->Clip(f2->plane->normal, f2->plane->dist, &fw, &bw);
+                            face->w->Clip(face2->plane->normal, face2->plane->dist, &fw, &bw);
                             if (fw)
                             {
-                                bface_t *front = NewFaceFromFace(f);
+                                bface_t *front = NewFaceFromFace(face);
                                 front->w = fw;
                                 fw->getBounds(front->bounds);
-                                front->next = outside;
-                                outside = front;
+                                front->next = outsideFaceList;
+                                outsideFaceList = front;
                             }
                             if (bw)
                             {
-                                delete f->w;
-                                f->w = bw;
-                                bw->getBounds(f->bounds);
+                                delete face->w;
+                                face->w = bw;
+                                bw->getBounds(face->bounds);
                             }
                             else
                             {
-                                FreeFace(f);
-                                f = NULL;
+                                FreeFace(face);
+                                face = NULL;
                                 break;
                             }
                         }
@@ -481,80 +481,74 @@ static void CSGBrush(int brushnum)
                 }
                 else
                 {
-                    f->next = outside;
-                    outside = f;
-                    f = NULL;
+                    face->next = outsideFaceList;
+                    outsideFaceList = face;
+                    face = NULL;
                 }
                 delete w;
 
-                area = f ? f->w->getArea() : 0;
-                if (f) // there is one convex fragment of the original, face left inside brush2
+                faceArea = face ? face->w->getArea() : 0;
+                if (face) // there is one convex fragment of the original, face left inside brush2
                 {
-                    if ((hull ? (b2->clipnodedetaillevel > b1->clipnodedetaillevel) : (b2->detaillevel > b1->detaillevel)))
+                    if ((hull ? (brush2->clipnodedetaillevel > brush1->clipnodedetaillevel) : (brush2->detaillevel > brush1->detaillevel)))
                     { // don't chop or set contents, only nullify
-                        f->next = outside;
-                        outside = f;
-                        f->texinfo = -1;
+                        face->next = outsideFaceList;
+                        outsideFaceList = face;
+                        face->texinfo = -1;
                         continue;
                     }
-                    if ((hull ? b2->clipnodedetaillevel < b1->clipnodedetaillevel : b2->detaillevel < b1->detaillevel) && b2->contents == CONTENTS_SOLID)
+                    if ((hull ? brush2->clipnodedetaillevel < brush1->clipnodedetaillevel : brush2->detaillevel < brush1->detaillevel) && brush2->contents == CONTENTS_SOLID)
                     { // real solid
-                        FreeFace(f);
+                        FreeFace(face);
                         continue;
                     }
-                    if (b1->contents == CONTENTS_TOEMPTY)
+                    if (brush1->contents == CONTENTS_TOEMPTY)
                     {
                         bool onfront = true, onback = true;
-                        for (f2 = bh2->faces; f2; f2 = f2->next)
+                        for (face2 = brushHull2->faces; face2; face2 = face2->next)
                         {
-                            if (f->planenum == (f2->planenum ^ 1))
+                            if (face->planenum == (face2->planenum ^ 1))
                                 onback = false;
-                            if (f->planenum == f2->planenum)
+                            if (face->planenum == face2->planenum)
                                 onfront = false;
                         }
-                        if (onfront && f->contents < b2->contents)
-                            f->contents = b2->contents;
-                        if (onback && f->backcontents < b2->contents)
-                            f->backcontents = b2->contents;
-                        if (f->contents == CONTENTS_SOLID && f->backcontents == CONTENTS_SOLID && strncasecmp(GetTextureByNumber_CSG(f->texinfo), "SOLIDHINT", 9) && strncasecmp(GetTextureByNumber_CSG(f->texinfo), "BEVELHINT", 9))
+                        if (onfront && face->contents < brush2->contents)
+                            face->contents = brush2->contents;
+                        if (onback && face->backcontents < brush2->contents)
+                            face->backcontents = brush2->contents;
+                        if (face->contents == CONTENTS_SOLID && face->backcontents == CONTENTS_SOLID && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "SOLIDHINT", 9) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "BEVELHINT", 9))
                         {
-                            FreeFace(f);
+                            FreeFace(face);
                         }
                         else
                         {
-                            f->next = outside;
-                            outside = f;
+                            face->next = outsideFaceList;
+                            outsideFaceList = face;
                         }
                         continue;
                     }
-                    if (((b1->contents > b2->contents) ||
-                         (b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "SOLIDHINT", 9))) ||
-                        (b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "BEVELHINT", 9)))
+                    if (((brush1->contents > brush2->contents) ||
+                         (brush1->contents == brush2->contents && !strncasecmp(GetTextureByNumber_CSG(face->texinfo), "SOLIDHINT", 9))) ||
+                        (brush1->contents == brush2->contents && !strncasecmp(GetTextureByNumber_CSG(face->texinfo), "BEVELHINT", 9)))
                     { // inside a water brush
-                        f->contents = b2->contents;
-                        f->next = outside;
-                        outside = f;
+                        face->contents = brush2->contents;
+                        face->next = outsideFaceList;
+                        outsideFaceList = face;
                     }
                     else // inside a solid brush
                     {
-                        FreeFace(f); // throw it away
+                        FreeFace(face); // throw it away
                     }
                 }
             }
         }
-        SaveOutside(b1, hull, outside, b1->contents); // all of the faces left in outside are real surface faces
+        SaveOutside(brush1, hull, outsideFaceList, brush1->contents); // all of the faces left in outside are real surface faces
     }
 }
 
 static void EmitPlanes()
 {
-    int i;
-    dplane_t *dp;
-    plane_t *mp;
-
     g_numplanes = g_nummapplanes;
-    mp = g_mapplanes;
-    dp = g_dplanes;
     {
         char name[_MAX_PATH];
         safe_snprintf(name, _MAX_PATH, "%s.pln", g_Mapname);
@@ -563,12 +557,6 @@ static void EmitPlanes()
             Error("Couldn't open %s", name);
         SafeWrite(planeout, g_mapplanes, g_nummapplanes * sizeof(plane_t));
         fclose(planeout);
-    }
-    for (i = 0; i < g_nummapplanes; i++, mp++, dp++)
-    {
-        VectorCopy(mp->normal, dp->normal);
-        dp->dist = mp->dist;
-        dp->type = mp->type;
     }
 }
 
