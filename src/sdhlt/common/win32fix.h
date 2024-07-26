@@ -6,7 +6,7 @@
 #pragma once
 #endif
 
-#include <malloc.h>
+#include <cstdlib>
 
 /////////////////////////////
 #ifdef SYSTEM_WIN32

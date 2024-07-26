@@ -4,7 +4,7 @@
 #ifdef SYSTEM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <malloc.h>
+#include <cstdlib>
 #include "cmdlib.h"
 #include "messages.h"
 #include "log.h"
