@@ -2,7 +2,6 @@
 
 edgeshare_t     g_edgeshare[MAX_MAP_EDGES];
 vec3_t          g_face_centroids[MAX_MAP_EDGES]; // BUG: should this be [MAX_MAP_FACES]?
-bool            g_sky_lighting_fix = DEFAULT_SKY_LIGHTING_FIX;
 
 //#define TEXTURE_STEP   16.0
 
@@ -2161,57 +2160,51 @@ void            CreateDirectLights()
     Log("%i direct lights and %i fast direct lights\n", countnormallights, countfastlights);
 	Log("%i light styles\n", numstyles);
 	// move all emit_skylight to leaf 0 (the solid leaf)
-	if (g_sky_lighting_fix)
+	directlight_t *skylights = NULL;
+	int l;
+	for (l = 0; l < 1 + g_dmodels[0].visleafs; l++)
 	{
-		directlight_t *skylights = NULL;
-		int l;
-		for (l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+		directlight_t **pdl;
+		for (dl = directlights[l], pdl = &directlights[l]; dl; dl = *pdl)
 		{
-			directlight_t **pdl;
-			for (dl = directlights[l], pdl = &directlights[l]; dl; dl = *pdl)
+			if (dl->type == emit_skylight)
 			{
-				if (dl->type == emit_skylight)
-				{
-					*pdl = dl->next;
-					dl->next = skylights;
-					skylights = dl;
-				}
-				else
-				{
-					pdl = &dl->next;
-				}
+				*pdl = dl->next;
+				dl->next = skylights;
+				skylights = dl;
+			}
+			else
+			{
+				pdl = &dl->next;
 			}
 		}
-        while ((dl = directlights[0]) != NULL)
-        {
-			// since they are in leaf 0, they won't emit a light anyway
-            directlights[0] = dl->next;
-            free(dl);
-        }
-		directlights[0] = skylights;
 	}
-	if (g_sky_lighting_fix)
+	while ((dl = directlights[0]) != NULL)
 	{
-		int countlightenvironment = 0;
-		int countinfosunlight = 0;
-		for (int i = 0; i < g_numentities; i++)
+		// since they are in leaf 0, they won't emit a light anyway
+		directlights[0] = dl->next;
+		free(dl);
+	}
+	directlights[0] = skylights;
+	int countlightenvironment = 0;
+	int countinfosunlight = 0;
+	for (int i = 0; i < g_numentities; i++)
+	{
+		entity_t *e = &g_entities[i];
+		const char *classname = ValueForKey (e, "classname");
+		if (!strcmp (classname, "light_environment"))
 		{
-			entity_t *e = &g_entities[i];
-			const char *classname = ValueForKey (e, "classname");
-			if (!strcmp (classname, "light_environment"))
-			{
-				countlightenvironment++;
-			}
-			if (!strcmp (classname, "info_sunlight"))
-			{
-				countinfosunlight++;
-			}
+			countlightenvironment++;
 		}
-		if (countlightenvironment > 1 && countinfosunlight == 0)
+		if (!strcmp (classname, "info_sunlight"))
 		{
-			// because the map is lit by more than one light_environments, but the game can only recognize one of them when setting sv_skycolor and sv_skyvec.
-			Warning ("More than one light_environments are in use. Add entity info_sunlight to clarify the sunlight's brightness for in-game model(.mdl) rendering.");
+			countinfosunlight++;
 		}
+	}
+	if (countlightenvironment > 1 && countinfosunlight == 0)
+	{
+		// because the map is lit by more than one light_environments, but the game can only recognize one of them when setting sv_skycolor and sv_skyvec.
+		Warning ("More than one light_environments are in use. Add entity info_sunlight to clarify the sunlight's brightness for in-game model(.mdl) rendering.");
 	}
 }
 
@@ -2463,21 +2456,13 @@ static void     GatherSampleLight(const vec3_t pos, const byte* const pvs, const
         l = directlights[i];
         if (l)
 		{
-            if (i == 0? g_sky_lighting_fix: pvs[(i - 1) >> 3] & (1 << ((i - 1) & 7)))
+            if (i == 0? true: pvs[(i - 1) >> 3] & (1 << ((i - 1) & 7))) // true = DEFAULT g_skylighting_fix a.k.a !-noskyfix
             {
                 for (; l; l = l->next)
                 {
                     // skylights work fundamentally differently than normal lights
                     if (l->type == emit_skylight)
                     {
-						if (!g_sky_lighting_fix)
-						{
-							if (sky_used)
-							{
-								continue;
-							}
-							sky_used = true;
-						}
 						do // add sun light
 						{
 							// check step

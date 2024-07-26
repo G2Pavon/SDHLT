@@ -7,4 +7,4 @@ Commands or functions that I only want to keep:
 ***CSG***: -cliptype -noskyclip -nowadtextures -wadautodetect
 ***BSP***: -subdivide -maxnodesize
 ***VIS***: -fast -full
-***RAD***: -bounce -chop -extra -blur -gamma -fade -scale -sparse -texchop -noskyfix
+***RAD***: -bounce -chop -extra -blur -gamma -fade -scale -sparse -texchop

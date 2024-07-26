@@ -2369,7 +2369,6 @@ static void     Settings()
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
-    Log("sky lighting fix     [ %17s ] [ %17s ]\n", g_sky_lighting_fix ? "on" : "off", DEFAULT_SKY_LIGHTING_FIX ? "on" : "off");
 
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2672,10 +2671,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        else if (!strcasecmp(argv[i], "-noskyfix"))
-        {
-            g_sky_lighting_fix = false;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {

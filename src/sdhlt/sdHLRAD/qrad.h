@@ -69,7 +69,6 @@
 // ------------------------------------------------------------------------
 
 #define DEFAULT_EXTRA               false
-#define DEFAULT_SKY_LIGHTING_FIX    true
 #define DEFAULT_INFO                true
 
 // ------------------------------------------------------------------------
@@ -386,7 +385,6 @@ extern vec_t *g_smoothvalues; //[nummiptex]
 extern bool     g_estimate;
 extern char     g_source[_MAX_PATH];
 extern vec_t    g_fade;
-extern bool     g_sky_lighting_fix;
 extern vec_t    g_chop;    // Chop value for normal textures
 extern vec_t    g_texchop; // Chop value for texture lights
 extern opaqueList_t* g_opaque_face_list;
