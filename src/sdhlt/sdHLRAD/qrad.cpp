@@ -67,7 +67,6 @@ bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
-bool g_drawpatch = false;
 bool g_drawsample = false;
 vec3_t g_drawsample_origin = {0,0,0};
 vec_t g_drawsample_radius = 0;
@@ -2131,34 +2130,6 @@ static void     RadWorld()
 
     // turn each face into a single patch
     MakePatches();
-	if (g_drawpatch)
-	{
-		char name[_MAX_PATH+20];
-		sprintf (name, "%s_patch.pts", g_Mapname);
-		Log ("Writing '%s' ...\n", name);
-		FILE *f;
-		f = fopen(name, "w");
-		if (f)
-		{
-			const int pos_count = 15;
-			const vec3_t pos[pos_count] = {{0,0,0},{1,0,0},{0,1,0},{-1,0,0},{0,-1,0},{1,0,0},{0,0,1},{-1,0,0},{0,0,-1},{0,-1,0},{0,0,1},{0,1,0},{0,0,-1},{1,0,0},{0,0,0}};
-			int j, k;
-			patch_t *patch;
-			vec3_t v;
-			for (j = 0, patch = g_patches; j < g_num_patches; j++, patch++)
-			{
-				if (patch->flags == ePatchFlagOutside)
-					continue;
-				VectorCopy (patch->origin, v);
-				for (k = 0; k < pos_count; ++k)
-					fprintf (f, "%g %g %g\n", v[0]+pos[k][0], v[1]+pos[k][1], v[2]+pos[k][2]);
-			}
-			fclose(f);
-			Log ("OK.\n");
-		}
-		else
-			Log ("Error.\n");
-	}
     CheckMaxPatches();                                     // Check here for exceeding max patches, to prevent a lot of work from occuring before an error occurs
     SortPatches();                                         // Makes the runs in the Transfer Compression really good
     PairEdges();
@@ -2638,10 +2609,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawpatch"))
-		{
-			g_drawpatch = true;
-		}
 		else if (!strcasecmp(argv[i], "-drawsample"))
 		{
 			g_drawsample = true;

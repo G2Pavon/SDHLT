@@ -356,7 +356,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 	extern float_type g_transfer_compress_type;
 	extern vector_type g_rgbtransfer_compress_type;
 	extern int g_blockopaque;
-	extern bool g_drawpatch;
 	extern bool g_drawsample;
 	extern vec3_t g_drawsample_origin;
 	extern vec_t g_drawsample_radius;
