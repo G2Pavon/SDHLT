@@ -64,7 +64,6 @@ void Usage(ProgramType programType)
             Log("    -bounce #       : Set number of radiosity bounces\n");
             Log("    -limiter #      : Set light clipping threshold (-1=None)\n");
             Log("    -circus         : Enable 'circus' mode for locating unlit lightmaps\n");
-            Log("    -nopaque        : Disable the opaque zhlt_lightflags for this compile\n\n");
             Log("    -nostudioshadow : Disable opaque studiomodels, ignore zhlt_studioshadow for this compile\n\n");
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");

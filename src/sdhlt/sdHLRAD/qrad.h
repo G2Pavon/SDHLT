@@ -72,7 +72,6 @@
 #define DEFAULT_EXTRA               false
 #define DEFAULT_SKY_LIGHTING_FIX    true
 #define DEFAULT_INFO                true
-#define DEFAULT_ALLOW_OPAQUES       true
 
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
