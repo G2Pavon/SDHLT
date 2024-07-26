@@ -79,7 +79,6 @@ void Usage(ProgramType programType)
             Log("    -scale #        : Set global light scaling value\n");
             Log("    -gamma #        : Set global gamma value\n\n");
             Log("    -sky #          : Set ambient sunlight contribution in the shade outside\n");
-            Log("    -lights file    : Manually specify a lights.rad file to use\n");
             Log("    -noskyfix       : Disable light_environment being global\n");
             Log("    -incremental    : Use or create an incremental transfer list file\n\n");
             Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");

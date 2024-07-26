@@ -188,99 +188,6 @@ typedef std::vector< texlight_t >::iterator texlight_i;
 std::vector<minlight_t> s_minlights;
 
 // =====================================================================================
-//  ReadLightFile
-// =====================================================================================
-static void     ReadLightFile(const char* const filename)
-{
-    FILE*           f;
-    char            scan[MAXTOKEN];
-    short           argCnt;
-    unsigned int    file_texlights = 0;
-
-    f = fopen(filename, "r");
-    if (!f)
-    {
-        Warning("Could not open texlight file %s", filename);
-        return;
-    }
-    else
-    {
-		Log("Reading texlights from '%s'\n", filename);
-    }
-
-    while (fgets(scan, sizeof(scan), f))
-    {
-        char*           comment;
-        char            szTexlight[_MAX_PATH];
-        vec_t           r, g, b, i = 1;
-
-        comment = strstr(scan, "//");
-        if (comment)
-        {
-            // Newline and Null terminate the string early if there is a c++ style single line comment
-            comment[0] = '\n';
-            comment[1] = 0;
-        }
-
-        argCnt = sscanf(scan, "%s %f %f %f %f", szTexlight, &r, &g, &b, &i);
-
-        if (argCnt == 2)
-        {
-            // With 1+1 args, the R,G,B values are all equal to the first value
-            g = b = r;
-        }
-        else if (argCnt == 5)
-        {
-            // With 1+4 args, the R,G,B values are "scaled" by the fourth numeric value i;
-            r *= i / 255.0;
-            g *= i / 255.0;
-            b *= i / 255.0;
-        }
-        else if (argCnt != 4)
-        {
-            if (strlen(scan) > 4)
-            {
-                Warning("ignoring bad texlight '%s' in %s", scan, filename);
-            }
-            continue;
-        }
-
-        texlight_i it;
-        for (it = s_texlights.begin(); it != s_texlights.end(); it++)
-        {
-            if (strcmp(it->name.c_str(), szTexlight) == 0)
-            {
-                if (strcmp(it->filename, filename) == 0)
-                {
-                    Warning("Duplication of texlight '%s' in file '%s'!", it->name.c_str(), it->filename);
-                }
-                else if (it->value[0] != r || it->value[1] != g || it->value[2] != b)
-                {
-                    Warning("Overriding '%s' from '%s' with '%s'!", it->name.c_str(), it->filename, filename);
-                }
-                else
-                {
-                    Warning("Redundant '%s' def in '%s' AND '%s'!", it->name.c_str(), it->filename, filename);
-                }
-                s_texlights.erase(it);
-                break;
-            }
-        }
-
-        texlight_t      texlight;
-        texlight.name = szTexlight;
-        texlight.value[0] = r;
-        texlight.value[1] = g;
-        texlight.value[2] = b;
-        texlight.filename = filename;
-        file_texlights++;
-        s_texlights.push_back(texlight);
-    }
-	fclose (f); //--vluzacn
-	Log("%u texlights parsed (%s)\n", file_texlights, filename); //readded //seedee
-}
-
-// =====================================================================================
 //  LightForTexture
 // =====================================================================================
 static void     LightForTexture(const char* const name, vec3_t result)
@@ -2678,132 +2585,6 @@ void            ReadInfoTexAndMinlights()
     }
 }
 
-const char* lights_rad = "lights.rad";
-const char* ext_rad = ".rad";
-// =====================================================================================
-//  LoadRadFiles
-// =====================================================================================
-void            LoadRadFiles(const char* const mapname, const char* const user_rad, const char* argv0)
-{
-    char global_lights[_MAX_PATH];
-    char mapname_lights[_MAX_PATH];
-
-    char mapfile[_MAX_PATH];
-    char mapdir[_MAX_PATH];
-    char appdir[_MAX_PATH];
-
-    // Get application directory (only an approximation on posix systems)
-    // try looking in the directory we were run from
-    {
-        char tmp[_MAX_PATH];
-        memset(tmp, 0, sizeof(tmp));
-#ifdef SYSTEM_WIN32
-        GetModuleFileName(NULL, tmp, _MAX_PATH);
-#else
-        safe_strncpy(tmp, argv0, _MAX_PATH);
-#endif
-        ExtractFilePath(tmp, appdir);
-    }
-
-    // Get map directory
-    ExtractFilePath(mapname, mapdir);
-	ExtractFile(mapname, mapfile);
-
-    // Look for lights.rad in mapdir
-    safe_strncpy(global_lights, mapdir, _MAX_PATH);
-    safe_strncat(global_lights, lights_rad, _MAX_PATH);
-    if (q_exists(global_lights))
-    {
-        ReadLightFile(global_lights);
-    }
-    else
-    {
-        // Look for lights.rad in appdir
-        safe_strncpy(global_lights, appdir, _MAX_PATH);
-        safe_strncat(global_lights, lights_rad, _MAX_PATH);
-        if (q_exists(global_lights))
-        {
-            ReadLightFile(global_lights);
-        }
-        else
-        {
-            // Look for lights.rad in current working directory
-            safe_strncpy(global_lights, lights_rad, _MAX_PATH);
-            if (q_exists(global_lights))
-            {
-                ReadLightFile(global_lights);
-            }
-        }
-    }
-   
-    // Look for mapname.rad in mapdir
-    safe_strncpy(mapname_lights, mapdir, _MAX_PATH);
-    safe_strncat(mapname_lights, mapfile, _MAX_PATH);
-	safe_strncat(mapname_lights, ext_rad, _MAX_PATH);
-    if (q_exists(mapname_lights))
-    {
-        ReadLightFile(mapname_lights);
-    }
-
-
-    if (user_rad)
-    {
-        char user_lights[_MAX_PATH];
-        char userfile[_MAX_PATH];
-
-        ExtractFile(user_rad, userfile);
-
-        // Look for user.rad from command line (raw)
-        safe_strncpy(user_lights, user_rad, _MAX_PATH);
-        if (q_exists(user_lights))
-        {
-            ReadLightFile(user_lights);
-        }
-        else
-        {
-            // Try again with .rad enforced as extension
-            DefaultExtension(user_lights, ext_rad);
-            if (q_exists(user_lights))
-            {
-                ReadLightFile(user_lights);
-            }
-            else
-            {
-                // Look for user.rad in mapdir
-                safe_strncpy(user_lights, mapdir, _MAX_PATH);
-                safe_strncat(user_lights, userfile, _MAX_PATH);
-                DefaultExtension(user_lights, ext_rad);
-                if (q_exists(user_lights))
-                {
-                    ReadLightFile(user_lights);
-                }
-                else
-                {
-                    // Look for user.rad in appdir
-                    safe_strncpy(user_lights, appdir, _MAX_PATH);
-                    safe_strncat(user_lights, userfile, _MAX_PATH);
-                    DefaultExtension(user_lights, ext_rad);
-                    if (q_exists(user_lights))
-                    {
-                        ReadLightFile(user_lights);
-                    }
-                    else
-                    {
-                        // Look for user.rad in current working directory
-                        safe_strncpy(user_lights, userfile, _MAX_PATH);
-                        DefaultExtension(user_lights, ext_rad);
-                        if (q_exists(user_lights))
-                        {
-                            ReadLightFile(user_lights);
-                        }
-                    }
-                }
-            }
-        }
-    }
-	ReadInfoTexAndMinlights(); // AJM + seedee
-}
-
 // =====================================================================================
 //  main
 // =====================================================================================
@@ -2812,7 +2593,6 @@ int             main(const int argc, char** argv)
     int             i;
     double          start, end;
     const char*     mapname_from_arg = NULL;
-    const char*     user_lights = NULL;
 	char temp[_MAX_PATH]; //seedee
 
     g_Program = "sdHLRAD";
@@ -2966,17 +2746,6 @@ int             main(const int argc, char** argv)
             if (i + 1 < argc)	//"1" was added to check if there is another argument afterwards (expected value) //seedee
             {
                 g_limitthreshold = atof(argv[++i]);
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-lights"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                user_lights = argv[++i];
             }
             else
             {
@@ -3488,7 +3257,6 @@ int             main(const int argc, char** argv)
     Settings();
 	DeleteEmbeddedLightmaps ();
 	LoadTextures ();
-    LoadRadFiles(g_Mapname, user_lights, argv[0]);
 	ReadCustomChopValue ();
 	ReadCustomSmoothValue ();
 	ReadTranslucentTextures ();
