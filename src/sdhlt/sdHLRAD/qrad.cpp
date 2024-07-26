@@ -2562,17 +2562,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-depth"))
-		{
-			if (i + 1 < argc)
-			{
-				g_translucentdepth = atof(argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-blockopaque"))
 		{
 			if (i + 1 < argc)
