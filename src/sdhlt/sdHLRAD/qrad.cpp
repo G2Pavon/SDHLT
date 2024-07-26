@@ -80,7 +80,6 @@ vec_t			g_corings[ALLSTYLES];
 vec3_t*			g_translucenttextures = NULL;
 vec_t			g_translucentdepth = DEFAULT_TRANSLUCENTDEPTH;
 vec_t			g_blur = DEFAULT_BLUR;
-bool			g_noemitterrange = DEFAULT_NOEMITTERRANGE;
 vec_t			g_texlightgap = DEFAULT_TEXLIGHTGAP;
 
 // Misc
@@ -341,10 +340,6 @@ static void		UpdateEmitterInfo (patch_t *patch)
 		}
 	}
 	patch->emitter_range = ACCURATEBOUNCE_THRESHOLD * radius;
-	if (g_noemitterrange)
-	{
-		patch->emitter_range = 0.0;
-	}
 	patch->emitter_skylevel = skylevel;
 }
 
@@ -2266,7 +2261,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	Log("no emitter range     [ %17s ] [ %17s ]\n", g_noemitterrange ? "on" : "off", DEFAULT_NOEMITTERRANGE ? "on" : "off");
 	Log("wall bleeding fix    [ %17s ] [ %17s ]\n", g_bleedfix ? "on" : "off", DEFAULT_BLEEDFIX ? "on" : "off");
 
     Log("\n\n");
@@ -2543,10 +2537,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-noemitterrange"))
-		{
-			g_noemitterrange = true;
-		}
 		else if (!strcasecmp (argv[i], "-nobleedfix"))
 		{
 			g_bleedfix = false;

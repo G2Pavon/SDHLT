@@ -65,15 +65,11 @@ void Usage(ProgramType programType)
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
             Log("    -texlightgap #  : Set global gap distance for texlights\n");
-            Log("    -incremental    : Use or create an incremental transfer list file\n\n");
             Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
             Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
             Log("    -low | -high    : run program an altered priority level\n");
             Log("    -threads #      : manually specify the number of threads to run\n");
-            Log("    -depth #       : Thickness of translucent objects.\n");
-            Log("    -notextures    : Don't load textures.\n");
             Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");
-            Log("    -noemitterrange: Don't fix pointy texlights.\n");
             Log("    -nobleedfix    : Don't fix wall bleeding problem for faces with large seams.\n");
             Log("    -noattic       : Skip shadow processing for small attic lights.\n");
             Log("    -nooutside     : Skip shadow processing for small outside lights.\n");

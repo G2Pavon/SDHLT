@@ -73,7 +73,6 @@
 #define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
 #define DEFAULT_TRANSLUCENTDEPTH 2.0f
 #define DEFAULT_BLUR 1.5 // classic lighting is equivalent to "-blur 1.0"
-#define DEFAULT_NOEMITTERRANGE false
 #define DEFAULT_BLEEDFIX true
 #define DEFAULT_EMBEDLIGHTMAP_POWEROFTWO true
 #define DEFAULT_EMBEDLIGHTMAP_DENOMINATOR 188.0
@@ -357,7 +356,6 @@ extern vec3_t *g_translucenttextures;
 extern vec_t g_translucentdepth;
 extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y component = scale, Z component = nothing
 extern vec_t g_blur;
-extern bool g_noemitterrange;
 extern bool g_bleedfix;
 extern vec_t g_maxdiscardedlight;
 extern vec3_t g_maxdiscardedpos;
