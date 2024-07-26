@@ -4879,8 +4879,8 @@ void            FinalLightFace(const int facenum)
 				}
 			}
 			for (i = 0; i < 3; ++i)
-				if (lb[i] < g_minlight)
-					lb[i] = g_minlight;
+				if (lb[i] < 0) // never i guess?
+					lb[i] = 0;
 	        // ------------------------------------------------------------------------
 			for (i = 0; i < 3; ++i)
 			{

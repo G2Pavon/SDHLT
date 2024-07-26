@@ -62,7 +62,6 @@ bool            g_extra = DEFAULT_EXTRA;
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
-unsigned char g_minlight = DEFAULT_MINLIGHT;
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
 bool g_softsky = DEFAULT_SOFTSKY;
@@ -2348,9 +2347,6 @@ static void     Settings()
     Log("\n");
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
     // ------------------------------------------------------------------------
-
-    Log("\n");
-	Log("minimum final light  [ %17d ] [ %17d ]\n", (int)g_minlight, (int)DEFAULT_MINLIGHT);
 	sprintf (buf1, "%d (%s)", g_transfer_compress_type, float_type_string[g_transfer_compress_type]);
 	sprintf (buf2, "%d (%s)", DEFAULT_TRANSFER_COMPRESS_TYPE, float_type_string[DEFAULT_TRANSFER_COMPRESS_TYPE]);
 	Log("size of transfer     [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2653,20 +2649,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-minlight"))
-		{
-			if (i + 1 < argc)
-			{
-				int v = atoi(argv[++i]);
-				v = qmax (0, qmin (v, 255));
-				g_minlight = (unsigned char)v;
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
-
 		else if (!strcasecmp(argv[i], "-softsky"))
 		{
 			if (i + 1 < argc)

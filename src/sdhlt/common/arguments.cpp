@@ -73,7 +73,6 @@ void Usage(ProgramType programType)
             Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
             Log("    -low | -high    : run program an altered priority level\n");
             Log("    -threads #      : manually specify the number of threads to run\n");
-            Log("    -minlight #    : Minimum final light (integer from 0 to 255)\n");
             Log("    -softsky #     : Smooth skylight.(0=off 1=on)\n");
             Log("    -depth #       : Thickness of translucent objects.\n");
             Log("    -blockopaque # : Remove the black areas around opaque entities.(0=off 1=on)\n");
