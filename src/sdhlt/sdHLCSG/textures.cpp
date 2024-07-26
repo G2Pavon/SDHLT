@@ -804,16 +804,6 @@ int             TexinfoForBrushTexture(const plane_t* const plane, brush_texture
 		// actually only 'sky' and 'aaatrigger' needs this. --vluzacn
         tx.flags |= TEX_SPECIAL;
     }
-
-    if (bt->txcommand)
-    {
-        memcpy(tx.vecs, bt->vects.quark.vects, sizeof(tx.vecs));
-        if (origin[0] || origin[1] || origin[2])
-        {
-            tx.vecs[0][3] += DotProduct(origin, tx.vecs[0]);
-            tx.vecs[1][3] += DotProduct(origin, tx.vecs[1]);
-        }
-    }
     else
     {
         if (g_nMapFileVersion < 220)
