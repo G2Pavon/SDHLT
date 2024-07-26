@@ -62,11 +62,6 @@ bool            g_extra = DEFAULT_EXTRA;
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
-// --------------------------------------------------------------------------
-// Changes by Adam Foster - afoster@compsoc.man.ac.uk
-vec3_t		g_jitter_hack = { DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE };
-// --------------------------------------------------------------------------
-
 bool		g_customshadow_with_bouncelight = DEFAULT_CUSTOMSHADOW_WITH_BOUNCELIGHT;
 bool		g_rgb_transfers = DEFAULT_RGB_TRANSFERS;
 
@@ -2359,18 +2354,6 @@ static void     Settings()
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
-
-    // ------------------------------------------------------------------------
-    // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-    // displays information on all the brand-new features :)
-
-    Log("\n");
-    safe_snprintf(buf1, sizeof(buf1), "%3.1f %3.1f %3.1f", g_jitter_hack[0], g_jitter_hack[1], g_jitter_hack[2]);
-    safe_snprintf(buf2, sizeof(buf2), "%3.1f %3.1f %3.1f", DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE);
-    Log("monochromatic jitter [ %17s ] [ %17s ]\n", buf1, buf2);
-
-
-
     // ------------------------------------------------------------------------
 
     Log("\n");
@@ -2681,20 +2664,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-jitter"))
-        {
-        	if (i + 3 < argc)
-			{
-				g_jitter_hack[0] = (float)atof(argv[++i]);
-				g_jitter_hack[1] = (float)atof(argv[++i]);
-				g_jitter_hack[2] = (float)atof(argv[++i]);
-			}
-			else
-			{
-				Error("expected three color values after '-jitter'\n");
-			}
-        }
-
         // ------------------------------------------------------------------------
 
         else if (!strcasecmp(argv[i], "-customshadowwithbounce"))

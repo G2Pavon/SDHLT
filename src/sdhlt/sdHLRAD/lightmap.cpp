@@ -4895,15 +4895,6 @@ void            FinalLightFace(const int facenum)
 			{
 				VectorSubtract (lbi, final_basiclight[j], lbi);
 			}
-			if (k == 0)
-			{
-				if (g_jitter_hack[0] || g_jitter_hack[1] || g_jitter_hack[2]) 
-				{
-					temp_rand = (float)rand() / RAND_MAX - 0.5;
-					for (i = 0; i < 3; i++) 
-						lbi[i] += g_jitter_hack[i] * temp_rand;
-				}
-			}
 			for (i = 0; i < 3; ++i)
 			{
 				if (lbi[i] < 0) lbi[i] = 0;

@@ -72,15 +72,6 @@
 #define DEFAULT_INFO                true
 
 // ------------------------------------------------------------------------
-// Changes by Adam Foster - afoster@compsoc.man.ac.uk
-
-#define DEFAULT_JITTER_HACK_RED			0.0
-#define DEFAULT_JITTER_HACK_GREEN		0.0
-#define DEFAULT_JITTER_HACK_BLUE		0.0
-
-
-
-// ------------------------------------------------------------------------
 
 // O_o ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Changes by Jussi Kivilinna <hullu@unitedadmins.com> [http://hullu.xtragaming.com/]
@@ -379,12 +370,6 @@ extern opaqueList_t* g_opaque_face_list;
 extern unsigned      g_opaque_face_count; // opaque entity count //HLRAD_OPAQUE_NODE
 extern unsigned      g_max_opaque_face_count;    // Current array maximum (used for reallocs)
 
-
-// ------------------------------------------------------------------------
-// Changes by Adam Foster - afoster@compsoc.man.ac.uk
-extern vec3_t	g_jitter_hack;
-
-// ------------------------------------------------------------------------
 
 
 	extern bool	g_customshadow_with_bouncelight;
