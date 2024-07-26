@@ -307,7 +307,7 @@ void            MakeScalesVismatrix()
 
 	safe_snprintf(transferfile, _MAX_PATH, "%s.inc", g_Mapname);
 
-    if (!g_incremental || !readtransfers(transferfile, g_num_patches))
+    if (!readtransfers(transferfile, g_num_patches))
     {
         // determine visibility between g_patches
         BuildVisMatrix();
@@ -321,11 +321,7 @@ void            MakeScalesVismatrix()
 		{NamedRunThreadsOn(g_num_patches, g_estimate, MakeScales);}
         FreeVisMatrix();
         FreeTransparencyArrays();
-
-        if (g_incremental)
-            writetransfers(transferfile, g_num_patches);
-        else
-            _unlink(transferfile);
+        _unlink(transferfile);
         DumpTransfersMemoryUsage();
 		CreateFinalStyleArrays ("dynamic shadow array");
     }

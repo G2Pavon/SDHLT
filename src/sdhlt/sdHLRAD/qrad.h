@@ -62,7 +62,6 @@
 #define DEFAULT_DLIGHT_SCALE        1.0 //2.0 //vluzacn
 #define DEFAULT_SMOOTHING_VALUE     50.0
 #define DEFAULT_SMOOTHING2_VALUE	0
-#define DEFAULT_INCREMENTAL         false
 
 
 // ------------------------------------------------------------------------
@@ -400,7 +399,6 @@ extern vec_t *g_smoothvalues; //[nummiptex]
 extern bool     g_estimate;
 extern char     g_source[_MAX_PATH];
 extern vec_t    g_fade;
-extern bool     g_incremental;
 extern bool		g_allow_spread;
 extern bool     g_sky_lighting_fix;
 extern vec_t    g_chop;    // Chop value for normal textures

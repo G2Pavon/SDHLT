@@ -70,7 +70,6 @@ float           g_dlight_threshold = DEFAULT_DLIGHT_THRESHOLD;  // was DIRECT_LI
 char            g_source[_MAX_PATH] = "";
 
 char            g_vismatfile[_MAX_PATH] = "";
-bool            g_incremental = DEFAULT_INCREMENTAL;
 float           g_indirect_sun = DEFAULT_INDIRECT_SUN;
 bool            g_extra = DEFAULT_EXTRA;
 
@@ -2446,7 +2445,6 @@ static void     Settings()
     Log("opaque brush models  [ %17s ] [ %17s ]\n", g_allow_opaques ? "on" : "off", DEFAULT_ALLOW_OPAQUES ? "on" : "off");
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
     Log("sky lighting fix     [ %17s ] [ %17s ]\n", g_sky_lighting_fix ? "on" : "off", DEFAULT_SKY_LIGHTING_FIX ? "on" : "off");
-    Log("incremental          [ %17s ] [ %17s ]\n", g_incremental ? "on" : "off", DEFAULT_INCREMENTAL ? "on" : "off");
 
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2753,10 +2751,6 @@ int             main(const int argc, char** argv)
         else if (!strcasecmp(argv[i], "-noskyfix"))
         {
             g_sky_lighting_fix = false;
-        }
-        else if (!strcasecmp(argv[i], "-incremental"))
-        {
-            g_incremental = true;
         }
         else if (!strcasecmp(argv[i], "-low"))
         {
