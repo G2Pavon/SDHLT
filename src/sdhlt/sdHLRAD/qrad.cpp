@@ -109,7 +109,6 @@ bool g_drawlerp = false;
 bool g_drawnudge = false;
 
 // Cosine of smoothing angle(in radians)
-float           g_coring = DEFAULT_CORING;                 // Light threshold to force to blackness(minimizes lightmaps)
 bool            g_estimate = DEFAULT_ESTIMATE;
 
 
@@ -2395,9 +2394,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_direct_scale);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_DLIGHT_SCALE);
     Log("direct light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_coring);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CORING);
-    Log("coring threshold     [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_chop);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CHOP);
@@ -2789,17 +2785,6 @@ int             main(const int argc, char** argv)
 				Usage(PROGRAM_RAD);
 			}
 		}
-        else if (!strcasecmp(argv[i], "-coring"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_coring = (float)atof(argv[++i]);
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
         else if (!strcasecmp(argv[i], "-texdata"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn
@@ -3220,9 +3205,12 @@ int             main(const int argc, char** argv)
 	{
 		int style;
 		for (style = 0; style < ALLSTYLES; ++style)
-		{
-			g_corings[style] = style? g_coring: 0;
+		if (style) {
+			g_corings[style] = 0.01; // 0.01 = DEFAULT_CORING = g_coring a.k.a -coring
+		} else {
+			g_corings[style] = 0;
 		}
+
 	}
 	if (g_direct_scale != 1.0)
 	{

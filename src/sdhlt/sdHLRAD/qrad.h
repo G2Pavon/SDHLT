@@ -73,7 +73,6 @@
 
 #define DEFAULT_EXTRA               false
 #define DEFAULT_SKY_LIGHTING_FIX    true
-#define DEFAULT_CORING				0.01
 #define DEFAULT_INFO                true
 #define DEFAULT_ALLOW_OPAQUES       true
 #define DEFAULT_ALLOW_SPREAD		true
@@ -375,7 +374,6 @@ extern patch_t* g_patches; // shrinked to its real size, because 1048576 patches
 extern unsigned g_num_patches;
 
 extern float    g_lightscale;
-extern float    g_coring;
 
 extern void     MakeShadowSplits();
 
