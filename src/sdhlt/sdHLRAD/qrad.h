@@ -72,7 +72,6 @@
 	#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
 	#define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
 	#define DEFAULT_TRANSLUCENTDEPTH 2.0f
-	#define DEFAULT_NOTEXTURES false
 	#define DEFAULT_TEXREFLECTGAMMA 1.76f // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 	#define DEFAULT_TEXREFLECTSCALE 0.7f // arbitrary (This is lower than 1.0, because textures are usually brightened in order to look better in Goldsrc. Textures are made brightened because Goldsrc is only able to darken the texture when combining the texture with the lightmap.)
 	#define DEFAULT_BLUR 1.5 // classic lighting is equivalent to "-blur 1.0"
@@ -359,7 +358,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 	extern vec3_t *g_translucenttextures;
 	extern vec_t g_translucentdepth;
 	extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y component = scale, Z component = nothing
-	extern bool g_notextures;
 	extern vec_t g_texreflectgamma;
 	extern vec_t g_texreflectscale;
 	extern vec_t g_blur;

@@ -319,10 +319,7 @@ void LoadTextureFromWad (radtexture_t *tex, const miptex_t *header)
 
 void LoadTextures ()
 {
-	if (!g_notextures)
-	{
-		Log ("Load Textures:\n");
-	}
+	Log ("Load Textures:\n");
 	g_numtextures = g_texdatasize? ((dmiptexlump_t *)g_dtexdata)->nummiptex: 0;
 	g_textures = (radtexture_t *)malloc (g_numtextures * sizeof (radtexture_t));
 	hlassume (g_textures != NULL, assume_NoMemory);
@@ -332,11 +329,7 @@ void LoadTextures ()
 		int offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
 		int size = g_texdatasize - offset;
 		radtexture_t *tex = &g_textures[i];
-		if (g_notextures)
-		{
-			DefaultTexture (tex, "DEFAULT");
-		}
-		else if (offset < 0 || size < (int)sizeof (miptex_t))
+		if (offset < 0 || size < (int)sizeof (miptex_t))
 		{
 			Warning ("Invalid texture data in '%s'.", g_source);
 			DefaultTexture (tex, "");
@@ -383,11 +376,8 @@ void LoadTextures ()
 			}
 		}
 	}
-	if (!g_notextures)
-	{
-		Log ("%i textures referenced\n", g_numtextures);
-		TryCloseWadFiles ();
-	}
+	Log ("%i textures referenced\n", g_numtextures);
+	TryCloseWadFiles ();
 }
 
 
@@ -995,11 +985,6 @@ void EmbedLightmapInTextures ()
 	if (!g_texdatasize)
 	{
 		// texdata hasn't been initialized
-		return;
-	}
-	if (g_notextures)
-	{
-		// hlrad didn't load the wad files
 		return;
 	}
 
