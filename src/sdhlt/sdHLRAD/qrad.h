@@ -71,7 +71,6 @@
 // superseded by DEFAULT_COLOUR_GAMMA_*
 // ------------------------------------------------------------------------
 
-#define DEFAULT_INDIRECT_SUN        1.0
 #define DEFAULT_EXTRA               false
 #define DEFAULT_SKY_LIGHTING_FIX    true
 #define DEFAULT_CORING				0.01
@@ -388,7 +387,6 @@ extern vec_t    g_direct_scale;
 extern vec_t	g_limitthreshold;
 extern unsigned g_numbounce;
 extern float    g_qgamma;
-extern float    g_indirect_sun;
 extern float    g_smoothing_threshold;
 extern float    g_smoothing_value;
 extern float g_smoothing_threshold_2;

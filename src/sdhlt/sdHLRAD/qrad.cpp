@@ -69,7 +69,6 @@ float           g_lightscale = DEFAULT_LIGHTSCALE;
 char            g_source[_MAX_PATH] = "";
 
 char            g_vismatfile[_MAX_PATH] = "";
-float           g_indirect_sun = DEFAULT_INDIRECT_SUN;
 bool            g_extra = DEFAULT_EXTRA;
 
 float           g_smoothing_threshold;
@@ -2430,12 +2429,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_lightscale);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIGHTSCALE);
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
-
-
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_indirect_sun);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_INDIRECT_SUN);
-    Log("global sky diffusion [ %17s ] [ %17s ]\n", buf1, buf2);
-
     Log("\n");
 	Log("spread angles        [ %17s ] [ %17s ]\n", g_allow_spread ? "on" : "off", DEFAULT_ALLOW_SPREAD ? "on" : "off");
     Log("opaque brush models  [ %17s ] [ %17s ]\n", g_allow_opaques ? "on" : "off", DEFAULT_ALLOW_OPAQUES ? "on" : "off");
@@ -2768,17 +2761,6 @@ int             main(const int argc, char** argv)
 		        g_colour_qgamma[1] = (float)atof(argv[i]);
 		        g_colour_qgamma[2] = (float)atof(argv[i]);
 		        // ------------------------------------------------------------------------
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-sky"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_indirect_sun = (float)atof(argv[++i]);
             }
             else
             {

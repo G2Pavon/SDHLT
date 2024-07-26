@@ -2143,7 +2143,7 @@ void            CreateDirectLights()
 							}
 						}
 					}
-					if (g_indirect_sun > 0 && !VectorCompare (dl->diffuse_intensity, vec3_origin))
+					if (!VectorCompare (dl->diffuse_intensity, vec3_origin))
 					{
 						if (g_softsky)
 						{
@@ -2555,12 +2555,8 @@ static void     GatherSampleLight(const vec3_t pos, const byte* const pvs, const
 							if (step != step_match)
 								continue;
 							// check intensity
-							if (g_indirect_sun <= 0.0 ||
-								VectorCompare (
-									l->diffuse_intensity,
-									vec3_origin)
-								&& VectorCompare (l->diffuse_intensity2, vec3_origin)
-								)
+							if (VectorCompare(l->diffuse_intensity,vec3_origin)
+								&& VectorCompare(l->diffuse_intensity2, vec3_origin))
 								continue;
 
 							vec3_t sky_intensity;
@@ -2603,7 +2599,7 @@ static void     GatherSampleLight(const vec3_t pos, const byte* const pvs, const
 								vec_t factor = qmin (qmax (0.0, (1 - DotProduct (l->normal, skynormals[j])) / 2), 1.0); // how far this piece of sky has deviated from the sun
 								VectorScale (l->diffuse_intensity, 1 - factor, sky_intensity);
 								VectorMA (sky_intensity, factor, l->diffuse_intensity2, sky_intensity);
-								VectorScale (sky_intensity, skyweights[j] * g_indirect_sun / 2, sky_intensity);
+								VectorScale (sky_intensity, skyweights[j] * 1.0 / 2, sky_intensity); // 1.0 = DEFAULT_INDIRECT_SUN a.k.a g_indirect_sun a.k.a '-sky'
 								vec3_t add_one;
 								if (lighting_diversify)
 								{
