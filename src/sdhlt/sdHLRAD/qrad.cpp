@@ -79,7 +79,6 @@ float           g_smoothing_value = DEFAULT_SMOOTHING_VALUE;
 float			g_smoothing_threshold_2;
 float			g_smoothing_value_2 = DEFAULT_SMOOTHING2_VALUE;
 
-bool            g_circus = DEFAULT_CIRCUS;
 bool            g_allow_opaques = DEFAULT_ALLOW_OPAQUES;
 bool			g_allow_spread = DEFAULT_ALLOW_SPREAD;
 
@@ -2383,7 +2382,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
     Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
-    Log("circus mode          [ %17s ] [ %17s ]\n", g_circus ? "on" : "off", DEFAULT_CIRCUS ? "on" : "off");
 
     Log("\n");
 
@@ -2751,10 +2749,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        else if (!strcasecmp(argv[i], "-circus"))
-        {
-            g_circus = true;
         }
         else if (!strcasecmp(argv[i], "-noskyfix"))
         {

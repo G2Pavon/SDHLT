@@ -76,7 +76,6 @@
 #define DEFAULT_INDIRECT_SUN        1.0
 #define DEFAULT_EXTRA               false
 #define DEFAULT_SKY_LIGHTING_FIX    true
-#define DEFAULT_CIRCUS              false
 #define DEFAULT_CORING				0.01
 #define DEFAULT_INFO                true
 #define DEFAULT_ALLOW_OPAQUES       true
@@ -402,7 +401,6 @@ extern bool     g_estimate;
 extern char     g_source[_MAX_PATH];
 extern vec_t    g_fade;
 extern bool     g_incremental;
-extern bool     g_circus;
 extern bool		g_allow_spread;
 extern bool     g_sky_lighting_fix;
 extern vec_t    g_chop;    // Chop value for normal textures

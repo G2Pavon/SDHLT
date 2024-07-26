@@ -3168,16 +3168,6 @@ void            GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnorma
     }
 }
 
-const vec3_t    s_circuscolors[] = {
-    {100000.0,  100000.0,   100000.0},                              // white
-    {100000.0,  0.0,        0.0     },                              // red
-    {0.0,       100000.0,   0.0     },                              // green
-    {0.0,       0.0,        100000.0},                              // blue
-    {0.0,       100000.0,   100000.0},                              // cyan
-    {100000.0,  0.0,        100000.0},                              // magenta
-    {100000.0,  100000.0,   0.0     }                               // yellow
-};
-
 // =====================================================================================
 //  BuildFacelights
 // =====================================================================================
@@ -3789,37 +3779,6 @@ void            BuildFacelights(const int facenum)
 				);
 		}
 	}
-    // add circus lighting for finding black lightmaps
-    if (g_circus)
-    {
-		for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
-		{
-			if (f_styles[j] == 0)
-			{
-                int             amt = 7;
-
-				s = fl_samples[j];
-
-                while ((l.numsurfpt % amt) == 0)
-                {
-                    amt--;
-                }
-                if (amt < 2)
-                {
-                    amt = 7;
-                }
-
-                for (i = 0; i < l.numsurfpt; i++, s++)
-                {
-                    if ((s->light[0] == 0) && (s->light[1] == 0) && (s->light[2] == 0))
-                    {
-                        VectorAdd(s->light, s_circuscolors[i % amt], s->light);
-                    }
-                }
-                break;
-            }
-        }
-    }
 
     // light from dlight_threshold and above is sent out, but the
     // texture itself should still be full bright
