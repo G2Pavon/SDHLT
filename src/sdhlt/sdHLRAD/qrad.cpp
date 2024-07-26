@@ -67,7 +67,6 @@ bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
-bool g_drawlerp = false;
 bool g_drawnudge = false;
 
 // Cosine of smoothing angle(in radians)
@@ -2572,10 +2571,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawlerp"))
-		{
-			g_drawlerp = true;
-		}
 		else if (!strcasecmp(argv[i], "-drawnudge"))
 		{
 			g_drawnudge = true;
@@ -2781,10 +2776,6 @@ int             main(const int argc, char** argv)
 			g_corings[style] = 0;
 		}
 	}
-	if (g_drawlerp)
-	{
-	}
-    
     if (!g_visdatasize)
     {
 		Warning("No vis information.");

@@ -844,18 +844,7 @@ void InterpolateSampleLight (const vec3_t position, int surface, int numstyles, 
 	}
 	if (maininterp->totalweight > 0)
 	{
-		ApplyInterpolation (maininterp, numstyles, styles, outs
-							);
-		if (g_drawlerp)
-		{
-			for (j = 0; j < numstyles; j++)
-			{
-				// white or yellow
-				outs[j][0] = 100;
-				outs[j][1] = 100;
-				outs[j][2] = (maininterp->isbiased? 0: 100);
-			}
-		}
+		ApplyInterpolation (maininterp, numstyles, styles, outs);
 	}
 	else
 	{
@@ -885,18 +874,7 @@ void InterpolateSampleLight (const vec3_t position, int surface, int numstyles, 
 		}
 		if (maininterp->totalweight > 0)
 		{
-			ApplyInterpolation (maininterp, numstyles, styles, outs
-								);
-			if (g_drawlerp)
-			{
-				for (j = 0; j < numstyles; j++)
-				{
-					// red
-					outs[j][0] = 100;
-					outs[j][1] = 0;
-					outs[j][2] = (maininterp->isbiased? 0: 100);
-				}
-			}
+			ApplyInterpolation (maininterp, numstyles, styles, outs);
 		}
 		else
 		{
@@ -934,36 +912,14 @@ void InterpolateSampleLight (const vec3_t position, int surface, int numstyles, 
 					}
 					maininterp->totalweight += maininterp->points[j].weight;
 				}
-				ApplyInterpolation (maininterp, numstyles, styles, outs
-									);
-				if (g_drawlerp)
-				{
-					for (j = 0; j < numstyles; j++)
-					{
-						// green
-						outs[j][0] = 0;
-						outs[j][1] = 100;
-						outs[j][2] = (maininterp->isbiased? 0: 100);
-					}
-				}
+				ApplyInterpolation (maininterp, numstyles, styles, outs);
 			}
 			else
 			{
 				maininterp->isbiased = true;
 				maininterp->totalweight = 0;
 				maininterp->points.resize (0);
-				ApplyInterpolation (maininterp, numstyles, styles, outs
-									);
-				if (g_drawlerp)
-				{
-					for (j = 0; j < numstyles; j++)
-					{
-						// black
-						outs[j][0] = 0;
-						outs[j][1] = 0;
-						outs[j][2] = 0;
-					}
-				}
+				ApplyInterpolation (maininterp, numstyles, styles, outs);
 			}
 		}
 	}
