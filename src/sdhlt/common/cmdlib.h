@@ -1,9 +1,4 @@
-#ifndef CMDLIB_H__
-#define CMDLIB_H__
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif
 
 // #define MODIFICATIONS_STRING "Submit detailed bug reports to (zoner@gearboxsoftware.com)\n"
 // #define MODIFICATIONS_STRING "Submit detailed bug reports to (merlinis@bigpond.net.au)\n"
@@ -62,9 +57,6 @@
 #if _MSC_VER < 1400
 #define strcpy_s strcpy   //--vluzacn
 #define sprintf_s sprintf //--vluzacn
-#endif
-#if _MSC_VER >= 1400
-#pragma warning(disable : 4996)
 #endif
 
 #ifdef __MINGW32__
@@ -161,5 +153,3 @@ extern int BigLong(int l);
 extern int LittleLong(int l);
 extern float BigFloat(float l);
 extern float LittleFloat(float l);
-
-#endif // CMDLIB_H__

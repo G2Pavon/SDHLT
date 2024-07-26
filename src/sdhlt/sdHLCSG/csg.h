@@ -1,9 +1,4 @@
-#ifndef HLCSG_H__
-#define HLCSG_H__
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif
 
 #pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
 #include <deque>
@@ -260,6 +255,3 @@ void ConvertGameTextMessages()
 //============================================================================
 // hullfile.cpp
 extern vec3_t g_hull_size[NUM_HULLS][2];
-
-//============================================================================
-#endif // HLCSG_H__

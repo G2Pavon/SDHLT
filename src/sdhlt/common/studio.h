@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef STUDIO_H
-#define STUDIO_H
+#pragma once
 
 /*
 ==============================================================================
@@ -494,5 +493,3 @@ typedef struct mbodypart_s
 	msubmodel_t *models[MAXSTUDIOBODYPARTS]; // submodels per body part
 	int nummodels;							 // mstudiobodyparts_t->nummodels
 } mbodypart_t;
-
-#endif // STUDIO_H

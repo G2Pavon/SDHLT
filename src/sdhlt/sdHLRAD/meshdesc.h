@@ -12,9 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-
-#ifndef MESHDESC_H
-#define MESHDESC_H
+#pragma once
 
 #include "studio.h"
 #include "list.h" // simple container
@@ -252,5 +250,3 @@ typedef struct model_s
 
 	CMeshDesc mesh; // cform
 } model_t;
-
-#endif // MESHDESC_H

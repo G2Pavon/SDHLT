@@ -4,8 +4,7 @@
  *  find in any c++ book.
  */
 // used by progmesh //seedee
-#ifndef GENERIC_LIST_H
-#define GENERIC_LIST_H
+#pragma once
 
 #include <assert.h>
 #include <stdio.h>
@@ -158,5 +157,3 @@ void List<Type>::Remove(Type t)
 		assert(element[i] != t);
 	}
 }
-
-#endif // GENERIC_LIST_H

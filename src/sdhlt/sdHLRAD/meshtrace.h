@@ -12,9 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-
-#ifndef TRACEMESH_H
-#define TRACEMESH_H
+#pragma once
 
 #include "meshdesc.h"
 
@@ -90,5 +88,3 @@ public:
 	void ClipToLinks(areanode_t *node);
 	bool DoTrace(void);
 };
-
-#endif // TRACEMESH_H
