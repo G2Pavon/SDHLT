@@ -77,7 +77,6 @@
 #define DEFAULT_EMBEDLIGHTMAP_DENOMINATOR 188.0
 #define DEFAULT_EMBEDLIGHTMAP_GAMMA 1.05
 #define DEFAULT_EMBEDLIGHTMAP_RESOLUTION 1
-#define DEFAULT_TEXLIGHTGAP 0.0
 
 #define DEFAULT_ESTIMATE    true
 
@@ -357,7 +356,6 @@ extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y compone
 extern vec_t g_blur;
 extern vec_t g_maxdiscardedlight;
 extern vec3_t g_maxdiscardedpos;
-extern vec_t g_texlightgap;
 
 extern void     MakeTnodes(dmodel_t* bm);
 extern void     PairEdges();

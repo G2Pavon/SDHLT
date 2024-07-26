@@ -64,7 +64,6 @@ void Usage(ProgramType programType)
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
-            Log("    -texlightgap #  : Set global gap distance for texlights\n");
             Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
             Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
             Log("    -low | -high    : run program an altered priority level\n");

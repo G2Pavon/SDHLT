@@ -1636,7 +1636,7 @@ void            CreateDirectLights()
 			dl->patch_area = p->area;
 			dl->patch_emitter_range = p->emitter_range;
 			dl->patch = p;
-			dl->texlightgap = g_texlightgap;
+			dl->texlightgap = 0.0; // DEFAULT_TEXLIGHTGAP
 			if (g_face_texlights[p->faceNumber] && *ValueForKey (g_face_texlights[p->faceNumber], "_texlightgap"))
 			{
 				dl->texlightgap = FloatForKey (g_face_texlights[p->faceNumber], "_texlightgap");

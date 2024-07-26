@@ -79,7 +79,6 @@ vec_t			g_corings[ALLSTYLES];
 vec3_t*			g_translucenttextures = NULL;
 vec_t			g_translucentdepth = DEFAULT_TRANSLUCENTDEPTH;
 vec_t			g_blur = DEFAULT_BLUR;
-vec_t			g_texlightgap = DEFAULT_TEXLIGHTGAP;
 
 // Misc
 int             leafparents[MAX_MAP_LEAFS];
@@ -2245,9 +2244,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_fade);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_FADE);
     Log("global fade          [ %17s ] [ %17s ]\n", buf1, buf2);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texlightgap);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXLIGHTGAP);
-    Log("global texlight gap  [ %17s ] [ %17s ]\n", buf1, buf2);
     
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2535,17 +2531,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-texlightgap"))
-		{
-			if (i + 1 < argc)
-			{
-				g_texlightgap = atof (argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp(argv[i], "-pre25")) //Pre25 should be after everything else to override
 		{
 			g_pre25update = true;
