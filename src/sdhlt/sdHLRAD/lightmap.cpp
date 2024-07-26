@@ -3486,7 +3486,6 @@ void            BuildFacelights(const int facenum)
 		sizehalf = 0.5 * g_blur * l.lmcache_density;
 		subsamples = 0.0;
 		VectorCopy (l.lmcache_normal[s_center + l.lmcachewidth * t_center], centernormal);
-		if (g_bleedfix)
 		{
 			int s_origin = s_center;
 			int t_origin = t_center;
@@ -3541,16 +3540,14 @@ void            BuildFacelights(const int facenum)
 				}
 			}
 		}
-	  for (pass = 0; pass < 2; pass++)
-	  {
-		for (s = s_center - l.lmcache_side; s <= s_center + l.lmcache_side; s++)
+		for (pass = 0; pass < 2; pass++)
 		{
-			for (t = t_center - l.lmcache_side; t <= t_center + l.lmcache_side; t++)
+			for (s = s_center - l.lmcache_side; s <= s_center + l.lmcache_side; s++)
 			{
-				weighting = (qmin (0.5, sizehalf - (s - s_center)) - qmax (-0.5, -sizehalf - (s - s_center)))
-					* (qmin (0.5, sizehalf - (t - t_center)) - qmax (-0.5, -sizehalf - (t - t_center)));
-				if (g_bleedfix)
+				for (t = t_center - l.lmcache_side; t <= t_center + l.lmcache_side; t++)
 				{
+					weighting = (qmin (0.5, sizehalf - (s - s_center)) - qmax (-0.5, -sizehalf - (s - s_center)))
+						* (qmin (0.5, sizehalf - (t - t_center)) - qmax (-0.5, -sizehalf - (t - t_center)));
 					int wallflags = sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
 					if (wallflags & (WALLFLAG_BLOCKED | WALLFLAG_SHADOWED))
 					{
@@ -3563,36 +3560,35 @@ void            BuildFacelights(const int facenum)
 							continue;
 						}
 					}
+					pos = s + l.lmcachewidth * t;
+					// when blur distance (g_blur) is large, the subsample can be very far from the original lightmap sample (aligned with interval TEXTURE_STEP (16.0))
+					// in some cases such as a thin cylinder, the subsample can even grow into the opposite side
+					// as a result, when exposed to a directional light, the light on the cylinder may "leak" into the opposite dark side
+					// this correction limits the effect of blur distance when the normal changes very fast
+					// this correction will not break the smoothness that HLRAD_GROWSAMPLE ensures
+					weighting_correction = DotProduct (l.lmcache_normal[pos], centernormal);
+					weighting_correction = (weighting_correction > 0)? weighting_correction * weighting_correction: 0;
+					weighting = weighting * weighting_correction;
+					for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
+					{
+						VectorMA (fl_samples[j][i].light, weighting, l.lmcache[pos][j], fl_samples[j][i].light);
+					}
+					subsamples += weighting;
 				}
-				pos = s + l.lmcachewidth * t;
-				// when blur distance (g_blur) is large, the subsample can be very far from the original lightmap sample (aligned with interval TEXTURE_STEP (16.0))
-				// in some cases such as a thin cylinder, the subsample can even grow into the opposite side
-				// as a result, when exposed to a directional light, the light on the cylinder may "leak" into the opposite dark side
-				// this correction limits the effect of blur distance when the normal changes very fast
-				// this correction will not break the smoothness that HLRAD_GROWSAMPLE ensures
-				weighting_correction = DotProduct (l.lmcache_normal[pos], centernormal);
-				weighting_correction = (weighting_correction > 0)? weighting_correction * weighting_correction: 0;
-				weighting = weighting * weighting_correction;
+			}
+			if (subsamples > NORMAL_EPSILON)
+			{
+				break;
+			}
+			else
+			{
+				subsamples = 0.0;
 				for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
 				{
-					VectorMA (fl_samples[j][i].light, weighting, l.lmcache[pos][j], fl_samples[j][i].light);
+					VectorClear (fl_samples[j][i].light);
 				}
-				subsamples += weighting;
 			}
 		}
-		if (subsamples > NORMAL_EPSILON)
-		{
-			break;
-		}
-		else
-		{
-			subsamples = 0.0;
-			for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
-			{
-				VectorClear (fl_samples[j][i].light);
-			}
-		}
-	  }
 		if (subsamples > 0)
 		{
 			for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)

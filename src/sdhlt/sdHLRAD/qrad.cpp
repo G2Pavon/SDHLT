@@ -62,7 +62,6 @@ float			g_smoothing_threshold_2;
 
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
-bool g_bleedfix = DEFAULT_BLEEDFIX;
 
 // Cosine of smoothing angle(in radians)
 bool            g_estimate = DEFAULT_ESTIMATE;
@@ -2261,7 +2260,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	Log("wall bleeding fix    [ %17s ] [ %17s ]\n", g_bleedfix ? "on" : "off", DEFAULT_BLEEDFIX ? "on" : "off");
 
     Log("\n\n");
 }
@@ -2537,10 +2535,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-nobleedfix"))
-		{
-			g_bleedfix = false;
-		}
 		else if (!strcasecmp (argv[i], "-texlightgap"))
 		{
 			if (i + 1 < argc)

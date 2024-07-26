@@ -70,7 +70,6 @@ void Usage(ProgramType programType)
             Log("    -low | -high    : run program an altered priority level\n");
             Log("    -threads #      : manually specify the number of threads to run\n");
             Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");
-            Log("    -nobleedfix    : Don't fix wall bleeding problem for faces with large seams.\n");
             Log("    -noattic       : Skip shadow processing for small attic lights.\n");
             Log("    -nooutside     : Skip shadow processing for small outside lights.\n");
             Log("    -fixsunlight   : Force correct sun lighting (overrides debug modes).\n");
