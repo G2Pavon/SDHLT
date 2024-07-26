@@ -30,7 +30,6 @@
  */
 
 bool            g_pre25update = DEFAULT_PRE25UPDATE;
-bool			g_fastmode = DEFAULT_FASTMODE;
 bool g_studioshadow = DEFAULT_STUDIOSHADOW;
 
 vec_t           g_fade = DEFAULT_FADE;
@@ -2310,8 +2309,6 @@ static void     Settings()
     }
     Log("priority             [ %17s ] [ %17s ]\n", tmp, "Normal");
     Log("\n");
-
-	Log("fast rad             [ %17s ] [ %17s ]\n", g_fastmode? "on": "off", DEFAULT_FASTMODE? "on": "off");
 	Log("pre-25th anniversary [ %17s ] [ %17s ]\n", g_pre25update ? "on" : "off", DEFAULT_PRE25UPDATE ? "on" : "off");
     Log("oversampling (-extra)[ %17s ] [ %17s ]\n", g_extra ? "on" : "off", DEFAULT_EXTRA ? "on" : "off");
     Log("bounces              [ %17d ] [ %17d ]\n", g_numbounce, DEFAULT_BOUNCE);
@@ -2536,10 +2533,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-fast"))
-		{
-			g_fastmode = true;
-		}
         else if (!strcasecmp(argv[i], "-chop"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn
@@ -2865,10 +2858,6 @@ int             main(const int argc, char** argv)
 	LoadExtentFile (extentfilename);
 #endif
     ParseEntities();
-	if (g_fastmode)
-	{
-		g_numbounce = 0;
-	}
     Settings();
 	DeleteEmbeddedLightmaps ();
 	LoadTextures ();

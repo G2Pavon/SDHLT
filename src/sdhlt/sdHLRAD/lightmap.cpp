@@ -639,9 +639,7 @@ static void     CalcFaceExtents(lightinfo_t* l)
 	}
 	// allocate sample light cache
 	{
-		if (g_extra
-			&& !g_fastmode
-			)
+		if (g_extra)
 		{
 			l->lmcache_density = 3;
 		}
@@ -1635,10 +1633,6 @@ void            CreateDirectLights()
 			{
 				dl->topatch = true;
 			}
-			if (g_fastmode)
-			{
-				dl->topatch = true;
-			}
 			dl->patch_area = p->area;
 			dl->patch_emitter_range = p->emitter_range;
 			dl->patch = p;
@@ -1783,10 +1777,6 @@ void            CreateDirectLights()
 		}
 		dl->topatch = false;
 		if (IntForKey (e, "_fast") == 1)
-		{
-			dl->topatch = true;
-		}
-		if (g_fastmode)
 		{
 			dl->topatch = true;
 		}

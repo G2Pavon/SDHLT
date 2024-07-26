@@ -47,7 +47,6 @@
 #include <string>
 
 #define DEFAULT_PRE25UPDATE         false
-#define DEFAULT_FASTMODE			false
 #define DEFAULT_STUDIOSHADOW        true //seedee
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
@@ -336,7 +335,6 @@ extern void     MakeShadowSplits();
 
 //==============================================
 
-extern bool		g_fastmode;
 extern bool     g_extra;
 extern vec_t	g_limitthreshold;
 extern unsigned g_numbounce;

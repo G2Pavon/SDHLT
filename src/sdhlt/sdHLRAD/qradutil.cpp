@@ -581,9 +581,7 @@ static void CalcSinglePosition (positionmap_t *map, int is, int it)
 			}
 		}
 
-		if (!p->valid
-			&& !g_fastmode
-			)
+		if (!p->valid)
 		{
 			const int numnudges = 12;
 			vec3_t nudgelist[numnudges] = {{0.1, 0, 0}, {-0.1, 0, 0}, {0, 0.1, 0}, {0, -0.1, 0},
@@ -698,10 +696,6 @@ void FindFacePositions (int facenum)
 		}
 	}
 	density = 3.0;
-	if (g_fastmode)
-	{
-		density = 1.0;
-	}
 	map->step[0] = (vec_t)TEXTURE_STEP / density;
 	map->step[1] = (vec_t)TEXTURE_STEP / density;
 	map->step[2] = 1.0;
