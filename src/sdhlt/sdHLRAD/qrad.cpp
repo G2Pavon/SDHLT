@@ -73,7 +73,6 @@ bool            g_extra = DEFAULT_EXTRA;
 
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
-float			g_smoothing_value_2 = DEFAULT_SMOOTHING2_VALUE;
 
 bool            g_allow_opaques = DEFAULT_ALLOW_OPAQUES;
 bool			g_allow_spread = DEFAULT_ALLOW_SPREAD;
@@ -2377,12 +2376,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
     Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
-	safe_snprintf(buf1, sizeof(buf1), g_smoothing_value_2<0? "no change": "%3.3f", g_smoothing_value_2);
-#if DEFAULT_SMOOTHING2_VALUE
-	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_SMOOTHING2_VALUE);
-#else
-	safe_snprintf(buf2, sizeof(buf2), "no change");
-#endif
     Log("smoothing threshold 2[ %17s ] [ %17s ]\n", buf1, buf2);
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_direct_scale);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_DLIGHT_SCALE);
@@ -2756,17 +2749,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-smooth2"))
-		{
-			if (i + 1 < argc)
-			{
-				g_smoothing_value_2 = atof(argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
         else if (!strcasecmp(argv[i], "-texdata"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn
@@ -3183,7 +3165,8 @@ int             main(const int argc, char** argv)
 	ReadCustomSmoothValue ();
 	ReadTranslucentTextures ();
 	ReadLightingCone ();
-    g_smoothing_threshold_2 = g_smoothing_value_2 < 0 ? g_smoothing_threshold : (float)cos(g_smoothing_value_2 * (Q_PI / 180.0));
+	
+	g_smoothing_threshold_2 = 1.0; // cos(0 * (Q_PI / 180.0)), 0 = DEFAULT_SMOOTHING2_VALUE = g_smoothing_value_2 a.k.a '-smooth2'
 	{
 		int style;
 		for (style = 0; style < ALLSTYLES; ++style)
@@ -3192,7 +3175,6 @@ int             main(const int argc, char** argv)
 		} else {
 			g_corings[style] = 0;
 		}
-
 	}
 	if (g_direct_scale != 1.0)
 	{

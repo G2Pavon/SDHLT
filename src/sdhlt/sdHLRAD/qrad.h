@@ -387,7 +387,6 @@ extern float    g_qgamma;
 extern float    g_smoothing_threshold;
 
 extern float g_smoothing_threshold_2;
-extern float g_smoothing_value_2;
 extern vec_t *g_smoothvalues; //[nummiptex]
 extern bool     g_estimate;
 extern char     g_source[_MAX_PATH];
