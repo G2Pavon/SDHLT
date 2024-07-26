@@ -4856,15 +4856,9 @@ void            FinalLightFace(const int facenum)
 
             // AJM: your code is formatted really wierd, and i cant understand a damn thing. 
             //      so i reformatted it into a somewhat readable "normal" fashion. :P
-
-	        if ( g_colour_qgamma[0] != 1.0 ) 
-		        lb[0] = (float) pow(lb[0] / 256.0f, g_colour_qgamma[0]) * 256.0f;
-
-	        if ( g_colour_qgamma[1] != 1.0 ) 
-		        lb[1] = (float) pow(lb[1] / 256.0f, g_colour_qgamma[1]) * 256.0f;
-
-	        if ( g_colour_qgamma[2] != 1.0 ) 
-		        lb[2] = (float) pow(lb[2] / 256.0f, g_colour_qgamma[2]) * 256.0f;
+			lb[0] = (float) pow(lb[0] / 256.0f, 0.55) * 256.0f; // 0.55 DEFAULT_COLOUR_GAMMA_RED a.k.a '-gamma r g b'
+			lb[1] = (float) pow(lb[1] / 256.0f, 0.55) * 256.0f; // 0.55 DEFAULT_COLOUR_GAMMA_GREEN
+			lb[2] = (float) pow(lb[2] / 256.0f, 0.55) * 256.0f; // 0.55 DEFAULT_COLOUR_GAMMA_BLUE
 
 	        // Two different ways of adding noise to the lightmap - colour jitter
 	        // (red, green and blue channels are independent), and mono jitter

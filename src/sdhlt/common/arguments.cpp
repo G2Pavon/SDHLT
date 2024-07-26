@@ -70,7 +70,6 @@ void Usage(ProgramType programType)
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
             Log("    -texlightgap #  : Set global gap distance for texlights\n");
             Log("    -scale #        : Set global light scaling value\n");
-            Log("    -gamma #        : Set global gamma value\n\n");
             Log("    -incremental    : Use or create an incremental transfer list file\n\n");
             Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
             Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");

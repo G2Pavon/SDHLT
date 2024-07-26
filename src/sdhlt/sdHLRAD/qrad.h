@@ -394,8 +394,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-
-extern vec3_t	g_colour_qgamma;
 extern vec3_t	g_colour_lightscale;
 
 extern vec3_t	g_colour_jitter_hack;

@@ -64,7 +64,6 @@ float			g_smoothing_threshold_2;
 
 // --------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-vec3_t		g_colour_qgamma = { DEFAULT_COLOUR_GAMMA_RED, DEFAULT_COLOUR_GAMMA_GREEN, DEFAULT_COLOUR_GAMMA_BLUE };
 vec3_t		g_colour_lightscale = { DEFAULT_COLOUR_LIGHTSCALE_RED, DEFAULT_COLOUR_LIGHTSCALE_GREEN, DEFAULT_COLOUR_LIGHTSCALE_BLUE };
 vec3_t		g_colour_jitter_hack = { DEFAULT_COLOUR_JITTER_HACK_RED, DEFAULT_COLOUR_JITTER_HACK_GREEN, DEFAULT_COLOUR_JITTER_HACK_BLUE };
 vec3_t		g_jitter_hack = { DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE };
@@ -2358,10 +2357,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%1.3f %1.3f %1.3f", g_colour_lightscale[0], g_colour_lightscale[1], g_colour_lightscale[2]);
     safe_snprintf(buf2, sizeof(buf2), "%1.3f %1.3f %1.3f", DEFAULT_COLOUR_LIGHTSCALE_RED, DEFAULT_COLOUR_LIGHTSCALE_GREEN, DEFAULT_COLOUR_LIGHTSCALE_BLUE);
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
-
-    safe_snprintf(buf1, sizeof(buf1), "%1.3f %1.3f %1.3f", g_colour_qgamma[0], g_colour_qgamma[1], g_colour_qgamma[2]);
-    safe_snprintf(buf2, sizeof(buf2), "%1.3f %1.3f %1.3f", DEFAULT_COLOUR_GAMMA_RED, DEFAULT_COLOUR_GAMMA_GREEN, DEFAULT_COLOUR_GAMMA_BLUE);
-    Log("global gamma         [ %17s ] [ %17s ]\n", buf1, buf2);
     // ------------------------------------------------------------------------
 
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_lightscale);
@@ -2680,24 +2675,6 @@ int             main(const int argc, char** argv)
         {
             g_threadpriority = eThreadPriorityHigh;
         }
-        else if (!strcasecmp(argv[i], "-gamma"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-            	// ------------------------------------------------------------------------
-		        // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-		        // Munge values from original, monochrome gamma into colour gamma
-	    	    i++;
-                g_colour_qgamma[0] = (float)atof(argv[i]);
-		        g_colour_qgamma[1] = (float)atof(argv[i]);
-		        g_colour_qgamma[2] = (float)atof(argv[i]);
-		        // ------------------------------------------------------------------------
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
         else if (!strcasecmp(argv[i], "-texdata"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn
@@ -2729,21 +2706,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        // ------------------------------------------------------------------------
-	    // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-        else if (!strcasecmp(argv[i], "-colourgamma"))
-        {
-        	if (i + 3 < argc)
-			{
-				g_colour_qgamma[0] = (float)atof(argv[++i]);
-				g_colour_qgamma[1] = (float)atof(argv[++i]);
-				g_colour_qgamma[2] = (float)atof(argv[++i]);
-			}
-			else
-			{
-				Error("expected three color values after '-colourgamma'\n");
-			}
         }
         else if (!strcasecmp(argv[i], "-colourscale"))
         {
