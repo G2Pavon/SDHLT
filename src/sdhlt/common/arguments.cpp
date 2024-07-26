@@ -62,7 +62,6 @@ void Usage(ProgramType programType)
             Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
             Log("    -bounce #       : Set number of radiosity bounces\n");
             Log("    -limiter #      : Set light clipping threshold (-1=None)\n");
-            Log("    -nostudioshadow : Disable opaque studiomodels, ignore zhlt_studioshadow for this compile\n\n");
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
             Log("    -fade #         : Set global fade (larger values = shorter lights)\n");

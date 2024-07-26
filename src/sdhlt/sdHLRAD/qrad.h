@@ -47,7 +47,6 @@
 #include <string>
 
 #define DEFAULT_PRE25UPDATE         false
-#define DEFAULT_STUDIOSHADOW        true //seedee
 #define DEFAULT_FADE                1.0
 #define DEFAULT_BOUNCE              8
 // 188 is the fullbright threshold for Goldsrc before 25th anniversary, regardless of the brightness and gamma settings in the graphic options. This is no longer necessary
@@ -524,6 +523,5 @@ extern void		GetAlternateOrigin (const vec3_t pos, const vec3_t normal, const pa
 extern void LoadStudioModels(void);
 extern void FreeStudioModels(void);
 extern bool TestSegmentAgainstStudioList(const vec_t* p1, const vec_t* p2);
-extern bool g_studioshadow;
 
 #endif //HLRAD_H__

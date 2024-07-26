@@ -30,7 +30,6 @@
  */
 
 bool            g_pre25update = DEFAULT_PRE25UPDATE;
-bool g_studioshadow = DEFAULT_STUDIOSHADOW;
 
 vec_t           g_fade = DEFAULT_FADE;
 
@@ -2341,7 +2340,6 @@ static void     Settings()
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIGHTSCALE);
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
-	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
     // ------------------------------------------------------------------------
 	sprintf (buf1, "%d (%s)", g_transfer_compress_type, float_type_string[g_transfer_compress_type]);
 	sprintf (buf2, "%d (%s)", DEFAULT_TRANSFER_COMPRESS_TYPE, float_type_string[DEFAULT_TRANSFER_COMPRESS_TYPE]);
@@ -2640,10 +2638,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-nostudioshadow"))
-		{
-			g_studioshadow = false;
-		}
 		else if (!strcasecmp(argv[i], "-drawpatch"))
 		{
 			g_drawpatch = true;

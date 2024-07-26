@@ -108,8 +108,6 @@ void LoadStudioModels( void )
 	memset( models, 0, sizeof( models ));
 	num_models = 0;
 
-	if( !g_studioshadow ) return;
-
 	for( int i = 0; i < g_numentities; i++ )
 	{
 		const char *name, *model;
