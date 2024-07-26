@@ -62,8 +62,6 @@ bool            g_extra = DEFAULT_EXTRA;
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
-bool		g_rgb_transfers = DEFAULT_RGB_TRANSFERS;
-
 float		g_transtotal_hack = DEFAULT_TRANSTOTAL_HACK;
 unsigned char g_minlight = DEFAULT_MINLIGHT;
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
@@ -2034,10 +2032,7 @@ static void     BounceLight()
     for (i = 0; i < g_numbounce; i++)
     {
         Log("Bounce %u ", i + 1);
-	if(g_rgb_transfers)
-	       	{NamedRunThreadsOn(g_num_patches, g_estimate, GatherRGBLight);}
-        else
-        	{NamedRunThreadsOn(g_num_patches, g_estimate, GatherLight);}
+		{NamedRunThreadsOn(g_num_patches, g_estimate, GatherLight);}
         CollectLight();
     }
 	for (i = 0; i < g_num_patches; i++)
@@ -2356,8 +2351,6 @@ static void     Settings()
     // ------------------------------------------------------------------------
 
     Log("\n");
-    Log("rgb transfers        [ %17s ] [ %17s ]\n", g_rgb_transfers ? "on" : "off", DEFAULT_RGB_TRANSFERS ? "on" : "off"); 
-
 	Log("minimum final light  [ %17d ] [ %17d ]\n", (int)g_minlight, (int)DEFAULT_MINLIGHT);
 	sprintf (buf1, "%d (%s)", g_transfer_compress_type, float_type_string[g_transfer_compress_type]);
 	sprintf (buf2, "%d (%s)", DEFAULT_TRANSFER_COMPRESS_TYPE, float_type_string[DEFAULT_TRANSFER_COMPRESS_TYPE]);
@@ -2661,12 +2654,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-        else if (!strcasecmp(argv[i], "-rgbtransfers"))
-        {
-        	g_rgb_transfers = true;
-        }
-
-
 		else if (!strcasecmp(argv[i], "-bscale"))
 		{
 			Error ("'-bscale' is obsolete.");

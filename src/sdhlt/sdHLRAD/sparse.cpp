@@ -441,10 +441,6 @@ void            MakeScalesSparseVismatrix()
         g_CheckVisBit = CheckVisBitSparse;
 
         CreateFinalTransparencyArrays("custom shadow array");
-        
-	if(g_rgb_transfers)
-		{NamedRunThreadsOn(g_num_patches, g_estimate, MakeRGBScales);}
-	else
 		{NamedRunThreadsOn(g_num_patches, g_estimate, MakeScales);}
         FreeVisMatrix();
         FreeTransparencyArrays();

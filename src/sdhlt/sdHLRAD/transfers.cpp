@@ -59,14 +59,7 @@ void            writetransfers(const char* const transferfile, const long total_
             }
             if (patch->iData)
             {
-				if(g_rgb_transfers)
-				{
-			amtwritten = fwrite(patch->tRGBData, vector_size[g_rgbtransfer_compress_type], patch->iData, file);
-				}
-				else
-				{
-			amtwritten = fwrite(patch->tData, float_size[g_transfer_compress_type], patch->iData, file);
-				}
+			    amtwritten = fwrite(patch->tData, float_size[g_transfer_compress_type], patch->iData, file);
                 if (amtwritten != patch->iData)
                 {
                     goto FailedWrite;
@@ -144,18 +137,9 @@ bool            readtransfers(const char* const transferfile, const long numpatc
             }
             if (patch->iData)
             {
-				if(g_rgb_transfers)
-				{
-                    patch->tRGBData = (rgb_transfer_data_t*)AllocBlock(patch->iData * vector_size[g_rgbtransfer_compress_type] + unused_size);
-                    hlassume(patch->tRGBData != NULL, assume_NoMemory);
-                    amtread = fread(patch->tRGBData, vector_size[g_rgbtransfer_compress_type], patch->iData, file);		    
-				}
-				else
-				{
-                    patch->tData = (transfer_data_t*)AllocBlock(patch->iData * float_size[g_transfer_compress_type] + unused_size);
-                    hlassume(patch->tData != NULL, assume_NoMemory);
-                    amtread = fread(patch->tData, float_size[g_transfer_compress_type], patch->iData, file);		    
-				}
+                patch->tData = (transfer_data_t*)AllocBlock(patch->iData * float_size[g_transfer_compress_type] + unused_size);
+                hlassume(patch->tData != NULL, assume_NoMemory);
+                amtread = fread(patch->tData, float_size[g_transfer_compress_type], patch->iData, file);		    
                 if (amtread != patch->iData)
                 {
                     goto FailedRead;

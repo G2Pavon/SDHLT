@@ -72,10 +72,6 @@
 #define DEFAULT_INFO                true
 
 
-	// RGB Transfers support for HLRAD .. to be used with -customshadowwithbounce
-	#define DEFAULT_RGB_TRANSFERS false
-// o_O ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 	#define DEFAULT_TRANSTOTAL_HACK 0.2 //0.5 //vluzacn
 	#define DEFAULT_MINLIGHT 0
 	#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
@@ -362,8 +358,6 @@ extern opaqueList_t* g_opaque_face_list;
 extern unsigned      g_opaque_face_count; // opaque entity count //HLRAD_OPAQUE_NODE
 extern unsigned      g_max_opaque_face_count;    // Current array maximum (used for reallocs)
 
-
-	extern bool	g_rgb_transfers;
 	extern const vec3_t vec3_one;
 
 	extern float g_transtotal_hack;
