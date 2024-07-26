@@ -49,7 +49,6 @@ set(COMMON_SOURCES
 
 set(COMMON_HEADERS
     ${COMMON_DIR}/arguments.h
-    ${TEMPLATE_DIR}/basictypes.h
     ${COMMON_DIR}/blockmem.h
     ${COMMON_DIR}/boundingbox.h
     ${COMMON_DIR}/bspfile.h
