@@ -67,7 +67,6 @@ bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
-bool g_drawedge = false;
 bool g_drawlerp = false;
 bool g_drawnudge = false;
 
@@ -2130,39 +2129,6 @@ static void     RadWorld()
     CheckMaxPatches();                                     // Check here for exceeding max patches, to prevent a lot of work from occuring before an error occurs
     SortPatches();                                         // Makes the runs in the Transfer Compression really good
     PairEdges();
-	if (g_drawedge)
-	{
-		char name[_MAX_PATH+20];
-		sprintf (name, "%s_edge.pts", g_Mapname);
-		Log ("Writing '%s' ...\n", name);
-		FILE *f;
-		f = fopen(name, "w");
-		if (f)
-		{
-			const int pos_count = 15;
-			const vec3_t pos[pos_count] = {{0,0,0},{1,0,0},{0,1,0},{-1,0,0},{0,-1,0},{1,0,0},{0,0,1},{-1,0,0},{0,0,-1},{0,-1,0},{0,0,1},{0,1,0},{0,0,-1},{1,0,0},{0,0,0}};
-			int j, k;
-			edgeshare_t *es;
-			vec3_t v;
-			for (j = 0, es = g_edgeshare; j < MAX_MAP_EDGES; j++, es++)
-			{
-				if (es->smooth)
-				{
-					int v0 = g_dedges[j].v[0], v1 = g_dedges[j].v[1];
-					VectorAdd (g_dvertexes[v0].point, g_dvertexes[v1].point, v);
-					VectorScale (v, 0.5, v);
-					VectorAdd (v, es->interface_normal, v);
-					VectorAdd (v, g_face_offset[es->faces[0] - g_dfaces], v);
-					for (k = 0; k < pos_count; ++k)
-						fprintf (f, "%g %g %g\n", v[0]+pos[k][0], v[1]+pos[k][1], v[2]+pos[k][2]);
-				}
-			}
-			fclose(f);
-			Log ("OK.\n");
-		}
-		else
-			Log ("Error.\n");
-	}
 
 	BuildDiffuseNormals ();
     // create directlights out of g_patches and lights
@@ -2606,10 +2572,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawedge"))
-		{
-			g_drawedge = true;
-		}
 		else if (!strcasecmp(argv[i], "-drawlerp"))
 		{
 			g_drawlerp = true;
