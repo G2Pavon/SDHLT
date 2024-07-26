@@ -67,9 +67,6 @@ bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
-bool g_drawsample = false;
-vec3_t g_drawsample_origin = {0,0,0};
-vec_t g_drawsample_radius = 0;
 bool g_drawedge = false;
 bool g_drawlerp = false;
 bool g_drawnudge = false;
@@ -2609,21 +2606,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-drawsample"))
-		{
-			g_drawsample = true;
-			if (i + 4 < argc)
-			{
-				g_drawsample_origin[0] = atof(argv[++i]);
-				g_drawsample_origin[1] = atof(argv[++i]);
-				g_drawsample_origin[2] = atof(argv[++i]);
-				g_drawsample_radius = atof(argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp(argv[i], "-drawedge"))
 		{
 			g_drawedge = true;

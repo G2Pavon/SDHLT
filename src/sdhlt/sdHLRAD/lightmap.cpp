@@ -4669,39 +4669,6 @@ void AddPatchLights (int facenum)
 // =====================================================================================
 void            FinalLightFace(const int facenum)
 {
-	if (facenum == 0 && g_drawsample)
-	{
-		char name[_MAX_PATH+20];
-		sprintf (name, "%s_sample.pts", g_Mapname);
-		Log ("Writing '%s' ...\n", name);
-		FILE *f;
-		f = fopen(name, "w");
-		if (f)
-		{
-			const int pos_count = 15;
-			const vec3_t pos[pos_count] = {{0,0,0},{1,0,0},{0,1,0},{-1,0,0},{0,-1,0},{1,0,0},{0,0,1},{-1,0,0},{0,0,-1},{0,-1,0},{0,0,1},{0,1,0},{0,0,-1},{1,0,0},{0,0,0}};
-			int i, j, k;
-			vec3_t v, dist;
-			for (i = 0; i < g_numfaces; ++i)
-			{
-				const facelight_t *fl=&facelight[i];
-				for (j = 0; j < fl->numsamples; ++j)
-				{
-					VectorCopy (fl->samples[0][j].pos, v);
-					VectorSubtract (v, g_drawsample_origin, dist);
-					if (DotProduct (dist, dist) < g_drawsample_radius * g_drawsample_radius)
-					{
-						for (k = 0; k < pos_count; ++k)
-							fprintf (f, "%g %g %g\n", v[0]+pos[k][0], v[1]+pos[k][1], v[2]+pos[k][2]);
-					}
-				}
-			}
-			fclose(f);
-			Log ("OK.\n");
-		}
-		else
-			Log ("Error.\n");
-	}
     int             i, j, k;
     vec3_t          lb;
     facelight_t*    fl;

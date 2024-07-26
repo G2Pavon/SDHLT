@@ -737,47 +737,6 @@ void FindFacePositions (int facenum)
 
 void FreePositionMaps ()
 {
-	if (g_drawsample)
-	{
-		char name[_MAX_PATH+20];
-		sprintf (name, "%s_positions.pts", g_Mapname);
-		Log ("Writing '%s' ...\n", name);
-		FILE *f;
-		f = fopen(name, "w");
-		if (f)
-		{
-			const int pos_count = 15;
-			const vec3_t pos[pos_count] = {{0,0,0},{1,0,0},{0,1,0},{-1,0,0},{0,-1,0},{1,0,0},{0,0,1},{-1,0,0},{0,0,-1},{0,-1,0},{0,0,1},{0,1,0},{0,0,-1},{1,0,0},{0,0,0}};
-			int i, j, k;
-			vec3_t v, dist;
-			for (i = 0; i < g_numfaces; ++i)
-			{
-				positionmap_t *map = &g_face_positions[i];
-				if (!map->valid)
-				{
-					continue;
-				}
-				for (j = 0; j < map->h * map->w; ++j)
-				{
-					if (!map->grid[j].valid)
-					{
-						continue;
-					}
-					VectorCopy (map->grid[j].pos, v);
-					VectorSubtract (v, g_drawsample_origin, dist);
-					if (DotProduct (dist, dist) < g_drawsample_radius * g_drawsample_radius)
-					{
-						for (k = 0; k < pos_count; ++k)
-							fprintf (f, "%g %g %g\n", v[0]+pos[k][0], v[1]+pos[k][1], v[2]+pos[k][2]);
-					}
-				}
-			}
-			fclose(f);
-			Log ("OK.\n");
-		}
-		else
-			Log ("Error.\n");
-	}
 	for (int facenum = 0; facenum < g_numfaces; facenum++)
 	{
 		positionmap_t *map = &g_face_positions[facenum];
