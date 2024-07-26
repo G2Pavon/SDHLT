@@ -73,7 +73,6 @@ void Usage(ProgramType programType)
             Log("    -depth #       : Thickness of translucent objects.\n");
             Log("    -notextures    : Don't load textures.\n");
             Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");
-            Log("    -blur #        : Enlarge lightmap sample to blur the lightmap.\n");
             Log("    -noemitterrange: Don't fix pointy texlights.\n");
             Log("    -nobleedfix    : Don't fix wall bleeding problem for faces with large seams.\n");
             Log("    -noattic       : Skip shadow processing for small attic lights.\n");

@@ -2266,9 +2266,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_blur);
-	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_BLUR);
-	Log("blur size            [ %17s ] [ %17s ]\n", buf1, buf2);
 	Log("no emitter range     [ %17s ] [ %17s ]\n", g_noemitterrange ? "on" : "off", DEFAULT_NOEMITTERRANGE ? "on" : "off");
 	Log("wall bleeding fix    [ %17s ] [ %17s ]\n", g_bleedfix ? "on" : "off", DEFAULT_BLEEDFIX ? "on" : "off");
 
@@ -2546,17 +2543,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-blur"))
-		{
-			if (i + 1 < argc)
-			{
-				g_blur = atof (argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-noemitterrange"))
 		{
 			g_noemitterrange = true;
@@ -2665,10 +2651,6 @@ int             main(const int argc, char** argv)
     {
 		Warning("No vis information.");
     }
-	if (g_blur < 1.0)
-	{
-		g_blur = 1.0;
-	}
     RadWorld();
 	FreeStudioModels(); //seedee
     FreeOpaqueFaceList();
