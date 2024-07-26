@@ -4835,10 +4835,10 @@ void            FinalLightFace(const int facenum)
 			}
             // ------------------------------------------------------------------------
 	        // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-	        // colour lightscale:
-	        lb[0] *= g_colour_lightscale[0];
-	        lb[1] *= g_colour_lightscale[1];
-	        lb[2] *= g_colour_lightscale[2];
+	        // colour lightscale used by -scale and -colourscale, default values is 2.0
+	        lb[0] *= 2.0; // g_colour_lightscale[1] = 2
+	        lb[1] *= 2.0; // g_colour_lightscale[2] = 2
+	        lb[2] *= 2.0; // g_colour_lightscale[3] = 2
             // ------------------------------------------------------------------------
 
             // clip from the bottom first

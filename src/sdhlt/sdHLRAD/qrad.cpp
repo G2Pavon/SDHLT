@@ -64,7 +64,6 @@ float			g_smoothing_threshold_2;
 
 // --------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-vec3_t		g_colour_lightscale = { DEFAULT_COLOUR_LIGHTSCALE_RED, DEFAULT_COLOUR_LIGHTSCALE_GREEN, DEFAULT_COLOUR_LIGHTSCALE_BLUE };
 vec3_t		g_colour_jitter_hack = { DEFAULT_COLOUR_JITTER_HACK_RED, DEFAULT_COLOUR_JITTER_HACK_GREEN, DEFAULT_COLOUR_JITTER_HACK_BLUE };
 vec3_t		g_jitter_hack = { DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE };
 // --------------------------------------------------------------------------
@@ -2354,9 +2353,6 @@ static void     Settings()
     // ------------------------------------------------------------------------
     // Changes by Adam Foster - afoster@compsoc.man.ac.uk
     // replaces the old stuff for displaying current values for gamma and lightscale
-    safe_snprintf(buf1, sizeof(buf1), "%1.3f %1.3f %1.3f", g_colour_lightscale[0], g_colour_lightscale[1], g_colour_lightscale[2]);
-    safe_snprintf(buf2, sizeof(buf2), "%1.3f %1.3f %1.3f", DEFAULT_COLOUR_LIGHTSCALE_RED, DEFAULT_COLOUR_LIGHTSCALE_GREEN, DEFAULT_COLOUR_LIGHTSCALE_BLUE);
-    Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     // ------------------------------------------------------------------------
 
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_lightscale);
@@ -2622,24 +2618,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-        else if (!strcasecmp(argv[i], "-scale"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-             	// ------------------------------------------------------------------------
-		        // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-		        // Munge monochrome lightscale into colour one
-	    	    i++;
-                g_colour_lightscale[0] = (float)atof(argv[i]);
-		        g_colour_lightscale[1] = (float)atof(argv[i]);
-		        g_colour_lightscale[2] = (float)atof(argv[i]);
-		        // ------------------------------------------------------------------------
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
         else if (!strcasecmp(argv[i], "-fade"))
         {
             if (i + 1 < argc)	//added "1" .--vluzacn
@@ -2707,20 +2685,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-        else if (!strcasecmp(argv[i], "-colourscale"))
-        {
-        	if (i + 3 < argc)
-			{
-				g_colour_lightscale[0] = (float)atof(argv[++i]);
-				g_colour_lightscale[1] = (float)atof(argv[++i]);
-				g_colour_lightscale[2] = (float)atof(argv[++i]);
-			}
-			else
-			{
-				Error("expected three color values after '-colourscale'\n");
-			}
-        }
-
         else if (!strcasecmp(argv[i], "-colourjitter"))
         {
         	if (i + 3 < argc)
@@ -3038,10 +3002,6 @@ int             main(const int argc, char** argv)
 		} else {
 			g_corings[style] = 0;
 		}
-	}
-	if (g_colour_lightscale[0] != 2.0 || g_colour_lightscale[1] != 2.0 || g_colour_lightscale[2] != 2.0)
-	{
-		Warning ("light scale value should be 2.0 for final compile.\nValues other than 2.0 will result in incorrect interpretation of light_environment's brightness when the engine loads the map.");
 	}
 	if (g_drawlerp)
 	{
