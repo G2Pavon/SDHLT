@@ -72,7 +72,6 @@ void Usage(ProgramType programType)
             Log("    -low | -high    : run program an altered priority level\n");
             Log("    -threads #      : manually specify the number of threads to run\n");
             Log("    -depth #       : Thickness of translucent objects.\n");
-            Log("    -blockopaque # : Remove the black areas around opaque entities.(0=off 1=on)\n");
             Log("    -notextures    : Don't load textures.\n");
             Log("    -texreflectgamma # : Gamma that relates reflectivity to texture color bits.\n");
             Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");

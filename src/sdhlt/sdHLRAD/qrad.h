@@ -71,7 +71,6 @@
 
 	#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
 	#define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
-	#define DEFAULT_BLOCKOPAQUE 1
 	#define DEFAULT_TRANSLUCENTDEPTH 2.0f
 	#define DEFAULT_NOTEXTURES false
 	#define DEFAULT_TEXREFLECTGAMMA 1.76f // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
@@ -355,7 +354,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 
 	extern float_type g_transfer_compress_type;
 	extern vector_type g_rgbtransfer_compress_type;
-	extern int g_blockopaque;
 	extern float g_corings[ALLSTYLES];
 	extern int stylewarningcount; // not thread safe
 	extern int stylewarningnext; // not thread safe

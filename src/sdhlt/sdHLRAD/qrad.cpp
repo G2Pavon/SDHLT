@@ -62,7 +62,6 @@ float			g_smoothing_threshold_2;
 
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
-int g_blockopaque = DEFAULT_BLOCKOPAQUE;
 bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
@@ -1260,17 +1259,13 @@ static void		LoadOpaqueEntities()
 			}
 			bool block = false;
 			{
-				if (g_blockopaque) //If opaque blocking is enabled
-				{
-					block = true;
-
+					block = true;//opaque blocking is enabled
 					if (IntForKey (ent, "zhlt_lightflags") & eModelLightmodeNonsolid) //If entity non-solid or has transparency or a specific style, which would prevent it from blocking
 						block = false;
 					if (b_transparency)
 						block = false;
 					if (opaquestyle != -1)
 						block = false;
-				}
 			}
 			if (opaque) //If opaque add it to the opaque list with its properties
 			{
@@ -2274,7 +2269,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	Log("block opaque         [ %17s ] [ %17s ]\n", g_blockopaque ? "on" : "off", DEFAULT_BLOCKOPAQUE ? "on" : "off");
 	Log("ignore textures      [ %17s ] [ %17s ]\n", g_notextures ? "on" : "off", DEFAULT_NOTEXTURES ? "on" : "off");
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texreflectgamma);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXREFLECTGAMMA);
@@ -2562,17 +2556,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-blockopaque"))
-		{
-			if (i + 1 < argc)
-			{
-				g_blockopaque = atoi(argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-waddir"))
 		{
 			if (i + 1 < argc)
