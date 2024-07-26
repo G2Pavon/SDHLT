@@ -1032,49 +1032,6 @@ static void     BoundWorld()
     }
 }
 
-
-static void     Settings() // prints out settings sheet
-{
-    char*           tmp;
-
-    Log("\nCurrent %s Settings\n", g_Program);
-    Log("Name                 |  Setting  |  Default\n"
-        "---------------------|-----------|-------------------------\n");
-    // ZHLT Common Settings
-    if (DEFAULT_NUMTHREADS == -1)
-    {
-        Log("threads               [ %7d ] [  Varies ]\n", g_numthreads);
-    }
-    else
-    {
-        Log("threads               [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
-    }
-    Log("max texture memory    [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
-	Log("max lighting memory   [ %7d ] [ %7d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA);
-    switch (g_threadpriority)
-    {
-    case eThreadPriorityNormal:
-    default:
-        tmp = "Normal";
-        break;
-    case eThreadPriorityLow:
-        tmp = "Low";
-        break;
-    case eThreadPriorityHigh:
-        tmp = "High";
-        break;
-    }
-    Log("priority              [ %7s ] [ %7s ]\n", tmp, "Normal");
-    Log("\n");
-    // HLCSG Specific Settings
-    Log("clipnode economy mode [ %7s ] [ %7s ]\n", g_bClipNazi       ? "on" : "off", DEFAULT_CLIPNAZI     ? "on" : "off");
-	Log("clip hull type        [ %7s ] [ %7s ]\n", GetClipTypeString(g_cliptype), GetClipTypeString(DEFAULT_CLIPTYPE));
-    Log("skyclip               [ %7s ] [ %7s ]\n", g_skyclip         ? "on" : "off", DEFAULT_SKYCLIP      ? "on" : "off");
-    Log("world extent          [ %7d ] [ %7d ]\n", g_iWorldExtent, 65536);
-    Log("\n");
-}
-
-
 void            CSGCleanup()
 {
     FreeWadPaths();
@@ -1254,8 +1211,7 @@ int             main(const int argc, char** argv)
             DefaultExtension(name, ".map");                  // might be .reg
             LoadMapFile(name);
             ThreadSetDefault();                    
-            ThreadSetPriority(g_threadpriority);  
-            Settings();
+            ThreadSetPriority(g_threadpriority);
 
 
         #ifdef HLCSG_GAMETEXTMESSAGE_UTF8

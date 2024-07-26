@@ -1211,59 +1211,6 @@ static bool     ProcessModel()
 }
 
 // =====================================================================================
-//  Settings
-// =====================================================================================
-static void     Settings()
-{
-    char*           tmp;
-
-    Log("\nCurrent %s Settings\n", g_Program);
-    Log("Name               |  Setting  |  Default\n" "-------------------|-----------|-------------------------\n");
-
-    // ZHLT Common Settings
-    if (DEFAULT_NUMTHREADS == -1)
-    {
-        Log("threads             [ %7d ] [  Varies ]\n", g_numthreads);
-    }
-    else
-    {
-        Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
-    }
-
-    Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
-
-    switch (g_threadpriority)
-    {
-    case eThreadPriorityNormal:
-    default:
-        tmp = "Normal";
-        break;
-    case eThreadPriorityLow:
-        tmp = "Low";
-        break;
-    case eThreadPriorityHigh:
-        tmp = "High";
-        break;
-    }
-    Log("priority            [ %7s ] [ %7s ]\n", tmp, "Normal");
-    Log("\n");
-
-    // HLBSP Specific Settings
-    Log("nofill              [ %7s ] [ %7s ]\n", g_nofill ? "on" : "off", DEFAULT_NOFILL ? "on" : "off");
-	Log("noinsidefill        [ %7s ] [ %7s ]\n", g_noinsidefill ? "on" : "off", DEFAULT_NOINSIDEFILL ? "on" : "off");
-	Log("noopt               [ %7s ] [ %7s ]\n", g_noopt ? "on" : "off", DEFAULT_NOOPT ? "on" : "off");
-	Log("no clipnode merging [ %7s ] [ %7s ]\n", g_noclipnodemerge? "on": "off", DEFAULT_NOCLIPNODEMERGE? "on": "off");
-    Log("notjunc             [ %7s ] [ %7s ]\n", g_notjunc ? "on" : "off", DEFAULT_NOTJUNC ? "on" : "off");
-	Log("nobrink             [ %7s ] [ %7s ]\n", g_nobrink? "on": "off", DEFAULT_NOBRINK? "on": "off");
-    Log("subdivide size      [ %7d ] [ %7d ] (Min %d) (Max %d)\n",
-        g_subdivide_size, DEFAULT_SUBDIVIDE_SIZE, MIN_SUBDIVIDE_SIZE, MAX_SUBDIVIDE_SIZE);
-    Log("max node size       [ %7d ] [ %7d ] (Min %d) (Max %d)\n",
-        g_maxnode_size, DEFAULT_MAXNODE_SIZE, MIN_MAXNODE_SIZE, MAX_MAXNODE_SIZE);
-	Log("remove hull 2       [ %7s ] [ %7s ]\n", g_nohull2? "on": "off", "off");
-    Log("\n\n");
-}
-
-// =====================================================================================
 //  ProcessFile
 // =====================================================================================
 static void     ProcessFile(const char* const filename)
@@ -1333,9 +1280,6 @@ static void     ProcessFile(const char* const filename)
     safe_snprintf(g_bspfilename, _MAX_PATH, "%s.bsp", filename);
     LoadBSPFile(g_bspfilename);
     ParseEntities();
-
-    Settings(); // AJM: moved here due to info_compile_parameters entity
-
 	{
 		char name[_MAX_PATH];
 		safe_snprintf (name, _MAX_PATH, "%s.pln", filename);
@@ -1612,7 +1556,6 @@ int             main(const int argc, char** argv)
 #endif
     dtexdata_init();
     atexit(dtexdata_free);
-    //Settings();
     // END INIT
 
     // Load the .void files for allowable entities in the void

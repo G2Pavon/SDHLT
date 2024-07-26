@@ -673,45 +673,6 @@ static void     LoadPortalsByFilename(const char* const filename)
     free(file_image);
 }
 
-// =====================================================================================
-//  Settings
-// =====================================================================================
-static void     Settings()
-{
-    char*           tmp;
-
-    Log("\n-= Current %s Settings =-\n", g_Program);
-    Log("Name               |  Setting  |  Default\n" "-------------------|-----------|-------------------------\n");
-    // ZHLT Common Settings
-    if (DEFAULT_NUMTHREADS == -1)
-    {
-        Log("threads             [ %7d ] [  Varies ]\n", g_numthreads);
-    }
-    else
-    {
-        Log("threads             [ %7d ] [ %7d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
-    }
-    Log("max texture memory  [ %7d ] [ %7d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
-    Log("max vis distance    [ %7d ] [ %7d ]\n", g_maxdistance, DEFAULT_MAXDISTANCE_RANGE);
-    switch (g_threadpriority)
-    {
-    case eThreadPriorityNormal:
-    default:
-        tmp = "Normal";
-        break;
-    case eThreadPriorityLow:
-        tmp = "Low";
-        break;
-    case eThreadPriorityHigh:
-        tmp = "High";
-        break;
-    }
-    Log("priority            [ %7s ] [ %7s ]\n", tmp, "Normal");
-    // HLVIS Specific Settings
-    Log("fast vis            [ %7s ] [ %7s ]\n", g_fastvis ? "on" : "off", DEFAULT_FASTVIS ? "on" : "off");
-    Log("full vis            [ %7s ] [ %7s ]\n", g_fullvis ? "on" : "off", DEFAULT_FULLVIS ? "on" : "off");
-    Log("\n\n");
-}
 
 int        VisLeafnumForPoint(const vec3_t point)
 {
@@ -966,7 +927,6 @@ int             main(const int argc, char** argv)
             }
         }
         LoadPortalsByFilename(portalfile);
-        Settings();
         g_uncompressed = (byte*)calloc(g_portalleafs, g_bitbytes);
 
         CalcVis();
