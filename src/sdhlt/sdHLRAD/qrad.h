@@ -73,7 +73,6 @@
 
 	#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
 	#define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
-	#define DEFAULT_SOFTSKY true
 	#define DEFAULT_BLOCKOPAQUE 1
 	#define DEFAULT_TRANSLUCENTDEPTH 2.0f
 	#define DEFAULT_NOTEXTURES false
@@ -359,7 +358,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 
 	extern float_type g_transfer_compress_type;
 	extern vector_type g_rgbtransfer_compress_type;
-	extern bool g_softsky;
 	extern int g_blockopaque;
 	extern bool g_drawpatch;
 	extern bool g_drawsample;

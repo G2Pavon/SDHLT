@@ -2140,14 +2140,7 @@ void            CreateDirectLights()
 					}
 					if (!VectorCompare (dl->diffuse_intensity, vec3_origin))
 					{
-						if (g_softsky)
-						{
-							countfastlights += g_numskynormals[SKYLEVEL_SOFTSKYON];
-						}
-						else
-						{
-							countfastlights += g_numskynormals[SKYLEVEL_SOFTSKYOFF];
-						}
+						countfastlights += g_numskynormals[SKYLEVEL_SOFTSKYON];
 					}
 					break;
 				default:
@@ -2528,24 +2521,19 @@ static void     GatherSampleLight(const vec3_t pos, const byte* const pvs, const
 						do // add sky light
 						{
 							// check step
-							step_match = 0;
-							if (g_softsky)
-								step_match = 1;
-							if (g_fastmode)
-								step_match = 1;
+							step_match = 1;
 							if (step != step_match)
 								continue;
 							// check intensity
-							if (VectorCompare(l->diffuse_intensity,vec3_origin)
-								&& VectorCompare(l->diffuse_intensity2, vec3_origin))
+							if (VectorCompare(l->diffuse_intensity,vec3_origin) && VectorCompare(l->diffuse_intensity2, vec3_origin))
 								continue;
 
 							vec3_t sky_intensity;
 
 							// loop over the normals
-							vec3_t *skynormals = g_skynormals[g_softsky?SKYLEVEL_SOFTSKYON:SKYLEVEL_SOFTSKYOFF];
-							vec_t *skyweights = g_skynormalsizes[g_softsky?SKYLEVEL_SOFTSKYON:SKYLEVEL_SOFTSKYOFF];
-							for (int j = 0; j < g_numskynormals[g_softsky?SKYLEVEL_SOFTSKYON:SKYLEVEL_SOFTSKYOFF]; j++)
+							vec3_t *skynormals = g_skynormals[7]; // 7 = SKYLEVEL_SOFTSKYON else 4 = SKYLEVEL_SOFTSKYOFF if -fast
+							vec_t *skyweights = g_skynormalsizes[7];
+							for (int j = 0; j < g_numskynormals[7]; j++)
 							{
 								// make sure the angle is okay
 								dot = -DotProduct (normal, skynormals[j]);

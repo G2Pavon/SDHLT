@@ -64,7 +64,6 @@ float			g_smoothing_threshold_2;
 
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
-bool g_softsky = DEFAULT_SOFTSKY;
 int g_blockopaque = DEFAULT_BLOCKOPAQUE;
 bool g_notextures = DEFAULT_NOTEXTURES;
 vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
@@ -2353,7 +2352,6 @@ static void     Settings()
 	sprintf (buf1, "%d (%s)", g_rgbtransfer_compress_type, vector_type_string[g_rgbtransfer_compress_type]);
 	sprintf (buf2, "%d (%s)", DEFAULT_RGBTRANSFER_COMPRESS_TYPE, vector_type_string[DEFAULT_RGBTRANSFER_COMPRESS_TYPE]);
 	Log("size of rgbtransfer  [ %17s ] [ %17s ]\n", buf1, buf2);
-	Log("soft sky             [ %17s ] [ %17s ]\n", g_softsky ? "on" : "off", DEFAULT_SOFTSKY ? "on" : "off");
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2649,17 +2647,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-softsky"))
-		{
-			if (i + 1 < argc)
-			{
-				g_softsky = (bool)atoi(argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp(argv[i], "-nostudioshadow"))
 		{
 			g_studioshadow = false;
@@ -2881,7 +2868,6 @@ int             main(const int argc, char** argv)
 	if (g_fastmode)
 	{
 		g_numbounce = 0;
-		g_softsky = false;
 	}
     Settings();
 	DeleteEmbeddedLightmaps ();
