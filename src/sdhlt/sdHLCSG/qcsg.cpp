@@ -527,7 +527,9 @@ static void CSGBrush(int brushnum)
                         }
                         continue;
                     }
-                    if (b1->contents > b2->contents || b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "SOLIDHINT", 9) || b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "BEVELHINT", 9))
+                    if (((b1->contents > b2->contents) ||
+                         (b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "SOLIDHINT", 9))) ||
+                        (b1->contents == b2->contents && !strncasecmp(GetTextureByNumber_CSG(f->texinfo), "BEVELHINT", 9)))
                     { // inside a water brush
                         f->contents = b2->contents;
                         f->next = outside;
