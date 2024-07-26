@@ -62,7 +62,6 @@ bool            g_extra = DEFAULT_EXTRA;
 float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
-float		g_transtotal_hack = DEFAULT_TRANSTOTAL_HACK;
 unsigned char g_minlight = DEFAULT_MINLIGHT;
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
@@ -2654,19 +2653,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp(argv[i], "-bscale"))
-		{
-			Error ("'-bscale' is obsolete.");
-            if (i + 1 < argc)
-            {
-                g_transtotal_hack = (float)atof(argv[++i]);
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-		}
-
 		else if (!strcasecmp(argv[i], "-minlight"))
 		{
 			if (i + 1 < argc)

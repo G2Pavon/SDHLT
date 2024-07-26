@@ -71,8 +71,6 @@
 #define DEFAULT_EXTRA               false
 #define DEFAULT_INFO                true
 
-
-	#define DEFAULT_TRANSTOTAL_HACK 0.2 //0.5 //vluzacn
 	#define DEFAULT_MINLIGHT 0
 	#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
 	#define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
@@ -360,7 +358,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 
 	extern const vec3_t vec3_one;
 
-	extern float g_transtotal_hack;
 	extern unsigned char g_minlight;
 	extern float_type g_transfer_compress_type;
 	extern vector_type g_rgbtransfer_compress_type;
