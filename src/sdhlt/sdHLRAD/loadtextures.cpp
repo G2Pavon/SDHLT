@@ -364,7 +364,7 @@ void LoadTextures ()
 					{
 						reflectivity[k] = pow (reflectivity[k], 1.76f); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 					}
-					VectorScale (reflectivity, g_texreflectscale, reflectivity);
+					VectorScale (reflectivity, 0.7f, reflectivity);
 				}
 				VectorAdd (total, reflectivity, total);
 			}

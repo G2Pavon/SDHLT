@@ -72,7 +72,6 @@
 #define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
 #define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
 #define DEFAULT_TRANSLUCENTDEPTH 2.0f
-#define DEFAULT_TEXREFLECTSCALE 0.7f // arbitrary (This is lower than 1.0, because textures are usually brightened in order to look better in Goldsrc. Textures are made brightened because Goldsrc is only able to darken the texture when combining the texture with the lightmap.)
 #define DEFAULT_BLUR 1.5 // classic lighting is equivalent to "-blur 1.0"
 #define DEFAULT_NOEMITTERRANGE false
 #define DEFAULT_BLEEDFIX true
@@ -347,23 +346,22 @@ extern opaqueList_t* g_opaque_face_list;
 extern unsigned      g_opaque_face_count; // opaque entity count //HLRAD_OPAQUE_NODE
 extern unsigned      g_max_opaque_face_count;    // Current array maximum (used for reallocs)
 
-	extern const vec3_t vec3_one;
+extern const vec3_t vec3_one;
 
-	extern float_type g_transfer_compress_type;
-	extern vector_type g_rgbtransfer_compress_type;
-	extern float g_corings[ALLSTYLES];
-	extern int stylewarningcount; // not thread safe
-	extern int stylewarningnext; // not thread safe
-	extern vec3_t *g_translucenttextures;
-	extern vec_t g_translucentdepth;
-	extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y component = scale, Z component = nothing
-	extern vec_t g_texreflectscale;
-	extern vec_t g_blur;
-	extern bool g_noemitterrange;
-	extern bool g_bleedfix;
-	extern vec_t g_maxdiscardedlight;
-	extern vec3_t g_maxdiscardedpos;
-	extern vec_t g_texlightgap;
+extern float_type g_transfer_compress_type;
+extern vector_type g_rgbtransfer_compress_type;
+extern float g_corings[ALLSTYLES];
+extern int stylewarningcount; // not thread safe
+extern int stylewarningnext; // not thread safe
+extern vec3_t *g_translucenttextures;
+extern vec_t g_translucentdepth;
+extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y component = scale, Z component = nothing
+extern vec_t g_blur;
+extern bool g_noemitterrange;
+extern bool g_bleedfix;
+extern vec_t g_maxdiscardedlight;
+extern vec3_t g_maxdiscardedpos;
+extern vec_t g_texlightgap;
 
 extern void     MakeTnodes(dmodel_t* bm);
 extern void     PairEdges();

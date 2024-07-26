@@ -62,7 +62,6 @@ float			g_smoothing_threshold_2;
 
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
-vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
 
 // Cosine of smoothing angle(in radians)
@@ -995,9 +994,9 @@ static void     MakePatchForFace(const int fn, Winding* w, int style
 			VectorScale (texturecolor, 1.0 / 255.0, texturereflectivity);
 			for (int k = 0; k < 3; k++)
 			{
-				texturereflectivity[k] = pow (texturereflectivity[k], 1.76f ); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
+				texturereflectivity[k] = pow (texturereflectivity[k], 1.76f );// 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 			}
-			VectorScale (texturereflectivity, g_texreflectscale, texturereflectivity);
+			VectorScale (texturereflectivity, 0.7f, texturereflectivity);
 			if (VectorMaximum (texturereflectivity) > 1.0 + NORMAL_EPSILON)
 			{
 				Warning ("Texture '%s': reflectivity (%f,%f,%f) greater than 1.0.", g_textures[g_texinfo[f->texinfo].miptex].name, texturereflectivity[0], texturereflectivity[1], texturereflectivity[2]);
@@ -2267,9 +2266,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texreflectscale);
-	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXREFLECTSCALE);
-	Log("reflectivity scale   [ %17s ] [ %17s ]\n", buf1, buf2);
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_blur);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_BLUR);
 	Log("blur size            [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2550,17 +2546,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-texreflectscale"))
-		{
-			if (i + 1 < argc)
-			{
-				g_texreflectscale = atof (argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-blur"))
 		{
 			if (i + 1 < argc)
