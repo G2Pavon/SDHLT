@@ -68,7 +68,6 @@ void Usage(ProgramType programType)
             Log("    -nospread       : Disable sunlight spread angles for this compile\n");
             Log("    -nopaque        : Disable the opaque zhlt_lightflags for this compile\n\n");
             Log("    -nostudioshadow : Disable opaque studiomodels, ignore zhlt_studioshadow for this compile\n\n");
-            Log("    -smooth #       : Set smoothing threshold for blending (in degrees)\n");
             Log("    -smooth2 #      : Set smoothing threshold between different textures\n");
             Log("    -chop #         : Set radiosity patch size for normal textures\n");
             Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");

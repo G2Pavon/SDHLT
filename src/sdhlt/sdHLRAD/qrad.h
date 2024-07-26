@@ -59,7 +59,6 @@
 #define DEFAULT_TEXCHOP             32.0
 #define DEFAULT_LIGHTSCALE          2.0 //1.0 //vluzacn
 #define DEFAULT_DLIGHT_SCALE        1.0 //2.0 //vluzacn
-#define DEFAULT_SMOOTHING_VALUE     50.0
 #define DEFAULT_SMOOTHING2_VALUE	0
 
 
@@ -386,7 +385,7 @@ extern vec_t	g_limitthreshold;
 extern unsigned g_numbounce;
 extern float    g_qgamma;
 extern float    g_smoothing_threshold;
-extern float    g_smoothing_value;
+
 extern float g_smoothing_threshold_2;
 extern float g_smoothing_value_2;
 extern vec_t *g_smoothvalues; //[nummiptex]

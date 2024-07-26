@@ -72,7 +72,6 @@ char            g_vismatfile[_MAX_PATH] = "";
 bool            g_extra = DEFAULT_EXTRA;
 
 float           g_smoothing_threshold;
-float           g_smoothing_value = DEFAULT_SMOOTHING_VALUE;
 float			g_smoothing_threshold_2;
 float			g_smoothing_value_2 = DEFAULT_SMOOTHING2_VALUE;
 
@@ -2378,12 +2377,6 @@ static void     Settings()
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
     Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
-
-    Log("\n");
-
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_smoothing_value);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_SMOOTHING_VALUE);
-    Log("smoothing threshold  [ %17s ] [ %17s ]\n", buf1, buf2);
 	safe_snprintf(buf1, sizeof(buf1), g_smoothing_value_2<0? "no change": "%3.3f", g_smoothing_value_2);
 #if DEFAULT_SMOOTHING2_VALUE
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_SMOOTHING2_VALUE);
@@ -2757,17 +2750,6 @@ int             main(const int argc, char** argv)
 		        g_colour_qgamma[1] = (float)atof(argv[i]);
 		        g_colour_qgamma[2] = (float)atof(argv[i]);
 		        // ------------------------------------------------------------------------
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-smooth"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_smoothing_value = atof(argv[++i]);
             }
             else
             {
@@ -3149,7 +3131,7 @@ int             main(const int argc, char** argv)
         Usage(PROGRAM_RAD);
     }
 
-    g_smoothing_threshold = (float)cos(g_smoothing_value * (Q_PI / 180.0));
+    g_smoothing_threshold = (float)cos(50.0 * (Q_PI / 180.0)); // 50.0 = DEFAULT_SMOOTHING_VALUE = g_smoothing_value =  a.k.a '-smooth'
 
     safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
     FlipSlashes(g_Mapname);
