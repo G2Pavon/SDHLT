@@ -33,6 +33,7 @@ set(COMMON_DIR ${SDHLT_DIR}/common)
 set(TEMPLATE_DIR ${SDHLT_DIR}/template)
 
 set(COMMON_SOURCES
+    ${COMMON_DIR}/arguments.cpp
     ${COMMON_DIR}/blockmem.cpp
     ${COMMON_DIR}/bspfile.cpp
     ${COMMON_DIR}/cmdlib.cpp
@@ -44,10 +45,10 @@ set(COMMON_SOURCES
     ${COMMON_DIR}/scriplib.cpp
     ${COMMON_DIR}/threads.cpp
     ${COMMON_DIR}/winding.cpp
-    ${COMMON_DIR}/arguments.cpp
 )
 
 set(COMMON_HEADERS
+    ${COMMON_DIR}/arguments.h
     ${TEMPLATE_DIR}/basictypes.h
     ${COMMON_DIR}/blockmem.h
     ${COMMON_DIR}/boundingbox.h
@@ -64,7 +65,6 @@ set(COMMON_HEADERS
     ${COMMON_DIR}/threads.h
     ${COMMON_DIR}/win32fix.h
     ${COMMON_DIR}/winding.h
-    ${COMMON_DIR}/arguments.h
 )
 
 #================
@@ -145,7 +145,6 @@ set(RAD_SOURCES
 
 set(RAD_HEADERS
     ${COMMON_HEADERS}
-    ${COMMON_DIR}/anorms.h
     ${RAD_DIR}/compress.h
 	${RAD_DIR}/list.h
 	${RAD_DIR}/meshdesc.h
