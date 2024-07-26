@@ -62,7 +62,6 @@ float			g_smoothing_threshold_2;
 
 float_type g_transfer_compress_type = DEFAULT_TRANSFER_COMPRESS_TYPE;
 vector_type g_rgbtransfer_compress_type = DEFAULT_RGBTRANSFER_COMPRESS_TYPE;
-vec_t g_texreflectgamma = DEFAULT_TEXREFLECTGAMMA;
 vec_t g_texreflectscale = DEFAULT_TEXREFLECTSCALE;
 bool g_bleedfix = DEFAULT_BLEEDFIX;
 
@@ -996,7 +995,7 @@ static void     MakePatchForFace(const int fn, Winding* w, int style
 			VectorScale (texturecolor, 1.0 / 255.0, texturereflectivity);
 			for (int k = 0; k < 3; k++)
 			{
-				texturereflectivity[k] = pow (texturereflectivity[k], g_texreflectgamma);
+				texturereflectivity[k] = pow (texturereflectivity[k], 1.76f ); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 			}
 			VectorScale (texturereflectivity, g_texreflectscale, texturereflectivity);
 			if (VectorMaximum (texturereflectivity) > 1.0 + NORMAL_EPSILON)
@@ -2268,9 +2267,6 @@ static void     Settings()
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
 	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texreflectgamma);
-	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXREFLECTGAMMA);
-	Log("reflectivity gamma   [ %17s ] [ %17s ]\n", buf1, buf2);
 	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texreflectscale);
 	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXREFLECTSCALE);
 	Log("reflectivity scale   [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2554,17 +2550,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-texreflectgamma"))
-		{
-			if (i + 1 < argc)
-			{
-				g_texreflectgamma = atof (argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-texreflectscale"))
 		{
 			if (i + 1 < argc)

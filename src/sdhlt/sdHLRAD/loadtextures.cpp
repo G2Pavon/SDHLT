@@ -362,7 +362,7 @@ void LoadTextures ()
 					VectorScale (tex->palette[tex->canvas[j]], 1.0/255.0, reflectivity);
 					for (int k = 0; k < 3; k++)
 					{
-						reflectivity[k] = pow (reflectivity[k], g_texreflectgamma);
+						reflectivity[k] = pow (reflectivity[k], 1.76f); // 2.0(texgamma cvar) / 2.5 (gamma cvar) * 2.2 (screen gamma) = 1.76
 					}
 					VectorScale (reflectivity, g_texreflectscale, reflectivity);
 				}

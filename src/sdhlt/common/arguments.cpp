@@ -72,7 +72,6 @@ void Usage(ProgramType programType)
             Log("    -threads #      : manually specify the number of threads to run\n");
             Log("    -depth #       : Thickness of translucent objects.\n");
             Log("    -notextures    : Don't load textures.\n");
-            Log("    -texreflectgamma # : Gamma that relates reflectivity to texture color bits.\n");
             Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");
             Log("    -blur #        : Enlarge lightmap sample to blur the lightmap.\n");
             Log("    -noemitterrange: Don't fix pointy texlights.\n");
