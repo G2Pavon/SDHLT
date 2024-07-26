@@ -2556,17 +2556,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-waddir"))
-		{
-			if (i + 1 < argc)
-			{
-				AddWadFolder (argv[++i]);
-			}
-			else
-			{
-				Usage(PROGRAM_RAD);
-			}
-		}
 		else if (!strcasecmp (argv[i], "-notextures"))
 		{
 			g_notextures = true;

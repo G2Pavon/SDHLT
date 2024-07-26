@@ -14,21 +14,6 @@ typedef struct waddir_s
 } waddir_t;
 waddir_t *g_waddirs = NULL;
 
-void AddWadFolder (const char *path)
-{
-	waddir_t *waddir;
-	waddir = (waddir_t *)malloc (sizeof (waddir_t));
-	hlassume (waddir != NULL, assume_NoMemory);
-	{
-		waddir_t **pos;
-		for (pos = &g_waddirs; *pos; pos = &(*pos)->next)
-			;
-		waddir->next = *pos;
-		*pos = waddir;
-	}
-	safe_snprintf (waddir->path, _MAX_PATH, "%s", path);
-}
-
 typedef struct
 {
 	int filepos;
