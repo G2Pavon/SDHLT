@@ -65,7 +65,6 @@ float           g_smoothing_threshold;
 float			g_smoothing_threshold_2;
 
 bool            g_allow_opaques = DEFAULT_ALLOW_OPAQUES;
-bool			g_allow_spread = DEFAULT_ALLOW_SPREAD;
 
 // --------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -2376,7 +2375,6 @@ static void     Settings()
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIGHTSCALE);
     Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
     Log("\n");
-	Log("spread angles        [ %17s ] [ %17s ]\n", g_allow_spread ? "on" : "off", DEFAULT_ALLOW_SPREAD ? "on" : "off");
     Log("opaque brush models  [ %17s ] [ %17s ]\n", g_allow_opaques ? "on" : "off", DEFAULT_ALLOW_OPAQUES ? "on" : "off");
 	Log("opaque studio models [ %17s ] [ %17s ]\n", g_studioshadow ? "on" : "off", DEFAULT_STUDIOSHADOW ? "on" : "off");
     Log("sky lighting fix     [ %17s ] [ %17s ]\n", g_sky_lighting_fix ? "on" : "off", DEFAULT_SKY_LIGHTING_FIX ? "on" : "off");
@@ -2745,10 +2743,6 @@ int             main(const int argc, char** argv)
                 Usage(PROGRAM_RAD);
             }
         }
-		else if (!strcasecmp (argv[i], "-nospread"))
-		{
-			g_allow_spread = false;
-		}
         else if (!strcasecmp(argv[i], "-nopaque")
 			|| !strcasecmp(argv[i], "-noopaque")) //--vluzacn
         {

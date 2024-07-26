@@ -1994,10 +1994,6 @@ void            CreateDirectLights()
                 dl->type = emit_skylight;
                 dl->stopdot2 = FloatForKey(e, "_sky");     // hack stopdot2 to a sky key number
 				dl->sunspreadangle = FloatForKey (e, "_spread");
-				if (!g_allow_spread)
-				{
-					dl->sunspreadangle = 0;
-				}
 				if (dl->sunspreadangle < 0.0 || dl->sunspreadangle > 180)
 				{
 					Error ("Invalid spread angle '%s'. Please use a number between 0 and 180.\n", ValueForKey (e, "_spread"));

@@ -73,7 +73,6 @@
 #define DEFAULT_SKY_LIGHTING_FIX    true
 #define DEFAULT_INFO                true
 #define DEFAULT_ALLOW_OPAQUES       true
-#define DEFAULT_ALLOW_SPREAD		true
 
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -390,7 +389,6 @@ extern vec_t *g_smoothvalues; //[nummiptex]
 extern bool     g_estimate;
 extern char     g_source[_MAX_PATH];
 extern vec_t    g_fade;
-extern bool		g_allow_spread;
 extern bool     g_sky_lighting_fix;
 extern vec_t    g_chop;    // Chop value for normal textures
 extern vec_t    g_texchop; // Chop value for texture lights
