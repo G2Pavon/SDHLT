@@ -74,10 +74,6 @@
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
 
-#define DEFAULT_COLOUR_JITTER_HACK_RED		0.0
-#define DEFAULT_COLOUR_JITTER_HACK_GREEN	0.0
-#define DEFAULT_COLOUR_JITTER_HACK_BLUE		0.0
-
 #define DEFAULT_JITTER_HACK_RED			0.0
 #define DEFAULT_JITTER_HACK_GREEN		0.0
 #define DEFAULT_JITTER_HACK_BLUE		0.0
@@ -386,8 +382,6 @@ extern unsigned      g_max_opaque_face_count;    // Current array maximum (used 
 
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-
-extern vec3_t	g_colour_jitter_hack;
 extern vec3_t	g_jitter_hack;
 
 // ------------------------------------------------------------------------

@@ -64,7 +64,6 @@ float			g_smoothing_threshold_2;
 
 // --------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-vec3_t		g_colour_jitter_hack = { DEFAULT_COLOUR_JITTER_HACK_RED, DEFAULT_COLOUR_JITTER_HACK_GREEN, DEFAULT_COLOUR_JITTER_HACK_BLUE };
 vec3_t		g_jitter_hack = { DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE };
 // --------------------------------------------------------------------------
 
@@ -2366,9 +2365,6 @@ static void     Settings()
     // displays information on all the brand-new features :)
 
     Log("\n");
-    safe_snprintf(buf1, sizeof(buf1), "%3.1f %3.1f %3.1f", g_colour_jitter_hack[0], g_colour_jitter_hack[1], g_colour_jitter_hack[2]);
-    safe_snprintf(buf2, sizeof(buf2), "%3.1f %3.1f %3.1f", DEFAULT_COLOUR_JITTER_HACK_RED, DEFAULT_COLOUR_JITTER_HACK_GREEN, DEFAULT_COLOUR_JITTER_HACK_BLUE);
-    Log("colour jitter        [ %17s ] [ %17s ]\n", buf1, buf2);
     safe_snprintf(buf1, sizeof(buf1), "%3.1f %3.1f %3.1f", g_jitter_hack[0], g_jitter_hack[1], g_jitter_hack[2]);
     safe_snprintf(buf2, sizeof(buf2), "%3.1f %3.1f %3.1f", DEFAULT_JITTER_HACK_RED, DEFAULT_JITTER_HACK_GREEN, DEFAULT_JITTER_HACK_BLUE);
     Log("monochromatic jitter [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2684,19 +2680,6 @@ int             main(const int argc, char** argv)
             {
                 Usage(PROGRAM_RAD);
             }
-        }
-        else if (!strcasecmp(argv[i], "-colourjitter"))
-        {
-        	if (i + 3 < argc)
-			{
-				g_colour_jitter_hack[0] = (float)atof(argv[++i]);
-				g_colour_jitter_hack[1] = (float)atof(argv[++i]);
-				g_colour_jitter_hack[2] = (float)atof(argv[++i]);
-			}
-			else
-			{
-				Error("expected three color values after '-colourjitter'\n");
-			}
         }
 		else if (!strcasecmp(argv[i], "-jitter"))
         {

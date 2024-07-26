@@ -4897,9 +4897,6 @@ void            FinalLightFace(const int facenum)
 			}
 			if (k == 0)
 			{
-				if (g_colour_jitter_hack[0] || g_colour_jitter_hack[1] || g_colour_jitter_hack[2]) 
-					for (i = 0; i < 3; i++) 
-						lbi[i] += g_colour_jitter_hack[i] * ((float)rand() / RAND_MAX - 0.5);
 				if (g_jitter_hack[0] || g_jitter_hack[1] || g_jitter_hack[2]) 
 				{
 					temp_rand = (float)rand() / RAND_MAX - 0.5;
