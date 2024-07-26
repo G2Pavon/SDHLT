@@ -58,7 +58,6 @@
 #define DEFAULT_CHOP                64.0
 #define DEFAULT_TEXCHOP             32.0
 #define DEFAULT_LIGHTSCALE          2.0 //1.0 //vluzacn
-#define DEFAULT_DLIGHT_THRESHOLD	10.0
 #define DEFAULT_DLIGHT_SCALE        1.0 //2.0 //vluzacn
 #define DEFAULT_SMOOTHING_VALUE     50.0
 #define DEFAULT_SMOOTHING2_VALUE	0
@@ -377,7 +376,6 @@ extern patch_t* g_patches; // shrinked to its real size, because 1048576 patches
 extern unsigned g_num_patches;
 
 extern float    g_lightscale;
-extern float    g_dlight_threshold;
 extern float    g_coring;
 
 extern void     MakeShadowSplits();

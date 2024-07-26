@@ -65,7 +65,6 @@ unsigned        g_numbounce = DEFAULT_BOUNCE;              // 3; /* Originally t
 vec_t			g_limitthreshold = DEFAULT_LIMITTHRESHOLD;
 
 float           g_lightscale = DEFAULT_LIGHTSCALE;
-float           g_dlight_threshold = DEFAULT_DLIGHT_THRESHOLD;  // was DIRECT_LIGHT constant
 
 char            g_source[_MAX_PATH] = "";
 
@@ -916,7 +915,7 @@ static bool		getEmitMode (const patch_t *patch)
 	{
 		emitmode = true;
 	}
-	if (value < g_dlight_threshold)
+	if (value < 10.0) // DEFAULT_DLIGHT_THRESHOLD '-dlight'
 	{
 		emitmode = false;
 	}
@@ -2394,9 +2393,6 @@ static void     Settings()
 	safe_snprintf(buf2, sizeof(buf2), "no change");
 #endif
     Log("smoothing threshold 2[ %17s ] [ %17s ]\n", buf1, buf2);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_dlight_threshold);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_DLIGHT_THRESHOLD);
-    Log("direct threshold     [ %17s ] [ %17s ]\n", buf1, buf2);
     safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_direct_scale);
     safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_DLIGHT_SCALE);
     Log("direct light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
@@ -2772,17 +2768,6 @@ int             main(const int argc, char** argv)
 		        g_colour_qgamma[1] = (float)atof(argv[i]);
 		        g_colour_qgamma[2] = (float)atof(argv[i]);
 		        // ------------------------------------------------------------------------
-            }
-            else
-            {
-                Usage(PROGRAM_RAD);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-dlight"))
-        {
-            if (i + 1 < argc)	//added "1" .--vluzacn
-            {
-                g_dlight_threshold = (float)atof(argv[++i]);
             }
             else
             {
