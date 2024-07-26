@@ -130,7 +130,6 @@ set(RAD_SOURCES
     ${RAD_DIR}/mathutil.cpp
 	${RAD_DIR}/meshdesc.cpp
 	${RAD_DIR}/meshtrace.cpp
-    ${RAD_DIR}/nomatrix.cpp
     ${RAD_DIR}/progmesh.cpp
     ${RAD_DIR}/qrad.cpp
     ${RAD_DIR}/qradutil.cpp

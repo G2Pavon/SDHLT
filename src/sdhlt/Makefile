@@ -170,7 +170,6 @@ HLRAD_CPPFILES = \
 			sdHLRAD/mathutil.cpp \
 			sdHLRAD/meshdesc.cpp \
 			sdHLRAD/meshtrace.cpp \
-			sdHLRAD/nomatrix.cpp \
 			sdHLRAD/progmesh.cpp \
 			sdHLRAD/qrad.cpp \
 			sdHLRAD/qradutil.cpp \
