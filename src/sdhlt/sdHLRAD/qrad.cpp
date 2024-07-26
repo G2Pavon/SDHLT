@@ -2182,82 +2182,6 @@ static void     RadWorld()
 	ExtendLightmapBuffer (); // expand the size of lightdata array (for a few KB) to ensure that game engine reads within its valid range
 }
 
-
-// =====================================================================================
-//  Settings
-// =====================================================================================
-static void     Settings()
-{
-    char*           tmp;
-    char            buf1[1024];
-    char            buf2[1024];
-
-    Log("\n-= Current %s Settings =-\n", g_Program);
-    Log("Name                | Setting             | Default\n"
-        "--------------------|---------------------|-------------------------\n");
-
-    // ZHLT Common Settings
-    if (DEFAULT_NUMTHREADS == -1)
-    {
-        Log("threads              [ %17d ] [            Varies ]\n", g_numthreads);
-    }
-    else
-    {
-        Log("threads              [ %17d ] [ %17d ]\n", g_numthreads, DEFAULT_NUMTHREADS);
-    }
-
-    Log("max texture memory   [ %17d ] [ %17d ]\n", g_max_map_miptex, DEFAULT_MAX_MAP_MIPTEX);
-		Log("max lighting memory  [ %17d ] [ %17d ]\n", g_max_map_lightdata, DEFAULT_MAX_MAP_LIGHTDATA); //lightdata
-
-    switch (g_threadpriority)
-    {
-    case eThreadPriorityNormal:
-    default:
-        tmp = "Normal";
-        break;
-    case eThreadPriorityLow:
-        tmp = "Low";
-        break;
-    case eThreadPriorityHigh:
-        tmp = "High";
-        break;
-    }
-    Log("priority             [ %17s ] [ %17s ]\n", tmp, "Normal");
-    Log("\n");
-    Log("oversampling (-extra)[ %17s ] [ %17s ]\n", g_extra ? "on" : "off", DEFAULT_EXTRA ? "on" : "off");
-    Log("bounces              [ %17d ] [ %17d ]\n", g_numbounce, DEFAULT_BOUNCE);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_limitthreshold);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIMITTHRESHOLD);
-    Log("light limit threshold[ %17s ] [ %17s ]\n", g_limitthreshold >= 0 ? buf1 : "None", buf2);
-    Log("smoothing threshold 2[ %17s ] [ %17s ]\n", buf1, buf2);
-    Log("\n");
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_chop);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_CHOP);
-    Log("chop value           [ %17s ] [ %17s ]\n", buf1, buf2);
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_texchop);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TEXCHOP);
-    Log("texchop value        [ %17s ] [ %17s ]\n", buf1, buf2);
-    Log("\n");
-
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_fade);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_FADE);
-    Log("global fade          [ %17s ] [ %17s ]\n", buf1, buf2);
-    
-    // ------------------------------------------------------------------------
-    // Changes by Adam Foster - afoster@compsoc.man.ac.uk
-    // replaces the old stuff for displaying current values for gamma and lightscale
-    // ------------------------------------------------------------------------
-
-    safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_lightscale);
-    safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_LIGHTSCALE);
-    Log("global light scale   [ %17s ] [ %17s ]\n", buf1, buf2);
-	safe_snprintf(buf1, sizeof(buf1), "%3.3f", g_translucentdepth);
-	safe_snprintf(buf2, sizeof(buf2), "%3.3f", DEFAULT_TRANSLUCENTDEPTH);
-	Log("translucent depth    [ %17s ] [ %17s ]\n", buf1, buf2);
-
-    Log("\n\n");
-}
-
 // AJM: added in
 // add minlights entity //seedee
 // =====================================================================================
@@ -2591,7 +2515,6 @@ int             main(const int argc, char** argv)
 	LoadExtentFile (extentfilename);
 #endif
     ParseEntities();
-    Settings();
 	DeleteEmbeddedLightmaps ();
 	LoadTextures ();
 	ReadCustomChopValue ();
