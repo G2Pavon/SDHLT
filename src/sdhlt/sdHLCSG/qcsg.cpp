@@ -12,35 +12,33 @@ static int c_outfaces;
 static int c_csgfaces;
 BoundingBox world_bounds;
 
-bool g_skyclip = DEFAULT_SKYCLIP;   // no sky clipping "-noskyclip"
-bool g_estimate = DEFAULT_ESTIMATE; // progress estimates "-estimate"
-
+bool g_skyclip = DEFAULT_SKYCLIP;       // no sky clipping "-noskyclip"
+bool g_estimate = DEFAULT_ESTIMATE;     // progress estimates "-estimate"
 cliptype g_cliptype = DEFAULT_CLIPTYPE; // "-cliptype <value>"
-
-bool g_bClipNazi = DEFAULT_CLIPNAZI; // "-noclipeconomy"
+bool g_bClipNazi = DEFAULT_CLIPNAZI;    // "-noclipeconomy"
 
 bface_t *NewFaceFromFace(const bface_t *const in) // Duplicates the non point information of a face, used by SplitFace
 {
-    bface_t *newf;
+    bface_t *newFace;
 
-    newf = (bface_t *)Alloc(sizeof(bface_t));
+    newFace = (bface_t *)Alloc(sizeof(bface_t));
 
-    newf->contents = in->contents;
-    newf->texinfo = in->texinfo;
-    newf->planenum = in->planenum;
-    newf->plane = in->plane;
-    newf->backcontents = in->backcontents;
+    newFace->contents = in->contents;
+    newFace->texinfo = in->texinfo;
+    newFace->planenum = in->planenum;
+    newFace->plane = in->plane;
+    newFace->backcontents = in->backcontents;
 
-    return newf;
+    return newFace;
 }
 
-void FreeFace(bface_t *f)
+void FreeFace(bface_t *face)
 {
-    delete f->w;
-    Free(f);
+    delete face->w;
+    Free(face);
 }
 
-void WriteFace(const int hull, const bface_t *const f, int detaillevel)
+void WriteFace(const int hull, const bface_t *const face, int detaillevel)
 {
     unsigned int i;
     Winding *w;
@@ -48,10 +46,9 @@ void WriteFace(const int hull, const bface_t *const f, int detaillevel)
     ThreadLock();
     if (!hull)
         c_csgfaces++;
+    w = face->w; // .p0 format
 
-    w = f->w; // .p0 format
-
-    fprintf(out[hull], "%i %i %i %i %u\n", detaillevel, f->planenum, f->texinfo, f->contents, w->m_NumPoints); // plane summary
+    fprintf(out[hull], "%i %i %i %i %u\n", detaillevel, face->planenum, face->texinfo, face->contents, w->m_NumPoints); // plane summary
 
     for (i = 0; i < w->m_NumPoints; i++) // for each of the points on the face
     {
@@ -66,10 +63,10 @@ void WriteDetailBrush(int hull, const bface_t *faces)
 {
     ThreadLock();
     fprintf(out_detailbrush[hull], "0\n");
-    for (const bface_t *f = faces; f; f = f->next)
+    for (const bface_t *face = faces; face; face = face->next)
     {
-        Winding *w = f->w;
-        fprintf(out_detailbrush[hull], "%i %u\n", f->planenum, w->m_NumPoints);
+        Winding *w = face->w;
+        fprintf(out_detailbrush[hull], "%i %u\n", face->planenum, w->m_NumPoints);
         for (int i = 0; i < w->m_NumPoints; i++)
         {
             fprintf(out_detailbrush[hull], "%5.8f %5.8f %5.8f\n", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]);
@@ -79,25 +76,25 @@ void WriteDetailBrush(int hull, const bface_t *faces)
     ThreadUnlock();
 }
 
-static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
-{                                                                                                           // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
-    bface_t *f;
-    bface_t *f2;
+static void SaveOutside(const brush_t *const brush, const int hull, bface_t *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
+{                                                                                                               // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
+    bface_t *face;
+    bface_t *face2;
     bface_t *next;
     int i;
     vec3_t temp;
 
-    for (f = outside; f; f = next)
+    for (face = outside; face; face = next)
     {
-        next = f->next;
+        next = face->next;
 
         int frontcontents, backcontents;
-        int texinfo = f->texinfo;
+        int texinfo = face->texinfo;
         const char *texname = GetTextureByNumber_CSG(texinfo);
-        frontcontents = f->contents;
+        frontcontents = face->contents;
         if (mirrorcontents == CONTENTS_TOEMPTY)
         {
-            backcontents = f->backcontents;
+            backcontents = face->backcontents;
         }
         else
         {
@@ -129,22 +126,22 @@ static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside
                 frontnull = backnull = true; // not discardable, so remove "SOLIDHINT" texture name and behave like NULL
             }
         }
-        if (b->entitynum != 0 && !strncasecmp(texname, "!", 1))
+        if (brush->entitynum != 0 && !strncasecmp(texname, "!", 1))
         {
             backnull = true; // strip water face on one side
         }
 
-        f->contents = frontcontents;
-        f->texinfo = frontnull ? -1 : texinfo;
+        face->contents = frontcontents;
+        face->texinfo = frontnull ? -1 : texinfo;
         if (!hull) // count unique faces
         {
-            for (f2 = b->hulls[hull].faces; f2; f2 = f2->next)
+            for (face2 = brush->hulls[hull].faces; face2; face2 = face2->next)
             {
-                if (f2->planenum == f->planenum)
+                if (face2->planenum == face->planenum)
                 {
-                    if (!f2->used)
+                    if (!face2->used)
                     {
-                        f2->used = true;
+                        face2->used = true;
                         c_outfaces++;
                     }
                     break;
@@ -154,7 +151,7 @@ static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside
 
         if (!hull) // check the texture alignment of this face
         {
-            int texinfo = f->texinfo;
+            int texinfo = face->texinfo;
             const char *texname = GetTextureByNumber_CSG(texinfo);
             texinfo_t *tex = &g_texinfo[texinfo];
 
@@ -166,10 +163,10 @@ static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside
                 vec3_t texnormal; // check for "Malformed face (%d) normal"
                 CrossProduct(tex->vecs[1], tex->vecs[0], texnormal);
                 VectorNormalize(texnormal);
-                if (fabs(DotProduct(texnormal, f->plane->normal)) <= NORMAL_EPSILON)
+                if (fabs(DotProduct(texnormal, face->plane->normal)) <= NORMAL_EPSILON)
                 {
                     Warning("Entity %i, Brush %i: Malformed texture alignment (texture %s): Texture axis perpendicular to face.",
-                            b->originalentitynum, b->originalbrushnum,
+                            brush->originalentitynum, brush->originalbrushnum,
                             texname);
                 }
 
@@ -179,11 +176,11 @@ static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside
                 vec_t val;
 
                 bad = false;
-                for (i = 0; i < f->w->m_NumPoints; i++)
+                for (i = 0; i < face->w->m_NumPoints; i++)
                 {
                     for (j = 0; j < 2; j++)
                     {
-                        val = DotProduct(f->w->m_Points[i], tex->vecs[j]) + tex->vecs[j][3];
+                        val = DotProduct(face->w->m_Points[i], tex->vecs[j]) + tex->vecs[j][3];
                         if (val < -99999 || val > 999999)
                         {
                             bad = true;
@@ -192,66 +189,40 @@ static void SaveOutside(const brush_t *const b, const int hull, bface_t *outside
                 }
                 if (bad)
                 {
-                    Warning("Entity %i, Brush %i: Malformed texture alignment (texture %s): Bad surface extents.", b->originalentitynum, b->originalbrushnum, texname);
+                    Warning("Entity %i, Brush %i: Malformed texture alignment (texture %s): Bad surface extents.", brush->originalentitynum, brush->originalbrushnum, texname);
                 }
             }
         }
 
-        WriteFace(hull, f, (hull ? b->clipnodedetaillevel : b->detaillevel));
+        WriteFace(hull, face, (hull ? brush->clipnodedetaillevel : brush->detaillevel));
 
         { // if (mirrorcontents != CONTENTS_SOLID)
-            f->planenum ^= 1;
-            f->plane = &g_mapplanes[f->planenum];
-            f->contents = backcontents;
-            f->texinfo = backnull ? -1 : texinfo;
+            face->planenum ^= 1;
+            face->plane = &g_mapplanes[face->planenum];
+            face->contents = backcontents;
+            face->texinfo = backnull ? -1 : texinfo;
 
-            for (i = 0; i < f->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
+            for (i = 0; i < face->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
             {
-                VectorCopy(f->w->m_Points[i], temp);
-                VectorCopy(f->w->m_Points[f->w->m_NumPoints - 1 - i], f->w->m_Points[i]);
-                VectorCopy(temp, f->w->m_Points[f->w->m_NumPoints - 1 - i]);
+                VectorCopy(face->w->m_Points[i], temp);
+                VectorCopy(face->w->m_Points[face->w->m_NumPoints - 1 - i], face->w->m_Points[i]);
+                VectorCopy(temp, face->w->m_Points[face->w->m_NumPoints - 1 - i]);
             }
-            WriteFace(hull, f, (hull ? b->clipnodedetaillevel : b->detaillevel));
+            WriteFace(hull, face, (hull ? brush->clipnodedetaillevel : brush->detaillevel));
         }
 
-        FreeFace(f);
+        FreeFace(face);
     }
 }
 
-bface_t *CopyFace(const bface_t *const f)
+bface_t *CopyFace(const bface_t *const face)
 {
-    bface_t *n;
+    bface_t *newFace;
 
-    n = NewFaceFromFace(f);
-    n->w = f->w->Copy();
-    n->bounds = f->bounds;
-    return n;
-}
-
-bface_t *CopyFaceList(bface_t *f)
-{
-    bface_t *head;
-    bface_t *n;
-
-    if (f)
-    {
-        head = CopyFace(f);
-        n = head;
-        f = f->next;
-
-        while (f)
-        {
-            n->next = CopyFace(f);
-            n = n->next;
-            f = f->next;
-        }
-
-        return head;
-    }
-    else
-    {
-        return NULL;
-    }
+    newFace = NewFaceFromFace(face);
+    newFace->w = face->w->Copy();
+    newFace->bounds = face->bounds;
+    return newFace;
 }
 
 void FreeFaceList(bface_t *f)
@@ -285,6 +256,7 @@ static bface_t *CopyFacesToOutside(brushhull_t *bh) // Make a copy of all the fa
 }
 
 extern const char *ContentsToString(const contents_t type);
+
 static void CSGBrush(int brushnum)
 {
     int hull;
@@ -620,8 +592,6 @@ void ReuseModel()
     }
 }
 
-#define MAX_SWITCHED_LIGHTS 32
-#define MAX_LIGHTTARGETS_NAME 64
 static void SetLightStyles()
 {
     int stylenum;
@@ -1081,6 +1051,46 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
     }
 }
 
+void OpenHullFiles()
+{
+    for (int i = 0; i < NUM_HULLS; i++)
+    {
+        char name[_MAX_PATH];
+
+        safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
+        out[i] = fopen(name, "w");
+        if (!out[i])
+            Error("Couldn't open %s", name);
+
+        safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
+        out_detailbrush[i] = fopen(name, "w");
+        if (!out_detailbrush[i])
+            Error("Couldn't open %s", name);
+    }
+}
+
+void WriteHullSizeFile()
+{
+    FILE *f;
+    char name[_MAX_PATH];
+    safe_snprintf(name, _MAX_PATH, "%s.hsz", g_Mapname);
+    f = fopen(name, "w");
+    if (!f)
+        Error("Couldn't open %s", name);
+
+    for (int i = 0; i < NUM_HULLS; i++)
+    {
+        float x1 = g_hull_size[i][0][0];
+        float y1 = g_hull_size[i][0][1];
+        float z1 = g_hull_size[i][0][2];
+        float x2 = g_hull_size[i][1][0];
+        float y2 = g_hull_size[i][1][1];
+        float z2 = g_hull_size[i][1][2];
+        fprintf(f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
+    }
+    fclose(f);
+}
+
 #ifdef HLCSG_GAMETEXTMESSAGE_UTF8
 void ConvertGameTextMessages()
 {
@@ -1175,44 +1185,10 @@ int main(const int argc, char **argv)
 
     for (i = 0; i < g_numentities; i++)
     {
-        SetModelCenters(i); // Set model centers //NamedRunThreadsOnIndividual(g_numentities, g_estimate, SetModelCenters); //--vluzacn
+        SetModelCenters(i); // Set model centers
     }
-    for (i = 0; i < NUM_HULLS; i++) // open hull files
-    {
-        char name[_MAX_PATH];
-
-        safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
-
-        out[i] = fopen(name, "w");
-
-        if (!out[i])
-            Error("Couldn't open %s", name);
-        safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
-        out_detailbrush[i] = fopen(name, "w");
-        if (!out_detailbrush[i])
-            Error("Couldn't open %s", name);
-    }
-    {
-        FILE *f;
-        char name[_MAX_PATH];
-        safe_snprintf(name, _MAX_PATH, "%s.hsz", g_Mapname);
-        f = fopen(name, "w");
-        if (!f)
-            Error("Couldn't open %s", name);
-        float x1, y1, z1;
-        float x2, y2, z2;
-        for (i = 0; i < NUM_HULLS; i++)
-        {
-            x1 = g_hull_size[i][0][0];
-            y1 = g_hull_size[i][0][1];
-            z1 = g_hull_size[i][0][2];
-            x2 = g_hull_size[i][1][0];
-            y2 = g_hull_size[i][1][1];
-            z2 = g_hull_size[i][1][2];
-            fprintf(f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
-        }
-        fclose(f);
-    }
+    OpenHullFiles();
+    WriteHullSizeFile();
 
     ProcessModels();
 

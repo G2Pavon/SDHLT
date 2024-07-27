@@ -196,6 +196,9 @@ extern void InitDefaultHulls();
 //=============================================================================
 // csg.c
 
+#define MAX_SWITCHED_LIGHTS 32
+#define MAX_LIGHTTARGETS_NAME 64
+
 extern bool g_skyclip;
 extern bool g_estimate;
 extern bool g_bClipNazi;
@@ -217,10 +220,10 @@ extern bface_t *NewFaceFromFace(const bface_t *const in);
 extern bface_t *CopyFace(const bface_t *const f);
 
 extern void FreeFace(bface_t *f);
-
-extern bface_t *CopyFaceList(bface_t *f);
 extern void FreeFaceList(bface_t *f);
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);
+void OpenHullFiles();
+void WriteHullSizeFile();
 
 //============================================================================
 // hullfile.cpp
