@@ -1,6 +1,7 @@
 #pragma once
 
 #pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
+
 #include <deque>
 #include <string>
 #include <map>
@@ -18,7 +19,6 @@
 #include "blockmem.h"
 #include "filelib.h"
 #include "boundingbox.h"
-// AJM: added in
 #include "wadpath.h"
 #include "cmdlinecfg.h"
 
@@ -26,26 +26,20 @@
 #error you must add -dDOUBLEVEC_T to the project!
 #endif
 
-#define DEFAULT_BRUSH_UNION_THRESHOLD 0.0f
 #define DEFAULT_WADTEXTURES true
 #define DEFAULT_SKYCLIP true
-
 #define FLOOR_Z 0.7                  // Quake default
 #define DEFAULT_CLIPTYPE clip_simple // clip_legacy //--vluzacn
-
 #define DEFAULT_CLIPNAZI false
-
 #define DEFAULT_RESETLOG true
-
-// AJM: added in
-#define UNLESS(a) if (!(a))
-
 #define DEFAULT_ESTIMATE true
-
 // #define BOGUS_RANGE    65534
 #define BOGUS_RANGE g_iWorldExtent // seedee
+#define MAX_HULLSHAPES 128         // arbitrary
+// NUM_HULLS should be no larger than MAX_MAP_HULLS
+#define NUM_HULLS 4
 
-#define MAX_HULLSHAPES 128 // arbitrary
+extern int g_nMapFileVersion; // map file version * 100 (ie 201), zero for pre-Worldcraft 2.0.1 maps
 
 typedef struct
 {
@@ -68,8 +62,6 @@ typedef union
 {
     valve_vects valve;
 } vects_union;
-
-extern int g_nMapFileVersion; // map file version * 100 (ie 201), zero for pre-Worldcraft 2.0.1 maps
 
 typedef struct
 {
@@ -97,9 +89,6 @@ typedef struct bface_s
     bool bevel; // used for ExpandBrush
     BoundingBox bounds;
 } bface_t;
-
-// NUM_HULLS should be no larger than MAX_MAP_HULLS
-#define NUM_HULLS 4
 
 typedef struct
 {
@@ -172,21 +161,14 @@ typedef struct
     hullbrush_t **brushes;
 } hullshape_t;
 
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-extern char *ANSItoUTF8(const char *);
-#endif
-
 //=============================================================================
 // map.c
 
+#define MAX_MAP_SIDES (MAX_MAP_BRUSHES * 6)
 extern int g_nummapbrushes;
 extern brush_t g_mapbrushes[MAX_MAP_BRUSHES];
-
-#define MAX_MAP_SIDES (MAX_MAP_BRUSHES * 6)
-
 extern int g_numbrushsides;
 extern side_t g_brushsides[MAX_MAP_SIDES];
-
 extern hullshape_t g_defaulthulls[NUM_HULLS];
 extern int g_numhullshapes;
 extern hullshape_t g_hullshapes[MAX_HULLSHAPES];
@@ -217,10 +199,8 @@ extern void InitDefaultHulls();
 
 extern bool g_skyclip;
 extern bool g_estimate;
-
 extern bool g_bClipNazi;
 
-#define EnumPrint(a) #a
 typedef enum
 {
     clip_smallest,
@@ -230,9 +210,6 @@ typedef enum
     clip_legacy
 } cliptype;
 extern cliptype g_cliptype;
-extern const char *GetClipTypeString(cliptype);
-
-extern vec_t g_BrushUnionThreshold;
 
 extern plane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_nummapplanes;
@@ -245,13 +222,15 @@ extern void FreeFace(bface_t *f);
 extern bface_t *CopyFaceList(bface_t *f);
 extern void FreeFaceList(bface_t *f);
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-void ConvertGameTextMessages()
-#endif
-    //=============================================================================
-    // brushunion.c
-    void CalculateBrushUnions(int brushnum);
 
 //============================================================================
 // hullfile.cpp
 extern vec3_t g_hull_size[NUM_HULLS][2];
+
+#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
+extern char *ANSItoUTF8(const char *);
+#endif
+
+#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
+void ConvertGameTextMessages()
+#endif
