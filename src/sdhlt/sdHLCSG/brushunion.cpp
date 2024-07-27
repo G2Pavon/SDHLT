@@ -1,7 +1,5 @@
 #include "csg.h"
 
-vec_t g_BrushUnionThreshold = DEFAULT_BRUSH_UNION_THRESHOLD;
-
 static Winding *NewWindingFromPlane(const brushhull_t *const hull, const int planenum)
 {
     Winding *winding;
@@ -242,99 +240,4 @@ static bool isInvalidHull(const brushhull_t *const hull)
         }
     }
     return false;
-}
-
-void CalculateBrushUnions(const int brushnum)
-{
-    int bn, hull;
-    brush_t *b1;
-    brush_t *b2;
-    brushhull_t *bh1;
-    brushhull_t *bh2;
-    entity_t *e;
-
-    b1 = &g_mapbrushes[brushnum];
-    e = &g_entities[b1->entitynum];
-
-    for (hull = 0; hull < 1 /* NUM_HULLS */; hull++)
-    {
-        bh1 = &b1->hulls[hull];
-        if (!bh1->faces) // Skip it if it is not in this hull
-        {
-            continue;
-        }
-
-        for (bn = brushnum + 1; bn < e->numbrushes; bn++)
-        { // Only compare if b2 > b1, tests are communitive
-            b2 = &g_mapbrushes[e->firstbrush + bn];
-            bh2 = &b2->hulls[hull];
-
-            if (!bh2->faces) // Skip it if it is not in this hull
-            {
-                continue;
-            }
-            if (b1->contents != b2->contents)
-            {
-                continue; // different contents, ignore
-            }
-
-            {
-                brushhull_t union_hull;
-                bface_t *face;
-
-                union_hull.bounds = bh1->bounds;
-
-                union_hull.faces = CopyFaceList(bh1->faces);
-
-                for (face = bh2->faces; face; face = face->next)
-                {
-                    AddPlaneToUnion(&union_hull, face->planenum);
-                }
-
-                // union was clipped away (no intersection)
-                if (!union_hull.faces)
-                {
-                    continue;
-                }
-
-                {
-                    vec_t volume_brush_1;
-                    vec_t volume_brush_2;
-                    vec_t volume_brush_union;
-                    vec_t volume_ratio_1;
-                    vec_t volume_ratio_2;
-
-                    if (isInvalidHull(&union_hull))
-                    {
-                        FreeFaceList(union_hull.faces);
-                        continue;
-                    }
-
-                    volume_brush_union = CalculateSolidVolume(&union_hull);
-                    volume_brush_1 = CalculateSolidVolume(bh1);
-                    volume_brush_2 = CalculateSolidVolume(bh2);
-
-                    volume_ratio_1 = volume_brush_union / volume_brush_1;
-                    volume_ratio_2 = volume_brush_union / volume_brush_2;
-
-                    if (volume_ratio_1 > g_BrushUnionThreshold)
-                    {
-                        volume_ratio_1 *= 100.0;
-                        Warning("Entity %d : Brush %d intersects with brush %d by %2.3f percent",
-                                b1->originalentitynum, b1->originalbrushnum, b2->originalbrushnum,
-                                volume_ratio_1);
-                    }
-                    if (volume_ratio_2 > g_BrushUnionThreshold)
-                    {
-                        volume_ratio_2 *= 100.0;
-                        Warning("Entity %d : Brush %d intersects with brush %d by %2.3f percent",
-                                b1->originalentitynum, b2->originalbrushnum, b1->originalbrushnum,
-                                volume_ratio_2);
-                    }
-                }
-
-                FreeFaceList(union_hull.faces);
-            }
-        }
-    }
 }
