@@ -31,7 +31,6 @@
 #define FLOOR_Z 0.7                  // Quake default
 #define DEFAULT_CLIPTYPE clip_simple // clip_legacy //--vluzacn
 #define DEFAULT_CLIPNAZI false
-#define DEFAULT_RESETLOG true
 #define DEFAULT_ESTIMATE true
 // #define BOGUS_RANGE    65534
 #define BOGUS_RANGE g_iWorldExtent // seedee

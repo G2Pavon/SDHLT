@@ -989,45 +989,9 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
     int i;
     for (i = 1; i < argc; i++)
     {
-        if (!strcasecmp(argv[i], "-threads"))
-        {
-            if (i + 1 < argc) // i=argument name, i+1=value
-            {
-                g_numthreads = atoi(argv[++i]);
-                if (g_numthreads < 1)
-                {
-                    Log("Expected value of at least 1 for '-threads'\n");
-                    Usage(PROGRAM_CSG);
-                }
-            }
-            else
-            {
-                Usage(PROGRAM_CSG);
-            }
-        }
-
-        else if (!strcasecmp(argv[i], "-worldextent"))
+        if (!strcasecmp(argv[i], "-worldextent"))
         {
             g_iWorldExtent = atoi(argv[++i]);
-        }
-
-        else if (!strcasecmp(argv[i], "-console"))
-        {
-#ifndef SYSTEM_WIN32
-            Warning("The option '-console #' is only valid for Windows.");
-#endif
-            if (i + 1 < argc)
-                ++i;
-            else
-                Usage(PROGRAM_CSG);
-        }
-        else if (!strcasecmp(argv[i], "-low"))
-        {
-            g_threadpriority = eThreadPriorityLow;
-        }
-        else if (!strcasecmp(argv[i], "-high"))
-        {
-            g_threadpriority = eThreadPriorityHigh;
         }
         else if (!strcasecmp(argv[i], "-noskyclip"))
         {
@@ -1098,11 +1062,6 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
             {
                 Usage(PROGRAM_CSG);
             }
-        }
-        else if (argv[i][0] == '-')
-        {
-            Log("Unknown option \"%s\"\n", argv[i]);
-            Usage(PROGRAM_CSG);
         }
         else if (!mapname_from_arg)
         {

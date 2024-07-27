@@ -8,14 +8,11 @@ void Usage(ProgramType programType)
     case PROGRAM_CSG:
         Log(" %s.exe map_name.map -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
-        Log("    -console #       : Set to 0 to turn off the pop-up console (default is 1)\n");
         Log("    -clipeconomy     : turn clipnode economy mode on\n");
         Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
         Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
-        Log("    -low | -high     : run program an altered priority level\n");
         Log("    -noskyclip       : disable automatic clipping of SKY brushes\n");
         Log("    -texdata #       : Alter maximum texture memory limit (in kb)\n");
-        Log("    -threads #       : manually specify the number of threads to run\n");
         Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
         break;
 
