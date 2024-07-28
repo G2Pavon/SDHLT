@@ -33,7 +33,7 @@
 #endif
 
 #ifdef STDC_HEADERS
-#include <ctype.h>
+#include <cctype>
 #endif
 
 #ifdef SYSTEM_WIN32

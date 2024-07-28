@@ -6,7 +6,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include <math.h>
+#include <cmath>
 #include "stringlib.h"
 #ifdef _WIN32
 #include <direct.h>

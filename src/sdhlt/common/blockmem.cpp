@@ -107,7 +107,7 @@ bool Free(void *pointer)
 #include "config.h"
 #endif
 #ifdef STDC_HEADERS
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 #include "cmdlib.h"
 #include "messages.h"

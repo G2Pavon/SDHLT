@@ -89,17 +89,17 @@
 #endif
 
 #ifdef STDC_HEADERS
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <ctype.h>
-#include <time.h>
-#include <stdarg.h>
-#include <limits.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cerrno>
+#include <cctype>
+#include <ctime>
+#include <cstdarg>
+#include <climits>
 #endif
 
-#include <stdint.h> //--vluzacn
+#include <cstdint> //--vluzacn
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>

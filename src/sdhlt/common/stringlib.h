@@ -4,8 +4,8 @@
 //=======================================================================
 #pragma once
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 extern void Q_strnupr(const char *in, char *out, size_t size_out);
 extern void Q_strnlwr(const char *in, char *out, size_t size_out);

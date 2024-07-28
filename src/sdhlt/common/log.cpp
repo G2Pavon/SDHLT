@@ -3,9 +3,9 @@
 #endif
 
 #ifdef STDC_HEADERS
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg>
 #endif
 
 #ifdef HAVE_UNISTD_H

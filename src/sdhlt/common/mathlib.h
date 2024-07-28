@@ -7,8 +7,8 @@
 #endif
 
 #ifdef STDC_HEADERS
-#include <math.h>
-#include <float.h>
+#include <cmath>
+#include <cfloat>
 #endif
 
 #if !defined(qmax)

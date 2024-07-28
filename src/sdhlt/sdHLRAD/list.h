@@ -6,8 +6,8 @@
 // used by progmesh //seedee
 #pragma once
 
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 
 template <class Type>
 class List

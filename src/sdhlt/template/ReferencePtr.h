@@ -13,13 +13,13 @@
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 #endif
-#include "assert.h"
-#include "limits.h"
+#include <cassert>
+#include <climits>
 
 #ifdef SYSTEM_POSIX
 #ifdef HAVE_STDDEF_H
 // For NULL
-#include <stddef.h>
+#include <cstddef>
 #endif
 #endif
 
