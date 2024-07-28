@@ -311,75 +311,59 @@ static void ParseBrush(entity_t *mapent)
 		}
 		safe_strncpy(side->td.name, g_token, sizeof(side->td.name));
 
-		if (g_nMapFileVersion < 220) // Worldcraft 2.1-, Radiant
+		// texture U axis
+		GetToken(false);
+		if (strcmp(g_token, "["))
 		{
-			GetToken(false);
-			side->td.vects.valve.shift[0] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.shift[1] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.rotate = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.scale[0] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.scale[1] = atof(g_token);
+			hlassume(false, assume_MISSING_BRACKET_IN_TEXTUREDEF);
 		}
-		else // Worldcraft 2.2+
+
+		GetToken(false);
+		side->td.vects.valve.UAxis[0] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.UAxis[1] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.UAxis[2] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.shift[0] = atof(g_token);
+
+		GetToken(false);
+		if (strcmp(g_token, "]"))
 		{
-			// texture U axis
-			GetToken(false);
-			if (strcmp(g_token, "["))
-			{
-				hlassume(false, assume_MISSING_BRACKET_IN_TEXTUREDEF);
-			}
-
-			GetToken(false);
-			side->td.vects.valve.UAxis[0] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.UAxis[1] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.UAxis[2] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.shift[0] = atof(g_token);
-
-			GetToken(false);
-			if (strcmp(g_token, "]"))
-			{
-				Error("missing ']' in texturedef (U)");
-			}
-
-			// texture V axis
-			GetToken(false);
-			if (strcmp(g_token, "["))
-			{
-				Error("missing '[' in texturedef (V)");
-			}
-
-			GetToken(false);
-			side->td.vects.valve.VAxis[0] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.VAxis[1] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.VAxis[2] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.shift[1] = atof(g_token);
-
-			GetToken(false);
-			if (strcmp(g_token, "]"))
-			{
-				Error("missing ']' in texturedef (V)");
-			}
-
-			// Texture rotation is implicit in U/V axes.
-			GetToken(false);
-			side->td.vects.valve.rotate = 0;
-
-			// texure scale
-			GetToken(false);
-			side->td.vects.valve.scale[0] = atof(g_token);
-			GetToken(false);
-			side->td.vects.valve.scale[1] = atof(g_token);
+			Error("missing ']' in texturedef (U)");
 		}
+
+		// texture V axis
+		GetToken(false);
+		if (strcmp(g_token, "["))
+		{
+			Error("missing '[' in texturedef (V)");
+		}
+
+		GetToken(false);
+		side->td.vects.valve.VAxis[0] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.VAxis[1] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.VAxis[2] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.shift[1] = atof(g_token);
+
+		GetToken(false);
+		if (strcmp(g_token, "]"))
+		{
+			Error("missing ']' in texturedef (V)");
+		}
+
+		// Texture rotation is implicit in U/V axes.
+		GetToken(false);
+		side->td.vects.valve.rotate = 0;
+
+		// texure scale
+		GetToken(false);
+		side->td.vects.valve.scale[0] = atof(g_token);
+		GetToken(false);
+		side->td.vects.valve.scale[1] = atof(g_token);
 
 		ok = GetToken(true); // Done with line, this reads the first item from the next line
 	};
@@ -683,137 +667,129 @@ auto ParseMapEntity() -> bool
 
 		if (ent_move_b || ent_scale_b)
 		{
-			if (g_nMapFileVersion < 220)
+			int ibrush, iside, ipoint;
+			brush_t *brush;
+			side_t *side;
+			vec_t *point;
+			for (ibrush = 0, brush = g_mapbrushes + mapent->firstbrush; ibrush < mapent->numbrushes; ++ibrush, ++brush)
 			{
-				Warning("hlcsg scaling hack is not supported in Worldcraft 2.1");
-			}
-			else
-			{
-				int ibrush, iside, ipoint;
-				brush_t *brush;
-				side_t *side;
-				vec_t *point;
-				for (ibrush = 0, brush = g_mapbrushes + mapent->firstbrush; ibrush < mapent->numbrushes; ++ibrush, ++brush)
+				for (iside = 0, side = g_brushsides + brush->firstside; iside < brush->numsides; ++iside, ++side)
 				{
-					for (iside = 0, side = g_brushsides + brush->firstside; iside < brush->numsides; ++iside, ++side)
+					for (ipoint = 0; ipoint < 3; ++ipoint)
 					{
-						for (ipoint = 0; ipoint < 3; ++ipoint)
-						{
-							point = side->planepts[ipoint];
-							if (ent_scale_b)
-							{
-								VectorSubtract(point, ent_scale_origin, point);
-								VectorScale(point, ent_scale, point);
-								VectorAdd(point, ent_scale_origin, point);
-							}
-							if (ent_move_b)
-							{
-								VectorAdd(point, ent_move, point);
-							}
-						}
-						// note that  tex->vecs = td.vects.valve.Axis / td.vects.valve.scale
-						//            tex->vecs[3] = vects.valve.shift + Dot(origin, tex->vecs)
-						//      and   texcoordinate = Dot(worldposition, tex->vecs) + tex->vecs[3]
-						bool zeroscale = false;
-						if (!side->td.vects.valve.scale[0])
-						{
-							side->td.vects.valve.scale[0] = 1;
-						}
-						if (!side->td.vects.valve.scale[1])
-						{
-							side->td.vects.valve.scale[1] = 1;
-						}
+						point = side->planepts[ipoint];
 						if (ent_scale_b)
 						{
-							vec_t coord[2];
-							if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
-							{
-								coord[0] = DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0] + side->td.vects.valve.shift[0];
-								side->td.vects.valve.scale[0] *= ent_scale;
-								if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
-								{
-									side->td.vects.valve.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
-								}
-								else
-								{
-									zeroscale = true;
-								}
-							}
-							else
-							{
-								zeroscale = true;
-							}
-							if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
-							{
-								coord[1] = DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1] + side->td.vects.valve.shift[1];
-								side->td.vects.valve.scale[1] *= ent_scale;
-								if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
-								{
-									side->td.vects.valve.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
-								}
-								else
-								{
-									zeroscale = true;
-								}
-							}
-							else
-							{
-								zeroscale = true;
-							}
+							VectorSubtract(point, ent_scale_origin, point);
+							VectorScale(point, ent_scale, point);
+							VectorAdd(point, ent_scale_origin, point);
 						}
 						if (ent_move_b)
 						{
+							VectorAdd(point, ent_move, point);
+						}
+					}
+					// note that  tex->vecs = td.vects.valve.Axis / td.vects.valve.scale
+					//            tex->vecs[3] = vects.valve.shift + Dot(origin, tex->vecs)
+					//      and   texcoordinate = Dot(worldposition, tex->vecs) + tex->vecs[3]
+					bool zeroscale = false;
+					if (!side->td.vects.valve.scale[0])
+					{
+						side->td.vects.valve.scale[0] = 1;
+					}
+					if (!side->td.vects.valve.scale[1])
+					{
+						side->td.vects.valve.scale[1] = 1;
+					}
+					if (ent_scale_b)
+					{
+						vec_t coord[2];
+						if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
+						{
+							coord[0] = DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0] + side->td.vects.valve.shift[0];
+							side->td.vects.valve.scale[0] *= ent_scale;
 							if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
 							{
-								side->td.vects.valve.shift[0] -= DotProduct(ent_move, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
+								side->td.vects.valve.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
 							}
 							else
 							{
 								zeroscale = true;
 							}
+						}
+						else
+						{
+							zeroscale = true;
+						}
+						if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
+						{
+							coord[1] = DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1] + side->td.vects.valve.shift[1];
+							side->td.vects.valve.scale[1] *= ent_scale;
 							if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
 							{
-								side->td.vects.valve.shift[1] -= DotProduct(ent_move, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
+								side->td.vects.valve.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
 							}
 							else
 							{
 								zeroscale = true;
 							}
 						}
-						if (zeroscale)
+						else
 						{
-							Error("Entity %i, Brush %i: invalid texture scale.\n",
-								  brush->originalentitynum, brush->originalbrushnum);
+							zeroscale = true;
 						}
+					}
+					if (ent_move_b)
+					{
+						if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
+						{
+							side->td.vects.valve.shift[0] -= DotProduct(ent_move, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
+						}
+						else
+						{
+							zeroscale = true;
+						}
+						if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
+						{
+							side->td.vects.valve.shift[1] -= DotProduct(ent_move, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
+						}
+						else
+						{
+							zeroscale = true;
+						}
+					}
+					if (zeroscale)
+					{
+						Error("Entity %i, Brush %i: invalid texture scale.\n",
+							  brush->originalentitynum, brush->originalbrushnum);
 					}
 				}
+			}
+			{
+				double b[2][3];
+				if (sscanf(ValueForKey(mapent, "zhlt_minsmaxs"), "%lf %lf %lf %lf %lf %lf", &b[0][0], &b[0][1], &b[0][2], &b[1][0], &b[1][1], &b[1][2]) == 6)
 				{
-					double b[2][3];
-					if (sscanf(ValueForKey(mapent, "zhlt_minsmaxs"), "%lf %lf %lf %lf %lf %lf", &b[0][0], &b[0][1], &b[0][2], &b[1][0], &b[1][1], &b[1][2]) == 6)
+					for (int i = 0; i < 2; i++)
 					{
-						for (int i = 0; i < 2; i++)
+						vec_t *point = b[i];
+						if (ent_scale_b)
 						{
-							vec_t *point = b[i];
-							if (ent_scale_b)
-							{
-								VectorSubtract(point, ent_scale_origin, point);
-								VectorScale(point, ent_scale, point);
-								VectorAdd(point, ent_scale_origin, point);
-							}
-							if (ent_move_b)
-							{
-								VectorAdd(point, ent_move, point);
-							}
+							VectorSubtract(point, ent_scale_origin, point);
+							VectorScale(point, ent_scale, point);
+							VectorAdd(point, ent_scale_origin, point);
 						}
-						char string[MAXTOKEN];
-						safe_snprintf(string, MAXTOKEN, "%.0f %.0f %.0f %.0f %.0f %.0f", b[0][0], b[0][1], b[0][2], b[1][0], b[1][1], b[1][2]);
-						SetKeyValue(mapent, "zhlt_minsmaxs", string);
+						if (ent_move_b)
+						{
+							VectorAdd(point, ent_move, point);
+						}
 					}
+					char string[MAXTOKEN];
+					safe_snprintf(string, MAXTOKEN, "%.0f %.0f %.0f %.0f %.0f %.0f", b[0][0], b[0][1], b[0][2], b[1][0], b[1][1], b[1][2]);
+					SetKeyValue(mapent, "zhlt_minsmaxs", string);
 				}
 			}
 		}
 	}
-
 	CheckFatal();
 	if (this_entity == 0)
 	{
