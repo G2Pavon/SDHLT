@@ -13,7 +13,7 @@ typedef struct
 	int numclipplanes;
 	dplane_t *clipplanes;
 } intersecttest_t;
-bool TestFaceIntersect(intersecttest_t *t, int facenum)
+auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 {
 	dface_t *f2 = &g_dfaces[facenum];
 	auto *w = new Winding(*f2);
@@ -33,7 +33,7 @@ bool TestFaceIntersect(intersecttest_t *t, int facenum)
 	delete w;
 	return intersect;
 }
-intersecttest_t *CreateIntersectTest(const dplane_t *p, int facenum)
+auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 {
 	dface_t *f = &g_dfaces[facenum];
 	intersecttest_t *t;
@@ -81,7 +81,7 @@ void FreeIntersectTest(intersecttest_t *t)
 	free(t);
 }
 
-int AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, dface_t *const f, dface_t *&fnext, vec_t &angle, vec3_t &normal)
+auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, dface_t *const f, dface_t *&fnext, vec_t &angle, vec3_t &normal) -> int
 // Must guarantee these faces will form a loop or a chain, otherwise will result in endless loop.
 //
 //   e[end]/enext[endnext]
@@ -165,7 +165,7 @@ int AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeen
 	return 0;
 }
 
-static bool TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &m, matrix_t &m_inverse)
+static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &m, matrix_t &m_inverse) -> bool
 // This function creates a matrix that can translate texture coords in face1 into texture coords in face2.
 // It keeps all points in the common edge invariant. For example, if there is a point in the edge, and in the texture of face1, its (s,t)=(16,0), and in face2, its (s,t)=(128,64), then we must let matrix*(16,0,0)=(128,64,0)
 {
@@ -524,7 +524,7 @@ typedef struct
 // =====================================================================================
 //  TextureNameFromFace
 // =====================================================================================
-static const char *TextureNameFromFace(const dface_t *const f)
+static auto TextureNameFromFace(const dface_t *const f) -> const char *
 {
 	texinfo_t *tx;
 	miptex_t *mt;
@@ -1020,7 +1020,7 @@ void ChopFrag(samplefrag_t *frag)
 	}
 }
 
-static samplefrag_t *GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, samplefragedge_t *edge)
+static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, samplefragedge_t *edge) -> samplefrag_t *
 {
 	samplefrag_t *frag;
 	bool overlap;
@@ -1121,7 +1121,7 @@ static samplefrag_t *GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *
 	return frag;
 }
 
-static bool FindBestEdge(samplefraginfo_t *info, samplefrag_t *&bestfrag, samplefragedge_t *&bestedge)
+static auto FindBestEdge(samplefraginfo_t *info, samplefrag_t *&bestfrag, samplefragedge_t *&bestedge) -> bool
 {
 	samplefrag_t *f;
 	samplefragedge_t *e;
@@ -1177,9 +1177,9 @@ static bool FindBestEdge(samplefraginfo_t *info, samplefrag_t *&bestfrag, sample
 	return found;
 }
 
-static samplefraginfo_t *CreateSampleFrag(int facenum, vec_t s, vec_t t,
+static auto CreateSampleFrag(int facenum, vec_t s, vec_t t,
 										  const vec_t square[2][2],
-										  int maxsize)
+										  int maxsize) -> samplefraginfo_t *
 {
 	samplefraginfo_t *info;
 	const vec3_t v_s = {1, 0, 0};
@@ -1288,7 +1288,7 @@ static samplefraginfo_t *CreateSampleFrag(int facenum, vec_t s, vec_t t,
 	return info;
 }
 
-static bool IsFragEmpty(samplefraginfo_t *fraginfo)
+static auto IsFragEmpty(samplefraginfo_t *fraginfo) -> bool
 {
 	return (fraginfo->size == 0);
 }
@@ -1309,13 +1309,13 @@ static void DeleteSampleFrag(samplefraginfo_t *fraginfo)
 	free(fraginfo);
 }
 
-static light_flag_t SetSampleFromST(vec_t *const point,
+static auto SetSampleFromST(vec_t *const point,
 									vec_t *const position, // a valid world position for light tracing
 									int *const surface,	   // the face used for phong normal and patch interpolation
 									bool *nudged,
 									const lightinfo_t *const l, const vec_t original_s, const vec_t original_t,
 									const vec_t square[2][2], // {smin, tmin}, {smax, tmax}
-									eModelLightmodes lightmode)
+									eModelLightmodes lightmode) -> light_flag_t
 {
 	light_flag_t LuxelFlag;
 	int facenum;
@@ -4194,7 +4194,7 @@ typedef struct
 	int facecount;
 } mdllight_t;
 
-int MLH_AddFace(mdllight_t *ml, int facenum)
+auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 {
 	dface_t *f = &g_dfaces[facenum];
 	int i, j;
@@ -4353,7 +4353,7 @@ void MLH_mdllightCreate(mdllight_t *ml)
 	MLH_GetSamples_r(ml, 0, p, end);
 }
 
-int MLH_CopyLight(const vec3_t from, const vec3_t to)
+auto MLH_CopyLight(const vec3_t from, const vec3_t to) -> int
 {
 	int i, j, k, count = 0;
 	mdllight_t mlfrom, mlto;
@@ -4790,7 +4790,7 @@ void FinalLightFace(const int facenum)
 vec3_t totallight_default = {0, 0, 0};
 
 // LRC - utility for getting the right totallight value from a patch
-vec3_t *GetTotalLight(patch_t *patch, int style)
+auto GetTotalLight(patch_t *patch, int style) -> vec3_t *
 {
 	int i;
 	for (i = 0; i < MAXLIGHTMAPS && patch->totalstyle[i] != 255; i++)

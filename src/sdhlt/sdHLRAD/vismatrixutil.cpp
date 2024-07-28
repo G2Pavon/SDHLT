@@ -9,7 +9,7 @@ size_t g_transfer_data_bytes = 0;
 #define COMPRESSED_TRANSFERS
 // #undef  COMPRESSED_TRANSFERS
 
-int FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const patch, const unsigned patchnum)
+auto FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const patch, const unsigned patchnum) -> int
 {
 	//
 	// binary search for match
@@ -52,7 +52,7 @@ int FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const pa
 
 #ifdef COMPRESSED_TRANSFERS
 
-static unsigned GetLengthOfRun(const transfer_raw_index_t *raw, const transfer_raw_index_t *const end)
+static auto GetLengthOfRun(const transfer_raw_index_t *raw, const transfer_raw_index_t *const end) -> unsigned
 {
 	unsigned run_size = 0;
 
@@ -76,7 +76,7 @@ static unsigned GetLengthOfRun(const transfer_raw_index_t *raw, const transfer_r
 	return run_size;
 }
 
-static transfer_index_t *CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize)
+static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize) -> transfer_index_t *
 {
 	unsigned x;
 	unsigned size = rawSize;
@@ -173,7 +173,7 @@ static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tR
 #pragma warning(disable : 4100) // unreferenced formal parameter
 #endif
 
-bool CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out)
+auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out) -> bool
 {
 	patch_t *emitpatch = &g_patches[emitter];
 

@@ -142,9 +142,9 @@ typedef struct node_s
 //=============================================================================
 // solidbsp.c
 extern void SubdivideFace(face_t *f, face_t **prevptr);
-extern node_t *SolidBSP(const surfchain_t *const surfhead,
+extern auto SolidBSP(const surfchain_t *const surfhead,
                         brush_t *detailbrushes,
-                        bool report_progress);
+                        bool report_progress) -> node_t *;
 
 //=============================================================================
 // merge.c
@@ -154,7 +154,7 @@ extern void MergeAll(surface_t *surfhead);
 //=============================================================================
 // surfaces.c
 extern void MakeFaceEdges();
-extern int GetEdge(const vec3_t p1, const vec3_t p2, face_t *f);
+extern auto GetEdge(const vec3_t p1, const vec3_t p2, face_t *f) -> int;
 
 //=============================================================================
 // portals.c
@@ -190,7 +190,7 @@ extern void FinishBSPFile();
 
 //=============================================================================
 // outside.c
-extern node_t *FillOutside(node_t *node, bool leakfile, unsigned hullnum);
+extern auto FillOutside(node_t *node, bool leakfile, unsigned hullnum) -> node_t *;
 extern void LoadAllowableOutsideList(const char *const filename);
 extern void FreeAllowableOutsideList();
 extern void FillInside(node_t *node);
@@ -198,31 +198,31 @@ extern void FillInside(node_t *node);
 //=============================================================================
 // misc functions
 
-extern face_t *AllocFace();
+extern auto AllocFace() -> face_t *;
 extern void FreeFace(face_t *f);
 
-extern struct portal_s *AllocPortal();
+extern auto AllocPortal() -> struct portal_s *;
 extern void FreePortal(struct portal_s *p);
 
-extern surface_t *AllocSurface();
+extern auto AllocSurface() -> surface_t *;
 extern void FreeSurface(surface_t *s);
 
-extern side_t *AllocSide();
+extern auto AllocSide() -> side_t *;
 extern void FreeSide(side_t *s);
-extern side_t *NewSideFromSide(const side_t *s);
-extern brush_t *AllocBrush();
+extern auto NewSideFromSide(const side_t *s) -> side_t *;
+extern auto AllocBrush() -> brush_t *;
 extern void FreeBrush(brush_t *b);
-extern brush_t *NewBrushFromBrush(const brush_t *b);
+extern auto NewBrushFromBrush(const brush_t *b) -> brush_t *;
 extern void SplitBrush(brush_t *in, const dplane_t *split, brush_t **front, brush_t **back);
-extern brush_t *BrushFromBox(const vec3_t mins, const vec3_t maxs);
+extern auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> brush_t *;
 extern void CalcBrushBounds(const brush_t *b, vec3_t &mins, vec3_t &maxs);
 
-extern node_t *AllocNode();
+extern auto AllocNode() -> node_t *;
 
-extern bool CheckFaceForHint(const face_t *const f);
-extern bool CheckFaceForSkip(const face_t *const f);
-extern bool CheckFaceForNull(const face_t *const f);
-extern bool CheckFaceForDiscardable(const face_t *f);
+extern auto CheckFaceForHint(const face_t *const f) -> bool;
+extern auto CheckFaceForSkip(const face_t *const f) -> bool;
+extern auto CheckFaceForNull(const face_t *const f) -> bool;
+extern auto CheckFaceForDiscardable(const face_t *f) -> bool;
 #define BRINK_FLOOR_THRESHOLD 0.7
 typedef enum
 {
@@ -233,14 +233,14 @@ typedef enum
     BrinkWall,
     BrinkAny,
 } bbrinklevel_e;
-extern void *CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode);
-extern bool FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out);
+extern auto CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode) -> void *;
+extern auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out) -> bool;
 extern void DeleteBrinkinfo(void *brinkinfo);
 
 // =====================================================================================
 // Cpt_Andrew - UTSky Check
 // =====================================================================================
-extern bool CheckFaceForEnv_Sky(const face_t *const f);
+extern auto CheckFaceForEnv_Sky(const face_t *const f) -> bool;
 // =====================================================================================
 
 //=============================================================================
@@ -264,7 +264,7 @@ extern char g_extentfilename[_MAX_PATH];
 
 extern bool g_nohull2;
 
-extern face_t *NewFaceFromFace(const face_t *const in);
+extern auto NewFaceFromFace(const face_t *const in) -> face_t *;
 extern void SplitFace(face_t *in, const dplane_t *const split, face_t **front, face_t **back);
 
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);

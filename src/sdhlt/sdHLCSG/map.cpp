@@ -32,7 +32,7 @@ static const vec3_t s_baseaxis[18] = {
 int g_numparsedentities;
 int g_numparsedbrushes;
 
-brush_t *CopyCurrentBrush(entity_t *entity, const brush_t *brush)
+auto CopyCurrentBrush(entity_t *entity, const brush_t *brush) -> brush_t *
 {
 	if (entity->firstbrush + entity->numbrushes != g_nummapbrushes)
 	{
@@ -131,7 +131,7 @@ void TextureAxisFromPlane(const plane_t *const pln, vec3_t xv, vec3_t yv)
 //  CheckForInvisible
 //      see if a brush is part of an invisible entity (KGP)
 // =====================================================================================
-static bool CheckForInvisible(entity_t *mapent)
+static auto CheckForInvisible(entity_t *mapent) -> bool
 {
 	using namespace std;
 
@@ -571,7 +571,7 @@ static void ParseBrush(entity_t *mapent)
 //  ParseMapEntity
 //      parse an entity from script
 // =====================================================================================
-bool ParseMapEntity()
+auto ParseMapEntity() -> bool
 {
 	bool all_clip = true;
 	int this_entity;
@@ -895,7 +895,7 @@ bool ParseMapEntity()
 // =====================================================================================
 //  CountEngineEntities
 // =====================================================================================
-unsigned int CountEngineEntities()
+auto CountEngineEntities() -> unsigned int
 {
 	unsigned int x;
 	unsigned num_engine_entities = 0;
@@ -933,7 +933,7 @@ unsigned int CountEngineEntities()
 //      wrapper for LoadScriptFile
 //      parse in script entities
 // =====================================================================================
-const char *ContentsToString(const contents_t type);
+auto ContentsToString(const contents_t type) -> const char *;
 
 void LoadMapFile(const char *const filename)
 {

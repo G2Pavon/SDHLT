@@ -164,7 +164,7 @@ extern const vec3_t vec3_origin;
         (c)[2] = qmax((a)[2], (b)[2]); \
     }
 
-inline vec_t VectorNormalize(vec3_t v)
+inline auto VectorNormalize(vec3_t v) -> vec_t
 {
     double length;
 
@@ -183,7 +183,7 @@ inline vec_t VectorNormalize(vec3_t v)
     return length;
 }
 
-inline bool VectorCompare(const vec3_t v1, const vec3_t v2)
+inline auto VectorCompare(const vec3_t v1, const vec3_t v2) -> bool
 {
     int i;
 
@@ -205,7 +205,7 @@ inline bool VectorCompare(const vec3_t v1, const vec3_t v2)
 #undef rotl
 #undef rotr
 
-inline unsigned int rotl(unsigned value, unsigned int amt)
+inline auto rotl(unsigned value, unsigned int amt) -> unsigned int
 {
     unsigned t1, t2;
 
@@ -215,7 +215,7 @@ inline unsigned int rotl(unsigned value, unsigned int amt)
     return (t1 | t2);
 }
 
-inline unsigned int rotr(unsigned value, unsigned int amt)
+inline auto rotr(unsigned value, unsigned int amt) -> unsigned int
 {
     unsigned t1, t2;
 
@@ -230,7 +230,7 @@ inline unsigned int rotr(unsigned value, unsigned int amt)
 // Misc
 //
 
-inline bool isPointFinite(const vec_t *p)
+inline auto isPointFinite(const vec_t *p) -> bool
 {
     if (finite(p[0]) && finite(p[1]) && finite(p[2]))
     {
@@ -256,7 +256,7 @@ typedef enum
 #define last_axial plane_z
 #define DIR_EPSILON 0.0001
 
-inline planetypes PlaneTypeForNormal(vec3_t normal)
+inline auto PlaneTypeForNormal(vec3_t normal) -> planetypes
 {
     vec_t ax, ay, az;
 
@@ -288,5 +288,5 @@ inline planetypes PlaneTypeForNormal(vec3_t normal)
     }
     return plane_anyz;
 }
-unsigned short FloatToHalf(float v);
-float HalfToFloat(unsigned short h);
+auto FloatToHalf(float v) -> unsigned short;
+auto HalfToFloat(unsigned short h) -> float;

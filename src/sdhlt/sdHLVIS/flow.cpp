@@ -19,7 +19,7 @@ static void     CheckStack(const leaf_t* const leaf, const threaddata_t* const t
 // =====================================================================================
 //  AllocStackWinding
 // =====================================================================================
-inline static winding_t* AllocStackWinding(pstack_t* const stack)
+inline static auto AllocStackWinding(pstack_t* const stack) -> winding_t*
 {
     int             i;
 
@@ -57,7 +57,7 @@ inline static void     FreeStackWinding(const winding_t* const w, pstack_t* cons
 // =====================================================================================
 //  ChopWinding
 // =====================================================================================
-inline winding_t*      ChopWinding(winding_t* const in, pstack_t* const stack, const plane_t* const split)
+inline auto      ChopWinding(winding_t* const in, pstack_t* const stack, const plane_t* const split) -> winding_t*
 {
     vec_t           dists[128];
     int             sides[128];
@@ -228,12 +228,12 @@ inline static void AddPlane(pstack_t* const stack, const plane_t* const split)
 //      order goes source, pass, target.  If the order goes pass, source, target then
 //      flipclip should be set.
 // =====================================================================================
-inline static winding_t* ClipToSeperators(
+inline static auto ClipToSeperators(
     const winding_t* const source,
     const winding_t* const pass, 
     winding_t* const a_target,
     const bool flipclip, 
-    pstack_t* const stack)
+    pstack_t* const stack) -> winding_t*
 {
     int             i, j, k, l;
     plane_t         plane;
@@ -724,7 +724,7 @@ void            BasePortalVis(int unused)
     }
 }
 
-bool BestNormalFromWinding (const vec3_t *points, int numpoints, vec3_t &normal_out)
+auto BestNormalFromWinding (const vec3_t *points, int numpoints, vec3_t &normal_out) -> bool
 {
 	const vec3_t *pt1, *pt2, *pt3;
 	int k;
@@ -787,7 +787,7 @@ bool BestNormalFromWinding (const vec3_t *points, int numpoints, vec3_t &normal_
 	return true;
 }
 
-vec_t WindingDist (const winding_t *w[2])
+auto WindingDist (const winding_t *w[2]) -> vec_t
 {
 	vec_t minsqrdist = 99999999.0 * 99999999.0;
 	vec_t sqrdist;

@@ -53,13 +53,13 @@ public:
 	virtual ~ReferenceArray();
 
 	// Assignment
-	ReferenceArray<DATA_T> &operator=(const ReferenceArray<DATA_T> &other);
-	ReferenceArray<DATA_T> &operator=(DATA_T *other);
+	auto operator=(const ReferenceArray<DATA_T> &other) -> ReferenceArray<DATA_T> &;
+	auto operator=(DATA_T *other) -> ReferenceArray<DATA_T> &;
 
 	// Dereferencing
 	operator DATA_T *() const { return m_pData->pData; }
-	DATA_T &operator[](unsigned int offset) const { return m_pData->pData[offset]; }
-	DATA_T &operator[](int offset) const { return m_pData->pData[offset]; }
+	auto operator[](unsigned int offset) const -> DATA_T & { return m_pData->pData[offset]; }
+	auto operator[](int offset) const -> DATA_T & { return m_pData->pData[offset]; }
 
 protected:
 	// Internal methods
@@ -99,7 +99,7 @@ ReferenceArray<DATA_T>::~ReferenceArray()
 }
 
 template <class DATA_T>
-ReferenceArray<DATA_T> &ReferenceArray<DATA_T>::operator=(const ReferenceArray<DATA_T> &other)
+auto ReferenceArray<DATA_T>::operator=(const ReferenceArray<DATA_T> &other) -> ReferenceArray<DATA_T> &
 {
 	if (m_pData != other.m_pData)
 	{
@@ -111,7 +111,7 @@ ReferenceArray<DATA_T> &ReferenceArray<DATA_T>::operator=(const ReferenceArray<D
 }
 
 template <class DATA_T>
-ReferenceArray<DATA_T> &ReferenceArray<DATA_T>::operator=(DATA_T *other)
+auto ReferenceArray<DATA_T>::operator=(DATA_T *other) -> ReferenceArray<DATA_T> &
 {
 	if (m_pData->ReferenceCount.dec() <= 0)
 	{

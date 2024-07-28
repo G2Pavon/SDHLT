@@ -15,7 +15,7 @@ hullshape_t g_hullshapes[MAX_HULLSHAPES];
 //	very large given the change from O(N^2) to O(NlogN) to build the set of planes.
 // =====================================================================================
 
-int FindIntPlane(const vec_t *const normal, const vec_t *const origin)
+auto FindIntPlane(const vec_t *const normal, const vec_t *const origin) -> int
 {
 	int returnval;
 	plane_t *p;
@@ -92,7 +92,7 @@ find_plane:
 	return returnval;
 }
 
-int PlaneFromPoints(const vec_t *const p0, const vec_t *const p1, const vec_t *const p2)
+auto PlaneFromPoints(const vec_t *const p0, const vec_t *const p1, const vec_t *const p2) -> int
 {
 	vec3_t v1, v2;
 	vec3_t normal;
@@ -109,7 +109,7 @@ int PlaneFromPoints(const vec_t *const p0, const vec_t *const p1, const vec_t *c
 
 const char ClipTypeStrings[5][11] = {{"smallest"}, {"normalized"}, {"simple"}, {"precise"}, {"legacy"}};
 
-const char *GetClipTypeString(cliptype ct)
+auto GetClipTypeString(cliptype ct) -> const char *
 {
 	return ClipTypeStrings[ct];
 }
@@ -852,7 +852,7 @@ restart:
 // =====================================================================================
 //  MakeBrushPlanes
 // =====================================================================================
-bool MakeBrushPlanes(brush_t *b)
+auto MakeBrushPlanes(brush_t *b) -> bool
 {
 	int i;
 	int j;
@@ -913,7 +913,7 @@ bool MakeBrushPlanes(brush_t *b)
 // =====================================================================================
 //  TextureContents
 // =====================================================================================
-static contents_t TextureContents(const char *const name)
+static auto TextureContents(const char *const name) -> contents_t
 {
 	if (!strncasecmp(name, "contentsolid", 12))
 		return CONTENTS_SOLID;
@@ -994,7 +994,7 @@ static contents_t TextureContents(const char *const name)
 // =====================================================================================
 //  ContentsToString
 // =====================================================================================
-const char *ContentsToString(const contents_t type)
+auto ContentsToString(const contents_t type) -> const char *
 {
 	switch (type)
 	{
@@ -1046,7 +1046,7 @@ const char *ContentsToString(const contents_t type)
 //  CheckBrushContents
 //      Perfoms abitrary checking on brush surfaces and states to try and catch errors
 // =====================================================================================
-contents_t CheckBrushContents(const brush_t *const b)
+auto CheckBrushContents(const brush_t *const b) -> contents_t
 {
 	contents_t best_contents;
 	contents_t contents;
@@ -1207,7 +1207,7 @@ void CreateBrush(const int brushnum) //--vluzacn
 		}
 	}
 }
-hullbrush_t *CreateHullBrush(const brush_t *b)
+auto CreateHullBrush(const brush_t *b) -> hullbrush_t *
 {
 	const int MAXSIZE = 256;
 
@@ -1457,7 +1457,7 @@ hullbrush_t *CreateHullBrush(const brush_t *b)
 	return hb;
 }
 
-hullbrush_t *CopyHullBrush(const hullbrush_t *hb)
+auto CopyHullBrush(const hullbrush_t *hb) -> hullbrush_t *
 {
 	hullbrush_t *hb2;
 	hb2 = (hullbrush_t *)malloc(sizeof(hullbrush_t));

@@ -161,9 +161,9 @@ public:
 	~CMeshDesc();
 
 	// mesh construction
-	bool InitMeshBuild(const char *debug_name, int numTrinagles);
-	bool AddMeshTrinagle(const mvert_t triangle[3], mstudiotexture_t *tex = nullptr);
-	bool FinishMeshBuild();
+	auto InitMeshBuild(const char *debug_name, int numTrinagles) -> bool;
+	auto AddMeshTrinagle(const mvert_t triangle[3], mstudiotexture_t *tex = nullptr) -> bool;
+	auto FinishMeshBuild() -> bool;
 	void FreeMeshBuild();
 	void FreeMesh();
 
@@ -177,7 +177,7 @@ public:
 	// studio models processing
 	void StudioCalcBoneQuaterion(mstudiobone_t *pbone, mstudioanim_t *panim, vec4_t q);
 	void StudioCalcBonePosition(mstudiobone_t *pbone, mstudioanim_t *panim, vec3_t pos);
-	bool StudioConstructMesh(struct model_s *pModel);
+	auto StudioConstructMesh(struct model_s *pModel) -> bool;
 
 	// linked list operations
 	void InsertLinkBefore(link_t *l, link_t *before);
@@ -185,21 +185,21 @@ public:
 	void ClearLink(link_t *l);
 
 	// AABB tree contsruction
-	areanode_t *CreateAreaNode(int depth, const vec3_t mins, const vec3_t maxs);
+	auto CreateAreaNode(int depth, const vec3_t mins, const vec3_t maxs) -> areanode_t *;
 	void RelinkFacet(mfacet_t *facet);
-	_inline areanode_t *GetHeadNode() { return (has_tree) ? &areanodes[0] : nullptr; }
+	_inline auto GetHeadNode() -> areanode_t * { return (has_tree) ? &areanodes[0] : nullptr; }
 
 	// plane cache
-	uint AddPlaneToPool(const mplane_t *pl);
-	bool PlaneFromPoints(const mvert_t triangle[3], mplane_t *plane);
-	bool ComparePlanes(const mplane_t *plane, const vec3_t normal, float dist);
-	bool PlaneEqual(const mplane_t *p0, const mplane_t *p1);
+	auto AddPlaneToPool(const mplane_t *pl) -> uint;
+	auto PlaneFromPoints(const mvert_t triangle[3], mplane_t *plane) -> bool;
+	auto ComparePlanes(const mplane_t *plane, const vec3_t normal, float dist) -> bool;
+	auto PlaneEqual(const mplane_t *p0, const mplane_t *p1) -> bool;
 	void CategorizePlane(mplane_t *plane);
 	void SnapPlaneToGrid(mplane_t *plane);
 	void SnapVectorToGrid(vec3_t normal);
 
 	// check for cache
-	_inline mmesh_t *GetMesh() { return &m_mesh; }
+	_inline auto GetMesh() -> mmesh_t * { return &m_mesh; }
 
 	void ClearBounds(vec3_t mins, vec3_t maxs)
 	{
@@ -219,7 +219,7 @@ public:
 		}
 	}
 
-	bool Intersect(const vec3_t trace_mins, const vec3_t trace_maxs)
+	auto Intersect(const vec3_t trace_mins, const vec3_t trace_maxs) -> bool
 	{
 		if (m_mesh.mins[0] > trace_maxs[0] || m_mesh.mins[1] > trace_maxs[1] || m_mesh.mins[2] > trace_maxs[2])
 			return false;
@@ -232,7 +232,7 @@ public:
 // simplification
 void ProgressiveMesh(List<vector> &vert, List<triset> &tri, List<int> &map, List<int> &permutation);
 void PermuteVertices(List<int> &permutation, List<vector> &vert, List<triset> &tris);
-int MapVertex(int a, int mx, List<int> &map);
+auto MapVertex(int a, int mx, List<int> &map) -> int;
 
 // collision description
 typedef struct model_s

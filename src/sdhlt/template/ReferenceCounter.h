@@ -41,7 +41,7 @@ public:
 	ReferenceCounter(int InitialValue);
 	virtual ~ReferenceCounter() = default; // Should optimize to nothing except in the derived-class case
 	ReferenceCounter(const ReferenceCounter &other) { copy(other); }
-	ReferenceCounter &operator=(const ReferenceCounter &other)
+	auto operator=(const ReferenceCounter &other) -> ReferenceCounter &
 	{
 		copy(other);
 		return *this;
@@ -49,22 +49,22 @@ public:
 
 public:
 	// User functions
-	inline int add(int amt);		 // increment the value by amt, returns the ORIGINAL value
-	inline int sub(int amt);		 // increment the value by amt, returns the ORIGINAL value
-	inline int inc();				 // increment the value, returns the NEW value
-	inline int dec();				 // decrement the value, returns the NEW value
-	inline int read() const;		 // read the current value
+	inline auto add(int amt) -> int;		 // increment the value by amt, returns the ORIGINAL value
+	inline auto sub(int amt) -> int;		 // increment the value by amt, returns the ORIGINAL value
+	inline auto inc() -> int;				 // increment the value, returns the NEW value
+	inline auto dec() -> int;				 // decrement the value, returns the NEW value
+	inline auto read() const -> int;		 // read the current value
 	inline void write(int newvalue); // change the counter to a new value blindly
-	inline int swap(int newvalue);	 // change the counter to a new value, and return the ORIGINAL value
+	inline auto swap(int newvalue) -> int;	 // change the counter to a new value, and return the ORIGINAL value
 
 	// Convenient Operators
-	int operator++() { return inc(); }
-	int operator--() { return dec(); }
-	int operator++(int) { return inc() - 1; }
-	int operator--(int) { return dec() + 1; }
-	int operator+=(int amt) { return add(amt) + amt; }
-	int operator-=(int amt) { return sub(amt) - amt; }
-	int operator=(int value)
+	auto operator++() -> int { return inc(); }
+	auto operator--() -> int { return dec(); }
+	auto operator++(int) -> int { return inc() - 1; }
+	auto operator--(int) -> int { return dec() + 1; }
+	auto operator+=(int amt) -> int { return add(amt) + amt; }
+	auto operator-=(int amt) -> int { return sub(amt) - amt; }
+	auto operator=(int value) -> int
 	{
 		write(value);
 		return value;

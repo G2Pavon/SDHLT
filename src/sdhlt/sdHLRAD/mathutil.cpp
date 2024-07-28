@@ -5,7 +5,7 @@
 //      returns whether the point is in the winding (including its edges)
 //      the point and all the vertexes of the winding can move freely along the plane's normal without changing the result
 // =====================================================================================
-bool point_in_winding(const Winding &w, const dplane_t &plane, const vec_t *const point, vec_t epsilon /* = 0.0*/)
+auto point_in_winding(const Winding &w, const dplane_t &plane, const vec_t *const point, vec_t epsilon /* = 0.0*/) -> bool
 {
 	int numpoints;
 	int x;
@@ -36,7 +36,7 @@ bool point_in_winding(const Winding &w, const dplane_t &plane, const vec_t *cons
 //      parameter 'width' : the radius of the ball
 //      the point and all the vertexes of the winding can move freely along the plane's normal without changing the result
 // =====================================================================================
-bool point_in_winding_noedge(const Winding &w, const dplane_t &plane, const vec_t *const point, vec_t width)
+auto point_in_winding_noedge(const Winding &w, const dplane_t &plane, const vec_t *const point, vec_t width) -> bool
 {
 	int numpoints;
 	int x;
@@ -142,7 +142,7 @@ void snap_to_winding(const Winding &w, const dplane_t &plane, vec_t *const point
 //      returns the maximal distance that the point can be kept away from all the edges
 //      in most of the cases, the maximal distance = width; in other cases, the maximal distance < width
 // =====================================================================================
-vec_t snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *const point, vec_t width, vec_t maxmove)
+auto snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *const point, vec_t width, vec_t maxmove) -> vec_t
 {
 	int pass;
 	int numplanes;
@@ -226,7 +226,7 @@ vec_t snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *con
 	return bestwidth;
 }
 
-bool intersect_linesegment_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point)
+auto intersect_linesegment_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point) -> bool
 {
 	vec_t part1;
 	vec_t part2;
@@ -258,7 +258,7 @@ void plane_from_points(const vec3_t p1, const vec3_t p2, const vec3_t p3, dplane
 }
 
 // LineSegmentIntersectsBounds --vluzacn
-bool LineSegmentIntersectsBounds_r(const vec_t *p1, const vec_t *p2, const vec_t *mins, const vec_t *maxs, int d)
+auto LineSegmentIntersectsBounds_r(const vec_t *p1, const vec_t *p2, const vec_t *mins, const vec_t *maxs, int d) -> bool
 {
 	vec_t lmin, lmax;
 	const vec_t *tmp;
@@ -280,7 +280,7 @@ bool LineSegmentIntersectsBounds_r(const vec_t *p1, const vec_t *p2, const vec_t
 	}
 	return LineSegmentIntersectsBounds_r(x1, x2, mins, maxs, d);
 }
-inline bool LineSegmentIntersectsBounds(const vec3_t p1, const vec3_t p2, const vec3_t mins, const vec3_t maxs)
+inline auto LineSegmentIntersectsBounds(const vec3_t p1, const vec3_t p2, const vec3_t mins, const vec3_t maxs) -> bool
 {
 	return LineSegmentIntersectsBounds_r(p1, p2, mins, maxs, 3);
 }
@@ -289,8 +289,8 @@ inline bool LineSegmentIntersectsBounds(const vec3_t p1, const vec3_t p2, const 
 //  TestSegmentAgainstOpaqueList
 //      Returns true if the segment intersects an item in the opaque list
 // =====================================================================================
-bool TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scaleout, int &opaquestyleout // light must convert to this style. -1 = no convert
-)
+auto TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scaleout, int &opaquestyleout // light must convert to this style. -1 = no convert
+) -> bool
 {
 	int x;
 	VectorFill(scaleout, 1.0);
@@ -341,7 +341,7 @@ void SnapToPlane(const dplane_t *const plane, vec_t *const point, vec_t offset)
 // =====================================================================================
 //  CalcSightArea
 // =====================================================================================
-vec_t CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale)
+auto CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t
 {
 	// maybe there are faster ways in calculating the weighted area, but at least this way is not bad.
 	vec_t area = 0.0;
@@ -398,7 +398,7 @@ vec_t CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, 
 	return area;
 }
 
-vec_t CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale)
+auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t
 {
 	// stopdot = cos (cone)
 	// stopdot2 = cos (cone2)

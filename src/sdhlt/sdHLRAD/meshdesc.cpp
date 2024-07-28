@@ -65,7 +65,7 @@ CreateAreaNode
 builds a uniformly subdivided tree for the given mesh size
 ===============
 */
-areanode_t *CMeshDesc ::CreateAreaNode(int depth, const vec3_t mins, const vec3_t maxs)
+auto CMeshDesc ::CreateAreaNode(int depth, const vec3_t mins, const vec3_t maxs) -> areanode_t *
 {
 	areanode_t *anode;
 	vec3_t size;
@@ -117,7 +117,7 @@ void CMeshDesc ::FreeMesh()
 	memset(&m_mesh, 0, sizeof(m_mesh));
 }
 
-bool CMeshDesc ::InitMeshBuild(const char *debug_name, int numTriangles)
+auto CMeshDesc ::InitMeshBuild(const char *debug_name, int numTriangles) -> bool
 {
 	if (numTriangles <= 0)
 		return false;
@@ -158,7 +158,7 @@ bool CMeshDesc ::InitMeshBuild(const char *debug_name, int numTriangles)
 	return true;
 }
 
-bool CMeshDesc ::PlaneEqual(const mplane_t *p0, const mplane_t *p1)
+auto CMeshDesc ::PlaneEqual(const mplane_t *p0, const mplane_t *p1) -> bool
 {
 	float t;
 
@@ -168,7 +168,7 @@ bool CMeshDesc ::PlaneEqual(const mplane_t *p0, const mplane_t *p1)
 	return false;
 }
 
-uint CMeshDesc ::AddPlaneToPool(const mplane_t *pl)
+auto CMeshDesc ::AddPlaneToPool(const mplane_t *pl) -> uint
 {
 	hashplane_t *p;
 	int hash;
@@ -213,7 +213,7 @@ Returns false if the triangle is degenrate.
 The normal will point out of the clock for clockwise ordered points
 =====================
 */
-bool CMeshDesc ::PlaneFromPoints(const mvert_t triangle[3], mplane_t *plane)
+auto CMeshDesc ::PlaneFromPoints(const mvert_t triangle[3], mplane_t *plane) -> bool
 {
 	vec3_t v1, v2;
 
@@ -238,7 +238,7 @@ bool CMeshDesc ::PlaneFromPoints(const mvert_t triangle[3], mplane_t *plane)
 ComparePlanes
 =================
 */
-bool CMeshDesc ::ComparePlanes(const mplane_t *plane, const vec3_t normal, float dist)
+auto CMeshDesc ::ComparePlanes(const mplane_t *plane, const vec3_t normal, float dist) -> bool
 {
 	if (fabs(plane->normal[0] - normal[0]) < PLANE_NORMAL_EPSILON && fabs(plane->normal[1] - normal[1]) < PLANE_NORMAL_EPSILON && fabs(plane->normal[2] - normal[2]) < PLANE_NORMAL_EPSILON && fabs(plane->dist - dist) < PLANE_DIST_EPSILON)
 		return true;
@@ -478,7 +478,7 @@ void CMeshDesc ::StudioCalcBonePosition(mstudiobone_t *pbone, mstudioanim_t *pan
 	}
 }
 
-bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
+auto CMeshDesc ::StudioConstructMesh(model_t *pModel) -> bool
 {
 	int i;
 	auto *phdr = (studiohdr_t *)pModel->extradata;
@@ -768,7 +768,7 @@ bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 	return true;
 }
 
-bool CMeshDesc ::AddMeshTrinagle(const mvert_t triangle[3], mstudiotexture_t *texture)
+auto CMeshDesc ::AddMeshTrinagle(const mvert_t triangle[3], mstudiotexture_t *texture) -> bool
 {
 	int i;
 
@@ -966,7 +966,7 @@ void CMeshDesc ::RelinkFacet(mfacet_t *facet)
 	InsertLinkBefore(&facet->area, &node->facets);
 }
 
-bool CMeshDesc ::FinishMeshBuild()
+auto CMeshDesc ::FinishMeshBuild() -> bool
 {
 	if (m_mesh.numfacets <= 0)
 	{

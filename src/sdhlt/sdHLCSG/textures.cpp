@@ -45,7 +45,7 @@ static char *texmap[MAX_INTERNAL_MAP_TEXINFO];
 
 static int numtexmap = 0;
 
-static int texmap_store(char *texname, bool shouldlock = true)
+static auto texmap_store(char *texname, bool shouldlock = true) -> int
 // This function should never be called unless a new entry in g_texinfo is being allocated.
 {
     int i;
@@ -66,7 +66,7 @@ static int texmap_store(char *texname, bool shouldlock = true)
     return i;
 }
 
-static char *texmap_retrieve(int index)
+static auto texmap_retrieve(int index) -> char *
 {
     hlassume(0 <= index && index < numtexmap, assume_first);
     return texmap[index];
@@ -111,7 +111,7 @@ static void CleanupName(const char *const in, char *out)
 //  lump_sorters
 // =====================================================================================
 
-static int CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2)
+static auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;
@@ -126,7 +126,7 @@ static int CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump
     }
 }
 
-static int CDECL lump_sorter_by_name(const void *lump1, const void *lump2)
+static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;
@@ -138,7 +138,7 @@ static int CDECL lump_sorter_by_name(const void *lump1, const void *lump2)
 //  FindMiptex
 //      Find and allocate a texture into the lump data
 // =====================================================================================
-static int FindMiptex(const char *const name)
+static auto FindMiptex(const char *const name) -> int
 {
     int i;
     if (strlen(name) >= MAXWADNAME)
@@ -166,7 +166,7 @@ static int FindMiptex(const char *const name)
 // =====================================================================================
 //  TEX_InitFromWad
 // =====================================================================================
-bool TEX_InitFromWad()
+auto TEX_InitFromWad() -> bool
 {
     int i, j;
     wadinfo_t wadinfo;
@@ -359,7 +359,7 @@ bool TEX_InitFromWad()
 // =====================================================================================
 //  FindTexture
 // =====================================================================================
-lumpinfo_t *FindTexture(const lumpinfo_t *const source)
+auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
 {
     // Log("** PnFNFUNC: FindTexture\n");
 
@@ -428,7 +428,7 @@ lumpinfo_t *FindTexture(const lumpinfo_t *const source)
 // =====================================================================================
 //  LoadLump
 // =====================================================================================
-int LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest_maxsize, byte *&writewad_data, int &writewad_datasize)
+auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest_maxsize, byte *&writewad_data, int &writewad_datasize) -> int
 {
     writewad_data = nullptr;
     writewad_datasize = -1;
@@ -761,7 +761,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 //  TexinfoForBrushTexture
 // =====================================================================================
-int TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin)
+auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int
 {
     vec3_t vecs[2];
     int sv, tv;
@@ -936,7 +936,7 @@ int TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, cons
 }
 
 // Before WriteMiptex(), for each texinfo in g_texinfo, .miptex is a string rather than texture index, so this function should be used instead of GetTextureByNumber.
-const char *GetTextureByNumber_CSG(int texturenumber)
+auto GetTextureByNumber_CSG(int texturenumber) -> const char *
 {
     if (texturenumber == -1)
         return "";

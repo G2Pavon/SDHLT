@@ -32,7 +32,7 @@ public:
 
 	void ComputeNormal();
 	void ReplaceVertex(CVertex *vold, CVertex *vnew);
-	int HasVertex(CVertex *v);
+	auto HasVertex(CVertex *v) -> int;
 };
 
 class CVertex
@@ -103,7 +103,7 @@ CTriangle ::~CTriangle()
 	}
 }
 
-int CTriangle ::HasVertex(CVertex *v)
+auto CTriangle ::HasVertex(CVertex *v) -> int
 {
 	return (v == vertex[0] || v == vertex[1] || v == vertex[2]);
 }
@@ -208,7 +208,7 @@ void CVertex ::RemoveIfNonNeighbor(CVertex *n)
 	neighbor.Remove(n);
 }
 
-static float ComputeEdgeCollapseCost(CVertex *u, CVertex *v)
+static auto ComputeEdgeCollapseCost(CVertex *u, CVertex *v) -> float
 {
 	// if we collapse edge uv by moving u to v then how
 	// much different will the model change, i.e. how much "error".
@@ -350,7 +350,7 @@ static void Collapse(CVertex *u, CVertex *v)
 	}
 }
 
-static CVertex *MinimumCostEdge()
+static auto MinimumCostEdge() -> CVertex *
 {
 	// Find the edge that when collapsed will affect model the least.
 	// This funtion actually returns a CVertex, the second vertex
@@ -430,7 +430,7 @@ void PermuteVertices(List<int> &permutation, List<vector> &vert, List<triset> &t
 	}
 }
 
-int MapVertex(int a, int mx, List<int> &map)
+auto MapVertex(int a, int mx, List<int> &map) -> int
 {
 	if (mx <= 0)
 		return 0;

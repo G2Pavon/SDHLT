@@ -20,13 +20,13 @@ public:
 	void Pack();
 	void Add(Type);
 	void AddUnique(Type);
-	int Contains(Type);
+	auto Contains(Type) -> int;
 	void Remove(Type);
 	void DelIndex(int i);
 	Type *element;
 	int num;
 	int array_size;
-	Type &operator[](int i)
+	auto operator[](int i) -> Type &
 	{
 		assert(i >= 0 && i < num);
 		return element[i];
@@ -104,7 +104,7 @@ void List<Type>::Add(Type t)
 }
 
 template <class Type>
-int List<Type>::Contains(Type t)
+auto List<Type>::Contains(Type t) -> int
 {
 	int count = 0;
 

@@ -66,7 +66,7 @@ static void InitHash(const vec3_t mins, const vec3_t maxs)
     hash_scale[1] = hash_numslots[1] / size[1];
 }
 
-static int HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors)
+static auto HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors) -> int
 {
     int h;
     int i;
@@ -119,7 +119,7 @@ static int HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors)
 
 //============================================================================
 
-static bool CanonicalVector(vec3_t vec)
+static auto CanonicalVector(vec3_t vec) -> bool
 {
     if (VectorNormalize(vec))
     {
@@ -171,7 +171,7 @@ static bool CanonicalVector(vec3_t vec)
     return false;
 }
 
-static wedge_t *FindEdge(const vec3_t p1, const vec3_t p2, vec_t *t1, vec_t *t2)
+static auto FindEdge(const vec3_t p1, const vec3_t p2, vec_t *t1, vec_t *t2) -> wedge_t *
 {
     vec3_t origin;
     vec3_t dir;

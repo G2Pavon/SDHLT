@@ -26,7 +26,7 @@ static int m_idum = 0;
 static int m_iy = 0;
 static int m_iv[NTAB];
 
-static int GenerateRandomNumber()
+static auto GenerateRandomNumber() -> int
 {
 	int j, k;
 
@@ -74,7 +74,7 @@ static int GenerateRandomNumber()
 	return m_iy;
 }
 
-float RandomFloat(float flLow, float flHigh)
+auto RandomFloat(float flLow, float flHigh) -> float
 {
 	// float in [0,1)
 	float fl = AM * GenerateRandomNumber();
@@ -84,7 +84,7 @@ float RandomFloat(float flLow, float flHigh)
 	return (fl * (flHigh - flLow)) + flLow; // float in [low,high)
 }
 
-vec_t ColorNormalize(const vec3_t in, vec3_t out)
+auto ColorNormalize(const vec3_t in, vec3_t out) -> vec_t
 {
 	float max, scale;
 
@@ -104,7 +104,7 @@ vec_t ColorNormalize(const vec3_t in, vec3_t out)
 	return max;
 }
 
-unsigned short FloatToHalf(float v)
+auto FloatToHalf(float v) -> unsigned short
 {
 	unsigned int i = *((unsigned int *)&v);
 	unsigned int e = (i >> 23) & 0x00ff;
@@ -121,7 +121,7 @@ unsigned short FloatToHalf(float v)
 	return h;
 }
 
-float HalfToFloat(unsigned short h)
+auto HalfToFloat(unsigned short h) -> float
 {
 	unsigned int f = (h << 16) & 0x80000000;
 	unsigned int em = h & 0x7fff;

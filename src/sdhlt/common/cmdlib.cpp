@@ -30,7 +30,7 @@
  * ================
  */
 
-double I_FloatTime()
+auto I_FloatTime() -> double
 {
 #ifdef SYSTEM_WIN32
     FILETIME ftime;
@@ -62,7 +62,7 @@ double I_FloatTime()
 }
 
 #ifdef SYSTEM_POSIX
-char *strupr(char *string)
+auto strupr(char *string) -> char *
 {
     int i;
     int len = strlen(string);
@@ -74,7 +74,7 @@ char *strupr(char *string)
     return string;
 }
 
-char *strlwr(char *string)
+auto strlwr(char *string) -> char *
 {
     int i;
     int len = strlen(string);
@@ -88,7 +88,7 @@ char *strlwr(char *string)
 #endif
 
 // Case Insensitive substring matching
-const char *stristr(const char *const string, const char *const substring)
+auto stristr(const char *const string, const char *const substring) -> const char *
 {
     char *string_copy;
     char *substring_copy;
@@ -156,7 +156,7 @@ inline void getFilePositions(const char *path, int *extension_position, int *dir
     }
 }
 
-char *FlipSlashes(char *string)
+auto FlipSlashes(char *string) -> char *
 {
     char *ptr = string;
     if (SYSTEM_SLASH_CHAR == '\\')
@@ -333,7 +333,7 @@ float BigFloat(const float l)
 
 #else // Little endian (Intel, etc)
 
-short BigShort(const short l)
+auto BigShort(const short l) -> short
 {
     byte b1, b2;
 
@@ -343,12 +343,12 @@ short BigShort(const short l)
     return (short)((b1 << 8) + b2);
 }
 
-short LittleShort(const short l)
+auto LittleShort(const short l) -> short
 {
     return l;
 }
 
-int BigLong(const int l)
+auto BigLong(const int l) -> int
 {
     byte b1, b2, b3, b4;
 
@@ -360,12 +360,12 @@ int BigLong(const int l)
     return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 }
 
-int LittleLong(const int l)
+auto LittleLong(const int l) -> int
 {
     return l;
 }
 
-float BigFloat(const float l)
+auto BigFloat(const float l) -> float
 {
     union
     {
@@ -382,7 +382,7 @@ float BigFloat(const float l)
     return out.f;
 }
 
-float LittleFloat(const float l)
+auto LittleFloat(const float l) -> float
 {
     return l;
 }
@@ -391,7 +391,7 @@ float LittleFloat(const float l)
 
 //=============================================================================
 
-bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...)
+auto CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...) -> bool
 {
     size_t amt;
     va_list argptr;
@@ -412,12 +412,12 @@ bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t coun
     return true;
 }
 
-bool safe_strncpy(char *const dest, const char *const src, const size_t count)
+auto safe_strncpy(char *const dest, const char *const src, const size_t count) -> bool
 {
     return safe_snprintf(dest, count, "%s", src);
 }
 
-bool safe_strncat(char *const dest, const char *const src, const size_t count)
+auto safe_strncat(char *const dest, const char *const src, const size_t count) -> bool
 {
     if (count)
     {
@@ -433,7 +433,7 @@ bool safe_strncat(char *const dest, const char *const src, const size_t count)
     }
 }
 
-bool TerminatedString(const char *buffer, const int size)
+auto TerminatedString(const char *buffer, const int size) -> bool
 {
     int x;
 

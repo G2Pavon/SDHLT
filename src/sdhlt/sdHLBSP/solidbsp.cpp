@@ -55,7 +55,7 @@ static void UpdateStatus()
 //  FaceSide
 //      For BSP hueristic
 // =====================================================================================
-static int FaceSide(face_t *in, const dplane_t *const split, double *epsilonsplit = nullptr)
+static auto FaceSide(face_t *in, const dplane_t *const split, double *epsilonsplit = nullptr) -> int
 {
 	const vec_t epsilonmin = 0.002, epsilonmax = 0.2;
 	vec_t d_front, d_back;
@@ -258,7 +258,7 @@ void BuildSurfaceTree_r(surfacetree_t *tree, surfacetreenode_t *node)
 	BuildSurfaceTree_r(tree, node->children[1]);
 }
 
-surfacetree_t *BuildSurfaceTree(surface_t *surfaces, vec_t epsilon)
+auto BuildSurfaceTree(surface_t *surfaces, vec_t epsilon) -> surfacetree_t *
 {
 	surfacetree_t *tree;
 	tree = (surfacetree_t *)malloc(sizeof(surfacetree_t));
@@ -384,7 +384,7 @@ void DeleteSurfaceTree(surfacetree_t *tree)
 //      When there are a huge number of planes, just choose one closest
 //      to the middle.
 // =====================================================================================
-static surface_t *ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins, const vec3_t maxs, int detaillevel)
+static auto ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins, const vec3_t maxs, int detaillevel) -> surface_t *
 {
 	int l;
 	surface_t *p;
@@ -502,10 +502,10 @@ static surface_t *ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins,
 //  ChoosePlaneFromList
 //      Choose the plane that splits the least faces
 // =====================================================================================
-static surface_t *ChoosePlaneFromList(surface_t *surfaces, const vec3_t mins, const vec3_t maxs
+static auto ChoosePlaneFromList(surface_t *surfaces, const vec3_t mins, const vec3_t maxs
 									  // mins and maxs are invalid when detaillevel > 0
 									  ,
-									  int detaillevel)
+									  int detaillevel) -> surface_t *
 {
 	surface_t *p;
 	surface_t *bestsurface;
@@ -637,7 +637,7 @@ static surface_t *ChoosePlaneFromList(surface_t *surfaces, const vec3_t mins, co
 //      Selects a surface from a linked list of surfaces to split the group on
 //      returns NULL if the surface list can not be divided any more (a leaf)
 // =====================================================================================
-int CalcSplitDetaillevel(const node_t *node)
+auto CalcSplitDetaillevel(const node_t *node) -> int
 {
 	int bestdetaillevel = -1;
 	surface_t *s;
@@ -662,7 +662,7 @@ int CalcSplitDetaillevel(const node_t *node)
 	}
 	return bestdetaillevel;
 }
-static surface_t *SelectPartition(surface_t *surfaces, const node_t *const node, const bool usemidsplit, int splitdetaillevel, vec3_t validmins, vec3_t validmaxs)
+static auto SelectPartition(surface_t *surfaces, const node_t *const node, const bool usemidsplit, int splitdetaillevel, vec3_t validmins, vec3_t validmaxs) -> surface_t *
 {
 	if (splitdetaillevel == -1)
 	{
@@ -956,7 +956,7 @@ static void SplitNodeBrushes(brush_t *brushes, const node_t *node)
 // =====================================================================================
 //  RankForContents
 // =====================================================================================
-static int RankForContents(const int contents)
+static auto RankForContents(const int contents) -> int
 {
 	// Log("SolidBSP::RankForContents - contents type is %i ",contents);
 	switch (contents)
@@ -1012,7 +1012,7 @@ static int RankForContents(const int contents)
 // =====================================================================================
 //  ContentsForRank
 // =====================================================================================
-static int ContentsForRank(const int rank)
+static auto ContentsForRank(const int rank) -> int
 {
 	switch (rank)
 	{
@@ -1094,7 +1094,7 @@ static void FreeLeafBrushes(node_t *leaf)
 // =====================================================================================
 #define MAX_LEAF_FACES 16384
 
-const char *ContentsToString(int contents)
+auto ContentsToString(int contents) -> const char *
 {
 	switch (contents)
 	{
@@ -1405,7 +1405,7 @@ static void SplitNodePortals(node_t *node)
 //      completely enclose the node.
 //      Returns true if the node should be midsplit.(very large)
 // =====================================================================================
-static bool CalcNodeBounds(node_t *node, vec3_t validmins, vec3_t validmaxs)
+static auto CalcNodeBounds(node_t *node, vec3_t validmins, vec3_t validmaxs) -> bool
 {
 	int i;
 	int j;
@@ -1637,9 +1637,9 @@ static void BuildBspTree_r(node_t *node)
 //      off the nodes.
 //      The original surface chain will be completely freed.
 // =====================================================================================
-node_t *SolidBSP(const surfchain_t *const surfhead,
+auto SolidBSP(const surfchain_t *const surfhead,
 				 brush_t *detailbrushes,
-				 bool report_progress)
+				 bool report_progress) -> node_t *
 {
 	node_t *headnode;
 

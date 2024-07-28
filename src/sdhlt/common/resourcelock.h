@@ -2,5 +2,5 @@
 
 #include "cmdlib.h" //--vluzacn
 
-extern void *CreateResourceLock(int LockNumber);
+extern auto CreateResourceLock(int LockNumber) -> void *;
 extern void ReleaseResourceLock(void **lock);

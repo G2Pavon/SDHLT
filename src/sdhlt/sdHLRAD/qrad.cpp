@@ -207,7 +207,7 @@ static void BaseLightForFace(const dface_t *const f, vec3_t light)
 // =====================================================================================
 //  IsSpecial
 // =====================================================================================
-static bool IsSpecial(const dface_t *const f)
+static auto IsSpecial(const dface_t *const f) -> bool
 {
 	return g_texinfo[f->texinfo].flags & TEX_SPECIAL;
 }
@@ -215,7 +215,7 @@ static bool IsSpecial(const dface_t *const f)
 // =====================================================================================
 //  PlacePatchInside
 // =====================================================================================
-static bool PlacePatchInside(patch_t *patch)
+static auto PlacePatchInside(patch_t *patch) -> bool
 {
 	const dplane_t *plane;
 	const vec_t *face_offset = g_face_offset[patch->faceNumber];
@@ -662,7 +662,7 @@ void ReadCustomChopValue()
 		}
 	}
 }
-vec_t ChopScaleForTexture(int facenum)
+auto ChopScaleForTexture(int facenum) -> vec_t
 {
 	return chopscales[g_texinfo[g_dfaces[facenum].texinfo].miptex];
 }
@@ -751,7 +751,7 @@ void ReadTranslucentTextures()
 	}
 }
 vec3_t *g_lightingconeinfo; //[nummiptex]
-static vec_t DefaultScaleForPower(vec_t power)
+static auto DefaultScaleForPower(vec_t power) -> vec_t
 {
 	vec_t scale;
 	// scale = Pi / Integrate [2 Pi * Sin [x] * Cos[x] ^ power, {x, 0, Pi / 2}]
@@ -811,7 +811,7 @@ void ReadLightingCone()
 	}
 }
 
-static vec_t getScale(const patch_t *const patch)
+static auto getScale(const patch_t *const patch) -> vec_t
 {
 	dface_t *f = g_dfaces + patch->faceNumber;
 	texinfo_t *tx = &g_texinfo[f->texinfo];
@@ -838,7 +838,7 @@ static vec_t getScale(const patch_t *const patch)
 // =====================================================================================
 //  getChop
 // =====================================================================================
-static bool getEmitMode(const patch_t *patch)
+static auto getEmitMode(const patch_t *patch) -> bool
 {
 	bool emitmode = false;
 	vec_t value =
@@ -872,7 +872,7 @@ static bool getEmitMode(const patch_t *patch)
 	}
 	return emitmode;
 }
-static vec_t getChop(const patch_t *const patch)
+static auto getChop(const patch_t *const patch) -> vec_t
 {
 	vec_t rval;
 
@@ -1267,7 +1267,7 @@ static void LoadOpaqueEntities()
 // =====================================================================================
 //  MakePatches
 // =====================================================================================
-static entity_t *FindTexlightEntity(int facenum)
+static auto FindTexlightEntity(int facenum) -> entity_t *
 {
 	dface_t *face = &g_dfaces[facenum];
 	const dplane_t *dplane = getPlaneFromFace(face);
@@ -1478,7 +1478,7 @@ static void MakePatches()
 // =====================================================================================
 //  patch_sorter
 // =====================================================================================
-static int CDECL patch_sorter(const void *p1, const void *p2)
+static auto CDECL patch_sorter(const void *p1, const void *p2) -> int
 {
 	auto *patch1 = (patch_t *)p1;
 	auto *patch2 = (patch_t *)p2;
@@ -2248,7 +2248,7 @@ void ReadInfoTexAndMinlights()
 // =====================================================================================
 //  main
 // =====================================================================================
-int main(const int argc, char **argv)
+auto main(const int argc, char **argv) -> int
 {
 	int i;
 	double start, end;

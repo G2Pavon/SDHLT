@@ -42,7 +42,7 @@ static bool threaded = false;
 static double threadstart = 0;
 static double threadtimes[THREADTIMES_SIZE];
 
-int GetThreadWork()
+auto GetThreadWork() -> int
 {
     int r, f, i;
     double ct, finish, finish2, finish3;
@@ -473,7 +473,7 @@ void ThreadUnlock()
 
 q_threadfunction q_entry;
 
-static void *CDECL ThreadEntryStub(void *pParam)
+static auto CDECL ThreadEntryStub(void *pParam) -> void *
 {
     q_entry((int)(intptr_t)pParam);
     return nullptr;

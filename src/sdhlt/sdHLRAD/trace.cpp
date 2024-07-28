@@ -310,7 +310,7 @@ void MakeTnodes(dmodel_t * /*bm*/)
 
 //==========================================================
 
-int TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &linecontent, vec_t *skyhit)
+auto TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &linecontent, vec_t *skyhit) -> int
 {
 	tnode_t *tnode;
 	float front, back;
@@ -399,7 +399,7 @@ int TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &linec
 	return TestLine_r(tnode->children[!side], mid, stop, linecontent, skyhit);
 }
 
-int TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhit)
+auto TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhit) -> int
 {
 	int linecontent = 0;
 	return TestLine_r(0, start, stop, linecontent, skyhit);
@@ -440,7 +440,7 @@ typedef struct
 #endif
 opaquemodel_t *opaquemodels;
 
-bool TryMerge(opaqueface_t *f, const opaqueface_t *f2)
+auto TryMerge(opaqueface_t *f, const opaqueface_t *f2) -> bool
 {
 	if (!f->winding || !f2->winding)
 	{
@@ -554,7 +554,7 @@ bool TryMerge(opaqueface_t *f, const opaqueface_t *f2)
 	return true;
 }
 
-int MergeOpaqueFaces(int firstface, int numfaces)
+auto MergeOpaqueFaces(int firstface, int numfaces) -> int
 {
 	int i, j, newnum;
 	opaqueface_t *faces = &opaquefaces[firstface];
@@ -698,7 +698,7 @@ void DeleteOpaqueNodes()
 	free(opaquemodels);
 }
 
-int TestLineOpaque_face(int facenum, const vec3_t hit)
+auto TestLineOpaque_face(int facenum, const vec3_t hit) -> int
 {
 	opaqueface_t *thisface = &opaquefaces[facenum];
 	int x;
@@ -732,7 +732,7 @@ int TestLineOpaque_face(int facenum, const vec3_t hit)
 	return 1;
 }
 
-int TestLineOpaque_r(int nodenum, const vec3_t start, const vec3_t stop)
+auto TestLineOpaque_r(int nodenum, const vec3_t start, const vec3_t stop) -> int
 {
 	opaquenode_t *thisnode;
 	vec_t front, back;
@@ -796,7 +796,7 @@ int TestLineOpaque_r(int nodenum, const vec3_t start, const vec3_t stop)
 	}
 }
 
-int TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop)
+auto TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop) -> int
 {
 	opaquemodel_t *thismodel = &opaquemodels[modelnum];
 	vec_t front, back, frac;
@@ -854,7 +854,7 @@ int TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, c
 	return TestLineOpaque_r(thismodel->headnode, p1, p2);
 }
 
-int CountOpaqueFaces_r(opaquenode_t *node)
+auto CountOpaqueFaces_r(opaquenode_t *node) -> int
 {
 	int count;
 	count = node->numfaces;
@@ -869,12 +869,12 @@ int CountOpaqueFaces_r(opaquenode_t *node)
 	return count;
 }
 
-int CountOpaqueFaces(int modelnum)
+auto CountOpaqueFaces(int modelnum) -> int
 {
 	return CountOpaqueFaces_r(&opaquenodes[opaquemodels[modelnum].headnode]);
 }
 
-int TestPointOpaque_r(int nodenum, bool solid, const vec3_t point)
+auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int
 {
 	opaquenode_t *thisnode;
 	vec_t dist;

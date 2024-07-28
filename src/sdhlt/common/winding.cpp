@@ -72,7 +72,7 @@ void Winding::getPlane(vec3_t &normal, vec_t &dist) const
     }
 }
 
-vec_t Winding::getArea() const
+auto Winding::getArea() const -> vec_t
 {
     unsigned int i;
     vec3_t d1, d2, cross;
@@ -140,7 +140,7 @@ void Winding::getCenter(vec3_t &center) const
     }
 }
 
-Winding *Winding::Copy() const
+auto Winding::Copy() const -> Winding *
 {
     auto *newWinding = new Winding(*this);
     return newWinding;
@@ -221,7 +221,7 @@ void Winding::Check(
     }
 }
 
-bool Winding::Valid() const
+auto Winding::Valid() const -> bool
 {
     // TODO: Check to ensure there are 3 non-colinear points
     if ((m_NumPoints < 3) || (!m_Points))
@@ -264,7 +264,7 @@ void Winding::initFromPoints(vec3_t *points, uint32_t numpoints)
     memcpy(m_Points, points, sizeof(vec3_t) * m_NumPoints);
 }
 
-Winding &Winding::operator=(const Winding &other)
+auto Winding::operator=(const Winding &other) -> Winding &
 {
     delete[] m_Points;
     m_NumPoints = other.m_NumPoints;
@@ -607,7 +607,7 @@ void Winding::Clip(const vec3_t normal, const vec_t dist, Winding **front, Windi
     }
 }
 
-bool Winding::Chop(const vec3_t normal, const vec_t dist, vec_t epsilon)
+auto Winding::Chop(const vec3_t normal, const vec_t dist, vec_t epsilon) -> bool
 {
     Winding *f;
     Winding *b;
@@ -636,7 +636,7 @@ bool Winding::Chop(const vec3_t normal, const vec_t dist, vec_t epsilon)
     }
 }
 
-int Winding::WindingOnPlaneSide(const vec3_t normal, const vec_t dist, vec_t epsilon)
+auto Winding::WindingOnPlaneSide(const vec3_t normal, const vec_t dist, vec_t epsilon) -> int
 {
     bool front, back;
     unsigned int i;
@@ -678,7 +678,7 @@ int Winding::WindingOnPlaneSide(const vec3_t normal, const vec_t dist, vec_t eps
     return SIDE_ON;
 }
 
-bool Winding::Clip(const dplane_t &split, bool keepon, vec_t epsilon)
+auto Winding::Clip(const dplane_t &split, bool keepon, vec_t epsilon) -> bool
 {
     vec_t dists[MAX_POINTS_ON_WINDING];
     int sides[MAX_POINTS_ON_WINDING];

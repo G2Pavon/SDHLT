@@ -20,7 +20,7 @@ public:
     } eBoundingState;
 
     // Tests if other box is completely outside of this box
-    bool testDisjoint(const BoundingBox &other) const
+    auto testDisjoint(const BoundingBox &other) const -> bool
     {
         if ((m_Mins[0] > other.m_Maxs[0] + ON_EPSILON) ||
             (m_Mins[1] > other.m_Maxs[1] + ON_EPSILON) ||
@@ -34,7 +34,7 @@ public:
         return false;
     }
     // returns true if this box is completely inside other box
-    bool testSubset(const BoundingBox &other) const
+    auto testSubset(const BoundingBox &other) const -> bool
     {
         if (
             (m_Mins[0] >= other.m_Mins[0]) &&
@@ -49,12 +49,12 @@ public:
         return false;
     }
     // returns true if this box contains the other box completely
-    bool testSuperset(const BoundingBox &other) const
+    auto testSuperset(const BoundingBox &other) const -> bool
     {
         return other.testSubset(*this);
     }
     // returns true if this box partially intersects the other box
-    bool testUnion(const BoundingBox &other) const
+    auto testUnion(const BoundingBox &other) const -> bool
     {
         BoundingBox tmpBox;
         tmpBox.m_Mins[0] = qmax(m_Mins[0], other.m_Mins[0]);
@@ -72,7 +72,7 @@ public:
         }
         return true;
     }
-    eBoundingState test(const BoundingBox &other) const
+    auto test(const BoundingBox &other) const -> eBoundingState
     {
         eBoundingState rval;
         if (testDisjoint(other))

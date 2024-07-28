@@ -184,7 +184,7 @@ static void InitHash()
 // =====================================================================================
 //  HashVec
 // =====================================================================================
-static int HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors)
+static auto HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors) -> int
 // returned value: the one bucket that a new vertex may "write" into
 // returned hashneighbors: the buckets that we should "read" to check for an existing vertex
 {
@@ -240,7 +240,7 @@ static int HashVec(const vec3_t vec, int *num_hashneighbors, int *hashneighbors)
 // =====================================================================================
 //  GetVertex
 // =====================================================================================
-static int GetVertex(const vec3_t in, const int planenum)
+static auto GetVertex(const vec3_t in, const int planenum) -> int
 {
     int h;
     int i;
@@ -317,7 +317,7 @@ static int GetVertex(const vec3_t in, const int planenum)
 //  GetEdge
 //      Don't allow four way edges
 // =====================================================================================
-int GetEdge(const vec3_t p1, const vec3_t p2, face_t *f)
+auto GetEdge(const vec3_t p1, const vec3_t p2, face_t *f) -> int
 {
     int v1;
     int v2;

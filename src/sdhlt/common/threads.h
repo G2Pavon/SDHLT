@@ -26,7 +26,7 @@ extern q_threadpriority g_threadpriority;
 
 extern void ThreadSetPriority(q_threadpriority type);
 extern void ThreadSetDefault();
-extern int GetThreadWork();
+extern auto GetThreadWork() -> int;
 extern void ThreadLock();
 extern void ThreadUnlock();
 

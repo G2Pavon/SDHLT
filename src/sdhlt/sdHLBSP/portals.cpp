@@ -272,7 +272,7 @@ static void NumberLeafs_r(node_t *node)
     }
 }
 
-static int CountChildLeafs_r(node_t *node)
+static auto CountChildLeafs_r(node_t *node) -> int
 {
     if (node->planenum == -1)
     { // dleaf

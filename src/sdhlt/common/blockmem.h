@@ -2,11 +2,11 @@
 
 #include "cmdlib.h" //--vluzacn
 
-extern void *AllocBlock(unsigned long size);
-extern bool FreeBlock(void *pointer);
+extern auto AllocBlock(unsigned long size) -> void *;
+extern auto FreeBlock(void *pointer) -> bool;
 
-extern void *Alloc(unsigned long size);
-extern bool Free(void *pointer);
+extern auto Alloc(unsigned long size) -> void *;
+extern auto Free(void *pointer) -> bool;
 
 #if defined(CHECK_HEAP)
 extern void HeapCheck();

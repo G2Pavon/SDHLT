@@ -88,7 +88,7 @@ FailedWrite:
  * =============
  */
 
-bool readtransfers(const char *const transferfile, const long numpatches)
+auto readtransfers(const char *const transferfile, const long numpatches) -> bool
 {
     FILE *file;
     long total_patches;

@@ -38,7 +38,7 @@ typedef struct wadfile_s
 wadfile_t *g_wadfiles = nullptr;
 bool g_wadfiles_opened;
 
-static int CDECL lump_sorter_by_name(const void *lump1, const void *lump2)
+static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
 	auto *plump1 = (lumpinfo_t *)lump1;
 	auto *plump2 = (lumpinfo_t *)lump2;
@@ -428,7 +428,7 @@ inline void CQ_VectorClear(T a[CQ_DIM])
 }
 
 template <class T>
-inline T CQ_DotProduct(const T a[CQ_DIM], const T b[CQ_DIM])
+inline auto CQ_DotProduct(const T a[CQ_DIM], const T b[CQ_DIM]) -> T
 {
 	T dot = (T)0;
 	for (int x = 0; x < CQ_DIM; x++)
@@ -553,7 +553,7 @@ static void CQ_SelectPartition(cq_node_t *node)
 	}
 }
 
-static cq_searchnode_t *CQ_AllocSearchTree(int maxcolors)
+static auto CQ_AllocSearchTree(int maxcolors) -> cq_searchnode_t *
 {
 	cq_searchnode_t *searchtree;
 	searchtree = (cq_searchnode_t *)malloc((2 * maxcolors - 1) * sizeof(cq_searchnode_t));
@@ -785,7 +785,7 @@ static void CQ_MapPoint_r(int *bestdist, int *best,
 	}
 }
 
-static int CQ_MapPoint(const unsigned char point[CQ_DIM], const unsigned char (*colors)[CQ_DIM], int numcolors, cq_searchnode_t *searchtree)
+static auto CQ_MapPoint(const unsigned char point[CQ_DIM], const unsigned char (*colors)[CQ_DIM], int numcolors, cq_searchnode_t *searchtree) -> int
 {
 	if (numcolors <= 0)
 	{
@@ -823,7 +823,7 @@ static int g_newtextures_num = 0;
 static byte *g_newtextures_data[RADTEXTURES_MAX];
 static int g_newtextures_size[RADTEXTURES_MAX];
 
-int NewTextures_GetCurrentMiptexIndex()
+auto NewTextures_GetCurrentMiptexIndex() -> int
 {
 	auto *texdata = (dmiptexlump_t *)g_dtexdata;
 	return texdata->nummiptex + g_newtextures_num;
@@ -884,7 +884,7 @@ void NewTextures_Write()
 	g_newtextures_num = 0;
 }
 
-static unsigned int Hash(int size, void *data)
+static auto Hash(int size, void *data) -> unsigned int
 {
 	unsigned int hash = 0;
 	for (int i = 0; i < size; i++)
@@ -939,7 +939,7 @@ static void GetLight(dface_t *face, const int texsize[2], double x, double y, ve
 	VectorMA(light, dx, light1, light);
 }
 
-static bool GetValidTextureName(int miptex, char name[16])
+static auto GetValidTextureName(int miptex, char name[16]) -> bool
 {
 	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
 	int offset;

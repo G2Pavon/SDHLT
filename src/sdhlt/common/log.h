@@ -35,9 +35,9 @@ extern void CheckFatal();
 #define IfDebug(x)
 #endif
 
-extern const char *Localize(const char *s);
+extern auto Localize(const char *s) -> const char *;
 extern void LoadLangFile(const char *name, const char *programpath);
-extern int InitConsole(int argc, char **argv);
+extern auto InitConsole(int argc, char **argv) -> int;
 extern void CDECL FORMAT_PRINTF(1, 2) PrintConsole(const char *const message, ...);
 extern void CDECL FORMAT_PRINTF(1, 2) Log(const char *const message, ...);
 extern void CDECL FORMAT_PRINTF(1, 2) Error(const char *const error, ...);

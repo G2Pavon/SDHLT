@@ -41,26 +41,26 @@ public:
   void Print() const;
   void getPlane(dplane_t &plane) const;
   void getPlane(vec3_t &normal, vec_t &dist) const;
-  vec_t getArea() const;
+  auto getArea() const -> vec_t;
   void getBounds(BoundingBox &bounds) const;
   void getBounds(vec3_t &mins, vec3_t &maxs) const;
   void getCenter(vec3_t &center) const;
-  Winding *Copy() const;
+  auto Copy() const -> Winding *;
   void Check(
       vec_t epsilon = ON_EPSILON) const; // Developer check for validity
-  bool Valid() const;                    // Runtime/user/normal check for validity
+  auto Valid() const -> bool;                    // Runtime/user/normal check for validity
   void addPoint(const vec3_t newpoint);
   void insertPoint(const vec3_t newpoint, const unsigned int offset);
 
   // Specialized Functions
   void RemoveColinearPoints(
       vec_t epsilon = ON_EPSILON);
-  bool Clip(const dplane_t &split, bool keepon, vec_t epsilon = ON_EPSILON); // For hlbsp
+  auto Clip(const dplane_t &split, bool keepon, vec_t epsilon = ON_EPSILON) -> bool; // For hlbsp
   void Clip(const dplane_t &split, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
   void Clip(const vec3_t normal, const vec_t dist, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
-  bool Chop(const vec3_t normal, const vec_t dist, vec_t epsilon = ON_EPSILON);
+  auto Chop(const vec3_t normal, const vec_t dist, vec_t epsilon = ON_EPSILON) -> bool;
   void Divide(const dplane_t &split, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
-  int WindingOnPlaneSide(const vec3_t normal, const vec_t dist, vec_t epsilon = ON_EPSILON);
+  auto WindingOnPlaneSide(const vec3_t normal, const vec_t dist, vec_t epsilon = ON_EPSILON) -> int;
   void CopyPoints(vec3_t *points, int &numpoints);
 
   void initFromPoints(vec3_t *points, uint32_t numpoints);
@@ -79,7 +79,7 @@ public:
   Winding(uint32_t points);
   Winding(const Winding &other);
   virtual ~Winding();
-  Winding &operator=(const Winding &other);
+  auto operator=(const Winding &other) -> Winding &;
 
   // Misc
 private:

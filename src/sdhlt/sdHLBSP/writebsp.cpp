@@ -33,7 +33,7 @@ inline clipnodemap_t::key_type MakeKey(const dclipnode_t &c)
 //  WritePlane
 //  hook for plane optimization
 // =====================================================================================
-static int WritePlane(int planenum)
+static auto WritePlane(int planenum) -> int
 {
 	planenum = planenum & (~1);
 
@@ -53,7 +53,7 @@ static int WritePlane(int planenum)
 // =====================================================================================
 //  WriteTexinfo
 // =====================================================================================
-static int WriteTexinfo(int texinfo)
+static auto WriteTexinfo(int texinfo) -> int
 {
 	if (texinfo < 0 || texinfo >= g_numtexinfo)
 	{
@@ -79,7 +79,7 @@ static int WriteTexinfo(int texinfo)
 // =====================================================================================
 //  WriteClipNodes_r
 // =====================================================================================
-static int WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap_t *outputmap)
+static auto WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap_t *outputmap) -> int
 {
 	int i, c;
 	dclipnode_t *cn;
@@ -163,7 +163,7 @@ void WriteClipNodes(node_t *nodes)
 // =====================================================================================
 //  WriteDrawLeaf
 // =====================================================================================
-static int WriteDrawLeaf(node_t *node, const node_t *portalleaf)
+static auto WriteDrawLeaf(node_t *node, const node_t *portalleaf) -> int
 {
 	face_t **fp;
 	face_t *f;
@@ -300,7 +300,7 @@ static void WriteFace(face_t *f)
 // =====================================================================================
 //  WriteDrawNodes_r
 // =====================================================================================
-static int WriteDrawNodes_r(node_t *node, const node_t *portalleaf)
+static auto WriteDrawNodes_r(node_t *node, const node_t *portalleaf) -> int
 {
 	if (node->isportalleaf)
 	{
@@ -436,7 +436,7 @@ void OutputEdges_face(face_t *f)
 		f->outputedges[i] = e;
 	}
 }
-int OutputEdges_r(node_t *node, int detaillevel)
+auto OutputEdges_r(node_t *node, int detaillevel) -> int
 {
 	int next = -1;
 	if (node->planenum == -1)

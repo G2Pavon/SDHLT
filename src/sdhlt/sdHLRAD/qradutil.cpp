@@ -2,7 +2,7 @@
 
 static dplane_t backplanes[MAX_MAP_PLANES];
 
-dleaf_t *PointInLeaf_Worst_r(int nodenum, const vec3_t point)
+auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> dleaf_t *
 {
 	vec_t dist;
 	dnode_t *node;
@@ -42,11 +42,11 @@ dleaf_t *PointInLeaf_Worst_r(int nodenum, const vec3_t point)
 
 	return &g_dleafs[-nodenum - 1];
 }
-dleaf_t *PointInLeaf_Worst(const vec3_t point)
+auto PointInLeaf_Worst(const vec3_t point) -> dleaf_t *
 {
 	return PointInLeaf_Worst_r(0, point);
 }
-dleaf_t *PointInLeaf(const vec3_t point)
+auto PointInLeaf(const vec3_t point) -> dleaf_t *
 {
 	int nodenum;
 	vec_t dist;
@@ -78,7 +78,7 @@ dleaf_t *PointInLeaf(const vec3_t point)
  * Fixes up patch planes for brush models with an origin brush
  * ==============
  */
-vec_t PatchPlaneDist(const patch_t *const patch)
+auto PatchPlaneDist(const patch_t *const patch) -> vec_t
 {
 	const dplane_t *plane = getPlaneFromFaceNumber(patch->faceNumber);
 
@@ -96,7 +96,7 @@ void MakeBackplanes()
 	}
 }
 
-const dplane_t *getPlaneFromFace(const dface_t *const face)
+auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *
 {
 	if (!face)
 	{
@@ -113,7 +113,7 @@ const dplane_t *getPlaneFromFace(const dface_t *const face)
 	}
 }
 
-const dplane_t *getPlaneFromFaceNumber(const unsigned int faceNumber)
+auto getPlaneFromFaceNumber(const unsigned int faceNumber) -> const dplane_t *
 {
 	dface_t *face = &g_dfaces[faceNumber];
 
@@ -160,7 +160,7 @@ void TranslatePlane(dplane_t *plane, const vec_t *delta)
 }
 
 // HuntForWorld will never return CONTENTS_SKY or CONTENTS_SOLID leafs
-dleaf_t *HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset)
+auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *
 {
 	dleaf_t *leaf;
 	int x, y, z;
@@ -300,7 +300,7 @@ void MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right, matrix_t &m
 	}
 }
 
-matrix_t MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right)
+auto MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right) -> matrix_t
 {
 	matrix_t m;
 
@@ -320,7 +320,7 @@ void MatrixForScale(const vec3_t center, vec_t scale, matrix_t &m)
 	VectorScale(center, 1 - scale, m.v[3]);
 }
 
-matrix_t MatrixForScale(const vec3_t center, vec_t scale)
+auto MatrixForScale(const vec3_t center, vec_t scale) -> matrix_t
 {
 	matrix_t m;
 
@@ -328,7 +328,7 @@ matrix_t MatrixForScale(const vec3_t center, vec_t scale)
 	return m;
 }
 
-vec_t CalcMatrixSign(const matrix_t &m)
+auto CalcMatrixSign(const matrix_t &m) -> vec_t
 {
 	vec3_t v;
 
@@ -358,7 +358,7 @@ void TranslateWorldToTex(int facenum, matrix_t &m)
 	m.v[3][2] = -fp->dist;
 }
 
-bool InvertMatrix(const matrix_t &m, matrix_t &m_inverse)
+auto InvertMatrix(const matrix_t &m, matrix_t &m_inverse) -> bool
 {
 	double texplanes[2][4];
 	double faceplane[4];
@@ -447,7 +447,7 @@ typedef struct
 
 static positionmap_t g_face_positions[MAX_MAP_FACES];
 
-static bool IsPositionValid(positionmap_t *map, const vec3_t &pos_st, vec3_t &pos_out, bool usephongnormal = true, bool doedgetest = true, int hunt_size = 2, vec_t hunt_scale = 0.2)
+static auto IsPositionValid(positionmap_t *map, const vec3_t &pos_st, vec3_t &pos_out, bool usephongnormal = true, bool doedgetest = true, int hunt_size = 2, vec_t hunt_scale = 0.2) -> bool
 {
 	vec3_t pos;
 	vec3_t pos_normal;
@@ -745,7 +745,7 @@ void FreePositionMaps()
 	}
 }
 
-bool FindNearestPosition(int facenum, const Winding *texwinding, const dplane_t &texplane, vec_t s, vec_t t, vec3_t &pos, vec_t *best_s, vec_t *best_t, vec_t *dist, bool *nudged)
+auto FindNearestPosition(int facenum, const Winding *texwinding, const dplane_t &texplane, vec_t s, vec_t t, vec3_t &pos, vec_t *best_s, vec_t *best_t, vec_t *dist, bool *nudged) -> bool
 {
 	positionmap_t *map;
 	vec3_t original_st;

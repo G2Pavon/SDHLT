@@ -216,7 +216,7 @@ void MoveBounds(const vec3_t start, const vec3_t mins, const vec3_t maxs, const 
 	}
 }
 
-bool TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2)
+auto TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2) -> bool
 {
 	if (!num_models)
 		return false; // easy out

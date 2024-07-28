@@ -116,7 +116,7 @@ bool Free(void *pointer)
 // =====================================================================================
 //  AllocBlock
 // =====================================================================================
-void *AllocBlock(const unsigned long size)
+auto AllocBlock(const unsigned long size) -> void *
 {
     if (!size)
     {
@@ -128,7 +128,7 @@ void *AllocBlock(const unsigned long size)
 // =====================================================================================
 //  FreeBlock
 // =====================================================================================
-bool FreeBlock(void *pointer)
+auto FreeBlock(void *pointer) -> bool
 {
     if (!pointer)
     {
@@ -141,7 +141,7 @@ bool FreeBlock(void *pointer)
 // =====================================================================================
 //  Alloc
 // =====================================================================================
-void *Alloc(const unsigned long size)
+auto Alloc(const unsigned long size) -> void *
 {
     return AllocBlock(size);
 }
@@ -149,7 +149,7 @@ void *Alloc(const unsigned long size)
 // =====================================================================================
 //  Free
 // =====================================================================================
-bool Free(void *pointer)
+auto Free(void *pointer) -> bool
 {
     return FreeBlock(pointer);
 }

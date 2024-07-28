@@ -69,7 +69,7 @@ dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
 //  NewFaceFromFace
 //      Duplicates the non point information of a face, used by SplitFace and MergeFace.
 // =====================================================================================
-face_t *NewFaceFromFace(const face_t *const in)
+auto NewFaceFromFace(const face_t *const in) -> face_t *
 {
 	face_t *newf;
 
@@ -312,7 +312,7 @@ void SplitFace(face_t *in, const dplane_t *const split, face_t **front, face_t *
 // =====================================================================================
 //  AllocFace
 // =====================================================================================
-face_t *AllocFace()
+auto AllocFace() -> face_t *
 {
 	face_t *f;
 
@@ -335,7 +335,7 @@ void FreeFace(face_t *f)
 // =====================================================================================
 //  AllocSurface
 // =====================================================================================
-surface_t *AllocSurface()
+auto AllocSurface() -> surface_t *
 {
 	surface_t *s;
 
@@ -356,7 +356,7 @@ void FreeSurface(surface_t *s)
 // =====================================================================================
 //  AllocPortal
 // =====================================================================================
-portal_t *AllocPortal()
+auto AllocPortal() -> portal_t *
 {
 	portal_t *p;
 
@@ -374,7 +374,7 @@ void FreePortal(portal_t *p) // consider: inline
 	free(p);
 }
 
-side_t *AllocSide()
+auto AllocSide() -> side_t *
 {
 	side_t *s;
 	s = (side_t *)malloc(sizeof(side_t));
@@ -392,7 +392,7 @@ void FreeSide(side_t *s)
 	return;
 }
 
-side_t *NewSideFromSide(const side_t *s)
+auto NewSideFromSide(const side_t *s) -> side_t *
 {
 	side_t *news;
 	news = AllocSide();
@@ -401,7 +401,7 @@ side_t *NewSideFromSide(const side_t *s)
 	return news;
 }
 
-brush_t *AllocBrush()
+auto AllocBrush() -> brush_t *
 {
 	brush_t *b;
 	b = (brush_t *)malloc(sizeof(brush_t));
@@ -424,7 +424,7 @@ void FreeBrush(brush_t *b)
 	return;
 }
 
-brush_t *NewBrushFromBrush(const brush_t *b)
+auto NewBrushFromBrush(const brush_t *b) -> brush_t *
 {
 	brush_t *newb;
 	newb = AllocBrush();
@@ -540,7 +540,7 @@ void SplitBrush(brush_t *in, const dplane_t *split, brush_t **front, brush_t **b
 	return;
 }
 
-brush_t *BrushFromBox(const vec3_t mins, const vec3_t maxs)
+auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> brush_t *
 {
 	brush_t *b = AllocBrush();
 	dplane_t planes[6];
@@ -584,7 +584,7 @@ void CalcBrushBounds(const brush_t *b, vec3_t &mins, vec3_t &maxs)
 //  AllocNode
 //      blah
 // =====================================================================================
-node_t *AllocNode()
+auto AllocNode() -> node_t *
 {
 	node_t *n;
 
@@ -642,7 +642,7 @@ static void ClearBounds(vec3_t mins, vec3_t maxs)
 //  SurflistFromValidFaces
 //      blah
 // =====================================================================================
-static surfchain_t *SurflistFromValidFaces()
+static auto SurflistFromValidFaces() -> surfchain_t *
 {
 	surface_t *n;
 	int i;
@@ -710,7 +710,7 @@ static surfchain_t *SurflistFromValidFaces()
 //  CheckFaceForNull
 //      Returns true if the passed face is facetype null
 // =====================================================================================
-bool CheckFaceForNull(const face_t *const f)
+auto CheckFaceForNull(const face_t *const f) -> bool
 {
 	if (f->contents == CONTENTS_SKY)
 	{
@@ -727,7 +727,7 @@ bool CheckFaceForNull(const face_t *const f)
 // =====================================================================================
 // Cpt_Andrew - UTSky Check
 // =====================================================================================
-bool CheckFaceForEnv_Sky(const face_t *const f)
+auto CheckFaceForEnv_Sky(const face_t *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "env_sky", 7))
@@ -740,7 +740,7 @@ bool CheckFaceForEnv_Sky(const face_t *const f)
 //  CheckFaceForHint
 //      Returns true if the passed face is facetype hint
 // =====================================================================================
-bool CheckFaceForHint(const face_t *const f)
+auto CheckFaceForHint(const face_t *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "hint", 4))
@@ -752,7 +752,7 @@ bool CheckFaceForHint(const face_t *const f)
 //  CheckFaceForSkipt
 //      Returns true if the passed face is facetype skip
 // =====================================================================================
-bool CheckFaceForSkip(const face_t *const f)
+auto CheckFaceForSkip(const face_t *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "skip", 4))
@@ -760,7 +760,7 @@ bool CheckFaceForSkip(const face_t *const f)
 	return false;
 }
 
-bool CheckFaceForDiscardable(const face_t *f)
+auto CheckFaceForDiscardable(const face_t *f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "SOLIDHINT", 9) || !strncasecmp(name, "BEVELHINT", 9))
@@ -771,7 +771,7 @@ bool CheckFaceForDiscardable(const face_t *f)
 // =====================================================================================
 //  SetFaceType
 // =====================================================================================
-static facestyle_e SetFaceType(face_t *f)
+static auto SetFaceType(face_t *f) -> facestyle_e
 {
 	if (CheckFaceForHint(f))
 	{
@@ -810,7 +810,7 @@ static facestyle_e SetFaceType(face_t *f)
 // =====================================================================================
 //  ReadSurfs
 // =====================================================================================
-static surfchain_t *ReadSurfs(FILE *file)
+static auto ReadSurfs(FILE *file) -> surfchain_t *
 {
 	int r;
 	int detaillevel;
@@ -898,7 +898,7 @@ static surfchain_t *ReadSurfs(FILE *file)
 
 	return SurflistFromValidFaces();
 }
-static brush_t *ReadBrushes(FILE *file)
+static auto ReadBrushes(FILE *file) -> brush_t *
 {
 	brush_t *brushes = nullptr;
 	while (true)
@@ -968,7 +968,7 @@ static brush_t *ReadBrushes(FILE *file)
 // =====================================================================================
 //  ProcessModel (model a.k.a brush entities)
 // =====================================================================================
-static bool ProcessModel()
+static auto ProcessModel() -> bool
 {
 	surfchain_t *surfs;
 	brush_t *detailbrushes;
@@ -1412,7 +1412,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 // =====================================================================================
 //  main
 // =====================================================================================
-int main(const int argc, char **argv)
+auto main(const int argc, char **argv) -> int
 {
 	double start, end;
 	const char *mapname_from_arg = nullptr;

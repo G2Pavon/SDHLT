@@ -122,20 +122,20 @@
 #define sizeofElement(type, identifier) (sizeof((type *)0)->identifier)
 
 #ifdef SYSTEM_POSIX
-extern char *strupr(char *string);
-extern char *strlwr(char *string);
+extern auto strupr(char *string) -> char *;
+extern auto strlwr(char *string) -> char *;
 #endif
-extern const char *stristr(const char *const string, const char *const substring);
+extern auto stristr(const char *const string, const char *const substring) -> const char *;
 extern bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...);
-extern bool safe_strncpy(char *const dest, const char *const src, const size_t count);
-extern bool safe_strncat(char *const dest, const char *const src, const size_t count);
-extern bool TerminatedString(const char *buffer, const int size);
+extern auto safe_strncpy(char *const dest, const char *const src, const size_t count) -> bool;
+extern auto safe_strncat(char *const dest, const char *const src, const size_t count) -> bool;
+extern auto TerminatedString(const char *buffer, const int size) -> bool;
 
-extern char *FlipSlashes(char *string);
+extern auto FlipSlashes(char *string) -> char *;
 
-extern double I_FloatTime();
+extern auto I_FloatTime() -> double;
 
-extern int CheckParm(char *check);
+extern auto CheckParm(char *check) -> int;
 
 extern void DefaultExtension(char *path, const char *extension);
 extern void DefaultPath(char *path, char *basepath);
@@ -147,9 +147,9 @@ extern void ExtractFilePath(const char *const path, char *dest);
 extern void ExtractFileBase(const char *const path, char *dest);
 extern void ExtractFileExtension(const char *const path, char *dest);
 
-extern short BigShort(short l);
-extern short LittleShort(short l);
-extern int BigLong(int l);
-extern int LittleLong(int l);
-extern float BigFloat(float l);
-extern float LittleFloat(float l);
+extern auto BigShort(short l) -> short;
+extern auto LittleShort(short l) -> short;
+extern auto BigLong(int l) -> int;
+extern auto LittleLong(int l) -> int;
+extern auto BigFloat(float l) -> float;
+extern auto LittleFloat(float l) -> float;

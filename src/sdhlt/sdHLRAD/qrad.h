@@ -221,7 +221,7 @@ typedef struct patch_s
 } patch_t;
 
 // LRC
-vec3_t *GetTotalLight(patch_t *patch, int style);
+auto GetTotalLight(patch_t *patch, int style) -> vec3_t *;
 
 typedef struct facelist_s
 {
@@ -361,7 +361,7 @@ extern void ScaleDirectLights();			 // run before AddPatchLights
 extern void CreateFacelightDependencyList(); // run before AddPatchLights
 extern void AddPatchLights(int facenum);
 extern void FreeFacelightDependencyList();
-extern int TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = nullptr);
+extern auto TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = nullptr) -> int;
 #define OPAQUE_NODE_INLINECALL
 #ifdef OPAQUE_NODE_INLINECALL
 typedef struct
@@ -372,11 +372,11 @@ typedef struct
 extern opaquemodel_t *opaquemodels;
 #endif
 extern void CreateOpaqueNodes();
-extern int TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop);
-extern int CountOpaqueFaces(int modelnum);
+extern auto TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop) -> int;
+extern auto CountOpaqueFaces(int modelnum) -> int;
 extern void DeleteOpaqueNodes();
 #ifdef OPAQUE_NODE_INLINECALL
-extern int TestPointOpaque_r(int nodenum, bool solid, const vec3_t point);
+extern auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int;
 FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point) // use "forceinline" because "inline" does nothing here
 {
 	opaquemodel_t *thismodel = &opaquemodels[modelnum];
@@ -401,36 +401,36 @@ extern void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal); 
 
 typedef bool (*funcCheckVisBit)(unsigned, unsigned, vec3_t &, unsigned int &);
 extern funcCheckVisBit g_CheckVisBit;
-extern bool CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out);
+extern auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out) -> bool;
 extern void MdlLightHack();
 
 // qradutil.c
-extern vec_t PatchPlaneDist(const patch_t *const patch);
-extern dleaf_t *PointInLeaf(const vec3_t point);
+extern auto PatchPlaneDist(const patch_t *const patch) -> vec_t;
+extern auto PointInLeaf(const vec3_t point) -> dleaf_t *;
 extern void MakeBackplanes();
-extern const dplane_t *getPlaneFromFace(const dface_t *const face);
-extern const dplane_t *getPlaneFromFaceNumber(unsigned int facenum);
+extern auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *;
+extern auto getPlaneFromFaceNumber(unsigned int facenum) -> const dplane_t *;
 extern void getAdjustedPlaneFromFaceNumber(unsigned int facenum, dplane_t *plane);
-extern dleaf_t *HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset);
+extern auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *;
 extern void ApplyMatrix(const matrix_t &m, const vec3_t in, vec3_t &out);
 extern void ApplyMatrixOnPlane(const matrix_t &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist);
 extern void MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right, matrix_t &m);
-extern matrix_t MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right);
+extern auto MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right) -> matrix_t;
 extern void MatrixForScale(const vec3_t center, vec_t scale, matrix_t &m);
-extern matrix_t MatrixForScale(const vec3_t center, vec_t scale);
-extern vec_t CalcMatrixSign(const matrix_t &m);
+extern auto MatrixForScale(const vec3_t center, vec_t scale) -> matrix_t;
+extern auto CalcMatrixSign(const matrix_t &m) -> vec_t;
 extern void TranslateWorldToTex(int facenum, matrix_t &m);
-extern bool InvertMatrix(const matrix_t &m, matrix_t &m_inverse);
+extern auto InvertMatrix(const matrix_t &m, matrix_t &m_inverse) -> bool;
 extern void FindFacePositions(int facenum);
 extern void FreePositionMaps();
-extern bool FindNearestPosition(int facenum, const Winding *texwinding, const dplane_t &texplane, vec_t s, vec_t t, vec3_t &pos, vec_t *best_s, vec_t *best_t, vec_t *best_dist, bool *nudged);
+extern auto FindNearestPosition(int facenum, const Winding *texwinding, const dplane_t &texplane, vec_t s, vec_t t, vec3_t &pos, vec_t *best_s, vec_t *best_t, vec_t *best_dist, bool *nudged) -> bool;
 
 // makescales.c
 extern void MakeScalesSparseVismatrix();
 
 // transfers.c
 extern size_t g_total_transfer;
-extern bool readtransfers(const char *const transferfile, long numpatches);
+extern auto readtransfers(const char *const transferfile, long numpatches) -> bool;
 extern void writetransfers(const char *const transferfile, long total_patches);
 
 // vismatrixutil.c (shared between vismatrix.c and sparse.c)
@@ -455,20 +455,20 @@ extern void InterpolateSampleLight(const vec3_t position, int surface, int numst
 extern void FreeTriangulations();
 
 // mathutil.c
-extern bool TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scaleout, int &opaquestyleout);
-extern bool intersect_line_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point);
-extern bool intersect_linesegment_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point);
+extern auto TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scaleout, int &opaquestyleout) -> bool;
+extern auto intersect_line_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point) -> bool;
+extern auto intersect_linesegment_plane(const dplane_t *const plane, const vec_t *const p1, const vec_t *const p2, vec3_t point) -> bool;
 extern void plane_from_points(const vec3_t p1, const vec3_t p2, const vec3_t p3, dplane_t *plane);
-extern bool point_in_winding(const Winding &w, const dplane_t &plane, const vec_t *point, vec_t epsilon = 0.0);
-extern bool point_in_winding_noedge(const Winding &w, const dplane_t &plane, const vec_t *point, vec_t width);
+extern auto point_in_winding(const Winding &w, const dplane_t &plane, const vec_t *point, vec_t epsilon = 0.0) -> bool;
+extern auto point_in_winding_noedge(const Winding &w, const dplane_t &plane, const vec_t *point, vec_t width) -> bool;
 extern void snap_to_winding(const Winding &w, const dplane_t &plane, vec_t *point);
-extern vec_t snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *point, vec_t width, vec_t maxmove);
+extern auto snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *point, vec_t width, vec_t maxmove) -> vec_t;
 extern void SnapToPlane(const dplane_t *const plane, vec_t *const point, vec_t offset);
-extern vec_t CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale);
-extern vec_t CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale);
+extern auto CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
+extern auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
 extern void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const patch_t *patch, vec3_t &origin);
 
 // studio.cpp
 extern void LoadStudioModels();
 extern void FreeStudioModels();
-extern bool TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2);
+extern auto TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2) -> bool;

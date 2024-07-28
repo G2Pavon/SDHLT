@@ -15,7 +15,7 @@
 //      Returns NULL if the faces couldn't be merged, or the new face.
 //      The originals will NOT be freed.
 // =====================================================================================
-static face_t *TryMerge(face_t *f1, face_t *f2)
+static auto TryMerge(face_t *f1, face_t *f2) -> face_t *
 {
     vec_t *p1;
     vec_t *p2;
@@ -176,7 +176,7 @@ static face_t *TryMerge(face_t *f1, face_t *f2)
 // =====================================================================================
 //  MergeFaceToList
 // =====================================================================================
-static face_t *MergeFaceToList(face_t *face, face_t *list)
+static auto MergeFaceToList(face_t *face, face_t *list) -> face_t *
 {
     face_t *newf;
     face_t *f;
@@ -202,7 +202,7 @@ static face_t *MergeFaceToList(face_t *face, face_t *list)
 // =====================================================================================
 //  FreeMergeListScraps
 // =====================================================================================
-static face_t *FreeMergeListScraps(face_t *merged)
+static auto FreeMergeListScraps(face_t *merged) -> face_t *
 {
     face_t *head;
     face_t *next;

@@ -48,7 +48,7 @@ void TraceMesh ::SetupTrace(const vec3_t start, const vec3_t mins, const vec3_t 
 	}
 }
 
-bool TraceMesh ::ClipRayToBox(const vec3_t mins, const vec3_t maxs)
+auto TraceMesh ::ClipRayToBox(const vec3_t mins, const vec3_t maxs) -> bool
 {
 	vec3_t ray_inv, t0, t1;
 	vec3_t n, f;
@@ -75,7 +75,7 @@ bool TraceMesh ::ClipRayToBox(const vec3_t mins, const vec3_t maxs)
 	return (t >= 0.0f) && (t >= d);
 }
 
-bool TraceMesh ::ClipRayToTriangle(const mfacet_t *facet)
+auto TraceMesh ::ClipRayToTriangle(const mfacet_t *facet) -> bool
 {
 	float uu, uv, vv, wu, wv, s, t;
 	float d1, d2, d, frac;
@@ -128,7 +128,7 @@ bool TraceMesh ::ClipRayToTriangle(const mfacet_t *facet)
 	return true;
 }
 
-bool TraceMesh ::ClipRayToFace(const mfacet_t *facet)
+auto TraceMesh ::ClipRayToFace(const mfacet_t *facet) -> bool
 {
 	vec3_t tvec, pvec, qvec;
 
@@ -210,7 +210,7 @@ bool TraceMesh ::ClipRayToFace(const mfacet_t *facet)
 	return true;
 }
 
-bool TraceMesh ::ClipRayToFacet(const mfacet_t *facet)
+auto TraceMesh ::ClipRayToFacet(const mfacet_t *facet) -> bool
 {
 	mplane_t *p, *clipplane;
 	float enterfrac, leavefrac, distfrac;
@@ -385,7 +385,7 @@ void TraceMesh ::ClipToLinks(areanode_t *node)
 		ClipToLinks(node->children[1]);
 }
 
-bool TraceMesh ::DoTrace()
+auto TraceMesh ::DoTrace() -> bool
 {
 	if (!mesh || !BoundsIntersect(mesh->mins, mesh->maxs, m_vecAbsMins, m_vecAbsMaxs))
 		return false; // invalid mesh or no intersection

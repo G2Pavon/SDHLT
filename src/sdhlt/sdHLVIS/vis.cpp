@@ -88,7 +88,7 @@ static void PlaneFromWinding(winding_t *w, plane_t *plane)
 // =====================================================================================
 //  NewWinding
 // =====================================================================================
-static winding_t *NewWinding(const int points)
+static auto NewWinding(const int points) -> winding_t *
 {
     winding_t *w;
     int size;
@@ -109,7 +109,7 @@ static winding_t *NewWinding(const int points)
 //      Returns the next portal for a thread to work on
 //      Returns the portals from the least complex, so the later ones can reuse the earlier information.
 // =====================================================================================
-static portal_t *GetNextPortal()
+static auto GetNextPortal() -> portal_t *
 {
     int j;
     portal_t *p;
@@ -599,7 +599,7 @@ static void LoadPortalsByFilename(const char *const filename)
     free(file_image);
 }
 
-int VisLeafnumForPoint(const vec3_t point)
+auto VisLeafnumForPoint(const vec3_t point) -> int
 {
     int nodenum;
     vec_t dist;
@@ -672,7 +672,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 // =====================================================================================
 //  main
 // =====================================================================================
-int main(const int argc, char **argv)
+auto main(const int argc, char **argv) -> int
 {
     char portalfile[_MAX_PATH];
     char source[_MAX_PATH];

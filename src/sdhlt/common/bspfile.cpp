@@ -85,7 +85,7 @@ entity_t g_entities[MAX_MAP_ENTITIES];
  * ===============
  */
 
-static int FastChecksum(const void *const buffer, int bytes)
+static auto FastChecksum(const void *const buffer, int bytes) -> int
 {
 	int checksum = 0;
 	char *buf = (char *)buffer;
@@ -104,7 +104,7 @@ static int FastChecksum(const void *const buffer, int bytes)
  * CompressVis
  * ===============
  */
-int CompressVis(const byte *const src, const unsigned int src_length, byte *dest, unsigned int dest_length)
+auto CompressVis(const byte *const src, const unsigned int src_length, byte *dest, unsigned int dest_length) -> int
 {
 	unsigned int j;
 	byte *dest_p = dest;
@@ -383,7 +383,7 @@ static void SwapBSPFile(const bool todisk)
 //  CopyLump
 //      balh
 // =====================================================================================
-static int CopyLump(int lump, void *dest, int size, const dheader_t *const header)
+static auto CopyLump(int lump, void *dest, int size, const dheader_t *const header) -> int
 {
 	int length, ofs;
 
@@ -585,7 +585,7 @@ static void CorrectFPUPrecision()
 }
 #endif
 
-float CalculatePointVecsProduct(const volatile float *point, const volatile float *vecs)
+auto CalculatePointVecsProduct(const volatile float *point, const volatile float *vecs) -> float
 {
 	volatile double val;
 	volatile double tmp;
@@ -600,7 +600,7 @@ float CalculatePointVecsProduct(const volatile float *point, const volatile floa
 	return (float)val;
 }
 
-bool CalcFaceExtents_test()
+auto CalcFaceExtents_test() -> bool
 {
 	const int numtestcases = 6;
 	volatile float testcases[numtestcases][8] = {
@@ -850,7 +850,7 @@ void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 		}
 	}
 }
-int CountBlocks()
+auto CountBlocks() -> int
 {
 #if !defined(PLATFORM_CAN_CALC_EXTENT) && !defined(SDHLRAD)
 	return -1; // otherwise GetFaceExtents will error
@@ -912,7 +912,7 @@ int CountBlocks()
 	}
 	return count;
 }
-bool NoWadTextures()
+auto NoWadTextures() -> bool
 {
 	// copied from loadtextures.cpp
 	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
@@ -933,7 +933,7 @@ bool NoWadTextures()
 	}
 	return true;
 }
-char *FindWadValue()
+auto FindWadValue() -> char *
 // return NULL for syntax error
 // this function needs to be as stable as possible because it might be called from ripent
 {
@@ -1005,7 +1005,7 @@ char *FindWadValue()
 //  ArrayUsage
 //      blah
 // =====================================================================================
-static int ArrayUsage(const char *const szItem, const int items, const int maxitems, const int itemsize)
+static auto ArrayUsage(const char *const szItem, const int items, const int maxitems, const int itemsize) -> int
 {
 	float percentage = maxitems ? items * 100.0 / maxitems : 0.0;
 
@@ -1018,7 +1018,7 @@ static int ArrayUsage(const char *const szItem, const int items, const int maxit
 //  GlobUsage
 //      pritn out global ussage line in chart
 // =====================================================================================
-static int GlobUsage(const char *const szItem, const int itemstorage, const int maxstorage)
+static auto GlobUsage(const char *const szItem, const int itemstorage, const int maxstorage) -> int
 {
 	float percentage = maxstorage ? itemstorage * 100.0 / maxstorage : 0.0;
 
@@ -1111,7 +1111,7 @@ void PrintBSPFileSizes()
 //  ParseImplicitTexinfoFromTexture
 //      purpose: get the actual texinfo for a face. the tools shouldn't directly use f->texinfo after embedlightmap is done
 // =====================================================================================
-int ParseImplicitTexinfoFromTexture(int miptex)
+auto ParseImplicitTexinfoFromTexture(int miptex) -> int
 {
 	int texinfo;
 	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
@@ -1151,7 +1151,7 @@ int ParseImplicitTexinfoFromTexture(int miptex)
 	return texinfo;
 }
 
-int ParseTexinfoForFace(const dface_t *f)
+auto ParseTexinfoForFace(const dface_t *f) -> int
 {
 	int texinfo;
 	int miptex;
@@ -1305,7 +1305,7 @@ void DeleteEmbeddedLightmaps()
 //  ParseEpair
 //      entity key/value pairs
 // =====================================================================================
-epair_t *ParseEpair()
+auto ParseEpair() -> epair_t *
 {
 	epair_t *e;
 
@@ -1331,7 +1331,7 @@ epair_t *ParseEpair()
  * ================
  */
 
-bool ParseEntity()
+auto ParseEntity() -> bool
 {
 	epair_t *e;
 	entity_t *mapent;
@@ -1419,7 +1419,7 @@ void ParseEntities()
 //  UnparseEntities
 //      Generates the dentdata string from all the entities
 // =====================================================================================
-int anglesforvector(float angles[3], const float vector[3])
+auto anglesforvector(float angles[3], const float vector[3]) -> int
 {
 	float z = vector[2], r = sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
 	float tmp;
@@ -1682,7 +1682,7 @@ void SetKeyValue(entity_t *ent, const char *const key, const char *const value)
 //  ValueForKey
 //      returns the value for a passed entity and key
 // =====================================================================================
-const char *ValueForKey(const entity_t *const ent, const char *const key)
+auto ValueForKey(const entity_t *const ent, const char *const key) -> const char *
 {
 	epair_t *ep;
 
@@ -1699,7 +1699,7 @@ const char *ValueForKey(const entity_t *const ent, const char *const key)
 // =====================================================================================
 //  IntForKey
 // =====================================================================================
-int IntForKey(const entity_t *const ent, const char *const key)
+auto IntForKey(const entity_t *const ent, const char *const key) -> int
 {
 	return atoi(ValueForKey(ent, key));
 }
@@ -1707,7 +1707,7 @@ int IntForKey(const entity_t *const ent, const char *const key)
 // =====================================================================================
 //  FloatForKey
 // =====================================================================================
-vec_t FloatForKey(const entity_t *const ent, const char *const key)
+auto FloatForKey(const entity_t *const ent, const char *const key) -> vec_t
 {
 	return atof(ValueForKey(ent, key));
 }
@@ -1734,7 +1734,7 @@ void GetVectorForKey(const entity_t *const ent, const char *const key, vec3_t ve
 //  FindTargetEntity
 //
 // =====================================================================================
-entity_t *FindTargetEntity(const char *const target)
+auto FindTargetEntity(const char *const target) -> entity_t *
 {
 	int i;
 	const char *n;
@@ -1773,7 +1773,7 @@ void CDECL dtexdata_free()
 //      (i.e. map was compiled with missing textures)
 // =====================================================================================
 static char emptystring[1] = {'\0'};
-char *GetTextureByNumber(int texturenumber)
+auto GetTextureByNumber(int texturenumber) -> char *
 {
 	if (texturenumber == -1)
 		return emptystring;
@@ -1792,7 +1792,7 @@ char *GetTextureByNumber(int texturenumber)
 //  EntityForModel
 //      returns entity addy for given modelnum
 // =====================================================================================
-entity_t *EntityForModel(const int modnum)
+auto EntityForModel(const int modnum) -> entity_t *
 {
 	int i;
 	const char *s;

@@ -16,7 +16,7 @@ public:
         accum += stop - starttime;
     }
 
-    double getTotal() const
+    auto getTotal() const -> double
     {
         return accum;
     }

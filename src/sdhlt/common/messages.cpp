@@ -106,7 +106,7 @@ static const MessageTable_t assumes[assume_last] = {
     {"Couldn't open extent file", "<mapname>.ext doesn't exist. This file is required by the " PLATFORM_VERSIONSTRING " version of hlrad.", "Make sure hlbsp has run correctly. Alternatively, run 'ripent.exe -writeextentfile <mapname>' to create the extent file."},
 };
 
-const MessageTable_t *GetAssume(assume_msgs id)
+auto GetAssume(assume_msgs id) -> const MessageTable_t *
 {
     if (!(id > assume_first && id < assume_last)) //(!(id > assume_first) && (id < assume_last)) --vluzacn
     {

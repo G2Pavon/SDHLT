@@ -56,12 +56,12 @@ public:
 	virtual ~ReferencePtr();
 
 	// Assignment
-	ReferencePtr<DATA_T> &operator=(const ReferencePtr<DATA_T> &other);
-	ReferencePtr<DATA_T> &operator=(DATA_T *other);
+	auto operator=(const ReferencePtr<DATA_T> &other) -> ReferencePtr<DATA_T> &;
+	auto operator=(DATA_T *other) -> ReferencePtr<DATA_T> &;
 
 	// Dereferencing
 	operator DATA_T *() const { return m_pData->pData; }
-	DATA_T *operator->() const { return m_pData->pData; }
+	auto operator->() const -> DATA_T * { return m_pData->pData; }
 
 protected:
 	// Internal methods
@@ -101,7 +101,7 @@ ReferencePtr<DATA_T>::~ReferencePtr()
 }
 
 template <class DATA_T>
-ReferencePtr<DATA_T> &ReferencePtr<DATA_T>::operator=(const ReferencePtr<DATA_T> &other)
+auto ReferencePtr<DATA_T>::operator=(const ReferencePtr<DATA_T> &other) -> ReferencePtr<DATA_T> &
 {
 	if (m_pData != other.m_pData)
 	{
@@ -113,7 +113,7 @@ ReferencePtr<DATA_T> &ReferencePtr<DATA_T>::operator=(const ReferencePtr<DATA_T>
 }
 
 template <class DATA_T>
-ReferencePtr<DATA_T> &ReferencePtr<DATA_T>::operator=(DATA_T *other)
+auto ReferencePtr<DATA_T>::operator=(DATA_T *other) -> ReferencePtr<DATA_T> &
 {
 	if (m_pData->ReferenceCount.dec() <= 0)
 	{

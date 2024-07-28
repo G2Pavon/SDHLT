@@ -72,7 +72,7 @@ struct facetriangulation_t
 
 facetriangulation_t *g_facetriangulations[MAX_MAP_FACES];
 
-static bool CalcAdaptedSpot(const localtriangulation_t *lt, const vec3_t position, int surface, vec3_t spot)
+static auto CalcAdaptedSpot(const localtriangulation_t *lt, const vec3_t position, int surface, vec3_t spot) -> bool
 // If the surface formed by the face and its neighbor faces is not flat, the surface should be unfolded onto the face plane
 // CalcAdaptedSpot calculates the coordinate of the unfolded spot on the face plane from the original position on the surface
 // CalcAdaptedSpot(center) = {0,0,0}
@@ -131,7 +131,7 @@ static bool CalcAdaptedSpot(const localtriangulation_t *lt, const vec3_t positio
 	return true;
 }
 
-static vec_t GetAngle(const vec3_t leftdirection, const vec3_t rightdirection, const vec3_t normal)
+static auto GetAngle(const vec3_t leftdirection, const vec3_t rightdirection, const vec3_t normal) -> vec_t
 {
 	vec_t angle;
 	vec3_t v;
@@ -142,7 +142,7 @@ static vec_t GetAngle(const vec3_t leftdirection, const vec3_t rightdirection, c
 	return angle;
 }
 
-static vec_t GetAngleDiff(vec_t angle, vec_t base)
+static auto GetAngleDiff(vec_t angle, vec_t base) -> vec_t
 {
 	vec_t diff;
 
@@ -154,7 +154,7 @@ static vec_t GetAngleDiff(vec_t angle, vec_t base)
 	return diff;
 }
 
-static vec_t GetFrac(const vec3_t leftspot, const vec3_t rightspot, const vec3_t direction, const vec3_t normal)
+static auto GetFrac(const vec3_t leftspot, const vec3_t rightspot, const vec3_t direction, const vec3_t normal) -> vec_t
 {
 	vec3_t v;
 	vec_t dot1;
@@ -183,7 +183,7 @@ static vec_t GetFrac(const vec3_t leftspot, const vec3_t rightspot, const vec3_t
 	return frac;
 }
 
-static vec_t GetDirection(const vec3_t spot, const vec3_t normal, vec3_t direction_out)
+static auto GetDirection(const vec3_t spot, const vec3_t normal, vec3_t direction_out) -> vec_t
 {
 	vec_t dot;
 
@@ -192,7 +192,7 @@ static vec_t GetDirection(const vec3_t spot, const vec3_t normal, vec3_t directi
 	return VectorNormalize(direction_out);
 }
 
-static bool CalcWeight(const localtriangulation_t *lt, const vec3_t spot, vec_t *weight_out)
+static auto CalcWeight(const localtriangulation_t *lt, const vec3_t spot, vec_t *weight_out) -> bool
 // It returns true when the point is inside the hull region (with boundary), even if weight = 0.
 {
 	vec3_t direction;
@@ -933,7 +933,7 @@ void InterpolateSampleLight(const vec3_t position, int surface, int numstyles, c
 	}
 }
 
-static bool TestLineSegmentIntersectWall(const facetriangulation_t *facetrian, const vec3_t p1, const vec3_t p2)
+static auto TestLineSegmentIntersectWall(const facetriangulation_t *facetrian, const vec3_t p1, const vec3_t p2) -> bool
 {
 	int i;
 	const facetriangulation_t::Wall *wall;
@@ -981,7 +981,7 @@ static bool TestLineSegmentIntersectWall(const facetriangulation_t *facetrian, c
 	return false;
 }
 
-static bool TestFarPatch(const localtriangulation_t *lt, const vec3_t p2, const Winding &p2winding)
+static auto TestFarPatch(const localtriangulation_t *lt, const vec3_t p2, const Winding &p2winding) -> bool
 {
 	int i;
 	vec3_t v;
@@ -1320,7 +1320,7 @@ static void PlaceHullPoints(localtriangulation_t *lt)
 	}
 }
 
-static bool TryMakeSquare(localtriangulation_t *lt, int i)
+static auto TryMakeSquare(localtriangulation_t *lt, int i) -> bool
 {
 	localtriangulation_t::Wedge *w1;
 	localtriangulation_t::Wedge *w2;
@@ -1400,7 +1400,7 @@ static void FindSquares(localtriangulation_t *lt)
 	}
 }
 
-static localtriangulation_t *CreateLocalTriangulation(const facetriangulation_t *facetrian, int patchnum)
+static auto CreateLocalTriangulation(const facetriangulation_t *facetrian, int patchnum) -> localtriangulation_t *
 {
 	localtriangulation_t *lt;
 	int i;

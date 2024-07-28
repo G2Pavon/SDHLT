@@ -47,7 +47,7 @@ void Q_strnlwr(const char *in, char *out, size_t size_out)
 	*out = '\0';
 }
 
-bool Q_isdigit(const char *str)
+auto Q_isdigit(const char *str) -> bool
 {
 	if (str && *str)
 	{
@@ -59,7 +59,7 @@ bool Q_isdigit(const char *str)
 	return false;
 }
 
-int Q_strlen(const char *string)
+auto Q_strlen(const char *string) -> int
 {
 	if (!string)
 		return 0;
@@ -74,7 +74,7 @@ int Q_strlen(const char *string)
 	return len;
 }
 
-char Q_toupper(const char in)
+auto Q_toupper(const char in) -> char
 {
 	char out;
 
@@ -86,7 +86,7 @@ char Q_toupper(const char in)
 	return out;
 }
 
-char Q_tolower(const char in)
+auto Q_tolower(const char in) -> char
 {
 	char out;
 
@@ -98,7 +98,7 @@ char Q_tolower(const char in)
 	return out;
 }
 
-size_t Q_strncat(char *dst, const char *src, size_t size)
+auto Q_strncat(char *dst, const char *src, size_t size) -> size_t
 {
 	if (!dst || !src || !size)
 		return 0;
@@ -131,7 +131,7 @@ size_t Q_strncat(char *dst, const char *src, size_t size)
 	return (dlen + (s - src)); // count does not include NULL
 }
 
-size_t Q_strncpy(char *dst, const char *src, size_t size)
+auto Q_strncpy(char *dst, const char *src, size_t size) -> size_t
 {
 	if (!dst || !src || !size)
 		return 0;
@@ -161,7 +161,7 @@ size_t Q_strncpy(char *dst, const char *src, size_t size)
 	return (s - src - 1); // count does not include NULL
 }
 
-char *copystring(const char *s)
+auto copystring(const char *s) -> char *
 {
 	if (!s)
 		return nullptr;
@@ -172,7 +172,7 @@ char *copystring(const char *s)
 	return b;
 }
 
-char *Q_strchr(const char *s, char c)
+auto Q_strchr(const char *s, char c) -> char *
 {
 	int len = Q_strlen(s);
 
@@ -184,7 +184,7 @@ char *Q_strchr(const char *s, char c)
 	return nullptr;
 }
 
-char *Q_strrchr(const char *s, char c)
+auto Q_strrchr(const char *s, char c) -> char *
 {
 	int len = Q_strlen(s);
 
@@ -198,7 +198,7 @@ char *Q_strrchr(const char *s, char c)
 	return nullptr;
 }
 
-int Q_strnicmp(const char *s1, const char *s2, int n)
+auto Q_strnicmp(const char *s1, const char *s2, int n) -> int
 {
 	int c1, c2;
 
@@ -235,7 +235,7 @@ int Q_strnicmp(const char *s1, const char *s2, int n)
 	return 0;
 }
 
-int Q_strncmp(const char *s1, const char *s2, int n)
+auto Q_strncmp(const char *s1, const char *s2, int n) -> int
 {
 	int c1, c2;
 
@@ -266,7 +266,7 @@ int Q_strncmp(const char *s1, const char *s2, int n)
 	return 0;
 }
 
-char *Q_strstr(const char *string, const char *string2)
+auto Q_strstr(const char *string, const char *string2) -> char *
 {
 	int c, len;
 
@@ -293,7 +293,7 @@ char *Q_strstr(const char *string, const char *string2)
 	return (char *)string;
 }
 
-char *Q_stristr(const char *string, const char *string2)
+auto Q_stristr(const char *string, const char *string2) -> char *
 {
 	int c, len;
 
@@ -320,7 +320,7 @@ char *Q_stristr(const char *string, const char *string2)
 	return (char *)string;
 }
 
-int Q_vsnprintf(char *buffer, size_t buffersize, const char *format, va_list args)
+auto Q_vsnprintf(char *buffer, size_t buffersize, const char *format, va_list args) -> int
 {
 	size_t result;
 
@@ -334,7 +334,7 @@ int Q_vsnprintf(char *buffer, size_t buffersize, const char *format, va_list arg
 	return result;
 }
 
-int Q_snprintf(char *buffer, size_t buffersize, const char *format, ...)
+auto Q_snprintf(char *buffer, size_t buffersize, const char *format, ...) -> int
 {
 	va_list args;
 	int result;
@@ -346,7 +346,7 @@ int Q_snprintf(char *buffer, size_t buffersize, const char *format, ...)
 	return result;
 }
 
-int Q_sprintf(char *buffer, const char *format, ...)
+auto Q_sprintf(char *buffer, const char *format, ...) -> int
 {
 	va_list args;
 	int result;
@@ -377,7 +377,7 @@ so I don't need to have varargs versions
 of all text functions.
 ============
 */
-char *va(const char *format, ...)
+auto va(const char *format, ...) -> char *
 {
 	va_list argptr;
 	static char string[64][1024], *s;
@@ -392,7 +392,7 @@ char *va(const char *format, ...)
 	return s;
 }
 
-char *Q_pretifymem(float value, int digitsafterdecimal)
+auto Q_pretifymem(float value, int digitsafterdecimal) -> char *
 {
 	static char output[8][32];
 	static int current;
@@ -491,7 +491,7 @@ COM_IsSingleChar
 interpert this character as single
 ==============
 */
-static int COM_IsSingleChar(char c)
+static auto COM_IsSingleChar(char c) -> int
 {
 	if (c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ',')
 		return true;
@@ -505,7 +505,7 @@ COM_ParseFile
 text parser
 ==============
 */
-char *COM_ParseFile(char *data, char *token)
+auto COM_ParseFile(char *data, char *token) -> char *
 {
 	int c, len;
 

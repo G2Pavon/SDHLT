@@ -52,10 +52,10 @@ public:
 	virtual ~ReferenceObject();
 
 public:
-	HEADER_T &getHeader();
-	DATA_T *getData();
+	auto getHeader() -> HEADER_T &;
+	auto getData() -> DATA_T *;
 
-	ReferenceObject<HEADER_T, DATA_T> &operator=(const ReferenceObject<HEADER_T, DATA_T> &other);
+	auto operator=(const ReferenceObject<HEADER_T, DATA_T> &other) -> ReferenceObject<HEADER_T, DATA_T> &;
 
 protected:
 	void AllocBlock(unsigned int size); // Allocate Header+Data Block (size in T units)
@@ -100,7 +100,7 @@ ReferenceObject<HEADER_T, DATA_T>::~ReferenceObject()
 }
 
 template <class HEADER_T, class DATA_T>
-ReferenceObject<HEADER_T, DATA_T> &ReferenceObject<HEADER_T, DATA_T>::operator=(const ReferenceObject<HEADER_T, DATA_T> &other)
+auto ReferenceObject<HEADER_T, DATA_T>::operator=(const ReferenceObject<HEADER_T, DATA_T> &other) -> ReferenceObject<HEADER_T, DATA_T> &
 {
 	if (m_pData != other.m_pData)
 	{
@@ -211,14 +211,14 @@ void ReferenceObject<HEADER_T, DATA_T>::CopyForWrite(unsigned int size)
 }
 
 template <class HEADER_T, class DATA_T>
-HEADER_T &ReferenceObject<HEADER_T, DATA_T>::getHeader()
+auto ReferenceObject<HEADER_T, DATA_T>::getHeader() -> HEADER_T &
 {
 	CopyForWrite();
 	return m_pData->Header;
 }
 
 template <class HEADER_T, class DATA_T>
-DATA_T *ReferenceObject<HEADER_T, DATA_T>::getData()
+auto ReferenceObject<HEADER_T, DATA_T>::getData() -> DATA_T *
 {
 	CopyForWrite();
 	return m_pData->pData;

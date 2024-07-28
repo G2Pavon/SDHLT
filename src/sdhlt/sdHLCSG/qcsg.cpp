@@ -17,7 +17,7 @@ bool g_estimate = DEFAULT_ESTIMATE;     // progress estimates "-estimate"
 cliptype g_cliptype = DEFAULT_CLIPTYPE; // "-cliptype <value>"
 bool g_bClipNazi = DEFAULT_CLIPNAZI;    // "-noclipeconomy"
 
-bface_t *NewFaceFromFace(const bface_t *const in) // Duplicates the non point information of a face, used by SplitFace
+auto NewFaceFromFace(const bface_t *const in) -> bface_t * // Duplicates the non point information of a face, used by SplitFace
 {
     bface_t *newFace;
 
@@ -215,7 +215,7 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
     }
 }
 
-bface_t *CopyFace(const bface_t *const face)
+auto CopyFace(const bface_t *const face) -> bface_t *
 {
     bface_t *newFace;
 
@@ -237,7 +237,7 @@ void FreeFaceList(bface_t *f)
     }
 }
 
-static bface_t *CopyFacesToOutside(brushhull_t *bh) // Make a copy of all the faces of the brush, so they can be chewed up by other brushes.
+static auto CopyFacesToOutside(brushhull_t *bh) -> bface_t * // Make a copy of all the faces of the brush, so they can be chewed up by other brushes.
 {                                                   // All of the faces start on the outside list. As other brushes take bites out of the faces, the fragments are moved to the  inside list, so they can be freed when they are determined to be completely enclosed in solid.
     bface_t *f;
     bface_t *newf;
@@ -255,7 +255,7 @@ static bface_t *CopyFacesToOutside(brushhull_t *bh) // Make a copy of all the fa
     return outside;
 }
 
-extern const char *ContentsToString(const contents_t type);
+extern auto ContentsToString(const contents_t type) -> const char *;
 
 static void CSGBrush(int brushnum)
 {
@@ -1129,7 +1129,7 @@ void ConvertGameTextMessages()
 }
 #endif
 
-int main(const int argc, char **argv)
+auto main(const int argc, char **argv) -> int
 {
     int i;
     char name[_MAX_PATH];                // mapanme

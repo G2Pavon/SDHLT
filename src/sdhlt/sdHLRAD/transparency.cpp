@@ -28,7 +28,7 @@ const vec3_t vec3_one = {1.0, 1.0, 1.0};
 //===============================================
 // AddTransparencyToRawArray
 //===============================================
-static unsigned AddTransparencyToDataList(const vec3_t trans)
+static auto AddTransparencyToDataList(const vec3_t trans) -> unsigned
 {
 	// Check if this value is in list already
 	for (unsigned int i = 0; i < s_trans_count; i++)
@@ -107,7 +107,7 @@ void AddTransparencyToRawArray(const unsigned p1, const unsigned p2, const vec3_
 //===============================================
 // SortList
 //===============================================
-static int CDECL SortList(const void *a, const void *b)
+static auto CDECL SortList(const void *a, const void *b) -> int
 {
 	const transList_t *item1 = (transList_t *)a;
 	const transList_t *item2 = (transList_t *)b;
@@ -310,7 +310,7 @@ void AddStyleToStyleArray(const unsigned p1, const unsigned p2, const int style)
 	// unlock list
 	ThreadUnlock();
 }
-static int CDECL SortStyleList(const void *a, const void *b)
+static auto CDECL SortStyleList(const void *a, const void *b) -> int
 {
 	const styleList_t *item1 = (styleList_t *)a;
 	const styleList_t *item2 = (styleList_t *)b;

@@ -564,7 +564,7 @@ int InitConsole(int argc, char **argv)
     return 0;
 }
 #else
-int InitConsole(int argc, char **argv)
+auto InitConsole(int argc, char **argv) -> int
 {
     twice = false;
     useconsole = false;
@@ -593,7 +593,7 @@ void CDECL FORMAT_PRINTF(1, 2) PrintConsole(const char *const warning, ...)
     }
 }
 
-int loadlangfileline(char *line, int n, FILE *f)
+auto loadlangfileline(char *line, int n, FILE *f) -> int
 {
     int i = 0, c = 0;
     bool special = false;
@@ -666,7 +666,7 @@ int loadlangfileline(char *line, int n, FILE *f)
         return 1;
     return 0;
 }
-const char *Localize(const char *s)
+auto Localize(const char *s) -> const char *
 {
     int i;
     for (i = 0; i < g_lang_count; i++)

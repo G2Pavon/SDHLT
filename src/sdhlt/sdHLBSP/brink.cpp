@@ -72,7 +72,7 @@ typedef struct
 	struct btreeedge_s *edge; // only for use in deciding brink type
 } bbrink_t;
 
-bbrink_t *CopyBrink(bbrink_t *other)
+auto CopyBrink(bbrink_t *other) -> bbrink_t *
 {
 	bbrink_t *b;
 	hlassume(b = (bbrink_t *)malloc(sizeof(bbrink_t)), assume_NoMemory);
@@ -90,7 +90,7 @@ void DeleteBrink(bbrink_t *b)
 	free(b);
 }
 
-bbrink_t *CreateBrink(vec3_t start, vec3_t stop)
+auto CreateBrink(vec3_t start, vec3_t stop) -> bbrink_t *
 {
 	bbrink_t *b;
 	hlassume(b = (bbrink_t *)malloc(sizeof(bbrink_t)), assume_NoMemory);
@@ -292,7 +292,7 @@ typedef struct btreeleaf_s
 	bclipnode_t *clipnode; // not defined for infinite leaf
 } btreeleaf_t;
 
-btreepoint_t *AllocTreepoint(int &numobjects, bool infinite)
+auto AllocTreepoint(int &numobjects, bool infinite) -> btreepoint_t *
 {
 	numobjects++;
 	auto *tp = (btreepoint_t *)malloc(sizeof(btreepoint_t));
@@ -302,7 +302,7 @@ btreepoint_t *AllocTreepoint(int &numobjects, bool infinite)
 	return tp;
 }
 
-btreeedge_t *AllocTreeedge(int &numobjects, bool infinite)
+auto AllocTreeedge(int &numobjects, bool infinite) -> btreeedge_t *
 {
 	numobjects++;
 	auto *te = (btreeedge_t *)malloc(sizeof(btreeedge_t));
@@ -343,7 +343,7 @@ void SetEdgePoints(btreeedge_t *te, btreepoint_t *tp0, btreepoint_t *tp1)
 	AttachPointToEdge(te, tp1, true);
 }
 
-btreeface_t *AllocTreeface(int &numobjects, bool infinite)
+auto AllocTreeface(int &numobjects, bool infinite) -> btreeface_t *
 {
 	numobjects++;
 	auto *tf = (btreeface_t *)malloc(sizeof(btreeface_t));
@@ -401,7 +401,7 @@ void SetFaceLeafs(btreeface_t *tf, btreeleaf_t *tl0, btreeleaf_t *tl1)
 	AttachFaceToLeaf(tl1, tf, true);
 }
 
-btreeleaf_t *AllocTreeleaf(int &numobjects, bool infinite)
+auto AllocTreeleaf(int &numobjects, bool infinite) -> btreeleaf_t *
 {
 	numobjects++;
 	auto *tl = (btreeleaf_t *)malloc(sizeof(btreeleaf_t));
@@ -411,7 +411,7 @@ btreeleaf_t *AllocTreeleaf(int &numobjects, bool infinite)
 	return tl;
 }
 
-btreeleaf_t *BuildOutside(int &numobjects)
+auto BuildOutside(int &numobjects) -> btreeleaf_t *
 {
 	btreeleaf_t *leaf_outside;
 	leaf_outside = AllocTreeleaf(numobjects, true);
@@ -419,7 +419,7 @@ btreeleaf_t *BuildOutside(int &numobjects)
 	return leaf_outside;
 }
 
-btreeleaf_t *BuildBaseCell(int &numobjects, bclipnode_t *clipnode, vec_t range, btreeleaf_t *leaf_outside)
+auto BuildBaseCell(int &numobjects, bclipnode_t *clipnode, vec_t range, btreeleaf_t *leaf_outside) -> btreeleaf_t *
 {
 	btreepoint_t *tp[8];
 	for (int i = 0; i < 8; i++)
@@ -494,7 +494,7 @@ btreeleaf_t *BuildBaseCell(int &numobjects, bclipnode_t *clipnode, vec_t range, 
 	return tl;
 }
 
-btreepoint_t *GetPointFromEdge(btreeedge_t *te, bool side)
+auto GetPointFromEdge(btreeedge_t *te, bool side) -> btreepoint_t *
 {
 	if (!te->points[side].p)
 	{
@@ -590,7 +590,7 @@ void DeleteEdge(int &numobjects, btreeedge_t *te) // warning: points in this edg
 	numobjects--;
 }
 
-btreeleaf_t *GetLeafFromFace(btreeface_t *tf, bool side)
+auto GetLeafFromFace(btreeface_t *tf, bool side) -> btreeleaf_t *
 {
 	if (!tf->leafs[side].l)
 	{
@@ -1111,7 +1111,7 @@ typedef struct bbrinkinfo_s
 
 #define MAXCLIPNODES (MAX_MAP_CLIPNODES * 8)
 
-bclipnode_t *ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const dclipnode_t *clipnodes, int headnode)
+auto ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const dclipnode_t *clipnodes, int headnode) -> bclipnode_t *
 {
 	if (numbclipnodes >= MAXCLIPNODES)
 	{
@@ -1302,7 +1302,7 @@ typedef struct
 	bsurface_t surfaces[2][MAXBRINKWEDGES]; // the surface between two adjacent wedges
 } bcircle_t;
 
-bool CalculateCircle(bbrink_t *b, bcircle_t *c)
+auto CalculateCircle(bbrink_t *b, bcircle_t *c) -> bool
 {
 	VectorCopy(b->direction, c->axis);
 	if (!VectorNormalize(c->axis))
@@ -1423,7 +1423,7 @@ void PrintCircle(const bcircle_t *c)
 	}
 }
 
-bool AddPartition(bclipnode_t *clipnode, int planenum, bool planeside, int content, bbrinklevel_e brinktype)
+auto AddPartition(bclipnode_t *clipnode, int planenum, bool planeside, int content, bbrinklevel_e brinktype) -> bool
 {
 	// make sure we won't do any harm
 	btreeface_l::iterator fi;
@@ -1747,7 +1747,7 @@ void SortPartitions(bbrinkinfo_t *info) // to merge same partition planes and co
 	}
 }
 
-void *CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode)
+auto CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode) -> void *
 {
 	bbrinkinfo_t *info;
 	try
@@ -1775,7 +1775,7 @@ inline clipnodemap_t::key_type MakeKey(const dclipnode_t &c)
 	return std::make_pair(c.planenum, std::make_pair(c.children[0], c.children[1]));
 }
 
-bool FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap)
+auto FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap) -> bool
 {
 	while (p && p->type > level)
 	{
@@ -1824,7 +1824,7 @@ bool FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklev
 	return true;
 }
 
-bool FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap)
+auto FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap) -> bool
 {
 	if (clipnode->isleaf)
 	{
@@ -1873,7 +1873,7 @@ bool FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode
 	}
 }
 
-bool FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out)
+auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out) -> bool
 {
 	const auto *info = (const bbrinkinfo_t *)brinkinfo;
 	dclipnode_t *begin = clipnodes_out;

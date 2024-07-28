@@ -180,14 +180,14 @@ extern void LoadMapFile(const char *const filename);
 
 extern void WriteMiptex();
 extern void LogWadUsage(wadpath_t *currentwad, int nummiptex);
-extern int TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin);
-extern const char *GetTextureByNumber_CSG(int texturenumber);
+extern auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int;
+extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 
 //=============================================================================
 // brush.c
 
-extern brush_t *Brush_LoadEntity(entity_t *ent, int hullnum);
-extern contents_t CheckBrushContents(const brush_t *const b);
+extern auto Brush_LoadEntity(entity_t *ent, int hullnum) -> brush_t *;
+extern auto CheckBrushContents(const brush_t *const b) -> contents_t;
 
 extern void CreateBrush(int brushnum);
 extern void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthulls);
@@ -216,8 +216,8 @@ extern cliptype g_cliptype;
 extern plane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_nummapplanes;
 
-extern bface_t *NewFaceFromFace(const bface_t *const in);
-extern bface_t *CopyFace(const bface_t *const f);
+extern auto NewFaceFromFace(const bface_t *const in) -> bface_t *;
+extern auto CopyFace(const bface_t *const f) -> bface_t *;
 
 extern void FreeFace(bface_t *f);
 extern void FreeFaceList(bface_t *f);

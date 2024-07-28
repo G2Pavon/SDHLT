@@ -21,7 +21,7 @@ static int c_keep_faces;
 // =====================================================================================
 //  PointInLeaf
 // =====================================================================================
-static node_t *PointInLeaf(node_t *node, const vec3_t point)
+static auto PointInLeaf(node_t *node, const vec3_t point) -> node_t *
 {
     vec_t d;
 
@@ -42,7 +42,7 @@ static node_t *PointInLeaf(node_t *node, const vec3_t point)
 // =====================================================================================
 //  PlaceOccupant
 // =====================================================================================
-static bool PlaceOccupant(const int num, const vec3_t point, node_t *headnode)
+static auto PlaceOccupant(const int num, const vec3_t point, node_t *headnode) -> bool
 {
     node_t *n;
 
@@ -150,7 +150,7 @@ static void FillLeaf(node_t *l)
 }
 static int hit_occupied;
 static int backdraw;
-static bool RecursiveFillOutside(node_t *l, const bool fill)
+static auto RecursiveFillOutside(node_t *l, const bool fill) -> bool
 {
     portal_t *p;
     int s;
@@ -222,7 +222,7 @@ static void MarkFacesInside_r(node_t *node)
         MarkFacesInside_r(node->children[1]);
     }
 }
-static node_t *ClearOutFaces_r(node_t *node)
+static auto ClearOutFaces_r(node_t *node) -> node_t *
 {
     face_t *f;
     face_t *fnext;
@@ -336,7 +336,7 @@ unsigned g_nAllowableOutside = 0;
 unsigned g_maxAllowableOutside = 0;
 char **g_strAllowableOutsideList;
 
-bool isClassnameAllowableOutside(const char *const classname)
+auto isClassnameAllowableOutside(const char *const classname) -> bool
 {
     if (g_strAllowableOutsideList)
     {
@@ -426,7 +426,7 @@ void LoadAllowableOutsideList(const char *const filename)
 // =====================================================================================
 //  FillOutside
 // =====================================================================================
-node_t *FillOutside(node_t *node, const bool leakfile, const unsigned hullnum)
+auto FillOutside(node_t *node, const bool leakfile, const unsigned hullnum) -> node_t *
 {
     int s;
     int i;

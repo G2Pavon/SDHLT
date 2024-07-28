@@ -16,7 +16,7 @@ const char sepchr = '\n';
 bool error = false;
 #define SEPSTR "\n"
 
-int plen(const char *p)
+auto plen(const char *p) -> int
 {
 	int l;
 	for (l = 0;; l++)
@@ -27,11 +27,11 @@ int plen(const char *p)
 			return l;
 	}
 }
-bool pvalid(const char *p)
+auto pvalid(const char *p) -> bool
 {
 	return plen(p) >= 0;
 }
-bool pmatch(const char *cmdlineparam, const char *param)
+auto pmatch(const char *cmdlineparam, const char *param) -> bool
 {
 	int cl, cstart, cend, pl, pstart, pend, k;
 	cl = plen(cmdlineparam);
@@ -64,11 +64,11 @@ bool pmatch(const char *cmdlineparam, const char *param)
 	}
 	return false;
 }
-char *pnext(char *p)
+auto pnext(char *p) -> char *
 {
 	return p + (plen(p) + 1);
 }
-char *findparams(char *cmdlineparams, char *params)
+auto findparams(char *cmdlineparams, char *params) -> char *
 {
 	char *c1, *c, *p;
 	for (c1 = cmdlineparams; pvalid(c1); c1 = pnext(c1))
@@ -182,7 +182,7 @@ void parsecommand(execute_t &e, char *cmdline, char *words, unsigned int n)
 		}
 	}
 }
-const char *nextword(const char *s, char *token, unsigned int n)
+auto nextword(const char *s, char *token, unsigned int n) -> const char *
 {
 	unsigned int i;
 	const char *c;

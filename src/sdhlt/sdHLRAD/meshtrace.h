@@ -60,7 +60,7 @@ private:
 		}
 	}
 
-	bool BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2)
+	auto BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2) -> bool
 	{
 		if (mins1[0] > maxs2[0] || mins1[1] > maxs2[1] || mins1[2] > maxs2[2])
 			return false;
@@ -81,10 +81,10 @@ public:
 	}
 	void SetupTrace(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end);
 	void SetTraceModExtradata(void *data) { m_extradata = data; }
-	bool ClipRayToBox(const vec3_t mins, const vec3_t maxs);
-	bool ClipRayToTriangle(const mfacet_t *facet); // obsolete
-	bool ClipRayToFacet(const mfacet_t *facet);
-	bool ClipRayToFace(const mfacet_t *facet); // ripped out from q3map2
+	auto ClipRayToBox(const vec3_t mins, const vec3_t maxs) -> bool;
+	auto ClipRayToTriangle(const mfacet_t *facet) -> bool; // obsolete
+	auto ClipRayToFacet(const mfacet_t *facet) -> bool;
+	auto ClipRayToFace(const mfacet_t *facet) -> bool; // ripped out from q3map2
 	void ClipToLinks(areanode_t *node);
-	bool DoTrace();
+	auto DoTrace() -> bool;
 };

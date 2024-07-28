@@ -15,7 +15,7 @@ typedef struct
 sparse_column_t *s_vismatrix;
 
 // Vismatrix protected
-static unsigned IsVisbitInArray(const unsigned x, const unsigned y)
+static auto IsVisbitInArray(const unsigned x, const unsigned y) -> unsigned
 {
     int first, last, current;
     int y_byte = y / 8;
@@ -130,7 +130,7 @@ static void SetVisColumn(int patchnum, bool uncompressedcolumn[MAX_SPARSE_VISMAT
 }
 
 // Vismatrix public
-static bool CheckVisBitSparse(unsigned x, unsigned y, vec3_t &transparency_out, unsigned int &next_index)
+static auto CheckVisBitSparse(unsigned x, unsigned y, vec3_t &transparency_out, unsigned int &next_index) -> bool
 {
     int offset;
 

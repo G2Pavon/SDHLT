@@ -109,7 +109,7 @@ void UnGetToken()
 // =====================================================================================
 //  EndOfScript
 // =====================================================================================
-bool EndOfScript(const bool crossline)
+auto EndOfScript(const bool crossline) -> bool
 {
     if (!crossline)
         Error("Line %i is incomplete (did you place a \" inside an entity string?) \n", s_scriptline);
@@ -139,7 +139,7 @@ bool EndOfScript(const bool crossline)
 // =====================================================================================
 //  GetToken
 // =====================================================================================
-bool GetToken(const bool crossline)
+auto GetToken(const bool crossline) -> bool
 {
     char *token_p;
 
@@ -242,7 +242,7 @@ skipspace:
 //  TokenAvailable
 //      returns true if there is another token on the line
 // =====================================================================================
-bool TokenAvailable()
+auto TokenAvailable() -> bool
 {
     char *search_p;
 

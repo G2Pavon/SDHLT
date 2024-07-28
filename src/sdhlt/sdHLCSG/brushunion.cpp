@@ -1,6 +1,6 @@
 #include "csg.h"
 
-static Winding *NewWindingFromPlane(const brushhull_t *const hull, const int planenum)
+static auto NewWindingFromPlane(const brushhull_t *const hull, const int planenum) -> Winding *
 {
     Winding *winding;
     Winding *front;
@@ -56,7 +56,7 @@ static void AddFaceToList(bface_t **head, bface_t *newface)
     }
 }
 
-static int NumberOfHullFaces(const brushhull_t *const hull)
+static auto NumberOfHullFaces(const brushhull_t *const hull) -> int
 {
     int x;
     bface_t *face;
@@ -158,7 +158,7 @@ static void AddPlaneToUnion(brushhull_t *hull, const int planenum)
     }
 }
 
-static vec_t CalculateSolidVolume(const brushhull_t *const hull)
+static auto CalculateSolidVolume(const brushhull_t *const hull) -> vec_t
 {
     // calculate polyhedron origin
     // subdivide face winding into triangles
@@ -212,7 +212,7 @@ static void DumpHullWindings(const brushhull_t *const hull)
     }
 }
 
-static bool isInvalidHull(const brushhull_t *const hull)
+static auto isInvalidHull(const brushhull_t *const hull) -> bool
 {
     int x = 0;
     bface_t *face;

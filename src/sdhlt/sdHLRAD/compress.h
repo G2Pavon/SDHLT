@@ -35,32 +35,32 @@ extern const char *vector_type_string[];
 
 extern const size_t vector_size[];
 
-inline unsigned int bitget(unsigned int i, unsigned int start, unsigned int end)
+inline auto bitget(unsigned int i, unsigned int start, unsigned int end) -> unsigned int
 {
 	return (i & ~(~0u << end)) >> start;
 }
 
-inline unsigned int bitput(unsigned int i, unsigned int start, unsigned int end)
+inline auto bitput(unsigned int i, unsigned int start, unsigned int end) -> unsigned int
 {
 	return i << start;
 }
 
-inline unsigned int bitclr(unsigned int i, unsigned int start, unsigned int end)
+inline auto bitclr(unsigned int i, unsigned int start, unsigned int end) -> unsigned int
 {
 	return i & (~(~0u << start) | (~0u << end));
 }
 
-inline unsigned int float_iswrong(unsigned int i)
+inline auto float_iswrong(unsigned int i) -> unsigned int
 {
 	return i >= 0x7F800000u;
 }
 
-inline unsigned int float_istoobig(unsigned int i)
+inline auto float_istoobig(unsigned int i) -> unsigned int
 {
 	return i >= 0x40000000u;
 }
 
-inline unsigned int float_istoosmall(unsigned int i)
+inline auto float_istoosmall(unsigned int i) -> unsigned int
 {
 	return i < 0x30800000u;
 }

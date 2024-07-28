@@ -35,7 +35,7 @@
  * ==============
  */
 
-time_t getfiletime(const char *const filename)
+auto getfiletime(const char *const filename) -> time_t
 {
     time_t filetime = 0;
     struct stat filestat;
@@ -51,7 +51,7 @@ time_t getfiletime(const char *const filename)
  * getfilesize
  * ==============
  */
-long getfilesize(const char *const filename)
+auto getfilesize(const char *const filename) -> long
 {
     long size = 0;
     struct stat filestat;
@@ -67,7 +67,7 @@ long getfilesize(const char *const filename)
  * getfiledata
  * ==============
  */
-long getfiledata(const char *const filename, char *buffer, const int buffersize)
+auto getfiledata(const char *const filename, char *buffer, const int buffersize) -> long
 {
     long size = 0;
     int handle;
@@ -104,7 +104,7 @@ long getfiledata(const char *const filename, char *buffer, const int buffersize)
  * filelength
  * ================
  */
-int q_filelength(FILE *f)
+auto q_filelength(FILE *f) -> int
 {
     int pos;
     int end;
@@ -122,7 +122,7 @@ int q_filelength(FILE *f)
  * exists
  * ================
  */
-bool q_exists(const char *const filename)
+auto q_exists(const char *const filename) -> bool
 {
     FILE *f;
 
@@ -180,7 +180,7 @@ void SafeWrite(FILE *f, const void *const buffer, int count)
  * LoadFile
  * ==============
  */
-int LoadFile(const char *const filename, char **bufferptr)
+auto LoadFile(const char *const filename, char **bufferptr) -> int
 {
     FILE *f;
     int length;
