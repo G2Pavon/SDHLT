@@ -18,13 +18,6 @@
 #include "bsp5.h"
 #include "arguments.h"
 
-/*
-
- NOTES
-
-
-*/
-
 vec3_t g_hull_size[NUM_HULLS][2] =
 	{
 		{// 0x0x0
@@ -1137,9 +1130,7 @@ static bool ProcessModel()
 			WriteClipNodes(nodes);
 		}
 	}
-skipclip:
 
-{
 	entity_t *ent;
 	ent = EntityForModel(modnum);
 	if (ent != &g_entities[0] && *ValueForKey(ent, "zhlt_minsmaxs"))
@@ -1153,7 +1144,6 @@ skipclip:
 			VectorSubtract(maxs, origin, model->maxs);
 		}
 	}
-}
 	if (model->mins[0] > model->maxs[0])
 	{
 		entity_t *ent = EntityForModel(g_nummodels - 1);
@@ -1424,7 +1414,6 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 // =====================================================================================
 int main(const int argc, char **argv)
 {
-	int i;
 	double start, end;
 	const char *mapname_from_arg = NULL;
 
