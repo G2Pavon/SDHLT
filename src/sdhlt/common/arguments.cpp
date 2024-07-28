@@ -20,21 +20,11 @@ void Usage(ProgramType programType)
         Log(" %s.exe map_name.map -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
         Log("    -console #     : Set to 0 to turn off the pop-up console (default is 1)\n");
-        Log("    -leakonly      : Run BSP only enough to check for LEAKs\n");
         Log("    -subdivide #   : Sets the face subdivide size\n");
         Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
-        Log("    -notjunc       : Don't break edges on t-junctions     (not for final runs)\n");
-        Log("    -nobrink       : Don't smooth brinks                  (not for final runs)\n");
-        Log("    -nofill        : Don't fill outside (will mask LEAKs) (not for final runs)\n");
-        Log("    -noinsidefill  : Don't fill empty spaces\n");
-        Log("    -noopt         : Don't optimize planes on BSP write   (not for final runs)\n");
-        Log("    -noclipnodemerge: Don't optimize clipnodes\n");
         Log("    -texdata #     : Alter maximum texture memory limit (in kb)\n");
         Log("    -lightdata #   : Alter maximum lighting memory limit (in kb)\n");
-        Log("    -low | -high   : run program an altered priority level\n");
-        Log("    -threads #     : manually specify the number of threads to run\n");
         Log("    -nohull2       : Don't generate hull 2 (the clipping hull for large monsters and pushables)\n");
-        Log("    -viewportal    : Show portal boundaries in 'mapname_portal.pts' file\n");
         break;
 
     case PROGRAM_VIS:
