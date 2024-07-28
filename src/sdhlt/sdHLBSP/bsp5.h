@@ -13,37 +13,29 @@
 #include "winding.h"
 #include "cmdlinecfg.h"
 
-#define ENTITIES_VOID "entities.void"
-#define ENTITIES_VOID_EXT ".void"
-
-#define BOGUS_RANGE 144000
+constexpr int BOGUS_RANGE = 144000;
 
 // the exact bounding box of the brushes is expanded some for the headnode
 // volume.  is this still needed?
-#define SIDESPACE 24
+constexpr int SIDESPACE = 24;
+constexpr int MIN_SUBDIVIDE_SIZE = 64;
+constexpr int MAX_SUBDIVIDE_SIZE = 512;
+constexpr int DEFAULT_SUBDIVIDE_SIZE = ((MAX_SURFACE_EXTENT - 1) * TEXTURE_STEP);
 
-//============================================================================
+constexpr int MIN_MAXNODE_SIZE = 64;
+constexpr int MAX_MAXNODE_SIZE = 65536;
+constexpr int DEFAULT_MAXNODE_SIZE = 1024;
 
-#define MIN_SUBDIVIDE_SIZE 64
+constexpr bool DEFAULT_LEAKONLY = false;
+constexpr bool DEFAULT_WATERVIS = false;
+constexpr bool DEFAULT_INFO = true;
 
-#define MAX_SUBDIVIDE_SIZE 512
+constexpr bool DEFAULT_ESTIMATE = true;
 
-#define DEFAULT_SUBDIVIDE_SIZE ((MAX_SURFACE_EXTENT - 1) * TEXTURE_STEP) // #define DEFAULT_SUBDIVIDE_SIZE  240 //--vluzacn
-
-#define MIN_MAXNODE_SIZE 64
-#define MAX_MAXNODE_SIZE 65536
-#define DEFAULT_MAXNODE_SIZE 1024
-
-#define DEFAULT_LEAKONLY false
-#define DEFAULT_WATERVIS false
-#define DEFAULT_INFO true
-
-#define DEFAULT_ESTIMATE true
-
-#define MAXEDGES 48      // 32
-#define MAXPOINTS 28     // don't let a base face get past this
-                         // because it can be split more later
-#define MAXNODESIZE 1024 // Valve default is 1024
+constexpr int MAXEDGES = 48;
+constexpr int MAXPOINTS = 28;     // don't let a base face get past this
+                                  // because it can be split more later
+constexpr int MAXNODESIZE = 1024; // Valve default is 1024
 
 typedef enum
 {
@@ -107,8 +99,8 @@ typedef struct brush_s
 //
 // there is a node_t structure for every node and leaf in the bsp tree
 //
-#define PLANENUM_LEAF -1
-#define BOUNDS_EXPANSION 1.0 // expand the bounds of detail leafs when clipping its boundsbrush, to prevent some strange brushes in the func_detail from clipping away the entire boundsbrush making the func_detail invisible.
+constexpr int PLANENUM_LEAF = -1;
+constexpr float BOUNDS_EXPANSION = 1.0f; // expand the bounds of detail leafs when clipping its boundsbrush, to prevent some strange brushes in the func_detail from clipping away the entire boundsbrush making the func_detail invisible.
 
 typedef struct node_s
 {
@@ -137,14 +129,14 @@ typedef struct node_s
     int empty;
 } node_t;
 
-#define NUM_HULLS 4
+constexpr int NUM_HULLS = 4;
 
 //=============================================================================
 // solidbsp.c
 extern void SubdivideFace(face_t *f, face_t **prevptr);
 extern auto SolidBSP(const surfchain_t *const surfhead,
-                        brush_t *detailbrushes,
-                        bool report_progress) -> node_t *;
+                     brush_t *detailbrushes,
+                     bool report_progress) -> node_t *;
 
 //=============================================================================
 // merge.c
@@ -223,7 +215,7 @@ extern auto CheckFaceForHint(const face_t *const f) -> bool;
 extern auto CheckFaceForSkip(const face_t *const f) -> bool;
 extern auto CheckFaceForNull(const face_t *const f) -> bool;
 extern auto CheckFaceForDiscardable(const face_t *f) -> bool;
-#define BRINK_FLOOR_THRESHOLD 0.7
+constexpr float BRINK_FLOOR_THRESHOLD = 0.7f;
 typedef enum
 {
     BrinkNone = 0,

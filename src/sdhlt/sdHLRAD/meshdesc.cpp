@@ -19,9 +19,9 @@ GNU General Public License for more details.
 #include "TimeCounter.h"
 
 // #define AABB_OFFSET
-#define SIMPLIFICATION_FACTOR_HIGH 0.15f
-#define SIMPLIFICATION_FACTOR_MED 0.55f
-#define SIMPLIFICATION_FACTOR_LOW 0.85f
+constexpr float SIMPLIFICATION_FACTOR_HIGH = 0.15f;
+constexpr float SIMPLIFICATION_FACTOR_MED = 0.55f;
+constexpr float SIMPLIFICATION_FACTOR_LOW = 0.85f;
 
 CMeshDesc ::CMeshDesc()
 {
@@ -547,8 +547,8 @@ auto CMeshDesc ::StudioConstructMesh(model_t *pModel) -> bool
 		totalVertSize += psubmodel->numverts;
 	}
 
-	auto *verts = (vec3_t *)malloc(sizeof(vec3_t) * totalVertSize * 8);									   // allocate temporary vertices array
-	auto *coords = (float *)malloc(sizeof(float) * totalVertSize * 16);									   // allocate temporary texcoords array
+	auto *verts = (vec3_t *)malloc(sizeof(vec3_t) * totalVertSize * 8);							   // allocate temporary vertices array
+	auto *coords = (float *)malloc(sizeof(float) * totalVertSize * 16);							   // allocate temporary texcoords array
 	auto **textures = (mstudiotexture_t **)malloc(sizeof(mstudiotexture_t *) * totalVertSize * 8); // lame way...
 	auto *indices = (unsigned int *)malloc(sizeof(int) * totalVertSize * 24);
 	int numVerts = 0, numElems = 0, numTris = 0;

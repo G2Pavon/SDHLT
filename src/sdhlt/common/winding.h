@@ -8,15 +8,15 @@
 #include "bspfile.h"
 #include "boundingbox.h"
 
-#define MAX_POINTS_ON_WINDING 128
+constexpr int MAX_POINTS_ON_WINDING = 128;
 // TODO: FIX THIS STUPID SHIT (MAX_POINTS_ON_WINDING)
 
-#define BASE_WINDING_DISTANCE 9000
+constexpr int BASE_WINDING_DISTANCE = 9000;
 
-#define SIDE_FRONT 0
-#define SIDE_ON 2
-#define SIDE_BACK 1
-#define SIDE_CROSS -2
+constexpr int SIDE_FRONT = 0;
+constexpr int SIDE_ON = 2;
+constexpr int SIDE_BACK = 1;
+constexpr int SIDE_CROSS = -2;
 
 #ifdef SDHLBSP // seedee
 #ifndef DOUBLEVEC_T
@@ -48,7 +48,7 @@ public:
   auto Copy() const -> Winding *;
   void Check(
       vec_t epsilon = ON_EPSILON) const; // Developer check for validity
-  auto Valid() const -> bool;                    // Runtime/user/normal check for validity
+  auto Valid() const -> bool;            // Runtime/user/normal check for validity
   void addPoint(const vec3_t newpoint);
   void insertPoint(const vec3_t newpoint, const unsigned int offset);
 

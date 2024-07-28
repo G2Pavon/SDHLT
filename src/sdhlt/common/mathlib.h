@@ -19,14 +19,14 @@
 #define qmin(a, b) (((a) < (b)) ? (a) : (b)) // changed 'min' to 'qmin'. --vluzacn
 #endif
 
-#define Q_PI 3.14159265358979323846
+constexpr double Q_PI = 3.14159265358979323846;
 
 extern const vec3_t vec3_origin;
 
-// HLCSG_HLBSP_DOUBLEPLANE: We could use smaller epsilon for hlcsg and hlbsp (hlcsg and hlbsp use double as vec_t), which will totally eliminate all epsilon errors. But we choose this big epsilon to tolerate the imprecision caused by Hammer. Basically, this is a balance between precision and flexibility.
-#define NORMAL_EPSILON 0.00001
-#define ON_EPSILON 0.04 // we should ensure that (float)BOGUS_RANGE < (float)(BOGUA_RANGE + 0.2 * ON_EPSILON)
-#define EQUAL_EPSILON 0.004
+// HLCSG_HLBSP_DOUBLEPLANE: We could use smaller epsilon for hlcsg and hlbsp (hlcsg and hlbsp use float as vec_t), which will totally eliminate all epsilon errors. But we choose this big epsilon to tolerate the imprecision caused by Hammer. Basically, this is a balance between precision and flexibility.
+constexpr float NORMAL_EPSILON = 0.00001;
+constexpr float ON_EPSILON = 0.04; // we should ensure that (float)BOGUS_RANGE < (float)(BOGUA_RANGE + 0.2 * ON_EPSILON)
+constexpr float EQUAL_EPSILON = 0.004;
 
 //
 // Vector Math
@@ -253,8 +253,8 @@ typedef enum
     plane_anyz
 } planetypes;
 
-#define last_axial plane_z
-#define DIR_EPSILON 0.0001
+constexpr planetypes last_axial = plane_z;
+constexpr float DIR_EPSILON = 0.0001;
 
 inline auto PlaneTypeForNormal(vec3_t normal) -> planetypes
 {

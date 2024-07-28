@@ -10,7 +10,7 @@
 #undef BOGUS_RANGE
 #undef ON_EPSILON
 
-#define BOGUS_RANGE 80000.0
+constexpr float BOGUS_RANGE = 80000.0;
 #define ON_EPSILON epsilon
 
 //

@@ -26,17 +26,26 @@
 #error you must add -dDOUBLEVEC_T to the project!
 #endif
 
-#define DEFAULT_WADTEXTURES true
-#define DEFAULT_SKYCLIP true
-#define FLOOR_Z 0.7                  // Quake default
-#define DEFAULT_CLIPTYPE clip_simple // clip_legacy //--vluzacn
-#define DEFAULT_CLIPNAZI false
-#define DEFAULT_ESTIMATE true
-// #define BOGUS_RANGE    65534
+typedef enum
+{
+    clip_smallest,
+    clip_normalized,
+    clip_simple,
+    clip_precise,
+    clip_legacy
+} cliptype;
+extern cliptype g_cliptype;
+
+constexpr bool DEFAULT_SKYCLIP = true;
+constexpr float FLOOR_Z = 0.7f;
+constexpr cliptype DEFAULT_CLIPTYPE = clip_simple;
+constexpr bool DEFAULT_CLIPNAZI = false;
+constexpr bool DEFAULT_ESTIMATE = true;
+
+constexpr int MAX_HULLSHAPES = 128; // arbitrary
+constexpr int NUM_HULLS = 4;        // NUM_HULLS should be no larger than MAX_MAP_HULLS
+
 #define BOGUS_RANGE g_iWorldExtent // seedee
-#define MAX_HULLSHAPES 128         // arbitrary
-// NUM_HULLS should be no larger than MAX_MAP_HULLS
-#define NUM_HULLS 4
 
 extern int g_nMapFileVersion; // map file version * 100 (ie 201), zero for pre-Worldcraft 2.0.1 maps
 
@@ -163,7 +172,8 @@ typedef struct
 //=============================================================================
 // map.c
 
-#define MAX_MAP_SIDES (MAX_MAP_BRUSHES * 6)
+constexpr int MAX_MAP_SIDES = MAX_MAP_BRUSHES * 6;
+
 extern int g_nummapbrushes;
 extern brush_t g_mapbrushes[MAX_MAP_BRUSHES];
 extern int g_numbrushsides;
@@ -196,22 +206,12 @@ extern void InitDefaultHulls();
 //=============================================================================
 // csg.c
 
-#define MAX_SWITCHED_LIGHTS 32
-#define MAX_LIGHTTARGETS_NAME 64
+constexpr int MAX_SWITCHED_LIGHTS = 32;
+constexpr int MAX_LIGHTTARGETS_NAME = 64;
 
 extern bool g_skyclip;
 extern bool g_estimate;
 extern bool g_bClipNazi;
-
-typedef enum
-{
-    clip_smallest,
-    clip_normalized,
-    clip_simple,
-    clip_precise,
-    clip_legacy
-} cliptype;
-extern cliptype g_cliptype;
 
 extern plane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_nummapplanes;

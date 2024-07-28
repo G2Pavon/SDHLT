@@ -295,9 +295,6 @@ static auto PlacePatchInside(patch_t *patch) -> bool
 }
 static void UpdateEmitterInfo(patch_t *patch)
 {
-#if ACCURATEBOUNCE_DEFAULT_SKYLEVEL + 3 > SKYLEVELMAX
-#error "please raise SKYLEVELMAX"
-#endif
 	const vec_t *origin = patch->origin;
 	const Winding *winding = patch->winding;
 	vec_t radius = ON_EPSILON;
@@ -342,7 +339,7 @@ static void UpdateEmitterInfo(patch_t *patch)
 // =====================================================================================
 
 // misc
-#define MAX_SUBDIVIDE 16384
+constexpr int MAX_SUBDIVIDE = 16384;
 static Winding *windingArray[MAX_SUBDIVIDE];
 static unsigned g_numwindings = 0;
 

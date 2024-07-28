@@ -2,7 +2,7 @@
 
 #include "cmdlib.h" //--vluzacn
 
-#define MAX_WADPATHS 128 // arbitrary
+constexpr int MAX_WADPATHS = 128; // arbitrary
 
 typedef struct
 {

@@ -8,19 +8,19 @@
 
 const vec3_t vec3_origin = {0, 0, 0};
 
-#define IA 16807
-#define IM 2147483647
-#define IQ 127773
-#define IR 2836
-#define NTAB 32
-#define NDIV (1 + (IM - 1) / NTAB)
-#define MAX_RANDOM_RANGE 0x7FFFFFFFUL
+constexpr int IA = 16807;
+constexpr int IM = 2147483647;
+constexpr int IQ = 127773;
+constexpr int IR = 2836;
+constexpr int NTAB = 32;
+constexpr int NDIV = (1 + (IM - 1) / NTAB);
+constexpr unsigned long MAX_RANDOM_RANGE = 0x7FFFFFFFUL;
 
 // fran1 -- return a random floating-point number on the interval [0,1)
 //
-#define AM (1.0 / IM)
-#define EPS 1.2e-7
-#define RNMX (1.0 - EPS)
+constexpr double AM = (1.0 / IM);
+constexpr double EPS = 1.2e-7;
+constexpr double RNMX = (1.0 - EPS);
 
 static int m_idum = 0;
 static int m_iy = 0;

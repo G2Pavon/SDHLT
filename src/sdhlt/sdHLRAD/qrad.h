@@ -41,15 +41,15 @@
 #endif
 #include <string>
 
-#define DEFAULT_FADE 1.0
-#define DEFAULT_BOUNCE 8
+constexpr float DEFAULT_FADE = 1.0f;
+constexpr int DEFAULT_BOUNCE = 8;
 // 188 is the fullbright threshold for Goldsrc before 25th anniversary, regardless of the brightness and gamma settings in the graphic options. This is no longer necessary
 // However, hlrad can only control the light values of each single light style. So the final in-game brightness may exceed 188 if you have set a high value in the "custom appearance" of the light, or if the face receives light from different styles.
-#define DEFAULT_LIMITTHRESHOLD 255.0 // We override to 188 with pre25 argument. //seedee
-#define DEFAULT_CHOP 64.0
-#define DEFAULT_TEXCHOP 32.0
-#define DEFAULT_LIGHTSCALE 2.0 // 1.0 //vluzacn
-#define DEFAULT_SMOOTHING2_VALUE 0
+constexpr float DEFAULT_LIMITTHRESHOLD = 255.0f; // We override to 188 with pre25 argument. //seedee
+constexpr float DEFAULT_CHOP = 64.0f;
+constexpr float DEFAULT_TEXCHOP = 32.0f;
+constexpr float DEFAULT_LIGHTSCALE = 2.0f; // 1.0 //vluzacn
+constexpr int DEFAULT_SMOOTHING2_VALUE = 0;
 
 // ------------------------------------------------------------------------
 // Changes by Adam Foster - afoster@compsoc.man.ac.uk
@@ -59,42 +59,42 @@
 // superseded by DEFAULT_COLOUR_GAMMA_*
 // ------------------------------------------------------------------------
 
-#define DEFAULT_EXTRA false
-#define DEFAULT_INFO true
+constexpr bool DEFAULT_EXTRA = false;
+constexpr bool DEFAULT_INFO = true;
 
-#define DEFAULT_TRANSFER_COMPRESS_TYPE FLOAT16
-#define DEFAULT_RGBTRANSFER_COMPRESS_TYPE VECTOR32
-#define DEFAULT_TRANSLUCENTDEPTH 2.0f
-#define DEFAULT_BLUR 1.5 // classic lighting is equivalent to "-blur 1.0"
-#define DEFAULT_EMBEDLIGHTMAP_POWEROFTWO true
-#define DEFAULT_EMBEDLIGHTMAP_DENOMINATOR 188.0
-#define DEFAULT_EMBEDLIGHTMAP_GAMMA 1.05
-#define DEFAULT_EMBEDLIGHTMAP_RESOLUTION 1
+constexpr float_type DEFAULT_TRANSFER_COMPRESS_TYPE = FLOAT16;
+constexpr vector_type DEFAULT_RGBTRANSFER_COMPRESS_TYPE = VECTOR32;
+constexpr float DEFAULT_TRANSLUCENTDEPTH = 2.0f;
+constexpr float DEFAULT_BLUR = 1.5f; // classic lighting is equivalent to "-blur 1.0"
+constexpr bool DEFAULT_EMBEDLIGHTMAP_POWEROFTWO = true;
+constexpr float DEFAULT_EMBEDLIGHTMAP_DENOMINATOR = 188.0f;
+constexpr float DEFAULT_EMBEDLIGHTMAP_GAMMA = 1.05f;
+constexpr int DEFAULT_EMBEDLIGHTMAP_RESOLUTION = 1;
 
-#define DEFAULT_ESTIMATE true
+constexpr bool DEFAULT_ESTIMATE = true;
 
 // Ideally matches what is in the FGD :)
-#define SPAWNFLAG_NOBLEEDADJUST (1 << 0)
+constexpr auto SPAWNFLAG_NOBLEEDADJUST = 1 << 0;
 
 // DEFAULT_HUNT_OFFSET is how many units in front of the plane to place the samples
 // Unit of '1' causes the 1 unit crate trick to cause extra shadows
-#define DEFAULT_HUNT_OFFSET 0.5
+constexpr float DEFAULT_HUNT_OFFSET = 0.5f;
 // DEFAULT_HUNT_SIZE number of iterations (one based) of radial search in HuntForWorld
-#define DEFAULT_HUNT_SIZE 11
+constexpr int DEFAULT_HUNT_SIZE = 11;
 // DEFAULT_HUNT_SCALE amount to grow from origin point per iteration of DEFAULT_HUNT_SIZE in HuntForWorld
-#define DEFAULT_HUNT_SCALE 0.1
-#define DEFAULT_EDGE_WIDTH 0.8
+constexpr float DEFAULT_HUNT_SCALE = 0.1f;
+constexpr float DEFAULT_EDGE_WIDTH = 0.8f;
 
-#define PATCH_HUNT_OFFSET 0.5			   //--vluzacn
-#define HUNT_WALL_EPSILON (3 * ON_EPSILON) // place sample at least this distance away from any wall //--vluzacn
+constexpr float PATCH_HUNT_OFFSET = 0.5f;			//--vluzacn
+constexpr float HUNT_WALL_EPSILON = 3 * ON_EPSILON; // place sample at least this distance away from any wall //--vluzacn
 
-#define MINIMUM_PATCH_DISTANCE ON_EPSILON
-#define ACCURATEBOUNCE_THRESHOLD 4.0	  // If the receiver patch is closer to emitter patch than EXACTBOUNCE_THRESHOLD * emitter_patch->radius, calculate the exact visibility amount.
-#define ACCURATEBOUNCE_DEFAULT_SKYLEVEL 5 // sample 1026 normals
+constexpr float MINIMUM_PATCH_DISTANCE = ON_EPSILON;
+constexpr float ACCURATEBOUNCE_THRESHOLD = 4.0;	   // If the receiver patch is closer to emitter patch than EXACTBOUNCE_THRESHOLD * emitter_patch->radius, calculate the exact visibility amount.
+constexpr int ACCURATEBOUNCE_DEFAULT_SKYLEVEL = 5; // sample 1026 normals
 
-#define ALLSTYLES 64 // HL limit. //--vluzacn
+constexpr int ALLSTYLES = 64; // HL limit. //--vluzacn
 
-#define BOGUS_RANGE 131072
+constexpr int BOGUS_RANGE = 131072;
 
 typedef struct
 {
@@ -164,11 +164,11 @@ typedef unsigned char transfer_data_t;
 
 typedef unsigned char rgb_transfer_data_t;
 
-#define MAX_COMPRESSED_TRANSFER_INDEX_SIZE ((1 << 12) - 1)
+constexpr int MAX_COMPRESSED_TRANSFER_INDEX_SIZE = (1 << 12) - 1;
 
-#define MAX_PATCHES (65535 * 16) // limited by transfer_index_t
-#define MAX_VISMATRIX_PATCHES 65535
-#define MAX_SPARSE_VISMATRIX_PATCHES MAX_PATCHES
+constexpr int MAX_PATCHES = 65535 * 16; // limited by transfer_index_t
+constexpr int MAX_VISMATRIX_PATCHES = 65535;
+constexpr int MAX_SPARSE_VISMATRIX_PATCHES = MAX_PATCHES;
 
 typedef enum
 {
@@ -268,7 +268,7 @@ typedef struct
 
 } opaqueList_t;
 
-#define OPAQUE_ARRAY_GROWTH_SIZE 1024
+constexpr int OPAQUE_ARRAY_GROWTH_SIZE = 1024;
 
 typedef struct
 {
@@ -344,11 +344,11 @@ extern vec3_t g_maxdiscardedpos;
 
 extern void MakeTnodes(dmodel_t *bm);
 extern void PairEdges();
-#define SKYLEVELMAX 8
-#define SKYLEVEL_SOFTSKYON 7
-#define SKYLEVEL_SOFTSKYOFF 4
-#define SUNSPREAD_SKYLEVEL 7
-#define SUNSPREAD_THRESHOLD 15.0
+constexpr int SKYLEVELMAX = 8;
+constexpr int SKYLEVEL_SOFTSKYON = 7;
+constexpr int SKYLEVEL_SOFTSKYOFF = 4;
+constexpr int SUNSPREAD_SKYLEVEL = 7;
+constexpr int SUNSPREAD_THRESHOLD = 15.0;
 extern int g_numskynormals[SKYLEVELMAX + 1];	 // 0, 6, 18, 66, 258, 1026, 4098, 16386, 65538
 extern vec3_t *g_skynormals[SKYLEVELMAX + 1];	 //[numskynormals]
 extern vec_t *g_skynormalsizes[SKYLEVELMAX + 1]; // the weight of each normal

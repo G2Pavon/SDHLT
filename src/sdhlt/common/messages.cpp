@@ -1,20 +1,20 @@
 #include "messages.h"
 
 // AJM: because these are repeated, they use up redundant memory.
-//  consequently ive made them into const strings which each occurance can point to.
+// consequently, I've made them into const strings which each occurrence can point to.
 
 // Common descriptions
-const char *const internallimit = "The compiler tool hit an internal limit";
-const char *const internalerror = "The compiler tool had an internal error";
-const char *const maperror = "The map has a problem which must be fixed";
+constexpr const char *internallimit = "The compiler tool hit an internal limit";
+constexpr const char *internalerror = "The compiler tool had an internal error";
+constexpr const char *maperror = "The map has a problem which must be fixed";
 
 // Common explanations
-#define contact contactvluzacn //"contact zoner@gearboxsoftware.com immidiately"
-const char *const selfexplanitory = "self explanitory";
-const char *const reference = "Check the file http://www.zhlt.info/common-mapping-problems.html for a detailed explanation of this problem";
-const char *const simplify = "The map is too complex for the game engine/compile tools to handle.  Simplify";
-const char *const contactmerl = "contact amckern@yahoo.com concerning this issue.";
-const char *const contactvluzacn = "contact vluzacn@163.com concerning this issue.";
+constexpr const char *contact = "contact vluzacn@163.com concerning this issue.";
+constexpr const char *selfexplanitory = "self explanatory";
+constexpr const char *reference = "Check the file http://www.zhlt.info/common-mapping-problems.html for a detailed explanation of this problem";
+constexpr const char *simplify = "The map is too complex for the game engine/compile tools to handle. Simplify";
+constexpr const char *contactmerl = "contact amckern@yahoo.com concerning this issue.";
+constexpr const char *contactvluzacn = "contact vluzacn@163.com concerning this issue.";
 
 static const MessageTable_t assumes[assume_last] = {
     {"invalid assume message", "This is a message should never be printed.", contact},

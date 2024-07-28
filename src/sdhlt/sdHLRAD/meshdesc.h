@@ -17,23 +17,23 @@ GNU General Public License for more details.
 #include "studio.h"
 #include "list.h" // simple container
 
-#define AREA_NODES 32
-#define AREA_DEPTH 4
+constexpr int AREA_NODES = 32;
+constexpr int AREA_DEPTH = 4;
 
-#define MAX_FACET_PLANES 32
-#define MAX_PLANES 524288 // unsigned short limit
-#define PLANE_HASHES (MAX_PLANES >> 2)
+constexpr int MAX_FACET_PLANES = 32;
+constexpr int MAX_PLANES = 524288; // unsigned short limit
+constexpr int PLANE_HASHES = MAX_PLANES >> 2;
 
-#define PLANE_NORMAL_EPSILON 0.00001f
-#define PLANE_DIST_EPSILON 0.04f
+constexpr float PLANE_NORMAL_EPSILON = 0.00001f;
+constexpr float PLANE_DIST_EPSILON = 0.04f;
 
 // compute methods
-#define SHADOW_FAST 0
-#define SHADOW_NORMAL 1
-#define SHADOW_SLOW 2
+constexpr int SHADOW_FAST = 0;
+constexpr int SHADOW_NORMAL = 1;
+constexpr int SHADOW_SLOW = 2;
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846 // matches value in gcc v2 math.h
+constexpr double M_PI = 3.14159265358979323846; // matches value in gcc v2 math.h
 #endif
 
 typedef unsigned short word;

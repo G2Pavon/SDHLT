@@ -13,7 +13,7 @@ extern char *g_Program;
 extern char g_Mapname[_MAX_PATH];
 extern char g_Wadpath[_MAX_PATH]; // seedee
 
-#define DEFAULT_LOG true
+constexpr bool DEFAULT_LOG = true;
 
 //
 // log.c Functions

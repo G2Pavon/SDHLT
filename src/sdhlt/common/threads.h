@@ -1,7 +1,7 @@
 #pragma once
 #include "cmdlib.h" //--vluzacn
 
-#define MAX_THREADS 64
+constexpr int MAX_THREADS = 64;
 
 typedef enum
 {
@@ -13,10 +13,10 @@ typedef enum
 typedef void (*q_threadfunction)(int);
 
 #ifdef SYSTEM_WIN32
-#define DEFAULT_NUMTHREADS -1
+constexpr int DEFAULT_NUMTHREADS = -1;
 #endif
 #ifdef SYSTEM_POSIX
-#define DEFAULT_NUMTHREADS 1
+constexpr int DEFAULT_NUMTHREADS = 1;
 #endif
 
 #define DEFAULT_THREAD_PRIORITY eThreadPriorityNormal

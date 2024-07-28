@@ -15,14 +15,14 @@
 
 #include "cmdlinecfg.h"
 
-#define DEFAULT_MAXDISTANCE_RANGE 0
+constexpr int DEFAULT_MAXDISTANCE_RANGE = 0;
 
-#define DEFAULT_FULLVIS false
-#define DEFAULT_INFO true
-#define DEFAULT_ESTIMATE true
-#define DEFAULT_FASTVIS false
+constexpr bool DEFAULT_FULLVIS = false;
+constexpr bool DEFAULT_INFO = true;
+constexpr bool DEFAULT_ESTIMATE = true;
+constexpr bool DEFAULT_FASTVIS = false;
 
-#define MAX_PORTALS 32768
+constexpr int MAX_PORTALS = 32768;
 
 // #define USE_CHECK_STACK
 #define RVIS_LEVEL_1
@@ -30,7 +30,7 @@
 
 #define PORTALFILE "PRT1" // WTF?
 
-#define MAX_POINTS_ON_FIXED_WINDING 32
+constexpr int MAX_POINTS_ON_FIXED_WINDING = 32;
 
 typedef struct
 {
@@ -77,7 +77,7 @@ typedef struct passage_s
     sep_t *planes;
 } passage_t;
 
-#define MAX_PORTALS_ON_LEAF 256
+constexpr int MAX_PORTALS_ON_LEAF = 256;
 typedef struct leaf_s
 {
     unsigned numportals;

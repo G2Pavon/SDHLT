@@ -16,12 +16,12 @@ GNU General Public License for more details.
 
 #include "meshdesc.h"
 
-#define FRAC_EPSILON (1.0f / 32.0f)
-#define BARY_EPSILON 0.01f
-#define ASLF_EPSILON 0.0001f
-#define COPLANAR_EPSILON 0.25f
-#define NEAR_SHADOW_EPSILON 1.5f
-#define SELF_SHADOW_EPSILON 0.5f
+constexpr float FRAC_EPSILON = 1.0f / 32.0f;
+constexpr float BARY_EPSILON = 0.01f;
+constexpr float ASLF_EPSILON = 0.0001f;
+constexpr float COPLANAR_EPSILON = 0.25f;
+constexpr float NEAR_SHADOW_EPSILON = 1.5f;
+constexpr float SELF_SHADOW_EPSILON = 0.5f;
 
 #define STRUCT_FROM_LINK(l, t, m) ((t *)((byte *)l - (int)(long int)&(((t *)0)->m)))
 #define FACET_FROM_AREA(l) STRUCT_FROM_LINK(l, mfacet_t, area)

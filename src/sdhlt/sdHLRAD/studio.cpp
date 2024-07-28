@@ -3,7 +3,7 @@
 #include "filelib.h"
 #include "stringlib.h"
 
-#define MAX_MODELS 1024
+constexpr int MAX_MODELS = 1024;
 
 model_t models[MAX_MODELS];
 int num_models;
