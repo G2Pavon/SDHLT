@@ -42,7 +42,7 @@ inline T FASTCALL; MAX(const T a, const T b, const T c)
 }
 
 template <typename T>
-inline T FASTCALL AVG(const T a, const T b)
+inline T FASTCALL; AVG(const T a, const T b)
 {
     return ((a + b) / 2);
 }

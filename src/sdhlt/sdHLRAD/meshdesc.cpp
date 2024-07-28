@@ -481,7 +481,7 @@ void CMeshDesc ::StudioCalcBonePosition(mstudiobone_t *pbone, mstudioanim_t *pan
 bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 {
 	int i;
-	studiohdr_t *phdr = (studiohdr_t *)pModel->extradata;
+	auto *phdr = (studiohdr_t *)pModel->extradata;
 
 	if (!phdr || phdr->numbones < 1)
 	{
@@ -494,7 +494,7 @@ bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 	bool simplify_model = (pModel->trace_mode == 2) ? true : false; // trying to reduce polycount and the speedup compilation
 
 	// compute default pose for building mesh from
-	mstudioseqdesc_t *pseqdesc = (mstudioseqdesc_t *)((byte *)phdr + phdr->seqindex);
+	auto *pseqdesc = (mstudioseqdesc_t *)((byte *)phdr + phdr->seqindex);
 	mstudioseqgroup_t *pseqgroup = (mstudioseqgroup_t *)((byte *)phdr + phdr->seqgroupindex) + pseqdesc->seqgroup;
 
 	// sanity check
@@ -506,9 +506,9 @@ bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 #ifdef VERSION_64BIT
 	mstudioanim_t *panim = (mstudioanim_t *)((byte *)phdr + /*pseqgroup->data +*/ pseqdesc->animindex);
 #else
-	mstudioanim_t *panim = (mstudioanim_t *)((byte *)phdr + pseqgroup->data + pseqdesc->animindex);
+	auto *panim = (mstudioanim_t *)((byte *)phdr + pseqgroup->data + pseqdesc->animindex);
 #endif
-	mstudiobone_t *pbone = (mstudiobone_t *)((byte *)phdr + phdr->boneindex);
+	auto *pbone = (mstudiobone_t *)((byte *)phdr + phdr->boneindex);
 	static vec3_t pos[MAXSTUDIOBONES];
 	static vec4_t q[MAXSTUDIOBONES];
 	int totalVertSize = 0;
@@ -547,10 +547,10 @@ bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 		totalVertSize += psubmodel->numverts;
 	}
 
-	vec3_t *verts = (vec3_t *)malloc(sizeof(vec3_t) * totalVertSize * 8);									   // allocate temporary vertices array
-	float *coords = (float *)malloc(sizeof(float) * totalVertSize * 16);									   // allocate temporary texcoords array
-	mstudiotexture_t **textures = (mstudiotexture_t **)malloc(sizeof(mstudiotexture_t *) * totalVertSize * 8); // lame way...
-	unsigned int *indices = (unsigned int *)malloc(sizeof(int) * totalVertSize * 24);
+	auto *verts = (vec3_t *)malloc(sizeof(vec3_t) * totalVertSize * 8);									   // allocate temporary vertices array
+	auto *coords = (float *)malloc(sizeof(float) * totalVertSize * 16);									   // allocate temporary texcoords array
+	auto **textures = (mstudiotexture_t **)malloc(sizeof(mstudiotexture_t *) * totalVertSize * 8); // lame way...
+	auto *indices = (unsigned int *)malloc(sizeof(int) * totalVertSize * 24);
 	int numVerts = 0, numElems = 0, numTris = 0;
 	mvert_t triangle[3];
 
@@ -563,23 +563,23 @@ bool CMeshDesc ::StudioConstructMesh(model_t *pModel)
 		int m_skinnum = qmin(qmax(0, pModel->skin), MAXSTUDIOSKINS);
 
 		mstudiomodel_t *psubmodel = (mstudiomodel_t *)((byte *)phdr + pbodypart->modelindex) + index;
-		vec3_t *pstudioverts = (vec3_t *)((byte *)phdr + psubmodel->vertindex);
-		vec3_t *m_verts = (vec3_t *)malloc(sizeof(vec3_t) * psubmodel->numverts);
+		auto *pstudioverts = (vec3_t *)((byte *)phdr + psubmodel->vertindex);
+		auto *m_verts = (vec3_t *)malloc(sizeof(vec3_t) * psubmodel->numverts);
 		byte *pvertbone = ((byte *)phdr + psubmodel->vertinfoindex);
 
 		// setup all the vertices
 		for (i = 0; i < psubmodel->numverts; i++)
 			VectorTransform(pstudioverts[i], bonetransform[pvertbone[i]], m_verts[i]);
 
-		mstudiotexture_t *ptexture = (mstudiotexture_t *)((byte *)phdr + phdr->textureindex);
-		short *pskinref = (short *)((byte *)phdr + phdr->skinindex);
+		auto *ptexture = (mstudiotexture_t *)((byte *)phdr + phdr->textureindex);
+		auto *pskinref = (short *)((byte *)phdr + phdr->skinindex);
 		if (m_skinnum != 0 && m_skinnum < phdr->numskinfamilies)
 			pskinref += (m_skinnum * phdr->numskinref);
 
 		for (int j = 0; j < psubmodel->nummesh; j++)
 		{
 			mstudiomesh_t *pmesh = (mstudiomesh_t *)((byte *)phdr + psubmodel->meshindex) + j;
-			short *ptricmds = (short *)((byte *)phdr + pmesh->triindex);
+			auto *ptricmds = (short *)((byte *)phdr + pmesh->triindex);
 			int flags = ptexture[pskinref[pmesh->skinref]].flags;
 			float s = 1.0f / (float)ptexture[pskinref[pmesh->skinref]].width;
 			float t = 1.0f / (float)ptexture[pskinref[pmesh->skinref]].height;

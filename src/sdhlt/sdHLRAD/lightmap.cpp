@@ -16,7 +16,7 @@ typedef struct
 bool TestFaceIntersect(intersecttest_t *t, int facenum)
 {
 	dface_t *f2 = &g_dfaces[facenum];
-	Winding *w = new Winding(*f2);
+	auto *w = new Winding(*f2);
 	int k;
 	for (k = 0; k < w->m_NumPoints; k++)
 	{
@@ -439,7 +439,7 @@ void PairEdges()
 								}
 								if (!in)
 								{
-									facelist_t *l = (facelist_t *)malloc(sizeof(facelist_t));
+									auto *l = (facelist_t *)malloc(sizeof(facelist_t));
 									hlassume(l != nullptr, assume_NoMemory);
 									l->face = fcurrent;
 									l->next = e->vertex_facelist[edgeend];
@@ -695,7 +695,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 
 		ThreadLock();
 		Log("Malformed face (%d) normal @ \n", facenum);
-		Winding *w = new Winding(*l->face);
+		auto *w = new Winding(*l->face);
 		{
 			const unsigned numpoints = w->m_NumPoints;
 			unsigned x;
@@ -1096,7 +1096,7 @@ static samplefrag_t *GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *
 	}
 	for (samplefrag_t *f2 = info->head; f2 && !overlap; f2 = f2->next)
 	{
-		Winding *w = new Winding(*f2->winding);
+		auto *w = new Winding(*f2->winding);
 		for (int x = 0; x < numclipplanes && w->m_NumPoints > 0; x++)
 		{
 			w->Clip(clipplanes[x], false, 4 * ON_EPSILON);
@@ -1398,7 +1398,7 @@ static light_flag_t SetSampleFromST(vec_t *const point,
 			const unsigned facenum = bestfrag->facenum;
 			ThreadLock();
 			Log("Malformed face (%d) normal @ \n", facenum);
-			Winding *w = new Winding(g_dfaces[facenum]);
+			auto *w = new Winding(g_dfaces[facenum]);
 			for (int x = 0; x < w->m_NumPoints; x++)
 			{
 				VectorAdd(w->m_Points[x], g_face_offset[facenum], w->m_Points[x]);
@@ -2282,7 +2282,7 @@ void BuildDiffuseNormals()
 	g_skynormals[0] = nullptr; // don't use this
 	g_skynormalsizes[0] = nullptr;
 	int numpoints = 6;
-	point_t *points = (point_t *)malloc(((1 << (2 * SKYLEVELMAX)) + 2) * sizeof(point_t));
+	auto *points = (point_t *)malloc(((1 << (2 * SKYLEVELMAX)) + 2) * sizeof(point_t));
 	hlassume(points != nullptr, assume_NoMemory);
 	points[0][0] = 1, points[0][1] = 0, points[0][2] = 0;
 	points[1][0] = -1, points[1][1] = 0, points[1][2] = 0;
@@ -2291,7 +2291,7 @@ void BuildDiffuseNormals()
 	points[4][0] = 0, points[4][1] = 0, points[4][2] = 1;
 	points[5][0] = 0, points[5][1] = 0, points[5][2] = -1;
 	int numedges = 12;
-	edge_t *edges = (edge_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 4 - 4) * sizeof(edge_t));
+	auto *edges = (edge_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 4 - 4) * sizeof(edge_t));
 	hlassume(edges != nullptr, assume_NoMemory);
 	edges[0].point[0] = 0, edges[0].point[1] = 2, edges[0].divided = false;
 	edges[1].point[0] = 2, edges[1].point[1] = 1, edges[1].divided = false;
@@ -2306,7 +2306,7 @@ void BuildDiffuseNormals()
 	edges[10].point[0] = 5, edges[10].point[1] = 1, edges[10].divided = false;
 	edges[11].point[0] = 1, edges[11].point[1] = 4, edges[11].divided = false;
 	int numtriangles = 8;
-	triangle_t *triangles = (triangle_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 2) * sizeof(triangle_t));
+	auto *triangles = (triangle_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 2) * sizeof(triangle_t));
 	hlassume(triangles != nullptr, assume_NoMemory);
 	triangles[0].edge[0] = 0, triangles[0].dir[0] = 0, triangles[0].edge[1] = 4, triangles[0].dir[1] = 0, triangles[0].edge[2] = 8, triangles[0].dir[2] = 0;
 	triangles[1].edge[0] = 1, triangles[1].dir[0] = 0, triangles[1].edge[1] = 11, triangles[1].dir[1] = 0, triangles[1].edge[2] = 4, triangles[1].dir[2] = 1;
@@ -2855,7 +2855,7 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 	// translate world winding into winding in s,t plane
 	for (j = 0, patch = g_face_patches[facenum]; j < numtexwindings; j++, patch = patch->next)
 	{
-		Winding *w = new Winding(patch->winding->m_NumPoints);
+		auto *w = new Winding(patch->winding->m_NumPoints);
 		for (int x = 0; x < w->m_NumPoints; x++)
 		{
 			vec_t s, t;
@@ -2892,7 +2892,7 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 		// clip each patch
 		for (j = 0, patch = g_face_patches[facenum]; j < numtexwindings; j++, patch = patch->next)
 		{
-			Winding *w = new Winding(*texwindings[j]);
+			auto *w = new Winding(*texwindings[j]);
 			for (k = 0; k < 4; k++)
 			{
 				if (w->m_NumPoints)
@@ -3225,7 +3225,7 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 			if (l->translucent_b)
 			{
 				const dplane_t *surfaceplane = getPlaneFromFaceNumber(surface);
-				Winding *surfacewinding = new Winding(g_dfaces[surface]);
+				auto *surfacewinding = new Winding(g_dfaces[surface]);
 
 				VectorCopy(spot, spot2);
 				for (int x = 0; x < surfacewinding->m_NumPoints; x++)

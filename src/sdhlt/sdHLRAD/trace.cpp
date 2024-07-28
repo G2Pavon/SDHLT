@@ -520,7 +520,7 @@ bool TryMerge(opaqueface_t *f, const opaqueface_t *f2)
 	}
 	side2 = (DotProduct(p2B, pl2.normal) - pl2.dist > ON_EPSILON) ? 1 : 0;
 
-	Winding *neww = new Winding(w->m_NumPoints + w2->m_NumPoints - 4 + side1 + side2);
+	auto *neww = new Winding(w->m_NumPoints + w2->m_NumPoints - 4 + side1 + side2);
 	int j, k;
 	k = 0;
 	for (j = (i + 2) % w->m_NumPoints; j != i; j = (j + 1) % w->m_NumPoints)

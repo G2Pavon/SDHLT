@@ -574,7 +574,7 @@ void FinishBSPFile()
 		g_numtexinfo = g_nummappedtexinfo;
 	}
 	{ // Optimize BSP Write
-		dmiptexlump_t *l = (dmiptexlump_t *)g_dtexdata;
+		auto *l = (dmiptexlump_t *)g_dtexdata;
 		int &g_nummiptex = l->nummiptex;
 		bool *Used = (bool *)calloc(g_nummiptex, sizeof(bool));
 		int Num = 0, Size = 0;
@@ -629,7 +629,7 @@ void FinishBSPFile()
 				continue;
 			if (Used[i] == true)
 			{
-				miptex_t *m = (miptex_t *)((byte *)l + l->dataofs[i]);
+				auto *m = (miptex_t *)((byte *)l + l->dataofs[i]);
 				if (m->name[0] != '+' && m->name[0] != '-')
 					continue;
 				safe_strncpy(name, m->name, MAXWADNAME);
@@ -645,7 +645,7 @@ void FinishBSPFile()
 					{
 						if (l->dataofs[k] < 0)
 							continue;
-						miptex_t *m2 = (miptex_t *)((byte *)l + l->dataofs[k]);
+						auto *m2 = (miptex_t *)((byte *)l + l->dataofs[k]);
 						if (!strcasecmp(name, m2->name))
 							Used[k] = true;
 					}

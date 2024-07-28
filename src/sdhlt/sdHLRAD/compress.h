@@ -67,8 +67,8 @@ inline unsigned int float_istoosmall(unsigned int i)
 
 inline void float_compress(float_type t, void *s, const float *f)
 {
-	unsigned int *m = (unsigned int *)s;
-	const unsigned int *p = (const unsigned int *)f;
+	auto *m = (unsigned int *)s;
+	const auto *p = (const unsigned int *)f;
 	switch (t)
 	{
 	case FLOAT32:
@@ -102,8 +102,8 @@ inline void float_compress(float_type t, void *s, const float *f)
 
 inline void float_decompress(float_type t, const void *s, float *f)
 {
-	const unsigned int *m = (const unsigned int *)s;
-	unsigned int *p = (unsigned int *)f;
+	const auto *m = (const unsigned int *)s;
+	auto *p = (unsigned int *)f;
 	switch (t)
 	{
 	case FLOAT32:
@@ -127,10 +127,10 @@ inline void float_decompress(float_type t, const void *s, float *f)
 
 inline void vector_compress(vector_type t, void *s, const float *f1, const float *f2, const float *f3)
 {
-	unsigned int *m = (unsigned int *)s;
-	const unsigned int *p1 = (const unsigned int *)f1;
-	const unsigned int *p2 = (const unsigned int *)f2;
-	const unsigned int *p3 = (const unsigned int *)f3;
+	auto *m = (unsigned int *)s;
+	const auto *p1 = (const unsigned int *)f1;
+	const auto *p2 = (const unsigned int *)f2;
+	const auto *p3 = (const unsigned int *)f3;
 	unsigned int max, i1, i2, i3;
 	switch (t)
 	{
@@ -188,10 +188,10 @@ inline void vector_compress(vector_type t, void *s, const float *f1, const float
 
 inline void vector_decompress(vector_type t, const void *s, float *f1, float *f2, float *f3)
 {
-	const unsigned int *m = (const unsigned int *)s;
-	unsigned int *p1 = (unsigned int *)f1;
-	unsigned int *p2 = (unsigned int *)f2;
-	unsigned int *p3 = (unsigned int *)f3;
+	const auto *m = (const unsigned int *)s;
+	auto *p1 = (unsigned int *)f1;
+	auto *p2 = (unsigned int *)f2;
+	auto *p3 = (unsigned int *)f3;
 	switch (t)
 	{
 	case VECTOR96:

@@ -368,7 +368,7 @@ static void CSGBrush(int brushnum)
                     }
                 }
 
-                Winding *w = new Winding(*face->w); // throw pieces on the front sides of the planes into the outside list, return the remains on the inside, find the fragment inside brush2
+                auto *w = new Winding(*face->w); // throw pieces on the front sides of the planes into the outside list, return the remains on the inside, find the fragment inside brush2
                 for (face2 = brushHull2->faces; face2; face2 = face2->next)
                 {
                     if (face->planenum == face2->planenum)
@@ -845,7 +845,7 @@ static void ProcessModels()
             continue;
 
         first = g_entities[i].firstbrush; // sort the contents down so stone bites water, etc
-        brush_t *temps = (brush_t *)malloc(g_entities[i].numbrushes * sizeof(brush_t));
+        auto *temps = (brush_t *)malloc(g_entities[i].numbrushes * sizeof(brush_t));
         hlassume(temps, assume_NoMemory);
         for (j = 0; j < g_entities[i].numbrushes; j++)
         {

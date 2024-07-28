@@ -40,8 +40,8 @@ bool g_wadfiles_opened;
 
 static int CDECL lump_sorter_by_name(const void *lump1, const void *lump2)
 {
-	lumpinfo_t *plump1 = (lumpinfo_t *)lump1;
-	lumpinfo_t *plump2 = (lumpinfo_t *)lump2;
+	auto *plump1 = (lumpinfo_t *)lump1;
+	auto *plump2 = (lumpinfo_t *)lump2;
 	return strcasecmp(plump1->name, plump2->name);
 }
 
@@ -287,7 +287,7 @@ void LoadTextureFromWad(radtexture_t *tex, const miptex_t *header)
 				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
 				continue;
 			}
-			miptex_t *mt = (miptex_t *)malloc(found->disksize);
+			auto *mt = (miptex_t *)malloc(found->disksize);
 			hlassume(mt != nullptr, assume_NoMemory);
 			if (fseek(wad->file, found->filepos, SEEK_SET))
 				Error("File read failure");
@@ -334,7 +334,7 @@ void LoadTextures()
 		}
 		else
 		{
-			miptex_t *mt = (miptex_t *)&g_dtexdata[offset];
+			auto *mt = (miptex_t *)&g_dtexdata[offset];
 			if (mt->offsets[0])
 			{
 				LoadTexture(tex, mt, size);
@@ -585,7 +585,7 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 	cq_searchnode_t *s;
 	int numnodes = 0;
 	int maxnodes = 2 * maxcolors - 1;
-	cq_node_t *nodes = (cq_node_t *)malloc(maxnodes * sizeof(cq_node_t));
+	auto *nodes = (cq_node_t *)malloc(maxnodes * sizeof(cq_node_t));
 	hlassume(nodes != nullptr, assume_NoMemory);
 
 	n = &nodes[0];
@@ -825,7 +825,7 @@ static int g_newtextures_size[RADTEXTURES_MAX];
 
 int NewTextures_GetCurrentMiptexIndex()
 {
-	dmiptexlump_t *texdata = (dmiptexlump_t *)g_dtexdata;
+	auto *texdata = (dmiptexlump_t *)g_dtexdata;
 	return texdata->nummiptex + g_newtextures_num;
 }
 
@@ -850,7 +850,7 @@ void NewTextures_Write()
 	}
 
 	int i;
-	dmiptexlump_t *texdata = (dmiptexlump_t *)g_dtexdata;
+	auto *texdata = (dmiptexlump_t *)g_dtexdata;
 
 	byte *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
 	int datasize = (g_dtexdata + g_texdatasize) - dataaddr;
@@ -1339,7 +1339,7 @@ void EmbedLightmapInTextures()
 			miptexsize += (texturesize[0] >> miplevel) * (texturesize[1] >> miplevel);
 		}
 		miptexsize += 2 + 256 * 3 + 2;
-		miptex_t *miptex = (miptex_t *)malloc(miptexsize);
+		auto *miptex = (miptex_t *)malloc(miptexsize);
 		hlassume(miptex != nullptr, assume_NoMemory);
 
 		memset(miptex, 0, sizeof(miptex_t));

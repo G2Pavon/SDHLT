@@ -25,7 +25,7 @@ void LoadStudioModel(const char *modelname, const vec3_t origin, const vec3_t an
 	}
 	LoadFile(m->name, (char **)&m->extradata);
 
-	studiohdr_t *phdr = (studiohdr_t *)m->extradata;
+	auto *phdr = (studiohdr_t *)m->extradata;
 
 	// well the textures place in separate file (very stupid case)
 	if (phdr->numtextures == 0)
@@ -64,7 +64,7 @@ void LoadStudioModel(const char *modelname, const vec3_t origin, const vec3_t an
 		// and finally merge datapointers for textures
 		for (int i = 0; i < newhdr->numtextures; i++)
 		{
-			mstudiotexture_t *ptexture = (mstudiotexture_t *)(((byte *)newhdr) + newhdr->textureindex);
+			auto *ptexture = (mstudiotexture_t *)(((byte *)newhdr) + newhdr->textureindex);
 			ptexture[i].index += (phdr->length - sizeof(studiohdr_t));
 			//			printf( "Texture %i [%s]\n", i, ptexture[i].name );
 			// now we can replace offsets with real pointers

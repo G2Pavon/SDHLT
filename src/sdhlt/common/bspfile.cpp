@@ -925,7 +925,7 @@ bool NoWadTextures()
 			// missing textures have ofs -1
 			continue;
 		}
-		miptex_t *mt = (miptex_t *)&g_dtexdata[offset];
+		auto *mt = (miptex_t *)&g_dtexdata[offset];
 		if (!mt->offsets[0]) // Check for valid mip texture
 		{
 			return false;
@@ -1274,7 +1274,7 @@ void DeleteEmbeddedLightmaps()
 
 		if (numremaining < numtextures)
 		{
-			dmiptexlump_t *texdata = (dmiptexlump_t *)g_dtexdata;
+			auto *texdata = (dmiptexlump_t *)g_dtexdata;
 			byte *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
 			int datasize = (g_dtexdata + texdata->dataofs[numremaining]) - dataaddr;
 			byte *newdataaddr = (byte *)&texdata->dataofs[numremaining];

@@ -142,7 +142,7 @@ void Winding::getCenter(vec3_t &center) const
 
 Winding *Winding::Copy() const
 {
-    Winding *newWinding = new Winding(*this);
+    auto *newWinding = new Winding(*this);
     return newWinding;
 }
 
@@ -500,8 +500,8 @@ void Winding::Clip(const vec3_t normal, const vec_t dist, Winding **front, Windi
     maxpts = m_NumPoints + 4; // can't use counts[0]+2 because
     // of fp grouping errors
 
-    Winding *f = new Winding(maxpts);
-    Winding *b = new Winding(maxpts);
+    auto *f = new Winding(maxpts);
+    auto *b = new Winding(maxpts);
 
     *front = f;
     *back = b;
@@ -732,7 +732,7 @@ bool Winding::Clip(const dplane_t &split, bool keepon, vec_t epsilon)
 
     unsigned maxpts = m_NumPoints + 4; // can't use counts[0]+2 because of fp grouping errors
     unsigned newNumPoints = 0;
-    vec3_t *newPoints = new vec3_t[maxpts];
+    auto *newPoints = new vec3_t[maxpts];
     memset(newPoints, 0, sizeof(vec3_t) * maxpts);
 
     for (i = 0; i < m_NumPoints; i++)
@@ -880,8 +880,8 @@ void Winding::Divide(const dplane_t &split, Winding **front, Winding **back, vec
     maxpts = m_NumPoints + 4; // can't use counts[0]+2 because
     // of fp grouping errors
 
-    Winding *f = new Winding(maxpts);
-    Winding *b = new Winding(maxpts);
+    auto *f = new Winding(maxpts);
+    auto *b = new Winding(maxpts);
 
     *front = f;
     *back = b;
@@ -1005,7 +1005,7 @@ void Winding::resize(uint32_t newsize)
 {
     newsize = (newsize + 3) & ~3; // groups of 4
 
-    vec3_t *newpoints = new vec3_t[newsize];
+    auto *newpoints = new vec3_t[newsize];
     m_NumPoints = qmin(newsize, m_NumPoints);
     memcpy(newpoints, m_Points, m_NumPoints);
     delete[] m_Points;

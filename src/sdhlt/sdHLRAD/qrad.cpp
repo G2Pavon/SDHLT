@@ -1274,7 +1274,7 @@ static entity_t *FindTexlightEntity(int facenum)
 	const char *texname = GetTextureByNumber(face->texinfo);
 	entity_t *faceent = g_face_entity[facenum];
 	vec3_t centroid;
-	Winding *w = new Winding(*face);
+	auto *w = new Winding(*face);
 	w->getCenter(centroid);
 	delete w;
 	VectorAdd(centroid, g_face_offset[facenum], centroid);
@@ -1480,8 +1480,8 @@ static void MakePatches()
 // =====================================================================================
 static int CDECL patch_sorter(const void *p1, const void *p2)
 {
-	patch_t *patch1 = (patch_t *)p1;
-	patch_t *patch2 = (patch_t *)p2;
+	auto *patch1 = (patch_t *)p1;
+	auto *patch2 = (patch_t *)p2;
 
 	if (patch1->faceNumber < patch2->faceNumber)
 	{

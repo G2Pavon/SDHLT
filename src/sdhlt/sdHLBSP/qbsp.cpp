@@ -255,7 +255,7 @@ static void SplitFaceTmp(face_t *in, const dplane_t *const split, face_t **front
 		Error("SplitFace: numpoints > MAXEDGES");
 	}
 	{
-		Winding *wd = new Winding(newf->numpoints);
+		auto *wd = new Winding(newf->numpoints);
 		int x;
 		for (x = 0; x < newf->numpoints; x++)
 		{
@@ -274,7 +274,7 @@ static void SplitFaceTmp(face_t *in, const dplane_t *const split, face_t **front
 		}
 	}
 	{
-		Winding *wd = new Winding(new2->numpoints);
+		auto *wd = new Winding(new2->numpoints);
 		int x;
 		for (x = 0; x < new2->numpoints; x++)
 		{

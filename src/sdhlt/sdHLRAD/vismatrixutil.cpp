@@ -98,7 +98,7 @@ static transfer_index_t *CompressTransferIndicies(transfer_raw_index_t *tRaw, co
 		return nullptr;
 	}
 
-	transfer_index_t *CompressedArray = (transfer_index_t *)AllocBlock(sizeof(transfer_index_t) * compressed_count_1);
+	auto *CompressedArray = (transfer_index_t *)AllocBlock(sizeof(transfer_index_t) * compressed_count_1);
 	transfer_index_t *compressed = CompressedArray;
 
 	for (x = 0; x < size; x++, raw++, compressed++)
@@ -251,8 +251,8 @@ void MakeScales(const int threadnum)
 	transfer_raw_index_t *tIndex;
 	float *tData;
 
-	transfer_raw_index_t *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
-	float *tData_All = (float *)AllocBlock(sizeof(float) * (g_num_patches + 1));
+	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
+	auto *tData_All = (float *)AllocBlock(sizeof(float) * (g_num_patches + 1));
 
 	count = 0;
 
@@ -504,8 +504,8 @@ void MakeRGBScales(const int threadnum)
 	transfer_raw_index_t *tIndex;
 	float *tRGBData;
 
-	transfer_raw_index_t *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
-	float *tRGBData_All = (float *)AllocBlock(sizeof(float[3]) * (g_num_patches + 1));
+	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
+	auto *tRGBData_All = (float *)AllocBlock(sizeof(float[3]) * (g_num_patches + 1));
 
 	count = 0;
 
