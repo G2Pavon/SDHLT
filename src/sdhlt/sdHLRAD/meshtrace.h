@@ -70,7 +70,7 @@ private:
 	}
 
 public:
-	TraceMesh() { mesh = NULL; }
+	TraceMesh() { mesh = nullptr; }
 	~TraceMesh() {}
 
 	// trace stuff

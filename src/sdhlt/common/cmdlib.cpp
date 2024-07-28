@@ -123,7 +123,7 @@ const char *stristr(const char *const string, const char *const substring)
 inline void getFilePositions(const char *path, int *extension_position, int *directory_position)
 {
     const char *ptr = strrchr(path, '.');
-    if (ptr == 0)
+    if (ptr == nullptr)
     {
         *extension_position = -1;
     }
@@ -133,7 +133,7 @@ inline void getFilePositions(const char *path, int *extension_position, int *dir
     }
 
     ptr = qmax(strrchr(path, '/'), strrchr(path, '\\'));
-    if (ptr == 0)
+    if (ptr == nullptr)
     {
         *directory_position = -1;
     }

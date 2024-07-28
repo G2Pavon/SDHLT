@@ -877,7 +877,7 @@ void InterpolateSampleLight(const vec3_t position, int surface, int numstyles, c
 			{
 				// worst case, simply use the nearest patch
 
-				best = NULL;
+				best = nullptr;
 				for (i = 0; i < (int)ft->localtriangulations.size(); i++)
 				{
 					lt = ft->localtriangulations[i];
@@ -885,7 +885,7 @@ void InterpolateSampleLight(const vec3_t position, int surface, int numstyles, c
 					snap_to_winding(lt->winding, lt->plane, v);
 					VectorSubtract(v, position, v);
 					dist = VectorLength(v);
-					if (best == NULL || dist < bestdist - ON_EPSILON)
+					if (best == nullptr || dist < bestdist - ON_EPSILON)
 					{
 						best = lt;
 						bestdist = dist;
@@ -1753,7 +1753,7 @@ void FreeTriangulations()
 			}
 
 			delete facetrian;
-			g_facetriangulations[i] = NULL;
+			g_facetriangulations[i] = nullptr;
 		}
 	}
 	catch (std::bad_alloc)

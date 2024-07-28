@@ -21,7 +21,7 @@ void writetransfers(const char *const transferfile, const long total_patches)
     FILE *file;
 
     file = fopen(transferfile, "w+b");
-    if (file != NULL)
+    if (file != nullptr)
     {
         unsigned amtwritten;
         patch_t *patch;
@@ -94,7 +94,7 @@ bool readtransfers(const char *const transferfile, const long numpatches)
     long total_patches;
 
     file = fopen(transferfile, "rb");
-    if (file != NULL)
+    if (file != nullptr)
     {
         unsigned amtread;
         patch_t *patch;
@@ -122,7 +122,7 @@ bool readtransfers(const char *const transferfile, const long numpatches)
             if (patch->iIndex)
             {
                 patch->tIndex = (transfer_index_t *)AllocBlock(patch->iIndex * sizeof(transfer_index_t *));
-                hlassume(patch->tIndex != NULL, assume_NoMemory);
+                hlassume(patch->tIndex != nullptr, assume_NoMemory);
                 amtread = fread(patch->tIndex, sizeof(transfer_index_t), patch->iIndex, file);
                 if (amtread != patch->iIndex)
                 {
@@ -138,7 +138,7 @@ bool readtransfers(const char *const transferfile, const long numpatches)
             if (patch->iData)
             {
                 patch->tData = (transfer_data_t *)AllocBlock(patch->iData * float_size[g_transfer_compress_type] + unused_size);
-                hlassume(patch->tData != NULL, assume_NoMemory);
+                hlassume(patch->tData != nullptr, assume_NoMemory);
                 amtread = fread(patch->tData, float_size[g_transfer_compress_type], patch->iData, file);
                 if (amtread != patch->iData)
                 {
@@ -166,8 +166,8 @@ FailedRead:
         FreeBlock(patch->tIndex);
         patch->iData = 0;
         patch->iIndex = 0;
-        patch->tData = NULL;
-        patch->tIndex = NULL;
+        patch->tData = nullptr;
+        patch->tIndex = nullptr;
     }
 }
     fclose(file);

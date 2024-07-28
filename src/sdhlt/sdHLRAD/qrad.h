@@ -361,7 +361,7 @@ extern void ScaleDirectLights();			 // run before AddPatchLights
 extern void CreateFacelightDependencyList(); // run before AddPatchLights
 extern void AddPatchLights(int facenum);
 extern void FreeFacelightDependencyList();
-extern int TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = NULL);
+extern int TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = nullptr);
 #define OPAQUE_NODE_INLINECALL
 #ifdef OPAQUE_NODE_INLINECALL
 typedef struct

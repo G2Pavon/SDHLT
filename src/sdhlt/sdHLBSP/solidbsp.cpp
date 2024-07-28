@@ -55,7 +55,7 @@ static void UpdateStatus(void)
 //  FaceSide
 //      For BSP hueristic
 // =====================================================================================
-static int FaceSide(face_t *in, const dplane_t *const split, double *epsilonsplit = NULL)
+static int FaceSide(face_t *in, const dplane_t *const split, double *epsilonsplit = nullptr)
 {
 	const vec_t epsilonmin = 0.002, epsilonmax = 0.2;
 	vec_t d_front, d_back;
@@ -403,7 +403,7 @@ static surface_t *ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins,
 	// pick the plane that splits the least
 	//
 	bestvalue = 9e30;
-	bestsurface = NULL;
+	bestsurface = nullptr;
 
 	for (p = surfaces; p; p = p->next)
 	{
@@ -492,7 +492,7 @@ static surface_t *ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins,
 	DeleteSurfaceTree(surfacetree);
 	if (!bestsurface)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return bestsurface;
@@ -529,7 +529,7 @@ static surface_t *ChoosePlaneFromList(surface_t *surfaces, const vec3_t mins, co
 	// pick the plane that splits the least
 	//
 	bestvalue = 9e30;
-	bestsurface = NULL;
+	bestsurface = nullptr;
 
 	for (p = surfaces; p; p = p->next)
 	{
@@ -666,7 +666,7 @@ static surface_t *SelectPartition(surface_t *surfaces, const node_t *const node,
 {
 	if (splitdetaillevel == -1)
 	{
-		return NULL;
+		return nullptr;
 	}
 	// now we MUST choose a surface of this detail level
 
@@ -674,7 +674,7 @@ static surface_t *SelectPartition(surface_t *surfaces, const node_t *const node,
 	{
 		surface_t *s = ChooseMidPlaneFromList(surfaces,
 											  validmins, validmaxs, splitdetaillevel);
-		if (s != NULL)
+		if (s != nullptr)
 			return s;
 	}
 	return ChoosePlaneFromList(surfaces, node->mins, node->maxs, splitdetaillevel);
@@ -690,7 +690,7 @@ static void CalcSurfaceInfo(surface_t *surf)
 	int j;
 	face_t *f;
 
-	hlassume(surf->faces != NULL, assume_ValidPointer); // "CalcSurfaceInfo() surface without a face"
+	hlassume(surf->faces != nullptr, assume_ValidPointer); // "CalcSurfaceInfo() surface without a face"
 
 	//
 	// calculate a bounding box
@@ -733,7 +733,7 @@ void FixDetaillevelForDiscardable(node_t *node, int detaillevel)
 	// when we move on to the next detaillevel, some discardable faces of previous detail level remain not on node (because they are discardable). remove them now
 	surface_t *s, **psnext;
 	face_t *f, **pfnext;
-	for (psnext = &node->surfaces; s = *psnext, s != NULL;)
+	for (psnext = &node->surfaces; s = *psnext, s != nullptr;)
 	{
 		if (s->onnode)
 		{
@@ -741,7 +741,7 @@ void FixDetaillevelForDiscardable(node_t *node, int detaillevel)
 			continue;
 		}
 		hlassume(s->faces, assume_ValidPointer);
-		for (pfnext = &s->faces; f = *pfnext, f != NULL;)
+		for (pfnext = &s->faces; f = *pfnext, f != nullptr;)
 		{
 			if (detaillevel == -1 || f->detaillevel < detaillevel)
 			{
@@ -790,17 +790,17 @@ static void DivideSurface(surface_t *in, const dplane_t *const split, surface_t 
 		if (inplane->dist > split->dist)
 		{
 			*front = in;
-			*back = NULL;
+			*back = nullptr;
 		}
 		else if (inplane->dist < split->dist)
 		{
-			*front = NULL;
+			*front = nullptr;
 			*back = in;
 		}
 		else
 		{ // split the surface into front and back
-			frontlist = NULL;
-			backlist = NULL;
+			frontlist = nullptr;
+			backlist = nullptr;
 			for (facet = in->faces; facet; facet = next)
 			{
 				next = facet->next;
@@ -822,8 +822,8 @@ static void DivideSurface(surface_t *in, const dplane_t *const split, surface_t 
 
 	// do a real split.  may still end up entirely on one side
 	// OPTIMIZE: use bounding box for fast test
-	frontlist = NULL;
-	backlist = NULL;
+	frontlist = nullptr;
+	backlist = nullptr;
 
 	for (facet = in->faces; facet; facet = next)
 	{
@@ -843,24 +843,24 @@ static void DivideSurface(surface_t *in, const dplane_t *const split, surface_t 
 
 	// if nothing actually got split, just move the in plane
 makesurfs:
-	if (frontlist == NULL && backlist == NULL)
+	if (frontlist == nullptr && backlist == nullptr)
 	{
-		*front = NULL;
-		*back = NULL;
+		*front = nullptr;
+		*back = nullptr;
 		return;
 	}
-	if (frontlist == NULL)
+	if (frontlist == nullptr)
 	{
-		*front = NULL;
+		*front = nullptr;
 		*back = in;
 		in->faces = backlist;
 		return;
 	}
 
-	if (backlist == NULL)
+	if (backlist == nullptr)
 	{
 		*front = in;
-		*back = NULL;
+		*back = nullptr;
 		in->faces = frontlist;
 		return;
 	}
@@ -894,8 +894,8 @@ static void SplitNodeSurfaces(surface_t *surfaces, const node_t *const node)
 
 	splitplane = &g_dplanes[node->planenum];
 
-	frontlist = NULL;
-	backlist = NULL;
+	frontlist = nullptr;
+	backlist = nullptr;
 
 	for (p = surfaces; p; p = next)
 	{
@@ -931,8 +931,8 @@ static void SplitNodeBrushes(brush_t *brushes, const node_t *node)
 	brush_t *backlist, *backfrag;
 	brush_t *b, *next;
 	const dplane_t *splitplane;
-	frontlist = NULL;
-	backlist = NULL;
+	frontlist = nullptr;
+	backlist = nullptr;
 	splitplane = &g_dplanes[node->planenum];
 	for (b = brushes; b; b = next)
 	{
@@ -1074,7 +1074,7 @@ static void FreeLeafSurfs(node_t *leaf)
 		FreeSurface(surf);
 	}
 
-	leaf->surfaces = NULL;
+	leaf->surfaces = nullptr;
 }
 static void FreeLeafBrushes(node_t *leaf)
 {
@@ -1084,7 +1084,7 @@ static void FreeLeafBrushes(node_t *leaf)
 		next = b->next;
 		FreeBrush(b);
 	}
-	leaf->detailbrushes = NULL;
+	leaf->detailbrushes = nullptr;
 }
 
 // =====================================================================================
@@ -1182,7 +1182,7 @@ static void LinkLeafFaces(surface_t *planelist, node_t *leafnode)
 		entity_t *ent = EntityForModel(g_nummodels - 1);
 		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
 		{
-			ent = NULL;
+			ent = nullptr;
 		}
 		Warning("Ambiguous leafnode content ( %s and %s ) at (%.0f,%.0f,%.0f)-(%.0f,%.0f,%.0f) in hull %d of model %d (entity: classname \"%s\", origin \"%s\", targetname \"%s\")",
 				ContentsToString(ContentsForRank(r)), ContentsToString(ContentsForRank(rank)),
@@ -1204,14 +1204,14 @@ static void MakeLeaf(node_t *leafnode)
 
 	leafnode->planenum = -1;
 
-	leafnode->iscontentsdetail = leafnode->detailbrushes != NULL;
+	leafnode->iscontentsdetail = leafnode->detailbrushes != nullptr;
 	FreeLeafBrushes(leafnode);
-	leafnode->detailbrushes = NULL;
+	leafnode->detailbrushes = nullptr;
 	if (leafnode->boundsbrush)
 	{
 		FreeBrush(leafnode->boundsbrush);
 	}
-	leafnode->boundsbrush = NULL;
+	leafnode->boundsbrush = nullptr;
 
 	if (!(leafnode->isportalleaf && leafnode->contents == CONTENTS_SOLID))
 	{
@@ -1228,11 +1228,11 @@ static void MakeLeaf(node_t *leafnode)
 			}
 			for (f = surf->faces; f; f = f->next)
 			{
-				if (f->original == NULL)
+				if (f->original == nullptr)
 				{ // because it is not on node or its content is solid
 					continue;
 				}
-				if (f->original == NULL)
+				if (f->original == nullptr)
 				{
 					continue;
 				}
@@ -1241,7 +1241,7 @@ static void MakeLeaf(node_t *leafnode)
 				markfaces[nummarkfaces++] = f->original;
 			}
 		}
-		markfaces[nummarkfaces] = NULL; // end marker
+		markfaces[nummarkfaces] = nullptr; // end marker
 		nummarkfaces++;
 
 		leafnode->markfaces = (face_t **)malloc(nummarkfaces * sizeof(*leafnode->markfaces));
@@ -1249,7 +1249,7 @@ static void MakeLeaf(node_t *leafnode)
 	}
 
 	FreeLeafSurfs(leafnode);
-	leafnode->surfaces = NULL;
+	leafnode->surfaces = nullptr;
 }
 
 // =====================================================================================
@@ -1396,7 +1396,7 @@ static void SplitNodePortals(node_t *node)
 		}
 	}
 
-	node->portals = NULL;
+	node->portals = nullptr;
 }
 
 // =====================================================================================
@@ -1510,8 +1510,8 @@ static void CopyFacesToNode(node_t *node, surface_t *surf)
 	}
 
 	// copy the faces to the node, and consider them the originals
-	node->surfaces = NULL;
-	node->faces = NULL;
+	node->surfaces = nullptr;
+	node->faces = nullptr;
 	for (f = surf->faces; f; f = f->next)
 	{
 		if (f->facestyle == face_discardable)
@@ -1559,7 +1559,7 @@ static void BuildBspTree_r(node_t *node)
 		LinkLeafFaces(node->surfaces, node); // set contents
 		if (node->contents == CONTENTS_SOLID)
 		{
-			split = NULL;
+			split = nullptr;
 		}
 	}
 	else
@@ -1576,7 +1576,7 @@ static void BuildBspTree_r(node_t *node)
 	split->onnode = node; // can't use again
 	allsurfs = node->surfaces;
 	node->planenum = split->planenum;
-	node->faces = NULL;
+	node->faces = nullptr;
 	CopyFacesToNode(node, split);
 
 	node->children[0] = AllocNode();
@@ -1617,7 +1617,7 @@ static void BuildBspTree_r(node_t *node)
 		}
 		FreeBrush(node->boundsbrush);
 	}
-	node->boundsbrush = NULL;
+	node->boundsbrush = nullptr;
 
 	if (!split->detaillevel)
 	{

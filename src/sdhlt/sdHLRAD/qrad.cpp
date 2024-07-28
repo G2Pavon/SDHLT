@@ -68,11 +68,11 @@ vec_t g_chop = DEFAULT_CHOP;
 vec_t g_texchop = DEFAULT_TEXCHOP;
 
 // Opaque faces
-opaqueList_t *g_opaque_face_list = NULL;
+opaqueList_t *g_opaque_face_list = nullptr;
 unsigned g_opaque_face_count = 0;
 unsigned g_max_opaque_face_count = 0; // Current array maximum (used for reallocs)
 vec_t g_corings[ALLSTYLES];
-vec3_t *g_translucenttextures = NULL;
+vec3_t *g_translucenttextures = nullptr;
 vec_t g_translucentdepth = DEFAULT_TRANSLUCENTDEPTH;
 vec_t g_blur = DEFAULT_BLUR;
 
@@ -355,7 +355,7 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 {
 	// patch->winding->m_NumPoints must > 0
 	// plA->dist and plB->dist will not be used
-	Winding *winding = NULL;
+	Winding *winding = nullptr;
 	vec_t chop;
 	vec_t epsilon;
 	const int max_gridsize = 64;
@@ -422,8 +422,8 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 		for (int i = 1; i < gridsizeA; i++)
 		{
 			vec_t dist;
-			Winding *front = NULL;
-			Winding *back = NULL;
+			Winding *front = nullptr;
+			Winding *back = nullptr;
 
 			dist = gridstartA + i * gridchopA;
 			winding->Clip(plA->normal, dist, &front, &back);
@@ -433,12 +433,12 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 				if (front)
 				{
 					delete front;
-					front = NULL;
+					front = nullptr;
 				}
 				if (back)
 				{
 					delete back;
-					back = NULL;
+					back = nullptr;
 				}
 				break;
 			}
@@ -447,30 +447,30 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 				if (front)
 				{
 					delete front;
-					front = NULL;
+					front = nullptr;
 				}
 				if (back)
 				{
 					delete back;
-					back = NULL;
+					back = nullptr;
 				}
 				continue;
 			}
 
 			delete winding;
-			winding = NULL;
+			winding = nullptr;
 
 			windingArray[g_numwindings] = back;
 			g_numwindings++;
-			back = NULL;
+			back = nullptr;
 
 			winding = front;
-			front = NULL;
+			front = nullptr;
 		}
 
 		windingArray[g_numwindings] = winding;
 		g_numwindings++;
-		winding = NULL;
+		winding = nullptr;
 	}
 
 	// cut by the direction of plane B
@@ -479,13 +479,13 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 		for (int i = 0; i < numstrips; i++)
 		{
 			Winding *strip = windingArray[i];
-			windingArray[i] = NULL;
+			windingArray[i] = nullptr;
 
 			for (int j = 1; j < gridsizeB; j++)
 			{
 				vec_t dist;
-				Winding *front = NULL;
-				Winding *back = NULL;
+				Winding *front = nullptr;
+				Winding *back = nullptr;
 
 				dist = gridstartB + j * gridchopB;
 				strip->Clip(plB->normal, dist, &front, &back);
@@ -495,12 +495,12 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 					if (front)
 					{
 						delete front;
-						front = NULL;
+						front = nullptr;
 					}
 					if (back)
 					{
 						delete back;
-						back = NULL;
+						back = nullptr;
 					}
 					break;
 				}
@@ -509,35 +509,35 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 					if (front)
 					{
 						delete front;
-						front = NULL;
+						front = nullptr;
 					}
 					if (back)
 					{
 						delete back;
-						back = NULL;
+						back = nullptr;
 					}
 					continue;
 				}
 
 				delete strip;
-				strip = NULL;
+				strip = nullptr;
 
 				windingArray[g_numwindings] = back;
 				g_numwindings++;
-				back = NULL;
+				back = nullptr;
 
 				strip = front;
-				front = NULL;
+				front = nullptr;
 			}
 
 			windingArray[g_numwindings] = strip;
 			g_numwindings++;
-			strip = NULL;
+			strip = nullptr;
 		}
 	}
 
 	delete patch->winding;
-	patch->winding = NULL;
+	patch->winding = nullptr;
 }
 
 // =====================================================================================
@@ -585,9 +585,9 @@ static void SubdividePatch(patch_t *patch)
 	cutWindingWithGrid(patch, plA, plB);
 
 	x = 0;
-	patch->next = NULL;
+	patch->next = nullptr;
 	winding = windingArray;
-	while (*winding == NULL)
+	while (*winding == nullptr)
 	{
 		winding++;
 		x++;
@@ -1102,7 +1102,7 @@ static void AddFaceToOpaqueList(
 		g_max_opaque_face_count += OPAQUE_ARRAY_GROWTH_SIZE;
 		g_opaque_face_list = (opaqueList_t *)realloc(g_opaque_face_list, sizeof(opaqueList_t) * g_max_opaque_face_count);
 
-		hlassume(g_opaque_face_list != NULL, assume_NoMemory);
+		hlassume(g_opaque_face_list != nullptr, assume_NoMemory);
 	}
 
 	{
@@ -1138,7 +1138,7 @@ static void FreeOpaqueFaceList()
 	}
 	free(g_opaque_face_list);
 
-	g_opaque_face_list = NULL;
+	g_opaque_face_list = nullptr;
 	g_opaque_face_count = 0;
 	g_max_opaque_face_count = 0;
 }
@@ -1279,7 +1279,7 @@ static entity_t *FindTexlightEntity(int facenum)
 	delete w;
 	VectorAdd(centroid, g_face_offset[facenum], centroid);
 
-	entity_t *found = NULL;
+	entity_t *found = nullptr;
 	vec_t bestdist = -1;
 	for (int i = 0; i < g_numentities; i++)
 	{
@@ -1523,7 +1523,7 @@ static void SortPatches()
 		{
 			if (patch->faceNumber != prev->faceNumber)
 			{
-				prev->next = NULL;
+				prev->next = nullptr;
 				g_face_patches[patch->faceNumber] = patch;
 			}
 			else
@@ -1557,7 +1557,7 @@ static void FreePatches()
 	}
 	memset(g_patches, 0, sizeof(patch_t) * g_num_patches);
 	FreeBlock(g_patches);
-	g_patches = NULL;
+	g_patches = nullptr;
 }
 
 //=====================================================================
@@ -2027,17 +2027,17 @@ static void FreeTransfers()
 		if (patch->tData)
 		{
 			FreeBlock(patch->tData);
-			patch->tData = NULL;
+			patch->tData = nullptr;
 		}
 		if (patch->tRGBData)
 		{
 			FreeBlock(patch->tRGBData);
-			patch->tRGBData = NULL;
+			patch->tRGBData = nullptr;
 		}
 		if (patch->tIndex)
 		{
 			FreeBlock(patch->tIndex);
-			patch->tIndex = NULL;
+			patch->tIndex = nullptr;
 		}
 	}
 }
@@ -2123,11 +2123,11 @@ static void RadWorld()
 		BounceLight();
 
 		FreeBlock(emitlight);
-		emitlight = NULL;
+		emitlight = nullptr;
 		FreeBlock(addlight);
-		addlight = NULL;
+		addlight = nullptr;
 		FreeBlock(newstyles);
-		newstyles = NULL;
+		newstyles = nullptr;
 	}
 
 	FreeTransfers();
@@ -2252,7 +2252,7 @@ int main(const int argc, char **argv)
 {
 	int i;
 	double start, end;
-	const char *mapname_from_arg = NULL;
+	const char *mapname_from_arg = nullptr;
 	char temp[_MAX_PATH]; // seedee
 
 	g_Program = "sdHLRAD";

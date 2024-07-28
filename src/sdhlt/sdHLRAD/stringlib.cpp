@@ -164,7 +164,7 @@ size_t Q_strncpy(char *dst, const char *src, size_t size)
 char *copystring(const char *s)
 {
 	if (!s)
-		return NULL;
+		return nullptr;
 
 	char *b = new char[Q_strlen(s) + 1];
 	Q_strcpy(b, s);
@@ -181,7 +181,7 @@ char *Q_strchr(const char *s, char c)
 		if (*++s == c)
 			return (char *)s;
 	}
-	return 0;
+	return nullptr;
 }
 
 char *Q_strrchr(const char *s, char c)
@@ -195,21 +195,21 @@ char *Q_strrchr(const char *s, char c)
 		if (*--s == c)
 			return (char *)s;
 	}
-	return 0;
+	return nullptr;
 }
 
 int Q_strnicmp(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
 
-	if (s1 == NULL)
+	if (s1 == nullptr)
 	{
-		if (s2 == NULL)
+		if (s2 == nullptr)
 			return 0;
 		else
 			return -1;
 	}
-	else if (s2 == NULL)
+	else if (s2 == nullptr)
 		return 1;
 
 	do
@@ -239,14 +239,14 @@ int Q_strncmp(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
 
-	if (s1 == NULL)
+	if (s1 == nullptr)
 	{
-		if (s2 == NULL)
+		if (s2 == nullptr)
 			return 0;
 		else
 			return -1;
 	}
-	else if (s2 == NULL)
+	else if (s2 == nullptr)
 		return 1;
 
 	do
@@ -271,7 +271,7 @@ char *Q_strstr(const char *string, const char *string2)
 	int c, len;
 
 	if (!string || !string2)
-		return NULL;
+		return nullptr;
 
 	c = *string2;
 	len = Q_strlen(string2);
@@ -288,7 +288,7 @@ char *Q_strstr(const char *string, const char *string2)
 			string++;
 		}
 		else
-			return NULL;
+			return nullptr;
 	}
 	return (char *)string;
 }
@@ -298,7 +298,7 @@ char *Q_stristr(const char *string, const char *string2)
 	int c, len;
 
 	if (!string || !string2)
-		return NULL;
+		return nullptr;
 
 	c = Q_tolower(*string2);
 	len = Q_strlen(string2);
@@ -315,7 +315,7 @@ char *Q_stristr(const char *string, const char *string2)
 			string++;
 		}
 		else
-			return NULL;
+			return nullptr;
 	}
 	return (char *)string;
 }
@@ -510,19 +510,19 @@ char *COM_ParseFile(char *data, char *token)
 	int c, len;
 
 	if (!token)
-		return NULL;
+		return nullptr;
 
 	len = 0;
 	token[0] = 0;
 
 	if (!data)
-		return NULL;
+		return nullptr;
 // skip whitespace
 skipwhite:
 	while ((c = ((byte)*data)) <= ' ')
 	{
 		if (c == 0)
-			return NULL; // end of file;
+			return nullptr; // end of file;
 		data++;
 	}
 

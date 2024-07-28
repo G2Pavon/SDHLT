@@ -79,7 +79,7 @@ char *findparams(char *cmdlineparams, char *params)
 		if (!pvalid(p))
 			return c1;
 	}
-	return NULL;
+	return nullptr;
 }
 void addparams(char *cmdline, char *params, unsigned int n)
 {
@@ -93,7 +93,7 @@ void delparams(char *cmdline, char *params)
 	char *c, *p;
 	if (!pvalid(params)) // avoid infinite loop
 		return;
-	while (cmdline = findparams(cmdline, params), cmdline != NULL)
+	while (cmdline = findparams(cmdline, params), cmdline != nullptr)
 	{
 		for (c = cmdline, p = params; pvalid(p); c = pnext(c), p = pnext(p))
 			;
@@ -210,7 +210,7 @@ const char *nextword(const char *s, char *token, unsigned int n)
 		}
 	}
 	token[i] = '\0';
-	return content ? c : NULL;
+	return content ? c : nullptr;
 }
 void parsearg(int argc, char **argv, char *cmdline, unsigned int n)
 {
@@ -265,7 +265,7 @@ void ParseParamFile(const int argc, char **const argv, int &argcnew, char **&arg
 	char *s;
 	const char *c, *c0;
 	char filepath[_MAX_PATH];
-	s = NULL;
+	s = nullptr;
 
 	char tmp[_MAX_PATH];
 #ifdef SYSTEM_WIN32

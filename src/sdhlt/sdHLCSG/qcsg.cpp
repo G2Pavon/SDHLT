@@ -243,7 +243,7 @@ static bface_t *CopyFacesToOutside(brushhull_t *bh) // Make a copy of all the fa
     bface_t *newf;
     bface_t *outside;
 
-    outside = NULL;
+    outside = nullptr;
 
     for (f = bh->faces; f; f = f->next)
     {
@@ -346,7 +346,7 @@ static void CSGBrush(int brushnum)
             }
 
             face = outsideFaceList;
-            outsideFaceList = NULL;
+            outsideFaceList = nullptr;
             for (; face; face = nextFace) // divide faces by the planes of the b2 to find which. Fragments are inside
             {
                 nextFace = face->next;
@@ -445,7 +445,7 @@ static void CSGBrush(int brushnum)
                             else
                             {
                                 FreeFace(face);
-                                face = NULL;
+                                face = nullptr;
                                 break;
                             }
                         }
@@ -455,7 +455,7 @@ static void CSGBrush(int brushnum)
                 {
                     face->next = outsideFaceList;
                     outsideFaceList = face;
-                    face = NULL;
+                    face = nullptr;
                 }
                 delete w;
 
@@ -1134,7 +1134,7 @@ int main(const int argc, char **argv)
     int i;
     char name[_MAX_PATH];                // mapanme
     double start, end;                   // start/end time log
-    const char *mapname_from_arg = NULL; // mapname path from passed argvar
+    const char *mapname_from_arg = nullptr; // mapname path from passed argvar
 
     g_Program = "sdHLCSG";
     if (InitConsole(argc, argv) < 0)

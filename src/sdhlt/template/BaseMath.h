@@ -18,25 +18,25 @@
 //
 
 template <typename T>
-inline T FASTCALL MIN(const T a, const T b)
+inline T FASTCALL; MIN(const T a, const T b)
 {
     return ((a < b) ? a : b);
 }
 
 template <typename T>
-inline T FASTCALL MIN(const T a, const T b, const T c)
+inline T FASTCALL; MIN(const T a, const T b, const T c)
 {
     return (MIN(MIN(a, b), c));
 }
 
 template <typename T>
-inline T FASTCALL MAX(const T a, const T b)
+inline T FASTCALL; MAX(const T a, const T b)
 {
     return ((a > b) ? a : b);
 }
 
 template <typename T>
-inline T FASTCALL MAX(const T a, const T b, const T c)
+inline T FASTCALL; MAX(const T a, const T b, const T c)
 {
     return (MAX(MAX(a, b), c));
 }

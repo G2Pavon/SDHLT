@@ -237,7 +237,7 @@ bool Winding::Valid() const
 
 Winding::Winding()
 {
-    m_Points = NULL;
+    m_Points = nullptr;
     m_NumPoints = m_MaxPoints = 0;
 }
 
@@ -486,14 +486,14 @@ void Winding::Clip(const vec3_t normal, const vec_t dist, Winding **front, Windi
 
     if (!counts[0])
     {
-        *front = NULL;
+        *front = nullptr;
         *back = new Winding(*this);
         return;
     }
     if (!counts[1])
     {
         *front = new Winding(*this);
-        *back = NULL;
+        *back = nullptr;
         return;
     }
 
@@ -598,12 +598,12 @@ void Winding::Clip(const vec3_t normal, const vec_t dist, Winding **front, Windi
     if (f->m_NumPoints == 0)
     {
         delete f;
-        *front = NULL;
+        *front = nullptr;
     }
     if (b->m_NumPoints == 0)
     {
         delete b;
-        *back = NULL;
+        *back = nullptr;
     }
 }
 
@@ -623,7 +623,7 @@ bool Winding::Chop(const vec3_t normal, const vec_t dist, vec_t epsilon)
         delete[] m_Points;
         m_NumPoints = f->m_NumPoints;
         m_Points = f->m_Points;
-        f->m_Points = NULL;
+        f->m_Points = nullptr;
         delete f;
         return true;
     }
@@ -631,7 +631,7 @@ bool Winding::Chop(const vec3_t normal, const vec_t dist, vec_t epsilon)
     {
         m_NumPoints = 0;
         delete[] m_Points;
-        m_Points = NULL;
+        m_Points = nullptr;
         return false;
     }
 }
@@ -720,7 +720,7 @@ bool Winding::Clip(const dplane_t &split, bool keepon, vec_t epsilon)
     if (!counts[0])
     {
         delete[] m_Points;
-        m_Points = NULL;
+        m_Points = nullptr;
         m_NumPoints = 0;
         return false;
     }
@@ -793,7 +793,7 @@ bool Winding::Clip(const dplane_t &split, bool keepon, vec_t epsilon)
     if (m_NumPoints == 0)
     {
         delete[] m_Points;
-        m_Points = NULL;
+        m_Points = nullptr;
         m_NumPoints = 0;
         return false;
     }
@@ -845,7 +845,7 @@ void Winding::Divide(const dplane_t &split, Winding **front, Winding **back, vec
     sides[i] = sides[0];
     dists[i] = dists[0];
 
-    *front = *back = NULL;
+    *front = *back = nullptr;
 
     if (!counts[0] && !counts[1])
     {
@@ -955,14 +955,14 @@ void Winding::Divide(const dplane_t &split, Winding **front, Winding **back, vec
     {
         delete f;
         delete b;
-        *front = NULL;
+        *front = nullptr;
         *back = this;
     }
     else if (b->m_NumPoints == 0)
     {
         delete f;
         delete b;
-        *back = NULL;
+        *back = nullptr;
         *front = this;
     }
 }
@@ -1031,7 +1031,7 @@ void Winding::Reset(void)
     if (m_Points)
     {
         delete[] m_Points;
-        m_Points = NULL;
+        m_Points = nullptr;
     }
 
     m_NumPoints = m_MaxPoints = 0;

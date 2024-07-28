@@ -34,7 +34,7 @@ inline static winding_t* AllocStackWinding(pstack_t* const stack)
 
     Error("AllocStackWinding: failed");
 
-    return NULL;
+    return nullptr;
 }
 
 // =====================================================================================
@@ -103,7 +103,7 @@ inline winding_t*      ChopWinding(winding_t* const in, pstack_t* const stack, c
     if (!counts[0])
     {
         FreeStackWinding(in, stack);
-        return NULL;
+        return nullptr;
     }
 
     sides[i] = sides[0];
@@ -343,13 +343,13 @@ inline static winding_t* ClipToSeperators(
                 plane.dist = -plane.dist;
             }
 
-	    if (target != NULL)
+	    if (target != nullptr)
 	    {
             // clip target by the seperating plane
             target = ChopWinding(target, stack, &plane);
             if (!target)
             {
-                return NULL;                               // target is not visible
+                return nullptr;                               // target is not visible
             }
 	    }
 	    else
@@ -399,10 +399,10 @@ inline static void     RecursiveLeafFlow(const int leafnum, const threaddata_t* 
 #endif
     stack.head = prevstack->head;
     stack.leaf = leaf;
-    stack.portal = NULL;
+    stack.portal = nullptr;
 #ifdef RVIS_LEVEL_2
     stack.clipPlaneCount = -1;
-    stack.clipPlane = NULL;
+    stack.clipPlane = nullptr;
 #endif
 
     // check all portals for flowing into other leafs       
@@ -522,19 +522,19 @@ inline static void     RecursiveLeafFlow(const int leafnum, const threaddata_t* 
             stack.clipPlaneCount = 0;
             stack.clipPlane = (plane_t*)alloca(sizeof(plane_t) * prevstack->source->numpoints * prevstack->pass->numpoints);
 
-            ClipToSeperators(prevstack->source, prevstack->pass, NULL, false, &stack);
-            ClipToSeperators(prevstack->pass, prevstack->source, NULL, true, &stack);
+            ClipToSeperators(prevstack->source, prevstack->pass, nullptr, false, &stack);
+            ClipToSeperators(prevstack->pass, prevstack->source, nullptr, true, &stack);
         }
 
         if (stack.clipPlaneCount > 0)
         {
             unsigned j;
-            for (j = 0; j < stack.clipPlaneCount && stack.pass != NULL; j++)
+            for (j = 0; j < stack.clipPlaneCount && stack.pass != nullptr; j++)
             {
                 stack.pass = ChopWinding(stack.pass, &stack, &(stack.clipPlane[j]));
             }
 
-            if (stack.pass == NULL)
+            if (stack.pass == nullptr)
             continue;
         }
 #else
@@ -978,7 +978,7 @@ void	MaxDistVis(int unused)
     int a, b;
 	leaf_t	*l;
 	leaf_t	*tl;
-    plane_t	*boundary = NULL;
+    plane_t	*boundary = nullptr;
 
 	unsigned offset_l;
 	unsigned bit_l;

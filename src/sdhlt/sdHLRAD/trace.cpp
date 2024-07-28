@@ -547,7 +547,7 @@ bool TryMerge(opaqueface_t *f, const opaqueface_t *f2)
 	if (neww->m_NumPoints < 3)
 	{
 		delete neww;
-		neww = NULL;
+		neww = nullptr;
 	}
 	delete f->winding;
 	f->winding = neww;
@@ -565,7 +565,7 @@ int MergeOpaqueFaces(int firstface, int numfaces)
 			if (TryMerge(&faces[i], &faces[j]))
 			{
 				delete faces[j].winding;
-				faces[j].winding = NULL;
+				faces[j].winding = nullptr;
 				j = -1;
 				continue;
 			}
@@ -629,7 +629,7 @@ void CreateOpaqueNodes()
 		if (of->winding->m_NumPoints < 3)
 		{
 			delete of->winding;
-			of->winding = NULL;
+			of->winding = nullptr;
 		}
 		of->plane = g_dplanes[df->planenum];
 		if (df->side)

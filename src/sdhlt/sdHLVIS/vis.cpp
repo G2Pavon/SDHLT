@@ -65,7 +65,7 @@ unsigned int g_maxdistance = DEFAULT_MAXDISTANCE_RANGE;
 const int g_overview_max = MAX_MAP_ENTITIES;
 overview_t g_overview[g_overview_max];
 int g_overview_count = 0;
-leafinfo_t *g_leafinfos = NULL;
+leafinfo_t *g_leafinfos = nullptr;
 
 static int totalvis = 0;
 
@@ -98,7 +98,7 @@ static winding_t *NewWinding(const int points)
         Error("NewWinding: %i points > MAX_POINTS_ON_WINDING", points);
     }
 
-    size = (int)(intptr_t)((winding_t *)0)->points[points];
+    size = (int)(intptr_t)((winding_t *)nullptr)->points[points];
     w = (winding_t *)calloc(1, size);
 
     return w;
@@ -118,12 +118,12 @@ static portal_t *GetNextPortal()
 
     if (GetThreadWork() == -1)
     {
-        return NULL;
+        return nullptr;
     }
     ThreadLock();
 
     min = 99999;
-    p = NULL;
+    p = nullptr;
 
     for (j = 0, tp = g_portals; j < g_numportals * 2; j++, tp++)
     {
@@ -398,7 +398,7 @@ static void CalcVis()
 // =====================================================================================
 static INLINE void FASTCALL CheckNullToken(const char *const token)
 {
-    if (token == NULL)
+    if (token == nullptr)
     {
         Error("LoadPortals: Damaged or invalid .prt file\n");
     }
@@ -426,7 +426,7 @@ static void LoadPortals(char *portal_image)
         Error("LoadPortals: failed to read header: number of leafs");
     }
 
-    token = strtok(NULL, seperators);
+    token = strtok(nullptr, seperators);
     CheckNullToken(token);
     if (!sscanf(token, "%i", &g_numportals))
     {
@@ -459,7 +459,7 @@ static void LoadPortals(char *portal_image)
     for (i = 0; i < g_portalleafs; i++)
     {
         unsigned rval = 0;
-        token = strtok(NULL, seperators);
+        token = strtok(nullptr, seperators);
         CheckNullToken(token);
         rval += sscanf(token, "%i", &g_leafcounts[i]);
         if (rval != 1)
@@ -495,13 +495,13 @@ static void LoadPortals(char *portal_image)
     {
         unsigned rval = 0;
 
-        token = strtok(NULL, seperators);
+        token = strtok(nullptr, seperators);
         CheckNullToken(token);
         rval += sscanf(token, "%i", &numpoints);
-        token = strtok(NULL, seperators);
+        token = strtok(nullptr, seperators);
         CheckNullToken(token);
         rval += sscanf(token, "%i", &leafnums[0]);
-        token = strtok(NULL, seperators);
+        token = strtok(nullptr, seperators);
         CheckNullToken(token);
         rval += sscanf(token, "%i", &leafnums[1]);
 
@@ -528,13 +528,13 @@ static void LoadPortals(char *portal_image)
             double v[3];
             unsigned rval = 0;
 
-            token = strtok(NULL, seperators);
+            token = strtok(nullptr, seperators);
             CheckNullToken(token);
             rval += sscanf(token, "%lf", &v[0]);
-            token = strtok(NULL, seperators);
+            token = strtok(nullptr, seperators);
             CheckNullToken(token);
             rval += sscanf(token, "%lf", &v[1]);
-            token = strtok(NULL, seperators);
+            token = strtok(nullptr, seperators);
             CheckNullToken(token);
             rval += sscanf(token, "%lf", &v[2]);
 
@@ -677,7 +677,7 @@ int main(const int argc, char **argv)
     char portalfile[_MAX_PATH];
     char source[_MAX_PATH];
     double start, end;
-    const char *mapname_from_arg = NULL;
+    const char *mapname_from_arg = nullptr;
     g_Program = "sdHLVIS";
 
     if (InitConsole(argc, argv) < 0)

@@ -46,13 +46,13 @@ int GetThreadWork()
 {
     int r, f, i;
     double ct, finish, finish2, finish3;
-    static const char *s1 = NULL; // avoid frequent call of Localize() in PrintConsole
-    static const char *s2 = NULL;
+    static const char *s1 = nullptr; // avoid frequent call of Localize() in PrintConsole
+    static const char *s2 = nullptr;
 
     ThreadLock();
-    if (s1 == NULL)
+    if (s1 == nullptr)
         s1 = Localize("  (%d%%: est. time to completion %ld/%ld/%ld secs)   ");
-    if (s2 == NULL)
+    if (s2 == nullptr)
         s2 = Localize("  (%d%%: est. time to completion <1 sec)   ");
 
     if (dispatch == 0)
@@ -476,7 +476,7 @@ q_threadfunction q_entry;
 static void *CDECL ThreadEntryStub(void *pParam)
 {
     q_entry((int)(intptr_t)pParam);
-    return NULL;
+    return nullptr;
 }
 
 void threads_InitCrit()
@@ -500,7 +500,7 @@ void threads_InitCrit()
 void threads_UninitCrit()
 {
     Free(my_mutex);
-    my_mutex = NULL;
+    my_mutex = nullptr;
 }
 
 /*
@@ -532,7 +532,7 @@ void RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction func)
 
     if (pacifier)
     {
-        setbuf(stdout, NULL);
+        setbuf(stdout, nullptr);
     }
 
     threads_InitCrit();
@@ -566,7 +566,7 @@ void RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction func)
 
     threads_UninitCrit();
 
-    q_entry = NULL;
+    q_entry = nullptr;
     threaded = false;
 
     end = I_FloatTime();
