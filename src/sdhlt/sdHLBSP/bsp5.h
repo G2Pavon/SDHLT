@@ -266,3 +266,5 @@ extern bool g_nohull2;
 
 extern face_t *NewFaceFromFace(const face_t *const in);
 extern void SplitFace(face_t *in, const dplane_t *const split, face_t **front, face_t **back);
+
+void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);

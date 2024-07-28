@@ -1314,6 +1314,111 @@ static void ProcessFile(const char *const filename)
 	unlink(name);
 }
 
+void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
+{
+	int i;
+	for (i = 1; i < argc; i++)
+	{
+		if (!strcasecmp(argv[i], "-nohull2"))
+		{
+			g_nohull2 = true;
+		}
+		else if (!strcasecmp(argv[i], "-subdivide"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_subdivide_size = atoi(argv[++i]);
+				if (g_subdivide_size > MAX_SUBDIVIDE_SIZE)
+				{
+					Warning("Maximum value for subdivide size is %i, '-subdivide %i' ignored",
+							MAX_SUBDIVIDE_SIZE, g_subdivide_size);
+					g_subdivide_size = MAX_SUBDIVIDE_SIZE;
+				}
+				else if (g_subdivide_size < MIN_SUBDIVIDE_SIZE)
+				{
+					Warning("Mininum value for subdivide size is %i, '-subdivide %i' ignored",
+							MIN_SUBDIVIDE_SIZE, g_subdivide_size);
+					g_subdivide_size = MIN_SUBDIVIDE_SIZE; // MAX_SUBDIVIDE_SIZE; //--vluzacn
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_BSP);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-maxnodesize"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_maxnode_size = atoi(argv[++i]);
+				if (g_maxnode_size > MAX_MAXNODE_SIZE)
+				{
+					Warning("Maximum value for max node size is %i, '-maxnodesize %i' ignored",
+							MAX_MAXNODE_SIZE, g_maxnode_size);
+					g_maxnode_size = MAX_MAXNODE_SIZE;
+				}
+				else if (g_maxnode_size < MIN_MAXNODE_SIZE)
+				{
+					Warning("Mininimum value for max node size is %i, '-maxnodesize %i' ignored",
+							MIN_MAXNODE_SIZE, g_maxnode_size);
+					g_maxnode_size = MIN_MAXNODE_SIZE; // MAX_MAXNODE_SIZE; //vluzacn
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_BSP);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-texdata"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				int x = atoi(argv[++i]) * 1024;
+
+				// if (x > g_max_map_miptex) //--vluzacn
+				{
+					g_max_map_miptex = x;
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_BSP);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-lightdata"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				int x = atoi(argv[++i]) * 1024;
+
+				// if (x > g_max_map_lightdata) //--vluzacn
+				{
+					g_max_map_lightdata = x;
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_BSP);
+			}
+		}
+		else if (!mapname_from_arg)
+		{
+			mapname_from_arg = argv[i];
+		}
+		else
+		{
+			Log("Unknown option \"%s\"\n", argv[i]);
+			Usage(PROGRAM_BSP);
+		}
+	}
+
+	if (!mapname_from_arg)
+	{
+		Log("No mapfile specified\n");
+		Usage(PROGRAM_BSP);
+	}
+}
+
 // =====================================================================================
 //  main
 // =====================================================================================
@@ -1324,180 +1429,70 @@ int main(const int argc, char **argv)
 	const char *mapname_from_arg = NULL;
 
 	g_Program = "sdHLBSP";
+	if (InitConsole(argc, argv) < 0)
+		Usage(PROGRAM_BSP);
+	// if we dont have any command line argvars, print out usage and die
+	if (argc == 1)
+		Usage(PROGRAM_BSP);
 
-	int argcold = argc;
-	char **argvold = argv;
-	{
-		int argc;
-		char **argv;
-		ParseParamFile(argcold, argvold, argc, argv);
-		{
-			if (InitConsole(argc, argv) < 0)
-				Usage(PROGRAM_BSP);
-			// if we dont have any command line argvars, print out usage and die
-			if (argc == 1)
-				Usage(PROGRAM_BSP);
+	HandleArgs(argc, argv, mapname_from_arg);
 
-			// check command line args
-			for (i = 1; i < argc; i++)
-			{
-				if (!strcasecmp(argv[i], "-nohull2"))
-				{
-					g_nohull2 = true;
-				}
-				else if (!strcasecmp(argv[i], "-subdivide"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_subdivide_size = atoi(argv[++i]);
-						if (g_subdivide_size > MAX_SUBDIVIDE_SIZE)
-						{
-							Warning("Maximum value for subdivide size is %i, '-subdivide %i' ignored",
-									MAX_SUBDIVIDE_SIZE, g_subdivide_size);
-							g_subdivide_size = MAX_SUBDIVIDE_SIZE;
-						}
-						else if (g_subdivide_size < MIN_SUBDIVIDE_SIZE)
-						{
-							Warning("Mininum value for subdivide size is %i, '-subdivide %i' ignored",
-									MIN_SUBDIVIDE_SIZE, g_subdivide_size);
-							g_subdivide_size = MIN_SUBDIVIDE_SIZE; // MAX_SUBDIVIDE_SIZE; //--vluzacn
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_BSP);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-maxnodesize"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_maxnode_size = atoi(argv[++i]);
-						if (g_maxnode_size > MAX_MAXNODE_SIZE)
-						{
-							Warning("Maximum value for max node size is %i, '-maxnodesize %i' ignored",
-									MAX_MAXNODE_SIZE, g_maxnode_size);
-							g_maxnode_size = MAX_MAXNODE_SIZE;
-						}
-						else if (g_maxnode_size < MIN_MAXNODE_SIZE)
-						{
-							Warning("Mininimum value for max node size is %i, '-maxnodesize %i' ignored",
-									MIN_MAXNODE_SIZE, g_maxnode_size);
-							g_maxnode_size = MIN_MAXNODE_SIZE; // MAX_MAXNODE_SIZE; //vluzacn
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_BSP);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-texdata"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						int x = atoi(argv[++i]) * 1024;
+	safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
+	FlipSlashes(g_Mapname);
+	StripExtension(g_Mapname);
 
-						// if (x > g_max_map_miptex) //--vluzacn
-						{
-							g_max_map_miptex = x;
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_BSP);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-lightdata"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						int x = atoi(argv[++i]) * 1024;
-
-						// if (x > g_max_map_lightdata) //--vluzacn
-						{
-							g_max_map_lightdata = x;
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_BSP);
-					}
-				}
-				else if (!mapname_from_arg)
-				{
-					mapname_from_arg = argv[i];
-				}
-				else
-				{
-					Log("Unknown option \"%s\"\n", argv[i]);
-					Usage(PROGRAM_BSP);
-				}
-			}
-
-			if (!mapname_from_arg)
-			{
-				Log("No mapfile specified\n");
-				Usage(PROGRAM_BSP);
-			}
-
-			safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
-			FlipSlashes(g_Mapname);
-			StripExtension(g_Mapname);
-			atexit(CloseLog);
-			ThreadSetDefault();
-			ThreadSetPriority(g_threadpriority);
-			LogStart(argcold, argvold);
-			LogArguments(argc, argv);
-			CheckForErrorLog();
+	atexit(CloseLog);
+	ThreadSetDefault();
+	ThreadSetPriority(g_threadpriority);
+	LogArguments(argc, argv);
+	CheckForErrorLog();
 
 #ifdef PLATFORM_CAN_CALC_EXTENT
-			hlassume(CalcFaceExtents_test(), assume_first);
+	hlassume(CalcFaceExtents_test(), assume_first);
 #endif
-			dtexdata_init();
-			atexit(dtexdata_free);
-			// END INIT
+	dtexdata_init();
+	atexit(dtexdata_free);
+	// END INIT
 
-			// Load the .void files for allowable entities in the void
-			{
-				char strSystemEntitiesVoidFile[_MAX_PATH];
-				char strMapEntitiesVoidFile[_MAX_PATH];
+	// Load the .void files for allowable entities in the void
+	{
+		char strSystemEntitiesVoidFile[_MAX_PATH];
+		char strMapEntitiesVoidFile[_MAX_PATH];
 
-				// try looking in the current directory
-				safe_strncpy(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
-				if (!q_exists(strSystemEntitiesVoidFile))
-				{
-					char tmp[_MAX_PATH];
-					// try looking in the directory we were run from
+		// try looking in the current directory
+		safe_strncpy(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
+		if (!q_exists(strSystemEntitiesVoidFile))
+		{
+			char tmp[_MAX_PATH];
+			// try looking in the directory we were run from
 #ifdef SYSTEM_WIN32
-					GetModuleFileName(NULL, tmp, _MAX_PATH);
+			GetModuleFileName(NULL, tmp, _MAX_PATH);
 #else
-					safe_strncpy(tmp, argv[0], _MAX_PATH);
+			safe_strncpy(tmp, argv[0], _MAX_PATH);
 #endif
-					ExtractFilePath(tmp, strSystemEntitiesVoidFile);
-					safe_strncat(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
-				}
+			ExtractFilePath(tmp, strSystemEntitiesVoidFile);
+			safe_strncat(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
+		}
 
-				// Set the optional level specific lights filename
-				safe_snprintf(strMapEntitiesVoidFile, _MAX_PATH, "%s" ENTITIES_VOID_EXT, g_Mapname);
+		// Set the optional level specific lights filename
+		safe_snprintf(strMapEntitiesVoidFile, _MAX_PATH, "%s" ENTITIES_VOID_EXT, g_Mapname);
 
-				LoadAllowableOutsideList(strSystemEntitiesVoidFile); // default entities.void
-				if (*strMapEntitiesVoidFile)
-				{
-					LoadAllowableOutsideList(strMapEntitiesVoidFile); // automatic mapname.void
-				}
-			}
-
-			// BEGIN BSP
-			start = I_FloatTime();
-
-			ProcessFile(g_Mapname);
-
-			end = I_FloatTime();
-			LogTimeElapsed(end - start);
-			// END BSP
-
-			FreeAllowableOutsideList();
+		LoadAllowableOutsideList(strSystemEntitiesVoidFile); // default entities.void
+		if (*strMapEntitiesVoidFile)
+		{
+			LoadAllowableOutsideList(strMapEntitiesVoidFile); // automatic mapname.void
 		}
 	}
+
+	// BEGIN BSP
+	start = I_FloatTime();
+
+	ProcessFile(g_Mapname);
+
+	end = I_FloatTime();
+	LogTimeElapsed(end - start);
+	// END BSP
+
+	FreeAllowableOutsideList();
 	return 0;
 }
