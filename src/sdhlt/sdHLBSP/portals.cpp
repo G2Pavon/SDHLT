@@ -157,7 +157,6 @@ void MakeHeadnodePortals(node_t *node, const vec3_t mins, const vec3_t maxs)
 
 static FILE *pf;
 static FILE *pf_view;
-extern bool g_viewportal;
 static int num_visleafs; // leafs the player can be in
 static int num_visportals;
 
@@ -217,26 +216,6 @@ static void WritePortalFile_r(const node_t *const node)
                     fprintf(pf, "(%f %f %f) ", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]);
                 }
                 fprintf(pf, "\n");
-                if (g_viewportal)
-                {
-                    vec3_t center, center1, center2;
-                    vec3_t from = {0.0, 0.0, -65536};
-                    w->getCenter(center);
-                    VectorMA(center, 0.5, p->plane.normal, center1);
-                    VectorMA(center, -0.5, p->plane.normal, center2);
-                    fprintf(pf_view, "%5.2f %5.2f %5.2f\n", from[0], from[1], from[2]);
-                    fprintf(pf_view, "%5.2f %5.2f %5.2f\n", center1[0], center1[1], center1[2]);
-                    for (i = 0; i < w->m_NumPoints; i++)
-                    {
-                        vec_t *p1, *p2;
-                        p1 = w->m_Points[i];
-                        p2 = w->m_Points[(i + 1) % w->m_NumPoints];
-                        fprintf(pf_view, "%5.2f %5.2f %5.2f\n", p1[0], p1[1], p1[2]);
-                        fprintf(pf_view, "%5.2f %5.2f %5.2f\n", p2[0], p2[1], p2[2]);
-                        fprintf(pf_view, "%5.2f %5.2f %5.2f\n", center2[0], center2[1], center2[2]);
-                        fprintf(pf_view, "%5.2f %5.2f %5.2f\n", center1[0], center1[1], center1[2]);
-                    }
-                }
             }
         }
 
@@ -350,17 +329,6 @@ void WritePortalfile(node_t *headnode)
     {
         Error("Error writing portal file %s", g_portfilename);
     }
-    if (g_viewportal)
-    {
-        char filename[_MAX_PATH];
-        safe_snprintf(filename, _MAX_PATH, "%s_portal.pts", g_Mapname);
-        pf_view = fopen(filename, "w");
-        if (!pf_view)
-        {
-            Error("Couldn't open %s", filename);
-        }
-        Log("Writing '%s' ...\n", filename);
-    }
 
     fprintf(pf, "%i\n", num_visleafs);
     fprintf(pf, "%i\n", num_visportals);
@@ -368,10 +336,6 @@ void WritePortalfile(node_t *headnode)
     WriteLeafCount_r(headnode);
     WritePortalFile_r(headnode);
     fclose(pf);
-    if (g_viewportal)
-    {
-        fclose(pf_view);
-    }
     Log("BSP generation successful, writing portal file '%s'\n", g_portfilename);
 }
 

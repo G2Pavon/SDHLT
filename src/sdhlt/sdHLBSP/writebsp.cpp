@@ -16,7 +16,6 @@ typedef std::map<int, int> PlaneMap;
 static PlaneMap gPlaneMap;
 static int gNumMappedPlanes;
 static dplane_t gMappedPlanes[MAX_MAP_PLANES];
-extern bool g_noopt;
 
 typedef std::map<int, int> texinfomap_t;
 static int g_nummappedtexinfo;
@@ -37,11 +36,6 @@ inline clipnodemap_t::key_type MakeKey(const dclipnode_t &c)
 static int WritePlane(int planenum)
 {
 	planenum = planenum & (~1);
-
-	if (g_noopt)
-	{
-		return planenum;
-	}
 
 	PlaneMap::iterator item = gPlaneMap.find(planenum);
 	if (item != gPlaneMap.end())
@@ -64,11 +58,6 @@ static int WriteTexinfo(int texinfo)
 	if (texinfo < 0 || texinfo >= g_numtexinfo)
 	{
 		Error("Bad texinfo number %d.\n", texinfo);
-	}
-
-	if (g_noopt)
-	{
-		return texinfo;
 	}
 
 	texinfomap_t::iterator it;
@@ -138,14 +127,14 @@ static int WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap_
 	}
 	clipnodemap_t::iterator output;
 	output = outputmap->find(MakeKey(*cn));
-	if (g_noclipnodemerge || output == outputmap->end())
+	if (output == outputmap->end())
 	{
 		hlassume(c < MAX_MAP_CLIPNODES, assume_MAX_MAP_CLIPNODES);
 		g_dclipnodes[c] = *cn;
 		(*outputmap)[MakeKey(*cn)] = c;
 	}
 	else
-	{
+	{ // Optimize clipnodes
 		count_mergedclipnodes++;
 		if (g_numclipnodes != c + 1)
 		{
@@ -575,237 +564,223 @@ void FinishBSPFile()
 	{
 		Warning("Number of world faces(%d) exceeded %d. Some faces will disappear in game.\nTo reduce world faces, change some world brushes (including func_details) to func_walls.\n", g_dmodels[0].numfaces, MAX_MAP_WORLDFACES);
 	}
-	if (!g_noclipnodemerge)
+	Log("Reduced %d clipnodes to %d\n", g_numclipnodes + count_mergedclipnodes, g_numclipnodes);
 	{
-		Log("Reduced %d clipnodes to %d\n", g_numclipnodes + count_mergedclipnodes, g_numclipnodes);
-	}
-	if (!g_noopt)
-	{
+		Log("Reduced %d texinfos to %d\n", g_numtexinfo, g_nummappedtexinfo);
+		for (int i = 0; i < g_nummappedtexinfo; i++)
 		{
-			Log("Reduced %d texinfos to %d\n", g_numtexinfo, g_nummappedtexinfo);
-			for (int i = 0; i < g_nummappedtexinfo; i++)
-			{
-				g_texinfo[i] = g_mappedtexinfo[i];
-			}
-			g_numtexinfo = g_nummappedtexinfo;
+			g_texinfo[i] = g_mappedtexinfo[i];
 		}
+		g_numtexinfo = g_nummappedtexinfo;
+	}
+	{ // Optimize BSP Write
+		dmiptexlump_t *l = (dmiptexlump_t *)g_dtexdata;
+		int &g_nummiptex = l->nummiptex;
+		bool *Used = (bool *)calloc(g_nummiptex, sizeof(bool));
+		int Num = 0, Size = 0;
+		int *Map = (int *)malloc(g_nummiptex * sizeof(int));
+		int i;
+		hlassume(Used != NULL && Map != NULL, assume_NoMemory);
+		int *lumpsizes = (int *)malloc(g_nummiptex * sizeof(int));
+		const int newdatasizemax = g_texdatasize - ((byte *)&l->dataofs[g_nummiptex] - (byte *)l);
+		byte *newdata = (byte *)malloc(newdatasizemax);
+		int newdatasize = 0;
+		hlassume(lumpsizes != NULL && newdata != NULL, assume_NoMemory);
+		int total = 0;
+		for (i = 0; i < g_nummiptex; i++)
 		{
-			dmiptexlump_t *l = (dmiptexlump_t *)g_dtexdata;
-			int &g_nummiptex = l->nummiptex;
-			bool *Used = (bool *)calloc(g_nummiptex, sizeof(bool));
-			int Num = 0, Size = 0;
-			int *Map = (int *)malloc(g_nummiptex * sizeof(int));
-			int i;
-			hlassume(Used != NULL && Map != NULL, assume_NoMemory);
-			int *lumpsizes = (int *)malloc(g_nummiptex * sizeof(int));
-			const int newdatasizemax = g_texdatasize - ((byte *)&l->dataofs[g_nummiptex] - (byte *)l);
-			byte *newdata = (byte *)malloc(newdatasizemax);
-			int newdatasize = 0;
-			hlassume(lumpsizes != NULL && newdata != NULL, assume_NoMemory);
-			int total = 0;
-			for (i = 0; i < g_nummiptex; i++)
+			if (l->dataofs[i] == -1)
 			{
-				if (l->dataofs[i] == -1)
-				{
-					lumpsizes[i] = -1;
-					continue;
-				}
-				lumpsizes[i] = g_texdatasize - l->dataofs[i];
-				for (int j = 0; j < g_nummiptex; j++)
-				{
-					int lumpsize = l->dataofs[j] - l->dataofs[i];
-					if (l->dataofs[j] == -1 || lumpsize < 0 || (lumpsize == 0 && j <= i))
-						continue;
-					if (lumpsize < lumpsizes[i])
-						lumpsizes[i] = lumpsize;
-				}
-				total += lumpsizes[i];
+				lumpsizes[i] = -1;
+				continue;
 			}
-			if (total != newdatasizemax)
+			lumpsizes[i] = g_texdatasize - l->dataofs[i];
+			for (int j = 0; j < g_nummiptex; j++)
 			{
-				Warning("Bad texdata structure.\n");
+				int lumpsize = l->dataofs[j] - l->dataofs[i];
+				if (l->dataofs[j] == -1 || lumpsize < 0 || (lumpsize == 0 && j <= i))
+					continue;
+				if (lumpsize < lumpsizes[i])
+					lumpsizes[i] = lumpsize;
+			}
+			total += lumpsizes[i];
+		}
+		if (total != newdatasizemax)
+		{
+			Warning("Bad texdata structure.\n");
+			goto skipReduceTexdata;
+		}
+		for (i = 0; i < g_numtexinfo; i++)
+		{
+			texinfo_t *t = &g_texinfo[i];
+			if (t->miptex < 0 || t->miptex >= g_nummiptex)
+			{
+				Warning("Bad miptex number %d.\n", t->miptex);
 				goto skipReduceTexdata;
 			}
-			for (i = 0; i < g_numtexinfo; i++)
+			Used[t->miptex] = true;
+		}
+		for (i = 0; i < g_nummiptex; i++)
+		{
+			const int MAXWADNAME = 16;
+			char name[MAXWADNAME];
+			int j, k;
+			if (l->dataofs[i] < 0)
+				continue;
+			if (Used[i] == true)
 			{
-				texinfo_t *t = &g_texinfo[i];
-				if (t->miptex < 0 || t->miptex >= g_nummiptex)
-				{
-					Warning("Bad miptex number %d.\n", t->miptex);
-					goto skipReduceTexdata;
-				}
-				Used[t->miptex] = true;
-			}
-			for (i = 0; i < g_nummiptex; i++)
-			{
-				const int MAXWADNAME = 16;
-				char name[MAXWADNAME];
-				int j, k;
-				if (l->dataofs[i] < 0)
+				miptex_t *m = (miptex_t *)((byte *)l + l->dataofs[i]);
+				if (m->name[0] != '+' && m->name[0] != '-')
 					continue;
-				if (Used[i] == true)
+				safe_strncpy(name, m->name, MAXWADNAME);
+				if (name[1] == '\0')
+					continue;
+				for (j = 0; j < 20; j++)
 				{
-					miptex_t *m = (miptex_t *)((byte *)l + l->dataofs[i]);
-					if (m->name[0] != '+' && m->name[0] != '-')
-						continue;
-					safe_strncpy(name, m->name, MAXWADNAME);
-					if (name[1] == '\0')
-						continue;
-					for (j = 0; j < 20; j++)
+					if (j < 10)
+						name[1] = '0' + j;
+					else
+						name[1] = 'A' + j - 10;
+					for (k = 0; k < g_nummiptex; k++)
 					{
-						if (j < 10)
-							name[1] = '0' + j;
-						else
-							name[1] = 'A' + j - 10;
-						for (k = 0; k < g_nummiptex; k++)
-						{
-							if (l->dataofs[k] < 0)
-								continue;
-							miptex_t *m2 = (miptex_t *)((byte *)l + l->dataofs[k]);
-							if (!strcasecmp(name, m2->name))
-								Used[k] = true;
-						}
+						if (l->dataofs[k] < 0)
+							continue;
+						miptex_t *m2 = (miptex_t *)((byte *)l + l->dataofs[k]);
+						if (!strcasecmp(name, m2->name))
+							Used[k] = true;
 					}
 				}
 			}
-			for (i = 0; i < g_nummiptex; i++)
+		}
+		for (i = 0; i < g_nummiptex; i++)
+		{
+			if (Used[i])
 			{
-				if (Used[i])
+				Map[i] = Num;
+				Num++;
+			}
+			else
+			{
+				Map[i] = -1;
+			}
+		}
+		for (i = 0; i < g_numtexinfo; i++)
+		{
+			texinfo_t *t = &g_texinfo[i];
+			t->miptex = Map[t->miptex];
+		}
+		Size += (byte *)&l->dataofs[Num] - (byte *)l;
+		for (i = 0; i < g_nummiptex; i++)
+		{
+			if (Used[i])
+			{
+				if (lumpsizes[i] == -1)
 				{
-					Map[i] = Num;
-					Num++;
+					l->dataofs[Map[i]] = -1;
 				}
 				else
 				{
-					Map[i] = -1;
+					memcpy((byte *)newdata + newdatasize, (byte *)l + l->dataofs[i], lumpsizes[i]);
+					l->dataofs[Map[i]] = Size;
+					newdatasize += lumpsizes[i];
+					Size += lumpsizes[i];
 				}
 			}
-			for (i = 0; i < g_numtexinfo; i++)
-			{
-				texinfo_t *t = &g_texinfo[i];
-				t->miptex = Map[t->miptex];
-			}
-			Size += (byte *)&l->dataofs[Num] - (byte *)l;
-			for (i = 0; i < g_nummiptex; i++)
-			{
-				if (Used[i])
-				{
-					if (lumpsizes[i] == -1)
-					{
-						l->dataofs[Map[i]] = -1;
-					}
-					else
-					{
-						memcpy((byte *)newdata + newdatasize, (byte *)l + l->dataofs[i], lumpsizes[i]);
-						l->dataofs[Map[i]] = Size;
-						newdatasize += lumpsizes[i];
-						Size += lumpsizes[i];
-					}
-				}
-			}
-			memcpy(&l->dataofs[Num], newdata, newdatasize);
-			Log("Reduced %d texdatas to %d (%d bytes to %d)\n", g_nummiptex, Num, g_texdatasize, Size);
-			g_nummiptex = Num;
-			g_texdatasize = Size;
-		skipReduceTexdata:;
-			free(lumpsizes);
-			free(newdata);
-			free(Used);
-			free(Map);
 		}
-		Log("Reduced %d planes to %d\n", g_numplanes, gNumMappedPlanes);
+		memcpy(&l->dataofs[Num], newdata, newdatasize);
+		Log("Reduced %d texdatas to %d (%d bytes to %d)\n", g_nummiptex, Num, g_texdatasize, Size);
+		g_nummiptex = Num;
+		g_texdatasize = Size;
+	skipReduceTexdata:;
+		free(lumpsizes);
+		free(newdata);
+		free(Used);
+		free(Map);
+	}
+	Log("Reduced %d planes to %d\n", g_numplanes, gNumMappedPlanes);
 
-		for (int counter = 0; counter < gNumMappedPlanes; counter++)
+	for (int counter = 0; counter < gNumMappedPlanes; counter++)
+	{
+		g_dplanes[counter] = gMappedPlanes[counter];
+	}
+	g_numplanes = gNumMappedPlanes;
+
+	Log("FixBrinks:\n");
+	dclipnode_t *clipnodes; //[MAX_MAP_CLIPNODES]
+	int numclipnodes;
+	clipnodes = (dclipnode_t *)malloc(MAX_MAP_CLIPNODES * sizeof(dclipnode_t));
+	hlassume(clipnodes != NULL, assume_NoMemory);
+	void *(*brinkinfo)[NUM_HULLS]; //[MAX_MAP_MODELS]
+	int(*headnode)[NUM_HULLS];	   //[MAX_MAP_MODELS]
+	brinkinfo = (void *(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(void *[NUM_HULLS]));
+	hlassume(brinkinfo != NULL, assume_NoMemory);
+	headnode = (int(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(int[NUM_HULLS]));
+	hlassume(headnode != NULL, assume_NoMemory);
+
+	int i, j, level;
+	for (i = 0; i < g_nummodels; i++)
+	{
+		dmodel_t *m = &g_dmodels[i];
+		for (j = 1; j < NUM_HULLS; j++)
 		{
-			g_dplanes[counter] = gMappedPlanes[counter];
+			brinkinfo[i][j] = CreateBrinkinfo(g_dclipnodes, m->headnode[j]);
 		}
-		g_numplanes = gNumMappedPlanes;
+	}
+	for (level = BrinkAny; level > BrinkNone; level--)
+	{
+		numclipnodes = 0;
+		count_mergedclipnodes = 0;
+		for (i = 0; i < g_nummodels; i++)
+		{
+			for (j = 1; j < NUM_HULLS; j++)
+			{
+				if (!FixBrinks(brinkinfo[i][j], (bbrinklevel_e)level, headnode[i][j], clipnodes, MAX_MAP_CLIPNODES, numclipnodes, numclipnodes))
+				{
+					break;
+				}
+			}
+			if (j < NUM_HULLS)
+			{
+				break;
+			}
+		}
+		if (i == g_nummodels)
+		{
+			break;
+		}
+	}
+	for (i = 0; i < g_nummodels; i++)
+	{
+		for (j = 1; j < NUM_HULLS; j++)
+		{
+			DeleteBrinkinfo(brinkinfo[i][j]);
+		}
+	}
+	if (level == BrinkNone)
+	{
+		Warning("No brinks have been fixed because clipnode data is almost full.");
 	}
 	else
 	{
-		hlassume(g_numtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
-		hlassume(g_numplanes < MAX_MAP_PLANES, assume_MAX_MAP_PLANES);
-	}
-
-	if (!g_nobrink)
-	{
-		Log("FixBrinks:\n");
-		dclipnode_t *clipnodes; //[MAX_MAP_CLIPNODES]
-		int numclipnodes;
-		clipnodes = (dclipnode_t *)malloc(MAX_MAP_CLIPNODES * sizeof(dclipnode_t));
-		hlassume(clipnodes != NULL, assume_NoMemory);
-		void *(*brinkinfo)[NUM_HULLS]; //[MAX_MAP_MODELS]
-		int(*headnode)[NUM_HULLS];	   //[MAX_MAP_MODELS]
-		brinkinfo = (void *(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(void *[NUM_HULLS]));
-		hlassume(brinkinfo != NULL, assume_NoMemory);
-		headnode = (int(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(int[NUM_HULLS]));
-		hlassume(headnode != NULL, assume_NoMemory);
-
-		int i, j, level;
+		if (level != BrinkAny)
+		{
+			Warning("Not all brinks have been fixed because clipnode data is almost full.");
+		}
+		Log("Increased %d clipnodes to %d.\n", g_numclipnodes, numclipnodes);
+		g_numclipnodes = numclipnodes;
+		memcpy(g_dclipnodes, clipnodes, numclipnodes * sizeof(dclipnode_t));
 		for (i = 0; i < g_nummodels; i++)
 		{
 			dmodel_t *m = &g_dmodels[i];
 			for (j = 1; j < NUM_HULLS; j++)
 			{
-				brinkinfo[i][j] = CreateBrinkinfo(g_dclipnodes, m->headnode[j]);
+				m->headnode[j] = headnode[i][j];
 			}
 		}
-		for (level = BrinkAny; level > BrinkNone; level--)
-		{
-			numclipnodes = 0;
-			count_mergedclipnodes = 0;
-			for (i = 0; i < g_nummodels; i++)
-			{
-				for (j = 1; j < NUM_HULLS; j++)
-				{
-					if (!FixBrinks(brinkinfo[i][j], (bbrinklevel_e)level, headnode[i][j], clipnodes, MAX_MAP_CLIPNODES, numclipnodes, numclipnodes))
-					{
-						break;
-					}
-				}
-				if (j < NUM_HULLS)
-				{
-					break;
-				}
-			}
-			if (i == g_nummodels)
-			{
-				break;
-			}
-		}
-		for (i = 0; i < g_nummodels; i++)
-		{
-			for (j = 1; j < NUM_HULLS; j++)
-			{
-				DeleteBrinkinfo(brinkinfo[i][j]);
-			}
-		}
-		if (level == BrinkNone)
-		{
-			Warning("No brinks have been fixed because clipnode data is almost full.");
-		}
-		else
-		{
-			if (level != BrinkAny)
-			{
-				Warning("Not all brinks have been fixed because clipnode data is almost full.");
-			}
-			Log("Increased %d clipnodes to %d.\n", g_numclipnodes, numclipnodes);
-			g_numclipnodes = numclipnodes;
-			memcpy(g_dclipnodes, clipnodes, numclipnodes * sizeof(dclipnode_t));
-			for (i = 0; i < g_nummodels; i++)
-			{
-				dmodel_t *m = &g_dmodels[i];
-				for (j = 1; j < NUM_HULLS; j++)
-				{
-					m->headnode[j] = headnode[i][j];
-				}
-			}
-		}
-		free(brinkinfo);
-		free(headnode);
-		free(clipnodes);
 	}
+	free(brinkinfo);
+	free(headnode);
+	free(clipnodes);
 
 #ifdef PLATFORM_CAN_CALC_EXTENT
 	WriteExtentFile(g_extentfilename);

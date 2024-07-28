@@ -34,12 +34,6 @@
 #define MAX_MAXNODE_SIZE 65536
 #define DEFAULT_MAXNODE_SIZE 1024
 
-#define DEFAULT_NOFILL false
-#define DEFAULT_NOINSIDEFILL false
-#define DEFAULT_NOTJUNC false
-#define DEFAULT_NOBRINK false
-#define DEFAULT_NOOPT false
-#define DEFAULT_NOCLIPNODEMERGE false
 #define DEFAULT_LEAKONLY false
 #define DEFAULT_WATERVIS false
 #define DEFAULT_INFO true
@@ -255,11 +249,6 @@ extern void CullStuff();
 
 //=============================================================================
 // qbsp.c
-extern bool g_nofill;
-extern bool g_noinsidefill;
-extern bool g_notjunc;
-extern bool g_nobrink;
-extern bool g_noclipnodemerge;
 extern bool g_watervis;
 extern bool g_estimate;
 extern int g_maxnode_size;

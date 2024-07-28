@@ -435,11 +435,6 @@ node_t *FillOutside(node_t *node, const bool leakfile, const unsigned hullnum)
     vec3_t origin;
     const char *cl;
 
-    if (g_nofill)
-    {
-        Log("skipped\n");
-        return node;
-    }
     if (hullnum == 2 && g_nohull2)
         return node;
 

@@ -537,12 +537,6 @@ void tjunc(node_t *headnode)
 {
     vec3_t maxs, mins;
     int i;
-
-    if (g_notjunc)
-    {
-        return;
-    }
-
     //
     // identify all points on common edges
     //

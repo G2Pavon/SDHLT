@@ -1801,7 +1801,7 @@ bool FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklev
 	cn->children[!p->planeside] = r;
 	clipnodemap_t::iterator output;
 	output = outputmap->find(MakeKey(*cn));
-	if (g_noclipnodemerge || output == outputmap->end())
+	if (output == outputmap->end())
 	{
 		if (c >= end)
 		{
@@ -1812,7 +1812,7 @@ bool FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklev
 		headnode_out = c - begin;
 	}
 	else
-	{
+	{ // Optimize clipnode
 		count_mergedclipnodes++;
 		if (current != c + 1)
 		{
@@ -1849,7 +1849,7 @@ bool FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode
 		}
 		clipnodemap_t::iterator output;
 		output = outputmap->find(MakeKey(*cn));
-		if (g_noclipnodemerge || output == outputmap->end())
+		if (output == outputmap->end())
 		{
 			if (c >= end)
 			{
@@ -1860,7 +1860,7 @@ bool FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode
 			headnode_out = c - begin;
 		}
 		else
-		{
+		{ // Optimize clipnodes
 			count_mergedclipnodes++;
 			if (current != c + 1)
 			{

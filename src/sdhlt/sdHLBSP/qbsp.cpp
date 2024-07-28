@@ -52,20 +52,12 @@ char g_portfilename[_MAX_PATH];
 char g_extentfilename[_MAX_PATH];
 
 // command line flags
-bool g_noopt = DEFAULT_NOOPT; // don't optimize BSP on write
-bool g_noclipnodemerge = DEFAULT_NOCLIPNODEMERGE;
-bool g_nofill = DEFAULT_NOFILL; // dont fill "-nofill"
-bool g_noinsidefill = DEFAULT_NOINSIDEFILL;
-bool g_notjunc = DEFAULT_NOTJUNC;
-bool g_nobrink = DEFAULT_NOBRINK;
 bool g_estimate = DEFAULT_ESTIMATE;	 // estimate mode "-estimate"
 bool g_bLeakOnly = DEFAULT_LEAKONLY; // leakonly mode "-leakonly"
 bool g_bLeaked = false;
 int g_subdivide_size = DEFAULT_SUBDIVIDE_SIZE;
 
 bool g_nohull2 = false;
-
-bool g_viewportal = false;
 
 dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
 
@@ -1036,10 +1028,9 @@ static bool ProcessModel()
 
 	// build all the portals in the bsp tree
 	// some portals are solid polygons, and some are paths to other leafs
-	if (g_nummodels == 1 && !g_nofill) // assume non-world bmodels are simple
+	if (g_nummodels == 1) // assume non-world bmodels are simple
 	{
-		if (!g_noinsidefill)
-			FillInside(nodes);
+		FillInside(nodes);
 		nodes = FillOutside(nodes, (g_bLeaked != true), 0); // make a leakfile if bad
 	}
 
@@ -1125,7 +1116,7 @@ static bool ProcessModel()
 		nodes = SolidBSP(surfs,
 						 detailbrushes,
 						 modnum == 0);
-		if (g_nummodels == 1 && !g_nofill) // assume non-world bmodels are simple
+		if (g_nummodels == 1) // assume non-world bmodels are simple
 		{
 			nodes = FillOutside(nodes, (g_bLeaked != true), g_hullnum);
 		}
@@ -1350,73 +1341,9 @@ int main(const int argc, char **argv)
 			// check command line args
 			for (i = 1; i < argc; i++)
 			{
-				if (!strcasecmp(argv[i], "-threads"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						int g_numthreads = atoi(argv[++i]);
-
-						if (g_numthreads < 1)
-						{
-							Log("Expected value of at least 1 for '-threads'\n");
-							Usage(PROGRAM_BSP);
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_BSP);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-console"))
-				{
-#ifndef SYSTEM_WIN32
-					Warning("The option '-console #' is only valid for Windows.");
-#endif
-					if (i + 1 < argc)
-						++i;
-					else
-						Usage(PROGRAM_BSP);
-				}
-				else if (!strcasecmp(argv[i], "-notjunc"))
-				{
-					g_notjunc = true;
-				}
-				else if (!strcasecmp(argv[i], "-nobrink"))
-				{
-					g_nobrink = true;
-				}
-				else if (!strcasecmp(argv[i], "-nofill"))
-				{
-					g_nofill = true;
-				}
-				else if (!strcasecmp(argv[i], "-noinsidefill"))
-				{
-					g_noinsidefill = true;
-				}
-				else if (!strcasecmp(argv[i], "-leakonly"))
-				{
-					g_bLeakOnly = true;
-				}
-				else if (!strcasecmp(argv[i], "-low"))
-				{
-					g_threadpriority = eThreadPriorityLow;
-				}
-				else if (!strcasecmp(argv[i], "-high"))
-				{
-					g_threadpriority = eThreadPriorityHigh;
-				}
-				else if (!strcasecmp(argv[i], "-nohull2"))
+				if (!strcasecmp(argv[i], "-nohull2"))
 				{
 					g_nohull2 = true;
-				}
-
-				else if (!strcasecmp(argv[i], "-noopt"))
-				{
-					g_noopt = true;
-				}
-				else if (!strcasecmp(argv[i], "-noclipnodemerge"))
-				{
-					g_noclipnodemerge = true;
 				}
 				else if (!strcasecmp(argv[i], "-subdivide"))
 				{
@@ -1464,10 +1391,6 @@ int main(const int argc, char **argv)
 						Usage(PROGRAM_BSP);
 					}
 				}
-				else if (!strcasecmp(argv[i], "-viewportal"))
-				{
-					g_viewportal = true;
-				}
 				else if (!strcasecmp(argv[i], "-texdata"))
 				{
 					if (i + 1 < argc) // added "1" .--vluzacn
@@ -1499,11 +1422,6 @@ int main(const int argc, char **argv)
 					{
 						Usage(PROGRAM_BSP);
 					}
-				}
-				else if (argv[i][0] == '-')
-				{
-					Log("Unknown option \"%s\"\n", argv[i]);
-					Usage(PROGRAM_BSP);
 				}
 				else if (!mapname_from_arg)
 				{
