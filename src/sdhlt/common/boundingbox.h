@@ -131,7 +131,7 @@ public:
         VectorCopy(mins, m_Mins);
         VectorCopy(maxs, m_Maxs);
     }
-    ~BoundingBox() {}
+    ~BoundingBox() = default;
 
 public:
     // Bounding box

@@ -39,7 +39,7 @@ class ReferenceCounter
 public:
 	ReferenceCounter();
 	ReferenceCounter(int InitialValue);
-	virtual ~ReferenceCounter() {} // Should optimize to nothing except in the derived-class case
+	virtual ~ReferenceCounter() = default; // Should optimize to nothing except in the derived-class case
 	ReferenceCounter(const ReferenceCounter &other) { copy(other); }
 	ReferenceCounter &operator=(const ReferenceCounter &other)
 	{

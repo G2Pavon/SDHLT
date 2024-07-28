@@ -71,7 +71,7 @@ private:
 
 public:
 	TraceMesh() { mesh = nullptr; }
-	~TraceMesh() {}
+	~TraceMesh() = default;
 
 	// trace stuff
 	void SetTraceMesh(mmesh_t *cached_mesh, areanode_t *tree)
