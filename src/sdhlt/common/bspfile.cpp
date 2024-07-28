@@ -264,9 +264,12 @@ static void SwapBSPFile(const bool todisk)
 	//
 	for (i = 0; i < g_numtexinfo; i++)
 	{
-		for (j = 0; j < 8; j++)
+		for (int st = 0; st < 2; st++)
 		{
-			g_texinfo[i].vecs[0][j] = LittleFloat(g_texinfo[i].vecs[0][j]);
+			for (int xyz = 0; xyz < 4; xyz++)
+			{
+				g_texinfo[i].vecs[st][xyz] = LittleFloat(g_texinfo[i].vecs[st][xyz]);
+			}
 		}
 		g_texinfo[i].miptex = LittleLong(g_texinfo[i].miptex);
 		g_texinfo[i].flags = LittleLong(g_texinfo[i].flags);
@@ -801,7 +804,7 @@ void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 	// code from Quake
 	int i, j;
 	int best, best2;
-	int x, y;
+	int x = 0, y = 0;
 	if (w < 1 || h < 1)
 	{
 		Error("DoAllocBlock: internal error.");
@@ -1572,7 +1575,7 @@ void UnparseEntities()
 			const char *classname = ValueForKey(ent, "classname");
 			const char *targetname = ValueForKey(ent, "targetname");
 			int style = IntForKey(ent, "style");
-			if (!targetname[0] || strcmp(classname, "light") && strcmp(classname, "light_spot") && strcmp(classname, "light_environment"))
+			if (!targetname[0] || (strcmp(classname, "light") && strcmp(classname, "light_spot") && strcmp(classname, "light_environment")))
 				continue;
 			for (j = i + 1; j < g_numentities; j++)
 			{
