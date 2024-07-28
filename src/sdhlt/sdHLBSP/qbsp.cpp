@@ -1452,37 +1452,6 @@ int main(const int argc, char **argv)
 #endif
 	dtexdata_init();
 	atexit(dtexdata_free);
-	// END INIT
-
-	// Load the .void files for allowable entities in the void
-	{
-		char strSystemEntitiesVoidFile[_MAX_PATH];
-		char strMapEntitiesVoidFile[_MAX_PATH];
-
-		// try looking in the current directory
-		safe_strncpy(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
-		if (!q_exists(strSystemEntitiesVoidFile))
-		{
-			char tmp[_MAX_PATH];
-			// try looking in the directory we were run from
-#ifdef SYSTEM_WIN32
-			GetModuleFileName(NULL, tmp, _MAX_PATH);
-#else
-			safe_strncpy(tmp, argv[0], _MAX_PATH);
-#endif
-			ExtractFilePath(tmp, strSystemEntitiesVoidFile);
-			safe_strncat(strSystemEntitiesVoidFile, ENTITIES_VOID, _MAX_PATH);
-		}
-
-		// Set the optional level specific lights filename
-		safe_snprintf(strMapEntitiesVoidFile, _MAX_PATH, "%s" ENTITIES_VOID_EXT, g_Mapname);
-
-		LoadAllowableOutsideList(strSystemEntitiesVoidFile); // default entities.void
-		if (*strMapEntitiesVoidFile)
-		{
-			LoadAllowableOutsideList(strMapEntitiesVoidFile); // automatic mapname.void
-		}
-	}
 
 	// BEGIN BSP
 	start = I_FloatTime();
