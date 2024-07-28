@@ -600,7 +600,7 @@ bool ParseMapEntity()
 	mapent->firstbrush = g_nummapbrushes;
 	mapent->numbrushes = 0;
 
-	while (1)
+	while (true)
 	{
 		if (!GetToken(true))
 			Error("ParseEntity: EOF without closing brace");

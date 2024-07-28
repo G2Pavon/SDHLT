@@ -693,7 +693,7 @@ void LoadWadValue()
         {
             Error("ParseEntity: { not found");
         }
-        while (1)
+        while (true)
         {
             if (!GetToken(true))
             {

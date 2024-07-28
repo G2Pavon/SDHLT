@@ -18,7 +18,7 @@ int FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const pa
 	int high = patch->iIndex - 1;
 	int offset;
 
-	while (1)
+	while (true)
 	{
 		offset = (low + high) / 2;
 
@@ -256,7 +256,7 @@ void MakeScales(const int threadnum)
 
 	count = 0;
 
-	while (1)
+	while (true)
 	{
 		i = GetThreadWork();
 		if (i == -1)
@@ -509,7 +509,7 @@ void MakeRGBScales(const int threadnum)
 
 	count = 0;
 
-	while (1)
+	while (true)
 	{
 		i = GetThreadWork();
 		if (i == -1)

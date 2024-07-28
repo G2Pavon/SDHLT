@@ -388,7 +388,7 @@ void PairEdges()
 					{
 						f = e->faces[d];
 						count = 0, fnext = f, edgeabsnext = edgeabs, edgeendnext = edgeend;
-						while (1)
+						while (true)
 						{
 							fcurrent = fnext;
 							r = AddFaceForVertexNormal(edgeabsnext, edgeabsnext, edgeendnext, edgeendnext, fcurrent, fnext, angle, normal);
@@ -2497,7 +2497,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 								}
 								VectorAdd(adds[style], add_one, adds[style]);
 							} // (loop over the normals)
-						} while (0);
+						} while (false);
 						do // add sky light
 						{
 							// check step
@@ -2563,7 +2563,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 								VectorAdd(adds[style], add_one, adds[style]);
 							} // (loop over the normals)
 
-						} while (0);
+						} while (false);
 					}
 					else // not emit_skylight
 					{

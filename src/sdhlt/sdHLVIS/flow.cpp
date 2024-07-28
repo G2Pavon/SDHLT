@@ -669,7 +669,7 @@ void            BasePortalVis(int unused)
     byte            portalsee[PORTALSEE_SIZE];
     const int       portalsize = (g_numportals * 2);
 
-    while (1)
+    while (true)
     {
         i = GetThreadWork();
         if (i == -1)
@@ -986,7 +986,7 @@ void	MaxDistVis(int unused)
 	unsigned offset_tl;
 	unsigned bit_tl;
 	
-	while(1)
+	while(true)
 	{
 		i = GetThreadWork();
 		if (i == -1)

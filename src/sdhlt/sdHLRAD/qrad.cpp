@@ -1661,7 +1661,7 @@ static void GatherLight(int threadnum)
 	int style;
 	unsigned int fastfind_index = 0;
 
-	while (1)
+	while (true)
 	{
 		j = GetThreadWork();
 		if (j == -1)
@@ -1818,7 +1818,7 @@ static void GatherRGBLight(int threadnum)
 	int style;
 	unsigned int fastfind_index = 0;
 
-	while (1)
+	while (true)
 	{
 		j = GetThreadWork();
 		if (j == -1)

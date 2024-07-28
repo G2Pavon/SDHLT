@@ -950,7 +950,7 @@ void CMeshDesc ::RelinkFacet(mfacet_t *facet)
 	// find the first node that the facet box crosses
 	areanode_t *node = areanodes;
 
-	while (1)
+	while (true)
 	{
 		if (node->axis == -1)
 			break;

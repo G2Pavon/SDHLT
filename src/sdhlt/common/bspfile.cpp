@@ -1354,7 +1354,7 @@ bool ParseEntity()
 	mapent = &g_entities[g_numentities];
 	g_numentities++;
 
-	while (1)
+	while (true)
 	{
 		if (!GetToken(true))
 		{

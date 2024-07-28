@@ -297,9 +297,9 @@ void ParseParamFile(const int argc, char **const argv, int &argcnew, char **&arg
 		strcpy(words, "");
 		strcpy(token, "");
 		parsearg(argc, argv, cmdline, MAXTOKEN);
-		while (1)
+		while (true)
 		{
-			while (1)
+			while (true)
 			{
 				c = nextword(c, token, MAXTOKEN);
 				if (token[0] == '#' || !c)
@@ -317,7 +317,7 @@ void ParseParamFile(const int argc, char **const argv, int &argcnew, char **&arg
 				error = true;
 				break;
 			}
-			while (1)
+			while (true)
 			{
 				c0 = c;
 				c = nextword(c, token, MAXTOKEN);

@@ -32,7 +32,7 @@ static unsigned IsVisbitInArray(const unsigned x, const unsigned y)
 
     //    Warning("Searching . . .");
     // binary search to find visbit
-    while (1)
+    while (true)
     {
         current = (first + last) / 2;
         row = column->row + current;
@@ -138,7 +138,7 @@ static bool CheckVisBitSparse(unsigned x, unsigned y, vec3_t &transparency_out, 
 
     if (x == y)
     {
-        return 1;
+        return true;
     }
 
     const unsigned a = x;
@@ -282,7 +282,7 @@ static void BuildVisLeafs(int threadnum)
     bool *uncompressedcolumn = (bool *)malloc(MAX_SPARSE_VISMATRIX_PATCHES * sizeof(bool));
     hlassume(uncompressedcolumn != nullptr, assume_NoMemory);
 
-    while (1)
+    while (true)
     {
         //
         // build a minimal BSP tree that only

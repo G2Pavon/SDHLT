@@ -538,7 +538,7 @@ skipwhite:
 	if (c == '\"')
 	{
 		data++;
-		while (1)
+		while (true)
 		{
 			c = (byte)*data++;
 			if (c == '\"' || !c)

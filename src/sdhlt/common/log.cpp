@@ -277,7 +277,7 @@ void CDECL FORMAT_PRINTF(1, 2) Error(const char *const error, ...)
     WriteLog(message2);
     LogError(message2);
 
-    fatal = 1;
+    fatal = true;
     CheckFatal();
 }
 
@@ -310,7 +310,7 @@ void CDECL FORMAT_PRINTF(2, 3) Fatal(assume_msgs msgid, const char *const warnin
         PrintOnce("%s", message);
     }
 
-    fatal = 1;
+    fatal = true;
 }
 
 // =====================================================================================
@@ -597,7 +597,7 @@ int loadlangfileline(char *line, int n, FILE *f)
 {
     int i = 0, c = 0;
     bool special = false;
-    while (1)
+    while (true)
     {
         c = fgetc(f);
         if (c == '\r')
@@ -700,7 +700,7 @@ void LoadLangFile(const char *name, const char *programpath)
         Warning("can not open file: '%s'", name);
         return;
     }
-    while (1)
+    while (true)
     {
         if (loadlangfileline(line1, MAXTOKEN, f) == 1)
             break;

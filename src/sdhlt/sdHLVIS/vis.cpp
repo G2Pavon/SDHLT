@@ -154,7 +154,7 @@ static void LeafThread(int unused)
 {
     portal_t *p;
 
-    while (1)
+    while (true)
     {
         if (!(p = GetNextPortal()))
         {

@@ -822,7 +822,7 @@ static surfchain_t *ReadSurfs(FILE *file)
 	double inaccuracy, inaccuracy_count = 0.0, inaccuracy_total = 0.0, inaccuracy_max = 0.0;
 
 	// read in the polygons
-	while (1)
+	while (true)
 	{
 		if (file == polyfiles[2] && g_nohull2)
 			break;
@@ -901,7 +901,7 @@ static surfchain_t *ReadSurfs(FILE *file)
 static brush_t *ReadBrushes(FILE *file)
 {
 	brush_t *brushes = nullptr;
-	while (1)
+	while (true)
 	{
 		if (file == brushfiles[2] && g_nohull2)
 			break;
@@ -929,7 +929,7 @@ static brush_t *ReadBrushes(FILE *file)
 		brushes = b;
 		side_t **psn;
 		psn = &b->sides;
-		while (1)
+		while (true)
 		{
 			int planenum;
 			int numpoints;

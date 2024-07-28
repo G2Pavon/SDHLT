@@ -129,7 +129,7 @@ static void BuildVisLeafs(int threadnum)
 	unsigned bitpos;
 	unsigned patchnum;
 
-	while (1)
+	while (true)
 	{
 		//
 		// build a minimal BSP tree that only

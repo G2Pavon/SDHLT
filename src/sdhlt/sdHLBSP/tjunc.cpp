@@ -261,7 +261,7 @@ static void AddVert(const wedge_t *const w, const vec_t t)
             break;
         }
         v = v->next;
-    } while (1);
+    } while (true);
 
     // insert a new wvert before v
     hlassume(numwverts < MAX_WVERTS, assume_MAX_WVERTS);
@@ -423,7 +423,7 @@ static void SplitFaceForTjunc(face_t *f, face_t *original)
             VectorCopy(f->pts[i], f->pts[i - (newface->numpoints - 2)]);
         }
         f->numpoints -= (newface->numpoints - 2);
-    } while (1);
+    } while (true);
 }
 
 /*

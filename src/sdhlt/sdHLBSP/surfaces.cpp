@@ -61,7 +61,7 @@ void SubdivideFace(face_t *f, face_t **prevptr)
 
     for (axis = 0; axis < 2; axis++)
     {
-        while (1)
+        while (true)
         {
             mins = 99999999;
             maxs = -99999999;
