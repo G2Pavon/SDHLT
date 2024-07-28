@@ -1151,7 +1151,7 @@ static bool ProcessModel()
 		{
 			ent = nullptr;
 		}
-		Warning("Empty solid entity: model %d (entity: classname \"%s\", origin \"%s\", targetname \"%s\")",
+		Warning(R"(Empty solid entity: model %d (entity: classname "%s", origin "%s", targetname "%s"))",
 				g_nummodels - 1,
 				(ent ? ValueForKey(ent, "classname") : "unknown"),
 				(ent ? ValueForKey(ent, "origin") : "unknown"),
@@ -1166,7 +1166,7 @@ static bool ProcessModel()
 		{
 			ent = nullptr;
 		}
-		Warning("No visible brushes in solid entity: model %d (entity: classname \"%s\", origin \"%s\", targetname \"%s\", range (%.0f,%.0f,%.0f) - (%.0f,%.0f,%.0f))",
+		Warning(R"(No visible brushes in solid entity: model %d (entity: classname "%s", origin "%s", targetname "%s", range (%.0f,%.0f,%.0f) - (%.0f,%.0f,%.0f)))",
 				g_nummodels - 1,
 				(ent ? ValueForKey(ent, "classname") : "unknown"),
 				(ent ? ValueForKey(ent, "origin") : "unknown"),
