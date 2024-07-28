@@ -402,7 +402,7 @@ extern void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal); 
 typedef bool (*funcCheckVisBit)(unsigned, unsigned, vec3_t &, unsigned int &);
 extern funcCheckVisBit g_CheckVisBit;
 extern bool CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out);
-extern void MdlLightHack(void);
+extern void MdlLightHack();
 
 // qradutil.c
 extern vec_t PatchPlaneDist(const patch_t *const patch);
@@ -469,6 +469,6 @@ extern vec_t CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t 
 extern void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const patch_t *patch, vec3_t &origin);
 
 // studio.cpp
-extern void LoadStudioModels(void);
-extern void FreeStudioModels(void);
+extern void LoadStudioModels();
+extern void FreeStudioModels();
 extern bool TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2);

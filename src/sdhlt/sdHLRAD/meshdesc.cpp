@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #define SIMPLIFICATION_FACTOR_MED 0.55f
 #define SIMPLIFICATION_FACTOR_LOW 0.85f
 
-CMeshDesc ::CMeshDesc(void)
+CMeshDesc ::CMeshDesc()
 {
 	memset(&m_mesh, 0, sizeof(m_mesh));
 
@@ -34,7 +34,7 @@ CMeshDesc ::CMeshDesc(void)
 	m_iNumTris = 0;
 }
 
-CMeshDesc ::~CMeshDesc(void)
+CMeshDesc ::~CMeshDesc()
 {
 	FreeMesh();
 }
@@ -104,7 +104,7 @@ areanode_t *CMeshDesc ::CreateAreaNode(int depth, const vec3_t mins, const vec3_
 	return anode;
 }
 
-void CMeshDesc ::FreeMesh(void)
+void CMeshDesc ::FreeMesh()
 {
 	if (m_mesh.numfacets <= 0)
 		return;
@@ -966,7 +966,7 @@ void CMeshDesc ::RelinkFacet(mfacet_t *facet)
 	InsertLinkBefore(&facet->area, &node->facets);
 }
 
-bool CMeshDesc ::FinishMeshBuild(void)
+bool CMeshDesc ::FinishMeshBuild()
 {
 	if (m_mesh.numfacets <= 0)
 	{
@@ -1039,7 +1039,7 @@ bool CMeshDesc ::FinishMeshBuild(void)
 	return true;
 }
 
-void CMeshDesc ::FreeMeshBuild(void)
+void CMeshDesc ::FreeMeshBuild()
 {
 	// no reason to keep these arrays
 	for (int i = 0; facets && i < m_mesh.numfacets; i++)

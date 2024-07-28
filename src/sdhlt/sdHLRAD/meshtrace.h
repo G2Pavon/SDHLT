@@ -86,5 +86,5 @@ public:
 	bool ClipRayToFacet(const mfacet_t *facet);
 	bool ClipRayToFace(const mfacet_t *facet); // ripped out from q3map2
 	void ClipToLinks(areanode_t *node);
-	bool DoTrace(void);
+	bool DoTrace();
 };

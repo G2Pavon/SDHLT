@@ -64,7 +64,7 @@ public:
   void CopyPoints(vec3_t *points, int &numpoints);
 
   void initFromPoints(vec3_t *points, uint32_t numpoints);
-  void Reset(void); // Resets the structure
+  void Reset(); // Resets the structure
 
 protected:
   void resize(uint32_t newsize);

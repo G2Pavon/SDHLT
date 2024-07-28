@@ -1026,7 +1026,7 @@ void Winding::CopyPoints(vec3_t *points, int &numpoints)
     numpoints = m_NumPoints;
 }
 
-void Winding::Reset(void)
+void Winding::Reset()
 {
     if (m_Points)
     {

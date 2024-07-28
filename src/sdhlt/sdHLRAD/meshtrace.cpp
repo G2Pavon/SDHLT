@@ -385,7 +385,7 @@ void TraceMesh ::ClipToLinks(areanode_t *node)
 		ClipToLinks(node->children[1]);
 }
 
-bool TraceMesh ::DoTrace(void)
+bool TraceMesh ::DoTrace()
 {
 	if (!mesh || !BoundsIntersect(mesh->mins, mesh->maxs, m_vecAbsMins, m_vecAbsMaxs))
 		return false; // invalid mesh or no intersection

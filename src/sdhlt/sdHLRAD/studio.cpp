@@ -103,7 +103,7 @@ void LoadStudioModel(const char *modelname, const vec3_t origin, const vec3_t an
 // =====================================================================================
 //  LoadStudioModels
 // =====================================================================================
-void LoadStudioModels(void)
+void LoadStudioModels()
 {
 	memset(models, 0, sizeof(models));
 	num_models = 0;
@@ -182,7 +182,7 @@ void LoadStudioModels(void)
 	Log("%i opaque studio models\n", num_models);
 }
 
-void FreeStudioModels(void)
+void FreeStudioModels()
 {
 	for (int i = 0; i < num_models; i++)
 	{

@@ -26,7 +26,7 @@ static int m_idum = 0;
 static int m_iy = 0;
 static int m_iv[NTAB];
 
-static int GenerateRandomNumber(void)
+static int GenerateRandomNumber()
 {
 	int j, k;
 

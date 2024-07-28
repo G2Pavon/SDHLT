@@ -108,7 +108,7 @@ int CTriangle ::HasVertex(CVertex *v)
 	return (v == vertex[0] || v == vertex[1] || v == vertex[2]);
 }
 
-void CTriangle ::ComputeNormal(void)
+void CTriangle ::ComputeNormal()
 {
 	vector a, b;
 
@@ -294,7 +294,7 @@ static void ComputeEdgeCostAtVertex(CVertex *v)
 	}
 }
 
-static void ComputeAllEdgeCollapseCosts(void)
+static void ComputeAllEdgeCollapseCosts()
 {
 	// For all the edges, compute the difference it would make
 	// to the model if it was collapsed.  The least of these
@@ -350,7 +350,7 @@ static void Collapse(CVertex *u, CVertex *v)
 	}
 }
 
-static CVertex *MinimumCostEdge(void)
+static CVertex *MinimumCostEdge()
 {
 	// Find the edge that when collapsed will affect model the least.
 	// This funtion actually returns a CVertex, the second vertex
