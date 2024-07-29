@@ -15,7 +15,7 @@ typedef struct
 } intersecttest_t;
 auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 {
-	dface_t *f2 = &g_dfaces[facenum];
+	auto *f2 = &g_dfaces[facenum];
 	auto *w = new Winding(*f2);
 	int k;
 	for (k = 0; k < w->m_NumPoints; k++)
@@ -29,24 +29,22 @@ auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 			break;
 		}
 	}
-	bool intersect = w->m_NumPoints > 0;
+	auto intersect = w->m_NumPoints > 0;
 	delete w;
 	return intersect;
 }
 auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 {
-	dface_t *f = &g_dfaces[facenum];
-	intersecttest_t *t;
-	t = (intersecttest_t *)malloc(sizeof(intersecttest_t));
+	auto *f = &g_dfaces[facenum];
+	auto *t = (intersecttest_t *)malloc(sizeof(intersecttest_t));
 	hlassume(t != nullptr, assume_NoMemory);
 	t->clipplanes = (dplane_t *)malloc(f->numedges * sizeof(dplane_t));
 	hlassume(t->clipplanes != nullptr, assume_NoMemory);
 	t->numclipplanes = 0;
-	int j;
-	for (j = 0; j < f->numedges; j++)
+	for (int j = 0; j < f->numedges; j++)
 	{
 		// should we use winding instead?
-		int edgenum = g_dsurfedges[f->firstedge + j];
+		auto edgenum = g_dsurfedges[f->firstedge + j];
 		{
 			vec3_t v0, v1;
 			vec3_t dir, normal;
@@ -95,10 +93,9 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 //
 {
 	VectorCopy(getPlaneFromFace(f)->normal, normal);
-	int vnum = g_dedges[edgeabs].v[edgeend];
-	int iedge, iedgenext, edge, edgenext;
+	auto vnum = g_dedges[edgeabs].v[edgeend];
 	int i, e, count1, count2;
-	vec_t dot;
+	int edge, edgenext;
 	for (count1 = count2 = 0, i = 0; i < f->numedges; i++)
 	{
 		e = g_dsurfedges[f->firstedge + i];
@@ -106,13 +103,13 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 			continue;
 		if (abs(e) == edgeabs)
 		{
-			iedge = i;
+			auto iedge = i;
 			edge = e;
 			count1++;
 		}
 		else if (g_dedges[abs(e)].v[0] == vnum || g_dedges[abs(e)].v[1] == vnum)
 		{
-			iedgenext = i;
+			auto iedgenext = i;
 			edgenext = e;
 			count2++;
 		}
@@ -121,12 +118,11 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 	{
 		return -1;
 	}
-	int vnum11, vnum12, vnum21, vnum22;
 	vec3_t vec1, vec2;
-	vnum11 = g_dedges[abs(edge)].v[edge > 0 ? 0 : 1];
-	vnum12 = g_dedges[abs(edge)].v[edge > 0 ? 1 : 0];
-	vnum21 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 0 : 1];
-	vnum22 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 1 : 0];
+	auto vnum11 = g_dedges[abs(edge)].v[edge > 0 ? 0 : 1];
+	auto vnum12 = g_dedges[abs(edge)].v[edge > 0 ? 1 : 0];
+	auto vnum21 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 0 : 1];
+	auto vnum22 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 1 : 0];
 	if (vnum == vnum12 && vnum == vnum21 && vnum != vnum11 && vnum != vnum22)
 	{
 		VectorSubtract(g_dvertexes[vnum11].point, g_dvertexes[vnum].point, vec1);
@@ -147,11 +143,11 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 	}
 	VectorNormalize(vec1);
 	VectorNormalize(vec2);
-	dot = DotProduct(vec1, vec2);
+	auto dot = DotProduct(vec1, vec2);
 	dot = dot > 1 ? 1 : dot < -1 ? -1
 								 : dot;
 	angle = acos(dot);
-	edgeshare_t *es = &g_edgeshare[edgeabsnext];
+	auto *es = &g_edgeshare[edgeabsnext];
 	if (!(es->faces[0] && es->faces[1]))
 		return 1;
 	if (es->faces[0] == f && es->faces[1] != f)
@@ -171,24 +167,20 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &
 {
 	matrix_t worldtotex;
 	matrix_t worldtotex2;
-	dedge_t *e;
-	int i;
 	dvertex_t *vert[2];
 	vec3_t face_vert[2];
 	vec3_t face2_vert[2];
 	vec3_t face_axis[2];
 	vec3_t face2_axis[2];
 	const vec3_t v_up = {0, 0, 1};
-	vec_t len;
-	vec_t len2;
 	matrix_t edgetotex, edgetotex2;
 	matrix_t inv, inv2;
 
 	TranslateWorldToTex(facenum, worldtotex);
 	TranslateWorldToTex(facenum2, worldtotex2);
 
-	e = &g_dedges[edgenum];
-	for (i = 0; i < 2; i++)
+	auto *e = &g_dedges[edgenum];
+	for (int i = 0; i < 2; i++)
 	{
 		vert[i] = &g_dvertexes[e->v[i]];
 		ApplyMatrix(worldtotex, vert[i]->point, face_vert[i]);
@@ -198,7 +190,7 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &
 	}
 
 	VectorSubtract(face_vert[1], face_vert[0], face_axis[0]);
-	len = VectorLength(face_axis[0]);
+	auto len = VectorLength(face_axis[0]);
 	CrossProduct(v_up, face_axis[0], face_axis[1]);
 	if (CalcMatrixSign(worldtotex) < 0.0) // the three vectors s, t, facenormal are in reverse order
 	{
@@ -206,7 +198,7 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &
 	}
 
 	VectorSubtract(face2_vert[1], face2_vert[0], face2_axis[0]);
-	len2 = VectorLength(face2_axis[0]);
+	auto len2 = VectorLength(face2_axis[0]);
 	CrossProduct(v_up, face2_axis[0], face2_axis[1]);
 	if (CalcMatrixSign(worldtotex2) < 0.0)
 	{
@@ -235,23 +227,20 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &
 
 void PairEdges()
 {
-	int i, j, k;
-	dface_t *f;
 	edgeshare_t *e;
-
 	memset(&g_edgeshare, 0, sizeof(g_edgeshare));
 
-	f = g_dfaces;
-	for (i = 0; i < g_numfaces; i++, f++)
+	auto *f = g_dfaces;
+	for (int i = 0; i < g_numfaces; i++, f++)
 	{
 		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			// special textures don't have lightmaps
 			continue;
 		}
-		for (j = 0; j < f->numedges; j++)
+		for (int j = 0; j < f->numedges; j++)
 		{
-			k = g_dsurfedges[f->firstedge + j];
+			auto k = g_dsurfedges[f->firstedge + j];
 			if (k < 0)
 			{
 				e = &g_edgeshare[-k];
@@ -286,10 +275,9 @@ void PairEdges()
 
 					e->cos_normals_angle = DotProduct(normals[0], normals[1]);
 
-					vec_t smoothvalue;
-					int m0 = g_texinfo[e->faces[0]->texinfo].miptex;
-					int m1 = g_texinfo[e->faces[1]->texinfo].miptex;
-					smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
+					auto m0 = g_texinfo[e->faces[0]->texinfo].miptex;
+					auto m1 = g_texinfo[e->faces[1]->texinfo].miptex;
+					auto smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
 					if (m0 != m1)
 					{
 						smoothvalue = qmax(smoothvalue, g_smoothing_threshold_2);
@@ -318,9 +306,8 @@ void PairEdges()
 					VectorClear(e->interface_normal);
 				}
 				{
-					int miptex0, miptex1;
-					miptex0 = g_texinfo[e->faces[0]->texinfo].miptex;
-					miptex1 = g_texinfo[e->faces[1]->texinfo].miptex;
+					auto miptex0 = g_texinfo[e->faces[0]->texinfo].miptex;
+					auto miptex1 = g_texinfo[e->faces[1]->texinfo].miptex;
 					if (fabs(g_lightingconeinfo[miptex0][0] - g_lightingconeinfo[miptex1][0]) > NORMAL_EPSILON ||
 						fabs(g_lightingconeinfo[miptex0][1] - g_lightingconeinfo[miptex1][1]) > NORMAL_EPSILON)
 					{
@@ -341,7 +328,7 @@ void PairEdges()
 						e->coplanar = false;
 						VectorClear(e->interface_normal);
 
-						dvertex_t *dv = &g_dvertexes[g_dedges[abs(k)].v[0]];
+						auto *dv = &g_dvertexes[g_dedges[abs(k)].v[0]];
 					}
 				}
 			}
@@ -350,12 +337,11 @@ void PairEdges()
 	{
 		int edgeabs, edgeabsnext;
 		int edgeend, edgeendnext;
-		int d;
-		dface_t *f, *fcurrent, *fnext;
+		dface_t *f, *fnext;
 		vec_t angle, angles;
 		vec3_t normal, normals;
 		vec3_t edgenormal;
-		int r, count;
+		int count;
 		for (edgeabs = 0; edgeabs < MAX_MAP_EDGES; edgeabs++)
 		{
 			e = &g_edgeshare[edgeabs];
@@ -384,14 +370,14 @@ void PairEdges()
 					angles = 0;
 					VectorClear(normals);
 
-					for (d = 0; d < 2; d++)
+					for (int d = 0; d < 2; d++)
 					{
 						f = e->faces[d];
 						count = 0, fnext = f, edgeabsnext = edgeabs, edgeendnext = edgeend;
 						while (true)
 						{
-							fcurrent = fnext;
-							r = AddFaceForVertexNormal(edgeabsnext, edgeabsnext, edgeendnext, edgeendnext, fcurrent, fnext, angle, normal);
+							auto *fcurrent = fnext;
+							auto r = AddFaceForVertexNormal(edgeabsnext, edgeabsnext, edgeendnext, edgeendnext, fcurrent, fnext, angle, normal);
 							count++;
 							if (r == -1)
 							{
@@ -403,10 +389,9 @@ void PairEdges()
 							}
 							if (DotProduct(normal, p0->normal) <= NORMAL_EPSILON || DotProduct(normal, p1->normal) <= NORMAL_EPSILON)
 								break;
-							vec_t smoothvalue;
-							int m0 = g_texinfo[f->texinfo].miptex;
-							int m1 = g_texinfo[fcurrent->texinfo].miptex;
-							smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
+							auto m0 = g_texinfo[f->texinfo].miptex;
+							auto m1 = g_texinfo[fcurrent->texinfo].miptex;
+							auto smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
 							if (m0 != m1)
 							{
 								smoothvalue = qmax(smoothvalue, g_smoothing_threshold_2);
@@ -425,7 +410,7 @@ void PairEdges()
 							angles += angle;
 							VectorMA(normals, angle, normal, normals);
 							{
-								bool in = false;
+								auto in = false;
 								if (fcurrent == e->faces[0] || fcurrent == e->faces[1])
 								{
 									in = true;
@@ -526,17 +511,12 @@ typedef struct
 // =====================================================================================
 static auto TextureNameFromFace(const dface_t *const f) -> const char *
 {
-	texinfo_t *tx;
-	miptex_t *mt;
-	int ofs;
-
 	//
 	// check for light emited by texture
 	//
-	tx = &g_texinfo[f->texinfo];
-
-	ofs = ((dmiptexlump_t *)g_dtexdata)->dataofs[tx->miptex];
-	mt = (miptex_t *)((byte *)g_dtexdata + ofs);
+	auto *tx = &g_texinfo[f->texinfo];
+	auto ofs = ((dmiptexlump_t *)g_dtexdata)->dataofs[tx->miptex];
+	auto *mt = (miptex_t *)((byte *)g_dtexdata + ofs);
 
 	return mt->name;
 }
@@ -548,19 +528,17 @@ static auto TextureNameFromFace(const dface_t *const f) -> const char *
 // =====================================================================================
 static void CalcFaceExtents(lightinfo_t *l)
 {
-	const int facenum = l->surfnum;
-	dface_t *s;
-	float mins[2], maxs[2], val; // vec_t           mins[2], maxs[2], val; //vluzacn
-	int i, j, e;
+	const auto facenum = l->surfnum;
+	float mins[2], maxs[2]; // vec_t           mins[2], maxs[2], val; //vluzacn
+	int i, e;
 	dvertex_t *v;
-	texinfo_t *tex;
 
-	s = l->face;
+	auto *s = l->face;
 
 	mins[0] = mins[1] = 99999999;
 	maxs[0] = maxs[1] = -99999999;
 
-	tex = &g_texinfo[s->texinfo];
+	auto *tex = &g_texinfo[s->texinfo];
 
 	for (i = 0; i < s->numedges; i++)
 	{
@@ -574,10 +552,10 @@ static void CalcFaceExtents(lightinfo_t *l)
 			v = g_dvertexes + g_dedges[-e].v[1];
 		}
 
-		for (j = 0; j < 2; j++)
+		for (int j = 0; j < 2; j++)
 		{
-			val = v->point[0] * tex->vecs[j][0] +
-				  v->point[1] * tex->vecs[j][1] + v->point[2] * tex->vecs[j][2] + tex->vecs[j][3];
+			auto val = v->point[0] * tex->vecs[j][0] +
+					   v->point[1] * tex->vecs[j][1] + v->point[2] * tex->vecs[j][2] + tex->vecs[j][3];
 			if (val < mins[j])
 			{
 				mins[j] = val;
@@ -665,18 +643,15 @@ static void CalcFaceExtents(lightinfo_t *l)
 // =====================================================================================
 static void CalcFaceVectors(lightinfo_t *l)
 {
-	texinfo_t *tex;
-	int i, j;
+	int i;
 	vec3_t texnormal;
-	vec_t distscale;
-	vec_t dist, len;
 
-	tex = &g_texinfo[l->face->texinfo];
+	auto *tex = &g_texinfo[l->face->texinfo];
 
 	// convert from float to double
 	for (i = 0; i < 2; i++)
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
 			l->worldtotex[i][j] = tex->vecs[i][j];
 		}
@@ -688,7 +663,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 	VectorNormalize(texnormal);
 
 	// flip it towards plane normal
-	distscale = DotProduct(texnormal, l->facenormal);
+	auto distscale = DotProduct(texnormal, l->facenormal);
 	if (distscale == 0.0)
 	{
 		const unsigned facenum = l->face - g_dfaces;
@@ -724,7 +699,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 	for (i = 0; i < 2; i++)
 	{
 		CrossProduct(l->worldtotex[!i], l->facenormal, l->textoworld[i]);
-		len = DotProduct(l->textoworld[i], l->worldtotex[i]);
+		auto len = DotProduct(l->textoworld[i], l->worldtotex[i]);
 		VectorScale(l->textoworld[i], 1 / len, l->textoworld[i]);
 	}
 
@@ -735,7 +710,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 	}
 
 	// project back to the face plane
-	dist = DotProduct(l->texorg, l->facenormal) - l->facedist;
+	auto dist = DotProduct(l->texorg, l->facenormal) - l->facedist;
 	dist *= distscale;
 	VectorMA(l->texorg, -dist, texnormal, l->texorg);
 	VectorCopy(texnormal, l->texnormal);
@@ -746,10 +721,8 @@ static void CalcFaceVectors(lightinfo_t *l)
 // =====================================================================================
 static void SetSurfFromST(const lightinfo_t *const l, vec_t *surf, const vec_t s, const vec_t t)
 {
-	const int facenum = l->surfnum;
-	int j;
-
-	for (j = 0; j < 3; j++)
+	const auto facenum = l->surfnum;
+	for (int j = 0; j < 3; j++)
 	{
 		surf[j] = l->texorg[j] + l->textoworld[0][j] * s + l->textoworld[1][j] * t;
 	}
@@ -775,11 +748,9 @@ typedef enum
 // =====================================================================================
 static void SetSTFromSurf(const lightinfo_t *const l, const vec_t *surf, vec_t &s, vec_t &t)
 {
-	const int facenum = l->surfnum;
-	int j;
-
+	const auto facenum = l->surfnum;
 	s = t = 0;
-	for (j = 0; j < 3; j++)
+	for (int j = 0; j < 3; j++)
 	{
 		s += (surf[j] - g_face_offset[facenum][j] - l->texorg[j]) * l->worldtotex[0][j];
 		t += (surf[j] - g_face_offset[facenum][j] - l->texorg[j]) * l->worldtotex[1][j];
@@ -850,13 +821,11 @@ void ChopFrag(samplefrag_t *frag)
 // fill winding, windingplane, mywinding, mywindingplane, numedges, edges
 {
 	// get the shape of the fragment by clipping the face using the boundaries
-	dface_t *f;
-	Winding *facewinding;
 	matrix_t worldtotex;
 	const vec3_t v_up = {0, 0, 1};
 
-	f = &g_dfaces[frag->facenum];
-	facewinding = new Winding(*f);
+	auto *f = &g_dfaces[frag->facenum];
+	auto *facewinding = new Winding(*f);
 
 	TranslateWorldToTex(frag->facenum, worldtotex);
 	frag->mywinding = new Winding(facewinding->m_NumPoints);
@@ -899,24 +868,15 @@ void ChopFrag(samplefrag_t *frag)
 	hlassume(frag->edges != nullptr, assume_NoMemory);
 	for (int i = 0; i < f->numedges; i++)
 	{
-		samplefragedge_t *e;
-		edgeshare_t *es;
-		dedge_t *de;
-		dvertex_t *dv1;
-		dvertex_t *dv2;
 		vec_t frac1, frac2;
-		vec_t edgelen;
-		vec_t dot, dot1, dot2;
 		vec3_t tmp, v, normal;
-		const matrix_t *m;
-		const matrix_t *m_inverse;
 
-		e = &frag->edges[frag->numedges];
+		auto *e = &frag->edges[frag->numedges];
 
 		// some basic info
 		e->edgenum = abs(g_dsurfedges[f->firstedge + i]);
 		e->edgeside = (g_dsurfedges[f->firstedge + i] < 0 ? 1 : 0);
-		es = &g_edgeshare[e->edgenum];
+		auto *es = &g_edgeshare[e->edgenum];
 		if (!es->smooth)
 		{
 			continue;
@@ -925,8 +885,8 @@ void ChopFrag(samplefrag_t *frag)
 		{
 			Error("internal error 1 in GrowSingleSampleFrag");
 		}
-		m = &es->textotex[e->edgeside];
-		m_inverse = &es->textotex[1 - e->edgeside];
+		const auto *m = &es->textotex[e->edgeside];
+		const auto *m_inverse = &es->textotex[1 - e->edgeside];
 		e->nextfacenum = es->faces[1 - e->edgeside] - g_dfaces;
 		if (e->nextfacenum == frag->facenum)
 		{
@@ -936,9 +896,9 @@ void ChopFrag(samplefrag_t *frag)
 
 		// translate the edge points from world to the texture plane of the original frag
 		//   so the distances are able to be compared among edges from different frags
-		de = &g_dedges[e->edgenum];
-		dv1 = &g_dvertexes[de->v[e->edgeside]];
-		dv2 = &g_dvertexes[de->v[1 - e->edgeside]];
+		auto *de = &g_dedges[e->edgenum];
+		auto *dv1 = &g_dvertexes[de->v[e->edgeside]];
+		auto *dv2 = &g_dvertexes[de->v[1 - e->edgeside]];
 		ApplyMatrix(worldtotex, dv1->point, tmp);
 		ApplyMatrix(frag->mycoordtocoord, tmp, e->point1);
 		e->point1[2] = 0.0;
@@ -946,7 +906,7 @@ void ChopFrag(samplefrag_t *frag)
 		ApplyMatrix(frag->mycoordtocoord, tmp, e->point2);
 		e->point2[2] = 0.0;
 		VectorSubtract(e->point2, e->point1, e->direction);
-		edgelen = VectorNormalize(e->direction);
+		auto edgelen = VectorNormalize(e->direction);
 		if (edgelen <= ON_EPSILON)
 		{
 			continue;
@@ -957,11 +917,9 @@ void ChopFrag(samplefrag_t *frag)
 		frac2 = 1;
 		for (int x = 0; x < 4; x++)
 		{
-			vec_t dot1;
-			vec_t dot2;
 
-			dot1 = DotProduct(e->point1, frag->rect.planes[x].normal) - frag->rect.planes[x].dist;
-			dot2 = DotProduct(e->point2, frag->rect.planes[x].normal) - frag->rect.planes[x].dist;
+			auto dot1 = DotProduct(e->point1, frag->rect.planes[x].normal) - frag->rect.planes[x].dist;
+			auto dot2 = DotProduct(e->point2, frag->rect.planes[x].normal) - frag->rect.planes[x].dist;
 			if (dot1 <= ON_EPSILON && dot2 <= ON_EPSILON)
 			{
 				frac1 = 1;
@@ -985,9 +943,9 @@ void ChopFrag(samplefrag_t *frag)
 
 		// calculate the distance, etc., which are used to determine its priority
 		e->noseam = frag->noseam;
-		dot = DotProduct(frag->origin, e->direction);
-		dot1 = DotProduct(e->point1, e->direction);
-		dot2 = DotProduct(e->point2, e->direction);
+		auto dot = DotProduct(frag->origin, e->direction);
+		auto dot1 = DotProduct(e->point1, e->direction);
+		auto dot2 = DotProduct(e->point2, e->direction);
 		dot = qmax(dot1, qmin(dot, dot2));
 		VectorMA(e->point1, dot - dot1, e->direction, v);
 		VectorSubtract(v, frag->origin, v);
@@ -1022,12 +980,7 @@ void ChopFrag(samplefrag_t *frag)
 
 static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, samplefragedge_t *edge) -> samplefrag_t *
 {
-	samplefrag_t *frag;
-	bool overlap;
-	int numclipplanes;
-	dplane_t *clipplanes;
-
-	frag = (samplefrag_t *)malloc(sizeof(samplefrag_t));
+	auto *frag = (samplefrag_t *)malloc(sizeof(samplefrag_t));
 	hlassume(frag != nullptr, assume_NoMemory);
 
 	// some basic info
@@ -1053,7 +1006,7 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 	{
 		// since a plane's parameters are in the dual coordinate space, we translate the original absolute plane into this relative plane by multiplying the inverse matrix
 		ApplyMatrixOnPlane(frag->mycoordtocoord, frag->rect.planes[x].normal, frag->rect.planes[x].dist, frag->myrect.planes[x].normal, frag->myrect.planes[x].dist);
-		double len = VectorLength(frag->myrect.planes[x].normal);
+		auto len = VectorLength(frag->myrect.planes[x].normal);
 		if (!len)
 		{
 			free(frag);
@@ -1078,10 +1031,10 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 
 	// do overlap test
 
-	overlap = false;
-	clipplanes = (dplane_t *)malloc(frag->winding->m_NumPoints * sizeof(dplane_t));
+	auto overlap = false;
+	auto *clipplanes = (dplane_t *)malloc(frag->winding->m_NumPoints * sizeof(dplane_t));
 	hlassume(clipplanes != nullptr, assume_NoMemory);
-	numclipplanes = 0;
+	auto numclipplanes = 0;
 	for (int x = 0; x < frag->winding->m_NumPoints; x++)
 	{
 		vec3_t v;
@@ -1123,15 +1076,10 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 
 static auto FindBestEdge(samplefraginfo_t *info, samplefrag_t *&bestfrag, samplefragedge_t *&bestedge) -> bool
 {
-	samplefrag_t *f;
-	samplefragedge_t *e;
-	bool found;
-
-	found = false;
-
-	for (f = info->head; f; f = f->next)
+	auto found = false;
+	for (auto *f = info->head; f; f = f->next)
 	{
-		for (e = f->edges; e < f->edges + f->numedges; e++)
+		for (auto *e = f->edges; e < f->edges + f->numedges; e++)
 		{
 			if (e->tried)
 			{
@@ -1178,14 +1126,13 @@ static auto FindBestEdge(samplefraginfo_t *info, samplefrag_t *&bestfrag, sample
 }
 
 static auto CreateSampleFrag(int facenum, vec_t s, vec_t t,
-										  const vec_t square[2][2],
-										  int maxsize) -> samplefraginfo_t *
+							 const vec_t square[2][2],
+							 int maxsize) -> samplefraginfo_t *
 {
-	samplefraginfo_t *info;
 	const vec3_t v_s = {1, 0, 0};
 	const vec3_t v_t = {0, 1, 0};
 
-	info = (samplefraginfo_t *)malloc(sizeof(samplefraginfo_t));
+	auto *info = (samplefraginfo_t *)malloc(sizeof(samplefraginfo_t));
 	hlassume(info != nullptr, assume_NoMemory);
 	info->maxsize = maxsize;
 	info->size = 1;
@@ -1246,14 +1193,13 @@ static auto CreateSampleFrag(int facenum, vec_t s, vec_t t,
 	{
 		samplefrag_t *bestfrag;
 		samplefragedge_t *bestedge;
-		samplefrag_t *newfrag;
 
 		if (!FindBestEdge(info, bestfrag, bestedge))
 		{
 			break;
 		}
 
-		newfrag = GrowSingleFrag(info, bestfrag, bestedge);
+		auto *newfrag = GrowSingleFrag(info, bestfrag, bestedge);
 		bestedge->tried = true;
 
 		if (newfrag)
@@ -1297,9 +1243,7 @@ static void DeleteSampleFrag(samplefraginfo_t *fraginfo)
 {
 	while (fraginfo->head)
 	{
-		samplefrag_t *f;
-
-		f = fraginfo->head;
+		auto *f = fraginfo->head;
 		fraginfo->head = f->next;
 		delete f->mywinding;
 		delete f->winding;
@@ -1310,37 +1254,31 @@ static void DeleteSampleFrag(samplefraginfo_t *fraginfo)
 }
 
 static auto SetSampleFromST(vec_t *const point,
-									vec_t *const position, // a valid world position for light tracing
-									int *const surface,	   // the face used for phong normal and patch interpolation
-									bool *nudged,
-									const lightinfo_t *const l, const vec_t original_s, const vec_t original_t,
-									const vec_t square[2][2], // {smin, tmin}, {smax, tmax}
-									eModelLightmodes lightmode) -> light_flag_t
+							vec_t *const position, // a valid world position for light tracing
+							int *const surface,	   // the face used for phong normal and patch interpolation
+							bool *nudged,
+							const lightinfo_t *const l, const vec_t original_s, const vec_t original_t,
+							const vec_t square[2][2], // {smin, tmin}, {smax, tmax}
+							eModelLightmodes lightmode) -> light_flag_t
 {
 	light_flag_t LuxelFlag;
-	int facenum;
-	dface_t *face;
-	const dplane_t *faceplane;
-	samplefraginfo_t *fraginfo;
-	samplefrag_t *f;
 
-	facenum = l->surfnum;
-	face = l->face;
-	faceplane = getPlaneFromFace(face);
+	auto facenum = l->surfnum;
+	auto *face = l->face;
+	const auto *faceplane = getPlaneFromFace(face);
 
-	fraginfo = CreateSampleFrag(facenum, original_s, original_t,
-								square,
-								100);
+	auto *fraginfo = CreateSampleFrag(facenum, original_s, original_t,
+									  square,
+									  100);
 
-	bool found;
 	samplefrag_t *bestfrag;
 	vec3_t bestpos;
 	vec_t bests, bestt;
 	vec_t best_dist;
 	bool best_nudged;
 
-	found = false;
-	for (f = fraginfo->head; f; f = f->next)
+	auto found = false;
+	for (auto *f = fraginfo->head; f; f = f->next)
 	{
 		vec3_t pos;
 		vec_t s, t;
@@ -1443,15 +1381,14 @@ static auto SetSampleFromST(vec_t *const point,
 }
 static void CalcPoints(lightinfo_t *l)
 {
-	const int facenum = l->surfnum;
-	const eModelLightmodes lightmode = g_face_lightmode[facenum];
-	const int h = l->texsize[1] + 1;
-	const int w = l->texsize[0] + 1;
-	const vec_t starts = l->texmins[0] * TEXTURE_STEP;
-	const vec_t startt = l->texmins[1] * TEXTURE_STEP;
+	const auto facenum = l->surfnum;
+	const auto lightmode = g_face_lightmode[facenum];
+	const auto h = l->texsize[1] + 1;
+	const auto w = l->texsize[0] + 1;
+	const auto starts = l->texmins[0] * TEXTURE_STEP;
+	const auto startt = l->texmins[1] * TEXTURE_STEP;
 	light_flag_t LuxelFlags[MAX_SINGLEMAP];
 	light_flag_t *pLuxelFlags;
-	vec_t us, ut;
 	vec_t *surf;
 	int s, t;
 	l->numsurfpt = w * h;
@@ -1461,8 +1398,8 @@ static void CalcPoints(lightinfo_t *l)
 		{
 			surf = l->surfpt[s + w * t];
 			pLuxelFlags = &LuxelFlags[s + w * t];
-			us = starts + s * TEXTURE_STEP;
-			ut = startt + t * TEXTURE_STEP;
+			auto us = starts + s * TEXTURE_STEP;
+			auto ut = startt + t * TEXTURE_STEP;
 			vec_t square[2][2];
 			square[0][0] = us - TEXTURE_STEP;
 			square[0][1] = ut - TEXTURE_STEP;
@@ -1478,14 +1415,10 @@ static void CalcPoints(lightinfo_t *l)
 		}
 	}
 	{
-		int i, n;
 		int s_other, t_other;
-		light_flag_t *pLuxelFlags_other;
-		vec_t *surf_other;
-		bool adjusted;
-		for (i = 0; i < h + w; i++)
+		for (int i = 0; i < h + w; i++)
 		{ // propagate valid light samples
-			adjusted = false;
+			auto adjusted = false;
 			for (t = 0; t < h; t++)
 			{
 				for (s = 0; s < w; s++)
@@ -1494,7 +1427,7 @@ static void CalcPoints(lightinfo_t *l)
 					pLuxelFlags = &LuxelFlags[s + w * t];
 					if (*pLuxelFlags != LightOutside)
 						continue;
-					for (n = 0; n < 4; n++)
+					for (int n = 0; n < 4; n++)
 					{
 						switch (n)
 						{
@@ -1517,8 +1450,8 @@ static void CalcPoints(lightinfo_t *l)
 						}
 						if (t_other < 0 || t_other >= h || s_other < 0 || s_other >= w)
 							continue;
-						surf_other = l->surfpt[s_other + w * t_other];
-						pLuxelFlags_other = &LuxelFlags[s_other + w * t_other];
+						auto *surf_other = l->surfpt[s_other + w * t_other];
+						auto *pLuxelFlags_other = &LuxelFlags[s_other + w * t_other];
 						if (*pLuxelFlags_other != LightOutside && *pLuxelFlags_other != LightShifted)
 						{
 							*pLuxelFlags = LightShifted;
@@ -1582,17 +1515,14 @@ void CreateDirectLights()
 	dleaf_t *leaf;
 	int leafnum;
 	entity_t *e;
-	entity_t *e2;
-	const char *name;
 	const char *target;
-	float angle;
 	vec3_t dest;
 
 	numdlights = 0;
 	int styleused[ALLSTYLES];
 	memset(styleused, 0, ALLSTYLES * sizeof(styleused[0]));
 	styleused[0] = true;
-	int numstyles = 1;
+	auto numstyles = 1;
 
 	//
 	// surfaces
@@ -1661,7 +1591,7 @@ void CreateDirectLights()
 			{
 				if (*ValueForKey(g_face_texlights[p->faceNumber], "_scale"))
 				{
-					vec_t scale = FloatForKey(g_face_texlights[p->faceNumber], "_scale");
+					auto scale = FloatForKey(g_face_texlights[p->faceNumber], "_scale");
 					VectorScale(dl->intensity, scale, dl->intensity);
 				}
 			}
@@ -1670,12 +1600,11 @@ void CreateDirectLights()
 			VectorScale(dl->intensity, 1.0 / Q_PI, dl->intensity);
 			VectorMultiply(dl->intensity, p->texturereflectivity, dl->intensity);
 
-			dface_t *f = &g_dfaces[p->faceNumber];
+			auto *f = &g_dfaces[p->faceNumber];
 			if (g_face_entity[p->faceNumber] - g_entities != 0 && !strncasecmp(GetTextureByNumber(f->texinfo), "!", 1))
 			{
-				directlight_t *dl2;
 				numdlights++;
-				dl2 = (directlight_t *)calloc(1, sizeof(directlight_t));
+				auto *dl2 = (directlight_t *)calloc(1, sizeof(directlight_t));
 				hlassume(dl2 != nullptr, assume_NoMemory);
 				*dl2 = *dl;
 				VectorMA(dl->origin, -2, dl->normal, dl2->origin);
@@ -1695,17 +1624,14 @@ void CreateDirectLights()
 	//
 	for (i = 0; i < (unsigned)g_numentities; i++)
 	{
-		const char *pLight;
 		double r, g, b, scaler;
-		float l1;
-		int argCnt;
 
 		e = &g_entities[i];
-		name = ValueForKey(e, "classname");
+		auto *name = ValueForKey(e, "classname");
 		if (strncmp(name, "light", 5))
 			continue;
 		{
-			int style = IntForKey(e, "style");
+			auto style = IntForKey(e, "style");
 			if (style < 0)
 			{
 				style = -style;
@@ -1718,7 +1644,7 @@ void CreateDirectLights()
 		}
 		if (!strcmp(name, "light_shadow") || !strcmp(name, "light_bounce"))
 		{
-			int style = IntForKey(e, "style");
+			auto style = IntForKey(e, "style");
 			if (style < 0)
 			{
 				style = -style;
@@ -1773,10 +1699,10 @@ void CreateDirectLights()
 		{
 			dl->topatch = true;
 		}
-		pLight = ValueForKey(e, "_light");
+		auto pLight = ValueForKey(e, "_light");
 		// scanf into doubles, then assign, so it is vec_t size independent
 		r = g = b = scaler = 0;
-		argCnt = sscanf(pLight, "%lf %lf %lf %lf", &r, &g, &b, &scaler);
+		auto argCnt = sscanf(pLight, "%lf %lf %lf %lf", &r, &g, &b, &scaler);
 		dl->intensity[0] = (float)r;
 		if (argCnt == 1)
 		{
@@ -1844,7 +1770,7 @@ void CreateDirectLights()
 			}
 			if (target[0])
 			{ // point towards target
-				e2 = FindTargetEntity(target);
+				auto *e2 = FindTargetEntity(target);
 				if (!e2)
 				{
 					Warning("light at (%i %i %i) has missing target",
@@ -1863,7 +1789,7 @@ void CreateDirectLights()
 
 				GetVectorForKey(e, "angles", vAngles);
 
-				angle = (float)FloatForKey(e, "angle");
+				auto angle = (float)FloatForKey(e, "angle");
 				if (angle == ANGLE_UP)
 				{
 					dl->normal[0] = dl->normal[1] = 0;
@@ -1981,8 +1907,7 @@ void CreateDirectLights()
 				}
 				if (dl->sunspreadangle > 0.0)
 				{
-					int i;
-					vec_t testangle = dl->sunspreadangle;
+					auto testangle = dl->sunspreadangle;
 					if (dl->sunspreadangle < SUNSPREAD_THRESHOLD)
 					{
 						testangle = SUNSPREAD_THRESHOLD; // We will later centralize all the normals we have collected.
@@ -1993,7 +1918,7 @@ void CreateDirectLights()
 						vec_t testdot = cos(testangle * (Q_PI / 180.0));
 						for (count = 0, i = 0; i < g_numskynormals[SUNSPREAD_SKYLEVEL]; i++)
 						{
-							vec3_t &testnormal = g_skynormals[SUNSPREAD_SKYLEVEL][i];
+							auto &testnormal = g_skynormals[SUNSPREAD_SKYLEVEL][i];
 							vec_t dot = DotProduct(dl->normal, testnormal);
 							if (dot >= testdot - NORMAL_EPSILON)
 							{
@@ -2012,7 +1937,7 @@ void CreateDirectLights()
 						hlassume(dl->sunnormalweights != nullptr, assume_NoMemory);
 						for (count = 0, i = 0; i < g_numskynormals[SUNSPREAD_SKYLEVEL]; i++)
 						{
-							vec3_t &testnormal = g_skynormals[SUNSPREAD_SKYLEVEL][i];
+							auto &testnormal = g_skynormals[SUNSPREAD_SKYLEVEL][i];
 							vec_t dot = DotProduct(dl->normal, testnormal);
 							if (dot >= testdot - NORMAL_EPSILON)
 							{
@@ -2065,7 +1990,7 @@ void CreateDirectLights()
 		if (dl->type != emit_skylight)
 		{
 			// why? --vluzacn
-			l1 = qmax(dl->intensity[0], qmax(dl->intensity[1], dl->intensity[2]));
+			auto l1 = qmax(dl->intensity[0], qmax(dl->intensity[1], dl->intensity[2]));
 			l1 = l1 * l1 / 10;
 
 			dl->intensity[0] *= l1;
@@ -2076,8 +2001,7 @@ void CreateDirectLights()
 
 	int countnormallights = 0, countfastlights = 0;
 	{
-		int l;
-		for (l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+		for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
 		{
 			for (dl = directlights[l]; dl; dl = dl->next)
 			{
@@ -2136,8 +2060,7 @@ void CreateDirectLights()
 	Log("%i light styles\n", numstyles);
 	// move all emit_skylight to leaf 0 (the solid leaf)
 	directlight_t *skylights = nullptr;
-	int l;
-	for (l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+	for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
 	{
 		directlight_t **pdl;
 		for (dl = directlights[l], pdl = &directlights[l]; dl; dl = *pdl)
@@ -2165,8 +2088,8 @@ void CreateDirectLights()
 	int countinfosunlight = 0;
 	for (int i = 0; i < g_numentities; i++)
 	{
-		entity_t *e = &g_entities[i];
-		const char *classname = ValueForKey(e, "classname");
+		auto *e = &g_entities[i];
+		const auto *classname = ValueForKey(e, "classname");
 		if (!strcmp(classname, "light_environment"))
 		{
 			countlightenvironment++;
@@ -2188,12 +2111,9 @@ void CreateDirectLights()
 // =====================================================================================
 void DeleteDirectLights()
 {
-	int l;
-	directlight_t *dl;
-
-	for (l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+	for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
 	{
-		dl = directlights[l];
+		auto *dl = directlights[l];
 		while (dl)
 		{
 			directlights[l] = dl->next;
@@ -2237,7 +2157,7 @@ void CopyToSkynormals(int skylevel, int numpoints, point_t *points, int numedges
 	g_skynormalsizes[skylevel] = (vec_t *)malloc(numpoints * sizeof(vec_t));
 	hlassume(g_skynormals[skylevel] != nullptr, assume_NoMemory);
 	hlassume(g_skynormalsizes[skylevel] != nullptr, assume_NoMemory);
-	int j, k;
+	int j;
 	for (j = 0; j < numpoints; j++)
 	{
 		VectorCopy(points[j], g_skynormals[skylevel][j]);
@@ -2247,7 +2167,7 @@ void CopyToSkynormals(int skylevel, int numpoints, point_t *points, int numedges
 	for (j = 0; j < numtriangles; j++)
 	{
 		int pt[3];
-		for (k = 0; k < 3; k++)
+		for (int k = 0; k < 3; k++)
 		{
 			pt[k] = edges[triangles[j].edge[k]].point[triangles[j].dir[k]];
 		}
@@ -2265,23 +2185,14 @@ void CopyToSkynormals(int skylevel, int numpoints, point_t *points, int numedges
 	{
 		g_skynormalsizes[skylevel][j] /= totalsize;
 	}
-#if 0
-	printf ("g_numskynormals[%i]=%i\n", skylevel, g_numskynormals[skylevel]);
-	for (j = 0; j < numpoints; j += (numpoints / 20 + 1))
-	{
-		printf ("g_skynormals[%i][%i]=%1.3f,%1.3f,%1.3f g_skynormalsizes[%i][%i]=%f\n",
-			skylevel, j, g_skynormals[skylevel][j][0], g_skynormals[skylevel][j][1], g_skynormals[skylevel][j][2],
-			skylevel, j, g_skynormalsizes[skylevel][j]);
-	}
-#endif
 }
 void BuildDiffuseNormals()
 {
-	int i, j, k;
+	int j;
 	g_numskynormals[0] = 0;
 	g_skynormals[0] = nullptr; // don't use this
 	g_skynormalsizes[0] = nullptr;
-	int numpoints = 6;
+	auto numpoints = 6;
 	auto *points = (point_t *)malloc(((1 << (2 * SKYLEVELMAX)) + 2) * sizeof(point_t));
 	hlassume(points != nullptr, assume_NoMemory);
 	points[0][0] = 1, points[0][1] = 0, points[0][2] = 0;
@@ -2290,7 +2201,7 @@ void BuildDiffuseNormals()
 	points[3][0] = 0, points[3][1] = -1, points[3][2] = 0;
 	points[4][0] = 0, points[4][1] = 0, points[4][2] = 1;
 	points[5][0] = 0, points[5][1] = 0, points[5][2] = -1;
-	int numedges = 12;
+	auto numedges = 12;
 	auto *edges = (edge_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 4 - 4) * sizeof(edge_t));
 	hlassume(edges != nullptr, assume_NoMemory);
 	edges[0].point[0] = 0, edges[0].point[1] = 2, edges[0].divided = false;
@@ -2317,7 +2228,7 @@ void BuildDiffuseNormals()
 	triangles[6].edge[0] = 2, triangles[6].dir[0] = 1, triangles[6].edge[1] = 10, triangles[6].dir[1] = 1, triangles[6].edge[2] = 6, triangles[6].dir[2] = 1;
 	triangles[7].edge[0] = 3, triangles[7].dir[0] = 1, triangles[7].edge[1] = 6, triangles[7].dir[1] = 0, triangles[7].edge[2] = 9, triangles[7].dir[2] = 1;
 	CopyToSkynormals(1, numpoints, points, numedges, edges, numtriangles, triangles);
-	for (i = 1; i < SKYLEVELMAX; i++)
+	for (int i = 1; i < SKYLEVELMAX; i++)
 	{
 		int oldnumedges = numedges;
 		for (j = 0; j < oldnumedges; j++)
@@ -2326,12 +2237,11 @@ void BuildDiffuseNormals()
 			{
 				hlassume(numpoints < (1 << (2 * SKYLEVELMAX)) + 2, assume_first);
 				point_t mid;
-				double len;
 				VectorAdd(points[edges[j].point[0]], points[edges[j].point[1]], mid);
-				len = sqrt(DotProduct(mid, mid));
+				auto len = sqrt(DotProduct(mid, mid));
 				hlassume(len > 0.2, assume_first);
 				VectorScale(mid, 1 / len, mid);
-				int p2 = numpoints;
+				auto p2 = numpoints;
 				VectorCopy(mid, points[numpoints]);
 				numpoints++;
 				hlassume(numedges < (1 << (2 * SKYLEVELMAX)) * 4 - 4, assume_first);
@@ -2353,7 +2263,7 @@ void BuildDiffuseNormals()
 		for (j = 0; j < oldnumtriangles; j++)
 		{
 			int mid[3];
-			for (k = 0; k < 3; k++)
+			for (int k = 0; k < 3; k++)
 			{
 				hlassume(numtriangles < (1 << (2 * SKYLEVELMAX)) * 2, assume_first);
 				mid[k] = edges[edges[triangles[j].edge[k]].child[0]].point[1];
@@ -2365,7 +2275,7 @@ void BuildDiffuseNormals()
 				triangles[numtriangles].dir[2] = 1;
 				numtriangles++;
 			}
-			for (k = 0; k < 3; k++)
+			for (int k = 0; k < 3; k++)
 			{
 				hlassume(numedges < (1 << (2 * SKYLEVELMAX)) * 4 - 4, assume_first);
 				triangles[j].edge[k] = numedges;
@@ -2384,11 +2294,8 @@ void BuildDiffuseNormals()
 }
 static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec3_t normal, vec3_t *sample, byte *styles, int step, int miptex, int texlightgap_surfacenum)
 {
-	int i;
-	directlight_t *l;
 	vec3_t delta;
 	float dot, dot2;
-	float dist;
 	float ratio;
 #ifdef HLRAD_OPACITY // AJM
 	float l_opacity;
@@ -2400,25 +2307,20 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 	vec3_t adds[ALLSTYLES];
 	int style;
 	memset(adds, 0, ALLSTYLES * sizeof(vec3_t));
-	bool lighting_diversify;
-	vec_t lighting_power;
-	vec_t lighting_scale;
-	lighting_power = g_lightingconeinfo[miptex][0];
-	lighting_scale = g_lightingconeinfo[miptex][1];
-	lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);
+	auto lighting_power = g_lightingconeinfo[miptex][0];
+	auto lighting_scale = g_lightingconeinfo[miptex][1];
+	auto lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);
 	vec3_t texlightgap_textoworld[2];
 	// calculates textoworld
 	{
-		dface_t *f = &g_dfaces[texlightgap_surfacenum];
-		const dplane_t *dp = getPlaneFromFace(f);
-		texinfo_t *tex = &g_texinfo[f->texinfo];
-		int x;
-		vec_t len;
+		auto *f = &g_dfaces[texlightgap_surfacenum];
+		const auto *dp = getPlaneFromFace(f);
+		auto *tex = &g_texinfo[f->texinfo];
 
-		for (x = 0; x < 2; x++)
+		for (int x = 0; x < 2; x++)
 		{
 			CrossProduct(tex->vecs[1 - x], dp->normal, texlightgap_textoworld[x]);
-			len = DotProduct(texlightgap_textoworld[x], tex->vecs[x]);
+			auto len = DotProduct(texlightgap_textoworld[x], tex->vecs[x]);
 			if (fabs(len) < NORMAL_EPSILON)
 			{
 				VectorClear(texlightgap_textoworld[x]);
@@ -2430,9 +2332,9 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 		}
 	}
 
-	for (i = 0; i < 1 + g_dmodels[0].visleafs; i++)
+	for (int i = 0; i < 1 + g_dmodels[0].visleafs; i++)
 	{
-		l = directlights[i];
+		auto *l = directlights[i];
 		if (l)
 		{
 			if (i == 0 ? true : pvs[(i - 1) >> 3] & (1 << ((i - 1) & 7))) // true = DEFAULT g_skylighting_fix a.k.a !-noskyfix
@@ -2511,8 +2413,8 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							vec3_t sky_intensity;
 
 							// loop over the normals
-							vec3_t *skynormals = g_skynormals[7]; // 7 = SKYLEVEL_SOFTSKYON else 4 = SKYLEVEL_SOFTSKYOFF if -fast
-							vec_t *skyweights = g_skynormalsizes[7];
+							auto *skynormals = g_skynormals[7]; // 7 = SKYLEVEL_SOFTSKYON else 4 = SKYLEVEL_SOFTSKYOFF if -fast
+							auto *skyweights = g_skynormalsizes[7];
 							for (int j = 0; j < g_numskynormals[7]; j++)
 							{
 								// make sure the angle is okay
@@ -2581,7 +2483,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							// move emitter back to its plane
 							VectorMA(delta, -PATCH_HUNT_OFFSET, l->normal, delta);
 						}
-						dist = VectorNormalize(delta);
+						auto dist = VectorNormalize(delta);
 						dot = DotProduct(delta, normal);
 						//                        if (dot <= 0.0)
 						//                            continue;
@@ -2602,7 +2504,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							{
 								continue;
 							}
-							vec_t denominator = dist * dist * l->fade;
+							auto denominator = dist * dist * l->fade;
 							if (lighting_diversify)
 							{
 								dot = lighting_scale * pow(dot, lighting_power);
@@ -2614,7 +2516,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 
 						case emit_surface:
 						{
-							bool light_behind_surface = false;
+							auto light_behind_surface = false;
 							if (dot <= NORMAL_EPSILON)
 							{
 								light_behind_surface = true;
@@ -2627,9 +2529,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							// discard the texlight if the spot is too close to the texlight plane
 							if (l->texlightgap > 0)
 							{
-								vec_t test;
-
-								test = dot2 * dist;																 // distance from spot to texlight plane;
+								auto test = dot2 * dist;														 // distance from spot to texlight plane;
 								test -= l->texlightgap * fabs(DotProduct(l->normal, texlightgap_textoworld[0])); // maximum distance reduction if the spot is allowed to shift l->texlightgap pixels along s axis
 								test -= l->texlightgap * fabs(DotProduct(l->normal, texlightgap_textoworld[1])); // maximum distance reduction if the spot is allowed to shift l->texlightgap pixels along t axis
 								if (test < -ON_EPSILON)
@@ -2641,11 +2541,10 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							{
 								continue;
 							}
-							vec_t range = l->patch_emitter_range;
+							auto range = l->patch_emitter_range;
 							if (l->stopdot > 0.0) // stopdot2 > 0.0 or stopdot > 0.0
 							{
-								vec_t range_scale;
-								range_scale = 1 - l->stopdot2 * l->stopdot2;
+								auto range_scale = 1 - l->stopdot2 * l->stopdot2;
 								range_scale = 1 / sqrt(qmax(NORMAL_EPSILON, range_scale));
 								// range_scale = 1 / sin (cone2)
 								range_scale = qmin(range_scale, 2); // restrict this to 2, because skylevel has limit.
@@ -2691,7 +2590,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 								int skylevel = l->patch->emitter_skylevel;
 								if (l->stopdot > 0.0) // stopdot2 > 0.0 or stopdot > 0.0
 								{
-									const vec_t *emitnormal = getPlaneFromFaceNumber(l->patch->faceNumber)->normal;
+									const auto *emitnormal = getPlaneFromFaceNumber(l->patch->faceNumber)->normal;
 									if (l->stopdot2 >= 0.8) // about 37deg
 									{
 										skylevel += 1; // because the range is larger
@@ -2703,11 +2602,11 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 									sightarea = CalcSightArea(pos, normal, l->patch->winding, skylevel, lighting_power, lighting_scale);
 								}
 
-								vec_t frac = dist / range;
+								auto frac = dist / range;
 								frac = (frac - 0.5) * 2; // make a smooth transition between the two methods
 								frac = qmax(0, qmin(frac, 1));
 
-								vec_t ratio2 = (sightarea / l->patch_area); // because l->patch->area has been multiplied into l->intensity
+								auto ratio2 = (sightarea / l->patch_area); // because l->patch->area has been multiplied into l->intensity
 								ratio = frac * ratio + (1 - frac) * ratio2;
 							}
 							else
@@ -2734,7 +2633,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 							}
 
 							// Variable power falloff (1 = inverse linear, 2 = inverse square
-							vec_t denominator = dist * l->fade;
+							auto denominator = dist * l->fade;
 							{
 								denominator *= dist;
 							}
@@ -2841,15 +2740,13 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 {
 	patch_t *patch;
 	int i, j, m, k;
-	int numtexwindings;
-	Winding **texwindings;
 
-	numtexwindings = 0;
+	auto numtexwindings = 0;
 	for (patch = g_face_patches[facenum]; patch; patch = patch->next)
 	{
 		numtexwindings++;
 	}
-	texwindings = (Winding **)malloc(numtexwindings * sizeof(Winding *));
+	auto **texwindings = (Winding **)malloc(numtexwindings * sizeof(Winding *));
 	hlassume(texwindings != nullptr, assume_NoMemory);
 
 	// translate world winding into winding in s,t plane
@@ -2871,9 +2768,8 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 	for (i = 0; i < l->numsurfpt; i++)
 	{
 		// prepare clip planes
-		vec_t s_vec, t_vec;
-		s_vec = l->texmins[0] * TEXTURE_STEP + (i % (l->texsize[0] + 1)) * TEXTURE_STEP;
-		t_vec = l->texmins[1] * TEXTURE_STEP + (i / (l->texsize[0] + 1)) * TEXTURE_STEP;
+		auto s_vec = l->texmins[0] * TEXTURE_STEP + (i % (l->texsize[0] + 1)) * TEXTURE_STEP;
+		auto t_vec = l->texmins[1] * TEXTURE_STEP + (i / (l->texsize[0] + 1)) * TEXTURE_STEP;
 
 		dplane_t clipplanes[4];
 		VectorClear(clipplanes[0].normal);
@@ -2903,12 +2799,12 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 			if (w->m_NumPoints)
 			{
 				// add sample to patch
-				vec_t area = w->getArea() / (TEXTURE_STEP * TEXTURE_STEP);
+				auto area = w->getArea() / (TEXTURE_STEP * TEXTURE_STEP);
 				patch->samples += area;
 				for (m = 0; m < ALLSTYLES && styles[m] != 255; m++)
 				{
-					int style = styles[m];
-					const sample_t *s = &samples[m][i];
+					auto style = styles[m];
+					const auto *s = &samples[m][i];
 					for (k = 0; k < ALLSTYLES && patch->totalstyle_all[k] != 255; k++)
 					{
 						if (patch->totalstyle_all[k] == style)
@@ -2951,10 +2847,8 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 // =====================================================================================
 void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 {
-	int j;
-	int s; // split every edge into two parts
-	const dface_t *f = g_dfaces + facenum;
-	const dplane_t *p = getPlaneFromFace(f);
+	const auto *f = g_dfaces + facenum;
+	const auto *p = getPlaneFromFace(f);
 	vec3_t facenormal;
 
 	VectorCopy(p->normal, facenormal);
@@ -2967,7 +2861,7 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 		// Second attempt: find edge points+center that bound the point and do a three-point triangulation(baricentric)
 		// Better third attempt: generate the point normals for all vertices and do baricentric triangulation.
 
-		for (j = 0; j < f->numedges; j++)
+		for (int j = 0; j < f->numedges; j++)
 		{
 			vec3_t p1;
 			vec3_t p2;
@@ -2976,17 +2870,6 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 			vec3_t vspot;
 			unsigned prev_edge;
 			unsigned next_edge;
-			int e;
-			int e1;
-			int e2;
-			edgeshare_t *es;
-			edgeshare_t *es1;
-			edgeshare_t *es2;
-			float a1;
-			float a2;
-			float aa;
-			float bb;
-			float ab;
 
 			if (j)
 			{
@@ -3006,13 +2889,13 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 				next_edge = f->firstedge;
 			}
 
-			e = g_dsurfedges[f->firstedge + j];
-			e1 = g_dsurfedges[prev_edge];
-			e2 = g_dsurfedges[next_edge];
+			auto e = g_dsurfedges[f->firstedge + j];
+			auto e1 = g_dsurfedges[prev_edge];
+			auto e2 = g_dsurfedges[next_edge];
 
-			es = &g_edgeshare[abs(e)];
-			es1 = &g_edgeshare[abs(e1)];
-			es2 = &g_edgeshare[abs(e2)];
+			auto *es = &g_edgeshare[abs(e)];
+			auto *es1 = &g_edgeshare[abs(e1)];
+			auto *es2 = &g_edgeshare[abs(e2)];
 
 			if ((!es->smooth || es->coplanar) && (!es1->smooth || es1->coplanar) && (!es2->smooth || es2->coplanar))
 			{
@@ -3033,7 +2916,7 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 			// Adjust for origin-based models
 			VectorAdd(p1, g_face_offset[facenum], p1);
 			VectorAdd(p2, g_face_offset[facenum], p2);
-			for (s = 0; s < 2; s++)
+			for (int s = 0; s < 2; s++) // split every edge into two parts
 			{
 				vec3_t s1, s2;
 				if (s == 0)
@@ -3052,11 +2935,11 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 				VectorSubtract(s2, g_face_centroids[facenum], v2);
 				VectorSubtract(spot, g_face_centroids[facenum], vspot);
 
-				aa = DotProduct(v1, v1);
-				bb = DotProduct(v2, v2);
-				ab = DotProduct(v1, v2);
-				a1 = (bb * DotProduct(v1, vspot) - ab * DotProduct(vspot, v2)) / (aa * bb - ab * ab);
-				a2 = (DotProduct(vspot, v2) - a1 * ab) / bb;
+				auto aa = DotProduct(v1, v1);
+				auto bb = DotProduct(v2, v2);
+				auto ab = DotProduct(v1, v2);
+				auto a1 = (bb * DotProduct(v1, vspot) - ab * DotProduct(vspot, v2)) / (aa * bb - ab * ab);
+				auto a2 = (DotProduct(vspot, v2) - a1 * ab) / bb;
 
 				// Test center to sample vector for inclusion between center to vertex vectors (Use dot product of vectors)
 				if (a1 >= -0.01 && a2 >= -0.01)
@@ -3115,20 +2998,18 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 // =====================================================================================
 void CalcLightmap(lightinfo_t *l, byte *styles)
 {
-	int facenum;
-	int i, j;
+	int j;
 	byte pvs[(MAX_MAP_LEAFS + 7) / 8];
 	int lastoffset;
 	byte pvs2[(MAX_MAP_LEAFS + 7) / 8];
 	int lastoffset2;
 
-	facenum = l->surfnum;
+	auto facenum = l->surfnum;
 	memset(l->lmcache, 0, l->lmcachewidth * l->lmcacheheight * sizeof(vec3_t[ALLSTYLES]));
 
 	// for each sample whose light we need to calculate
-	for (i = 0; i < l->lmcachewidth * l->lmcacheheight; i++)
+	for (int i = 0; i < l->lmcachewidth * l->lmcacheheight; i++)
 	{
-		vec_t s, t;
 		vec_t s_vec, t_vec;
 		int nearest_s, nearest_t;
 		vec3_t spot;
@@ -3146,8 +3027,8 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 
 		// prepare input parameter and output parameter
 		{
-			s = ((i % l->lmcachewidth) - l->lmcache_offset) / (vec_t)l->lmcache_density;
-			t = ((i / l->lmcachewidth) - l->lmcache_offset) / (vec_t)l->lmcache_density;
+			auto s = ((i % l->lmcachewidth) - l->lmcache_offset) / (vec_t)l->lmcache_density;
+			auto t = ((i / l->lmcachewidth) - l->lmcache_offset) / (vec_t)l->lmcache_density;
 			s_vec = l->texmins[0] * TEXTURE_STEP + s * TEXTURE_STEP;
 			t_vec = l->texmins[1] * TEXTURE_STEP + t * TEXTURE_STEP;
 			nearest_s = qmax(0, qmin((int)floor(s + 0.5), l->texsize[0]));
@@ -3270,8 +3151,8 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 			}
 			else
 			{
-				dleaf_t *leaf = PointInLeaf(spot);
-				int thisoffset = leaf->visofs;
+				auto *leaf = PointInLeaf(spot);
+				auto thisoffset = leaf->visofs;
 				if (i == 0 || thisoffset != lastoffset)
 				{
 					if (thisoffset == -1)
@@ -3296,8 +3177,8 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 				}
 				else
 				{
-					dleaf_t *leaf2 = PointInLeaf(spot2);
-					int thisoffset2 = leaf2->visofs;
+					auto *leaf2 = PointInLeaf(spot2);
+					auto thisoffset2 = leaf2->visofs;
 					if (i == 0 || thisoffset2 != lastoffset2)
 					{
 						if (thisoffset2 == -1)
@@ -3340,29 +3221,20 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 }
 void BuildFacelights(const int facenum)
 {
-	dface_t *f;
 	unsigned char f_styles[ALLSTYLES];
 	sample_t *fl_samples[ALLSTYLES];
 	lightinfo_t l;
 	int i;
 	int j;
 	int k;
-	sample_t *s;
-	vec_t *spot;
 	patch_t *patch;
-	const dplane_t *plane;
 	byte pvs[(MAX_MAP_LEAFS + 7) / 8];
 	int thisoffset = -1, lastoffset = -1;
-	int lightmapwidth;
-	int lightmapheight;
-	int size;
 	vec3_t spot2, normal2;
 	byte pvs2[(MAX_MAP_LEAFS + 7) / 8];
 	int thisoffset2 = -1, lastoffset2 = -1;
 
-	int *sample_wallflags;
-
-	f = &g_dfaces[facenum];
+	auto *f = &g_dfaces[facenum];
 
 	//
 	// some surfaces don't need lightmaps
@@ -3400,7 +3272,7 @@ void BuildFacelights(const int facenum)
 	//
 	// rotate plane
 	//
-	plane = getPlaneFromFace(f);
+	auto *plane = getPlaneFromFace(f);
 	VectorCopy(plane->normal, l.facenormal);
 	l.facedist = plane->dist;
 
@@ -3409,10 +3281,9 @@ void BuildFacelights(const int facenum)
 	CalcPoints(&l);
 	CalcLightmap(&l, f_styles);
 
-	lightmapwidth = l.texsize[0] + 1;
-	lightmapheight = l.texsize[1] + 1;
-
-	size = lightmapwidth * lightmapheight;
+	auto lightmapwidth = l.texsize[0] + 1;
+	auto lightmapheight = l.texsize[1] + 1;
+	auto size = lightmapwidth * lightmapheight;
 	hlassume(size <= MAX_SINGLEMAP, assume_MAX_SINGLEMAP);
 
 	facelight[facenum].numsamples = l.numsurfpt;
@@ -3438,8 +3309,8 @@ void BuildFacelights(const int facenum)
 		patch->totalstyle_all[0] = 0;
 	}
 
-	sample_wallflags = (int *)malloc((2 * l.lmcache_side + 1) * (2 * l.lmcache_side + 1) * sizeof(int));
-	spot = l.surfpt[0];
+	auto *sample_wallflags = (int *)malloc((2 * l.lmcache_side + 1) * (2 * l.lmcache_side + 1) * sizeof(int));
+	auto *spot = l.surfpt[0];
 	for (i = 0; i < l.numsurfpt; i++, spot += 3)
 	{
 
@@ -3449,26 +3320,21 @@ void BuildFacelights(const int facenum)
 			fl_samples[k][i].surface = l.surfpt_surface[i];
 		}
 
-		int s, t, pos;
-		int s_center, t_center;
-		vec_t sizehalf;
-		vec_t weighting, subsamples;
+		int s, t;
 		vec3_t centernormal;
-		vec_t weighting_correction;
-		int pass;
-		s_center = (i % lightmapwidth) * l.lmcache_density + l.lmcache_offset;
-		t_center = (i / lightmapwidth) * l.lmcache_density + l.lmcache_offset;
-		sizehalf = 0.5 * g_blur * l.lmcache_density;
-		subsamples = 0.0;
+		auto s_center = (i % lightmapwidth) * l.lmcache_density + l.lmcache_offset;
+		auto t_center = (i / lightmapwidth) * l.lmcache_density + l.lmcache_offset;
+		auto sizehalf = 0.5 * g_blur * l.lmcache_density;
+		auto subsamples = 0.0;
 		VectorCopy(l.lmcache_normal[s_center + l.lmcachewidth * t_center], centernormal);
 		{
-			int s_origin = s_center;
-			int t_origin = t_center;
+			auto s_origin = s_center;
+			auto t_origin = t_center;
 			for (s = s_center - l.lmcache_side; s <= s_center + l.lmcache_side; s++)
 			{
 				for (t = t_center - l.lmcache_side; t <= t_center + l.lmcache_side; t++)
 				{
-					int *pwallflags = &sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
+					auto *pwallflags = &sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
 					*pwallflags = l.lmcache_wallflags[s + l.lmcachewidth * t];
 				}
 			}
@@ -3477,18 +3343,18 @@ void BuildFacelights(const int facenum)
 			{
 				for (t = t_center - l.lmcache_side; t <= t_center + l.lmcache_side; t++)
 				{
-					int *pwallflags = &sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
+					auto *pwallflags = &sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
 					int coord[2] = {s - s_origin, t - t_origin};
-					int axis = abs(coord[0]) >= abs(coord[1]) ? 0 : 1;
-					int sign = coord[axis] >= 0 ? 1 : -1;
-					bool blocked1 = false;
-					bool blocked2 = false;
+					auto axis = abs(coord[0]) >= abs(coord[1]) ? 0 : 1;
+					auto sign = coord[axis] >= 0 ? 1 : -1;
+					auto blocked1 = false;
+					auto blocked2 = false;
 					for (int dist = 1; dist < abs(coord[axis]); dist++)
 					{
 						int test1[2];
 						int test2[2];
 						test1[axis] = test2[axis] = sign * dist;
-						double intercept = (double)coord[1 - axis] * (double)test1[axis] / (double)coord[axis];
+						auto intercept = (double)coord[1 - axis] * (double)test1[axis] / (double)coord[axis];
 						test1[1 - axis] = (int)floor(intercept + 0.01);
 						test2[1 - axis] = (int)ceil(intercept - 0.01);
 						if (abs(test1[0] + s_origin - s_center) > l.lmcache_side || abs(test1[1] + t_origin - t_center) > l.lmcache_side ||
@@ -3497,8 +3363,8 @@ void BuildFacelights(const int facenum)
 							Warning("HLRAD_AVOIDWALLBLEED: internal error. Contact vluzacn@163.com concerning this issue.");
 							continue;
 						}
-						int wallflags1 = sample_wallflags[(test1[0] + s_origin - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (test1[1] + t_origin - t_center + l.lmcache_side)];
-						int wallflags2 = sample_wallflags[(test2[0] + s_origin - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (test2[1] + t_origin - t_center + l.lmcache_side)];
+						auto wallflags1 = sample_wallflags[(test1[0] + s_origin - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (test1[1] + t_origin - t_center + l.lmcache_side)];
+						auto wallflags2 = sample_wallflags[(test2[0] + s_origin - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (test2[1] + t_origin - t_center + l.lmcache_side)];
 						if (wallflags1 & WALLFLAG_NUDGED)
 						{
 							blocked1 = true;
@@ -3515,14 +3381,14 @@ void BuildFacelights(const int facenum)
 				}
 			}
 		}
-		for (pass = 0; pass < 2; pass++)
+		for (int pass = 0; pass < 2; pass++)
 		{
 			for (s = s_center - l.lmcache_side; s <= s_center + l.lmcache_side; s++)
 			{
 				for (t = t_center - l.lmcache_side; t <= t_center + l.lmcache_side; t++)
 				{
-					weighting = (qmin(0.5, sizehalf - (s - s_center)) - qmax(-0.5, -sizehalf - (s - s_center))) * (qmin(0.5, sizehalf - (t - t_center)) - qmax(-0.5, -sizehalf - (t - t_center)));
-					int wallflags = sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
+					auto weighting = (qmin(0.5, sizehalf - (s - s_center)) - qmax(-0.5, -sizehalf - (s - s_center))) * (qmin(0.5, sizehalf - (t - t_center)) - qmax(-0.5, -sizehalf - (t - t_center)));
+					auto wallflags = sample_wallflags[(s - s_center + l.lmcache_side) + (2 * l.lmcache_side + 1) * (t - t_center + l.lmcache_side)];
 					if (wallflags & (WALLFLAG_BLOCKED | WALLFLAG_SHADOWED))
 					{
 						continue;
@@ -3534,13 +3400,13 @@ void BuildFacelights(const int facenum)
 							continue;
 						}
 					}
-					pos = s + l.lmcachewidth * t;
+					auto pos = s + l.lmcachewidth * t;
 					// when blur distance (g_blur) is large, the subsample can be very far from the original lightmap sample (aligned with interval TEXTURE_STEP (16.0))
 					// in some cases such as a thin cylinder, the subsample can even grow into the opposite side
 					// as a result, when exposed to a directional light, the light on the cylinder may "leak" into the opposite dark side
 					// this correction limits the effect of blur distance when the normal changes very fast
 					// this correction will not break the smoothness that HLRAD_GROWSAMPLE ensures
-					weighting_correction = DotProduct(l.lmcache_normal[pos], centernormal);
+					auto weighting_correction = DotProduct(l.lmcache_normal[pos], centernormal);
 					weighting_correction = (weighting_correction > 0) ? weighting_correction * weighting_correction : 0;
 					weighting = weighting * weighting_correction;
 					for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
@@ -3604,7 +3470,7 @@ void BuildFacelights(const int facenum)
 		}
 		else
 		{
-			dleaf_t *leaf = PointInLeaf(patch->origin);
+			auto *leaf = PointInLeaf(patch->origin);
 
 			thisoffset = leaf->visofs;
 			if (patch == g_face_patches[facenum] || thisoffset != lastoffset)
@@ -3630,7 +3496,7 @@ void BuildFacelights(const int facenum)
 			else
 			{
 				VectorMA(patch->origin, -(g_translucentdepth + 2 * PATCH_HUNT_OFFSET), l.facenormal, spot2);
-				dleaf_t *leaf2 = PointInLeaf(spot2);
+				auto *leaf2 = PointInLeaf(spot2);
 
 				thisoffset2 = leaf2->visofs;
 				if (l.numsurfpt == 0 || thisoffset2 != lastoffset2)
@@ -3704,7 +3570,7 @@ void BuildFacelights(const int facenum)
 					f_styles[j] = g_face_patches[facenum]->emitstyle;
 				}
 
-				s = fl_samples[j];
+				auto *s = fl_samples[j];
 				for (i = 0; i < l.numsurfpt; i++, s++)
 				{
 					VectorAdd(s->light, g_face_patches[facenum]->baselight, s->light);
@@ -3715,14 +3581,14 @@ void BuildFacelights(const int facenum)
 	}
 	// samples
 	{
-		facelight_t *fl = &facelight[facenum];
+		auto *fl = &facelight[facenum];
 		vec_t maxlights[ALLSTYLES];
 		for (j = 0; j < ALLSTYLES && f_styles[j] != 255; j++)
 		{
 			maxlights[j] = 0;
 			for (i = 0; i < fl->numsamples; i++)
 			{
-				vec_t b = VectorMaximum(fl_samples[j][i].light);
+				auto b = VectorMaximum(fl_samples[j][i].light);
 				maxlights[j] = qmax(maxlights[j], b);
 			}
 			if (maxlights[j] <= g_corings[f_styles[j]] * 0.1) // light is too dim, discard this style to reduce RAM usage
@@ -3848,7 +3714,7 @@ void BuildFacelights(const int facenum)
 		}
 		for (k = 0; k < MAXLIGHTMAPS; k++)
 		{
-			int bestindex = -1;
+			auto bestindex = -1;
 			if (k == 0)
 			{
 				bestindex = 0;
@@ -3910,19 +3776,14 @@ void BuildFacelights(const int facenum)
 // =====================================================================================
 void PrecompLightmapOffsets()
 {
-	int facenum;
-	dface_t *f;
-	facelight_t *fl;
 	int lightstyles;
-
-	patch_t *patch; // LRC
 
 	g_lightdatasize = 0;
 
-	for (facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_numfaces; facenum++)
 	{
-		f = &g_dfaces[facenum];
-		fl = &facelight[facenum];
+		auto *f = &g_dfaces[facenum];
+		auto *fl = &facelight[facenum];
 
 		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
@@ -3953,7 +3814,7 @@ void PrecompLightmapOffsets()
 
 				for (i = 0; i < numpatches; i++)
 				{
-					patch = &g_patches[patches[i]];
+					auto *patch = &g_patches[patches[i]];
 					for (k = 0; k < MAXLIGHTMAPS && patch->totalstyle[k] != 255; k++)
 					{
 						VectorCompareMaximum(maxlights2[patch->totalstyle[k]], patch->totallight[k], maxlights2[patch->totalstyle[k]]);
@@ -4067,16 +3928,15 @@ void PrecompLightmapOffsets()
 }
 void ReduceLightmap()
 {
-	byte *oldlightdata = (byte *)malloc(g_lightdatasize);
+	auto *oldlightdata = (byte *)malloc(g_lightdatasize);
 	hlassume(oldlightdata != nullptr, assume_NoMemory);
 	memcpy(oldlightdata, g_dlightdata, g_lightdatasize);
 	g_lightdatasize = 0;
 
-	int facenum;
-	for (facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_numfaces; facenum++)
 	{
-		dface_t *f = &g_dfaces[facenum];
-		facelight_t *fl = &facelight[facenum];
+		auto *f = &g_dfaces[facenum];
+		auto *fl = &facelight[facenum];
 		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue; // non-lit texture
@@ -4091,49 +3951,14 @@ void ReduceLightmap()
 			}
 			continue;
 		}
-#if 0 // debug. --vluzacn
-		const char *lightmapcolor = ValueForKey (g_face_entity[facenum], "zhlt_rad");
-		if (*lightmapcolor)
-		{
-			hlassume (MAXLIGHTMAPS == 4, assume_first);
-			int styles[4], values[4][3];
-			if (sscanf (lightmapcolor, "%d=%d,%d,%d %d=%d,%d,%d %d=%d,%d,%d %d=%d,%d,%d"
-					, &styles[0], &values[0][0], &values[0][1], &values[0][2]
-					, &styles[1], &values[1][0], &values[1][1], &values[1][2]
-					, &styles[2], &values[2][0], &values[2][1], &values[2][2]
-					, &styles[3], &values[3][0], &values[3][1], &values[3][2]
-				) != 16)
-			{
-				Error ("Bad value for 'zhlt_rad'.");
-			}
-			f->lightofs = g_lightdatasize;
-			int i, k;
-			for (k = 0; k < 4; k++)
-			{
-				f->styles[k] = 255;
-			}
-			for (k = 0; k < 4 && styles[k] != 255; k++)
-			{
-				f->styles[k] = styles[k];
-				hlassume (g_lightdatasize + fl->numsamples * 3 <= g_max_map_lightdata, assume_MAX_MAP_LIGHTING);
-				for (i = 0; i < fl->numsamples; i++)
-				{
-					VectorCopy (values[k], (byte *)&g_dlightdata[g_lightdatasize + i * 3]);
-				}
-				g_lightdatasize += fl->numsamples * 3;
-			}
-			continue;
-		}
-#endif
 		if (f->lightofs == -1)
 		{
 			continue;
 		}
 
-		int i, k;
-		int oldofs;
+		int k;
 		unsigned char oldstyles[MAXLIGHTMAPS];
-		oldofs = f->lightofs;
+		auto oldofs = f->lightofs;
 		f->lightofs = g_lightdatasize;
 		for (k = 0; k < MAXLIGHTMAPS; k++)
 		{
@@ -4144,7 +3969,7 @@ void ReduceLightmap()
 		for (k = 0; k < MAXLIGHTMAPS && oldstyles[k] != 255; k++)
 		{
 			unsigned char maxb = 0;
-			for (i = 0; i < fl->numsamples; i++)
+			for (int i = 0; i < fl->numsamples; i++)
 			{
 				unsigned char *v = &oldlightdata[oldofs + fl->numsamples * 3 * k + i * 3];
 				maxb = qmax(maxb, VectorMaximum(v));
@@ -4196,7 +4021,7 @@ typedef struct
 
 auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 {
-	dface_t *f = &g_dfaces[facenum];
+	auto *f = &g_dfaces[facenum];
 	int i, j;
 	for (i = 0; i < ml->facecount; i++)
 	{
@@ -4226,15 +4051,15 @@ auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 }
 void MLH_AddSample(mdllight_t *ml, int facenum, int w, int h, int s, int t, const vec3_t pos)
 {
-	dface_t *f = &g_dfaces[facenum];
-	int i, j;
-	int r = MLH_AddFace(ml, facenum);
+	auto *f = &g_dfaces[facenum];
+	int i;
+	auto r = MLH_AddFace(ml, facenum);
 	if (r == -1)
 	{
 		return;
 	}
-	int size = w * h;
-	int num = s + w * t;
+	auto size = w * h;
+	auto num = s + w * t;
 	for (i = 0; i < ml->face[r].samplecount; i++)
 	{
 		if (ml->face[r].sample[i].num == num)
@@ -4250,7 +4075,7 @@ void MLH_AddSample(mdllight_t *ml, int facenum, int w, int h, int s, int t, cons
 	ml->face[r].samplecount++;
 	ml->face[r].sample[i].num = num;
 	VectorCopy(pos, ml->face[r].sample[i].pos);
-	for (j = 0; j < ALLSTYLES; j++)
+	for (int j = 0; j < ALLSTYLES; j++)
 	{
 		if (ml->face[r].style[j].exist)
 		{
@@ -4262,10 +4087,9 @@ void MLH_CalcExtents(const dface_t *f, int *texturemins, int *extents)
 {
 	int bmins[2];
 	int bmaxs[2];
-	int i;
 
 	GetFaceExtents(f - g_dfaces, bmins, bmaxs);
-	for (i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		texturemins[i] = bmins[i] * TEXTURE_STEP;
 		extents[i] = (bmaxs[i] - bmins[i]) * TEXTURE_STEP;
@@ -4275,21 +4099,18 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 {
 	if (nodenum < 0)
 		return;
-	dnode_t *node = &g_dnodes[nodenum];
-	dplane_t *plane;
-	float front, back, frac;
+	auto *node = &g_dnodes[nodenum];
 	float mid[3];
-	int side;
-	plane = &g_dplanes[node->planenum];
-	front = DotProduct(start, plane->normal) - plane->dist;
-	back = DotProduct(end, plane->normal) - plane->dist;
-	side = front < 0;
+	auto *plane = &g_dplanes[node->planenum];
+	auto front = DotProduct(start, plane->normal) - plane->dist;
+	auto back = DotProduct(end, plane->normal) - plane->dist;
+	auto side = front < 0;
 	if ((back < 0) == side)
 	{
 		MLH_GetSamples_r(ml, node->children[side], start, end);
 		return;
 	}
-	frac = front / (front - back);
+	auto frac = front / (front - back);
 	mid[0] = start[0] + (end[0] - start[0]) * frac;
 	mid[1] = start[1] + (end[1] - start[1]) * frac;
 	mid[2] = start[2] + (end[2] - start[2]) * frac;
@@ -4299,12 +4120,11 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 		return;
 	}
 	{
-		int i;
-		for (i = 0; i < node->numfaces; i++)
+		for (int i = 0; i < node->numfaces; i++)
 		{
-			dface_t *f = &g_dfaces[node->firstface + i];
-			texinfo_t *tex = &g_texinfo[f->texinfo];
-			const char *texname = GetTextureByNumber(f->texinfo);
+			auto *f = &g_dfaces[node->firstface + i];
+			auto *tex = &g_texinfo[f->texinfo];
+			const auto *texname = GetTextureByNumber(f->texinfo);
 			if (!strncmp(texname, "sky", 3))
 			{
 				continue;
@@ -4313,16 +4133,16 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 			{
 				continue;
 			}
-			int s = (int)(DotProduct(mid, tex->vecs[0]) + tex->vecs[0][3]);
-			int t = (int)(DotProduct(mid, tex->vecs[1]) + tex->vecs[1][3]);
+			auto s = (int)(DotProduct(mid, tex->vecs[0]) + tex->vecs[0][3]);
+			auto t = (int)(DotProduct(mid, tex->vecs[1]) + tex->vecs[1][3]);
 			int texturemins[2], extents[2];
 			MLH_CalcExtents(f, texturemins, extents);
 			if (s < texturemins[0] || t < texturemins[1])
 			{
 				continue;
 			}
-			int ds = s - texturemins[0];
-			int dt = t - texturemins[1];
+			auto ds = s - texturemins[0];
+			auto dt = t - texturemins[1];
 			if (ds > extents[0] || dt > extents[1])
 			{
 				continue;
@@ -4375,19 +4195,16 @@ auto MLH_CopyLight(const vec3_t from, const vec3_t to) -> int
 
 void MdlLightHack()
 {
-	int ient;
-	entity_t *ent1, *ent2;
 	vec3_t origin1, origin2;
-	const char *target;
-	int used = 0, countent = 0, countsample = 0, r;
-	for (ient = 0; ient < g_numentities; ++ient)
+	int used = 0, countent = 0, countsample = 0;
+	for (int ient = 0; ient < g_numentities; ++ient)
 	{
-		ent1 = &g_entities[ient];
-		target = ValueForKey(ent1, "zhlt_copylight");
+		auto *ent1 = &g_entities[ient];
+		auto *target = ValueForKey(ent1, "zhlt_copylight");
 		if (!strcmp(target, ""))
 			continue;
 		used = 1;
-		ent2 = FindTargetEntity(target);
+		auto *ent2 = FindTargetEntity(target);
 		if (ent2 == nullptr)
 		{
 			Warning("target entity '%s' not found", target);
@@ -4395,7 +4212,7 @@ void MdlLightHack()
 		}
 		GetVectorForKey(ent1, "origin", origin1);
 		GetVectorForKey(ent2, "origin", origin2);
-		r = MLH_CopyLight(origin2, origin1);
+		auto r = MLH_CopyLight(origin2, origin1);
 		if (r < 0)
 			Warning("can not copy light from (%f,%f,%f)", origin2[0], origin2[1], origin2[2]);
 		else
@@ -4421,12 +4238,7 @@ static facelightlist_t *g_dependentfacelights[MAX_MAP_FACES];
 // =====================================================================================
 void CreateFacelightDependencyList()
 {
-	int facenum;
-	dface_t *f;
-	facelight_t *fl;
 	int i;
-	int k;
-	int surface;
 	facelightlist_t *item;
 
 	for (i = 0; i < MAX_MAP_FACES; i++)
@@ -4435,20 +4247,20 @@ void CreateFacelightDependencyList()
 	}
 
 	// for each face
-	for (facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_numfaces; facenum++)
 	{
-		f = &g_dfaces[facenum];
-		fl = &facelight[facenum];
+		auto *f = &g_dfaces[facenum];
+		auto *fl = &facelight[facenum];
 		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue;
 		}
 
-		for (k = 0; k < MAXLIGHTMAPS && f->styles[k] != 255; k++)
+		for (int k = 0; k < MAXLIGHTMAPS && f->styles[k] != 255; k++)
 		{
 			for (i = 0; i < fl->numsamples; i++)
 			{
-				surface = fl->samples[k][i].surface; // that surface contains at least one sample from this face
+				auto surface = fl->samples[k][i].surface; // that surface contains at least one sample from this face
 				if (0 <= surface && surface < g_numfaces)
 				{
 					// insert this face into the dependency list of that surface
@@ -4478,14 +4290,11 @@ void CreateFacelightDependencyList()
 // =====================================================================================
 void FreeFacelightDependencyList()
 {
-	int i;
-	facelightlist_t *item;
-
-	for (i = 0; i < MAX_MAP_FACES; i++)
+	for (int i = 0; i < MAX_MAP_FACES; i++)
 	{
 		while (g_dependentfacelights[i])
 		{
-			item = g_dependentfacelights[i];
+			auto *item = g_dependentfacelights[i];
 			g_dependentfacelights[i] = item->next;
 			free(item);
 		}
@@ -4497,29 +4306,22 @@ void FreeFacelightDependencyList()
 // =====================================================================================
 void ScaleDirectLights()
 {
-	int facenum;
-	dface_t *f;
-	facelight_t *fl;
-	int i;
-	int k;
-	sample_t *samp;
-
-	for (facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_numfaces; facenum++)
 	{
-		f = &g_dfaces[facenum];
+		auto *f = &g_dfaces[facenum];
 
 		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue;
 		}
 
-		fl = &facelight[facenum];
+		auto *fl = &facelight[facenum];
 
-		for (k = 0; k < MAXLIGHTMAPS && f->styles[k] != 255; k++)
+		for (int k = 0; k < MAXLIGHTMAPS && f->styles[k] != 255; k++)
 		{
-			for (i = 0; i < fl->numsamples; i++)
+			for (int i = 0; i < fl->numsamples; i++)
 			{
-				samp = &fl->samples[k][i];
+				auto *samp = &fl->samples[k][i];
 			}
 		}
 	}
@@ -4531,30 +4333,22 @@ void ScaleDirectLights()
 // =====================================================================================
 void AddPatchLights(int facenum)
 {
-	dface_t *f;
-	facelightlist_t *item;
-	dface_t *f_other;
-	facelight_t *fl_other;
-	int k;
-	int i;
-	sample_t *samp;
-
-	f = &g_dfaces[facenum];
+	auto *f = &g_dfaces[facenum];
 
 	if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 	{
 		return;
 	}
 
-	for (item = g_dependentfacelights[facenum]; item != nullptr; item = item->next)
+	for (auto *item = g_dependentfacelights[facenum]; item != nullptr; item = item->next)
 	{
-		f_other = &g_dfaces[item->facenum];
-		fl_other = &facelight[item->facenum];
-		for (k = 0; k < MAXLIGHTMAPS && f_other->styles[k] != 255; k++)
+		auto *f_other = &g_dfaces[item->facenum];
+		auto *fl_other = &facelight[item->facenum];
+		for (int k = 0; k < MAXLIGHTMAPS && f_other->styles[k] != 255; k++)
 		{
-			for (i = 0; i < fl_other->numsamples; i++)
+			for (int i = 0; i < fl_other->numsamples; i++)
 			{
-				samp = &fl_other->samples[k][i];
+				auto *samp = &fl_other->samples[k][i];
 				if (samp->surface != facenum)
 				{ // the sample is not in this surface
 					continue;
@@ -4598,22 +4392,11 @@ void FinalLightFace(const int facenum)
 {
 	int i, j, k;
 	vec3_t lb;
-	facelight_t *fl;
-	sample_t *samp;
-	float minlight;
 	int lightstyles;
-	dface_t *f;
-	vec3_t *original_basiclight;
-	int(*final_basiclight)[3];
 	int lbi[3];
 
-	// ------------------------------------------------------------------------
-	// Changes by Adam Foster - afoster@compsoc.man.ac.uk
-	float temp_rand;
-	// ------------------------------------------------------------------------
-
-	f = &g_dfaces[facenum];
-	fl = &facelight[facenum];
+	auto *f = &g_dfaces[facenum];
+	auto *fl = &facelight[facenum];
 
 	if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
 	{
@@ -4633,26 +4416,20 @@ void FinalLightFace(const int facenum)
 		return;
 	}
 
-	//
-	// set up the triangulation
-	//
-	//
-	// sample the triangulation
-	//
-	minlight = FloatForKey(g_face_entity[facenum], "_minlight") * 255; // seedee
+	auto minlight = FloatForKey(g_face_entity[facenum], "_minlight") * 255; // seedee
 	minlight = (minlight > 255) ? 255 : minlight;
 
-	const char *texname = GetTextureByNumber(f->texinfo);
+	const auto *texname = GetTextureByNumber(f->texinfo);
 
 	if (!strncasecmp(texname, "%", 1)) // If texture name has % flag //seedee
 	{
-		size_t texnameLength = strlen(texname);
+		auto texnameLength = strlen(texname);
 
 		if (texnameLength > 1)
 		{
-			char *minlightValue = new char[texnameLength + 1];
-			int valueIndex = 0;
-			int i = 1;
+			auto *minlightValue = new char[texnameLength + 1];
+			auto valueIndex = 0;
+			auto i = 1;
 
 			if (texname[i] >= '0' && texname[i] <= '9') // Loop until non-digit is found or we run out of space
 			{
@@ -4671,9 +4448,7 @@ void FinalLightFace(const int facenum)
 			minlight = 255;
 		}
 	}
-	minlight_i it;
-
-	for (it = s_minlights.begin(); it != s_minlights.end(); it++)
+	for (auto it = s_minlights.begin(); it != s_minlights.end(); it++)
 	{
 		if (!strcasecmp(texname, it->name.c_str()))
 		{
@@ -4682,13 +4457,13 @@ void FinalLightFace(const int facenum)
 			minlight = (minlight > 255) ? 255 : minlight;
 		}
 	}
-	original_basiclight = (vec3_t *)calloc(fl->numsamples, sizeof(vec3_t));
-	final_basiclight = (int(*)[3])calloc(fl->numsamples, sizeof(int[3]));
+	auto *original_basiclight = (vec3_t *)calloc(fl->numsamples, sizeof(vec3_t));
+	auto *final_basiclight = (int(*)[3])calloc(fl->numsamples, sizeof(int[3]));
 	hlassume(original_basiclight != nullptr, assume_NoMemory);
 	hlassume(final_basiclight != nullptr, assume_NoMemory);
 	for (k = 0; k < lightstyles; k++)
 	{
-		samp = fl->samples[k];
+		auto *samp = fl->samples[k];
 		for (j = 0; j < fl->numsamples; j++, samp++)
 		{
 			VectorCopy(samp->light, lb);
@@ -4792,8 +4567,7 @@ vec3_t totallight_default = {0, 0, 0};
 // LRC - utility for getting the right totallight value from a patch
 auto GetTotalLight(patch_t *patch, int style) -> vec3_t *
 {
-	int i;
-	for (i = 0; i < MAXLIGHTMAPS && patch->totalstyle[i] != 255; i++)
+	for (int i = 0; i < MAXLIGHTMAPS && patch->totalstyle[i] != 255; i++)
 	{
 		if (patch->totalstyle[i] == style)
 		{
