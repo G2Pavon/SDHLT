@@ -20,7 +20,6 @@
 #include "filelib.h"
 #include "boundingbox.h"
 #include "wadpath.h"
-#include "cmdlinecfg.h"
 
 #ifndef DOUBLEVEC_T
 #error you must add -dDOUBLEVEC_T to the project!

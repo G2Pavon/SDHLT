@@ -13,8 +13,6 @@
 #include "filelib.h"
 #include "winding.h"
 
-#include "cmdlinecfg.h"
-
 constexpr int DEFAULT_MAXDISTANCE_RANGE = 0;
 
 constexpr bool DEFAULT_FULLVIS = false;

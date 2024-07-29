@@ -11,7 +11,6 @@
 #include "filelib.h"
 #include "threads.h"
 #include "winding.h"
-#include "cmdlinecfg.h"
 
 constexpr int BOGUS_RANGE = 144000;
 

@@ -14,7 +14,6 @@
 #include "filelib.h"
 #include "winding.h"
 #include "compress.h"
-#include "cmdlinecfg.h"
 
 #include <vector>
 

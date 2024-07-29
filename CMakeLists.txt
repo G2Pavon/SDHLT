@@ -27,7 +27,6 @@ set(COMMON_SOURCES
     ${COMMON_DIR}/blockmem.cpp
     ${COMMON_DIR}/bspfile.cpp
     ${COMMON_DIR}/cmdlib.cpp
-    ${COMMON_DIR}/cmdlinecfg.cpp
     ${COMMON_DIR}/filelib.cpp
     ${COMMON_DIR}/log.cpp
     ${COMMON_DIR}/mathlib.cpp
@@ -43,7 +42,6 @@ set(COMMON_HEADERS
     ${COMMON_DIR}/boundingbox.h
     ${COMMON_DIR}/bspfile.h
     ${COMMON_DIR}/cmdlib.h
-    ${COMMON_DIR}/cmdlinecfg.h
     ${COMMON_DIR}/filelib.h
     ${COMMON_DIR}/hlassert.h
     ${COMMON_DIR}/log.h

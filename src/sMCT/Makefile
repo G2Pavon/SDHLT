@@ -43,7 +43,6 @@ COMMON_CPPFILES = \
 			common/blockmem.cpp \
 			common/bspfile.cpp \
 			common/cmdlib.cpp \
-			common/cmdlinecfg.cpp \
 			common/filelib.cpp \
 			common/log.cpp \
 			common/mathlib.cpp \
@@ -63,7 +62,6 @@ COMMON_INCLUDEFILES = \
 			common/boundingbox.h \
 			common/bspfile.h \
 			common/cmdlib.h \
-			common/cmdlinecfg.h \
 			common/filelib.h \
 			common/hlassert.h \
 			common/log.h \
