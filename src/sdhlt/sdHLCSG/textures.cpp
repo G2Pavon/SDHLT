@@ -48,7 +48,6 @@ static int numtexmap = 0;
 static auto texmap_store(char *texname, bool shouldlock = true) -> int
 // This function should never be called unless a new entry in g_texinfo is being allocated.
 {
-    int i;
     if (shouldlock)
     {
         ThreadLock();
@@ -56,7 +55,7 @@ static auto texmap_store(char *texname, bool shouldlock = true) -> int
 
     hlassume(numtexmap < MAX_INTERNAL_MAP_TEXINFO, assume_MAX_MAP_TEXINFO); // This error should never appear.
 
-    i = numtexmap;
+    auto i = numtexmap;
     texmap[numtexmap] = strdup(texname);
     numtexmap++;
     if (shouldlock)
@@ -74,9 +73,8 @@ static auto texmap_retrieve(int index) -> char *
 
 static void texmap_clear()
 {
-    int i;
     ThreadLock();
-    for (i = 0; i < numtexmap; i++)
+    for (int i = 0; i < numtexmap; i++)
     {
         free(texmap[i]);
     }
@@ -168,10 +166,8 @@ static auto FindMiptex(const char *const name) -> int
 // =====================================================================================
 auto TEX_InitFromWad() -> bool
 {
-    int i, j;
+    int i;
     wadinfo_t wadinfo;
-    char *pszWadFile;
-    const char *pszWadroot;
     wadpath_t *currentwad;
 
     Log("\n"); // looks cleaner
@@ -182,14 +178,14 @@ auto TEX_InitFromWad() -> bool
         currentwad->usedbymap = false; //-nowadtextures
     }
 
-    pszWadroot = getenv("WADROOT");
+    auto *pszWadroot = getenv("WADROOT");
 
     // for eachwadpath
     for (i = 0; i < g_iNumWadPaths; i++)
     {
         FILE *texfile; // temporary used in this loop
         currentwad = g_pWadPaths[i];
-        pszWadFile = currentwad->path;
+        auto *pszWadFile = currentwad->path;
         texwadpathes[nTexFiles] = currentwad;
         texfiles[nTexFiles] = fopen(pszWadFile, "rb");
 
@@ -234,8 +230,7 @@ auto TEX_InitFromWad() -> bool
         if (!texfiles[nTexFiles] && pszWadFile[0] == '\\')
         {
             char tmp[_MAX_PATH];
-            int l;
-            for (l = 'C'; l <= 'Z'; ++l)
+            for (int l = 'C'; l <= 'Z'; ++l)
             {
                 safe_snprintf(tmp, _MAX_PATH, "%c:%s", l, pszWadFile);
                 texfiles[nTexFiles] = fopen(tmp, "rb");
@@ -284,7 +279,7 @@ auto TEX_InitFromWad() -> bool
         std::vector<std::tuple<std::string, char *, int>> texturesUnterminatedString; // 2 for now in case the same texture has 2 issues
         std::vector<std::tuple<std::string, char *, int>> texturesOversized;
 
-        for (j = 0; j < wadinfo.numlumps; j++, nTexLumps++)
+        for (int j = 0; j < wadinfo.numlumps; j++, nTexLumps++)
         {
             SafeRead(texfile, &lumpinfo[nTexLumps], (sizeof(lumpinfo_t) - sizeof(int))); // iTexFile is NOT read from file
             char szWadFileName[_MAX_PATH];
@@ -312,9 +307,9 @@ auto TEX_InitFromWad() -> bool
 
             for (const auto &texture : texturesUnterminatedString)
             {
-                const std::string &texName = std::get<0>(texture);
-                char *szWadFileName = std::get<1>(texture);
-                int texLumps = std::get<2>(texture);
+                const auto &texName = std::get<0>(texture);
+                auto *szWadFileName = std::get<1>(texture);
+                auto texLumps = std::get<2>(texture);
                 Log("[%s] %s (%d)\n", szWadFileName, texName, texLumps);
             }
             Log("---------------------------------\n\n");
@@ -330,9 +325,9 @@ auto TEX_InitFromWad() -> bool
             {
                 for (const auto &texture : texturesOversized)
                 {
-                    const std::string &texName = std::get<0>(texture);
-                    char *szWadFileName = std::get<1>(texture);
-                    int texBytes = std::get<2>(texture);
+                    const auto &texName = std::get<0>(texture);
+                    auto *szWadFileName = std::get<1>(texture);
+                    auto texBytes = std::get<2>(texture);
                     Log("[%s] %s (%d bytes)\n", szWadFileName, texName, texBytes);
                 }
             }
@@ -378,8 +373,8 @@ auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
     if (found)
     {
         // get the first and last matching lump
-        lumpinfo_t *first = found;
-        lumpinfo_t *last = found;
+        auto *first = found;
+        auto *last = found;
         while (first - 1 >= lumpinfo && lump_sorter_by_name(first - 1, source) == 0)
         {
             first = first - 1;
@@ -399,8 +394,8 @@ auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
             }
             else if (found->iTexFile != best->iTexFile)
             {
-                wadpath_t *found_wadpath = texwadpathes[found->iTexFile];
-                wadpath_t *best_wadpath = texwadpathes[best->iTexFile];
+                auto *found_wadpath = texwadpathes[found->iTexFile];
+                auto *best_wadpath = texwadpathes[best->iTexFile];
                 if (found_wadpath->usedbymap != best_wadpath->usedbymap)
                 {
                     better = !found_wadpath->usedbymap; // included wad is better
@@ -432,7 +427,6 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
 {
     writewad_data = nullptr;
     writewad_datasize = -1;
-    // Log("** PnFNFUNC: LoadLump\n");
 
     *texsize = 0;
     if (source->filepos)
@@ -447,13 +441,12 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
         if (texwadpathes[source->iTexFile]->usedbymap)
         {
             // Just read the miptex header and zero out the data offsets.
-            // We will load the entire texture from the WAD at engine runtime
-            int i;
+            // We will load the entire texture from the WAD at engine runtime¿
             auto *miptex = (miptex_t *)dest;
             hlassume((int)sizeof(miptex_t) <= dest_maxsize, assume_MAX_MAP_MIPTEX);
             SafeRead(texfiles[source->iTexFile], dest, sizeof(miptex_t));
 
-            for (i = 0; i < MIPLEVELS; i++)
+            for (int i = 0; i < MIPLEVELS; i++)
                 miptex->offsets[i] = 0;
             writewad_data = (byte *)malloc(source->disksize);
             hlassume(writewad_data != nullptr, assume_NoMemory);
@@ -481,13 +474,10 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
 // =====================================================================================
 void AddAnimatingTextures()
 {
-    int base;
-    int i, j, k;
     char name[MAXWADNAME];
+    auto base = nummiptex;
 
-    base = nummiptex;
-
-    for (i = 0; i < base; i++)
+    for (int i = 0; i < base; i++)
     {
         if ((miptex[i].name[0] != '+') && (miptex[i].name[0] != '-'))
         {
@@ -496,7 +486,7 @@ void AddAnimatingTextures()
 
         safe_strncpy(name, miptex[i].name, MAXWADNAME);
 
-        for (j = 0; j < 20; j++)
+        for (int j = 0; j < 20; j++)
         {
             if (j < 10)
             {
@@ -508,7 +498,7 @@ void AddAnimatingTextures()
             }
 
             // see if this name exists in the wadfile
-            for (k = 0; k < nTexLumps; k++)
+            for (int k = 0; k < nTexLumps; k++)
             {
                 if (!strcmp(name, lumpinfo[k].name))
                 {
@@ -531,9 +521,7 @@ void AddAnimatingTextures()
 // =====================================================================================
 void WriteMiptex()
 {
-    int len, texsize, totaltexsize = 0;
-    byte *data;
-    dmiptexlump_t *l;
+    int texsize, totaltexsize = 0;
     double start, end;
 
     g_texdatasize = 0;
@@ -549,9 +537,7 @@ void WriteMiptex()
 
     start = I_FloatTime();
     {
-        int i;
-
-        for (i = 0; i < nummiptex; i++)
+        for (int i = 0; i < nummiptex; i++)
         {
             lumpinfo_t *found;
 
@@ -634,16 +620,15 @@ void WriteMiptex()
 
     start = I_FloatTime();
     {
-        int i;
-        texinfo_t *tx = g_texinfo;
+        auto *tx = g_texinfo;
 
         // Sort them FIRST by wadfile and THEN by name for most efficient loading in the engine.
         qsort((void *)miptex, (size_t)nummiptex, sizeof(miptex[0]), lump_sorter_by_wad_and_name);
 
         // Sleazy Hack 104 Pt 2 - After sorting the miptex array, reset the texinfos to point to the right miptexs
-        for (i = 0; i < g_numtexinfo; i++, tx++)
+        for (int i = 0; i < g_numtexinfo; i++, tx++)
         {
-            char *miptex_name = texmap_retrieve(tx->miptex);
+            auto *miptex_name = texmap_retrieve(tx->miptex);
 
             tx->miptex = FindMiptex(miptex_name);
         }
@@ -653,16 +638,12 @@ void WriteMiptex()
 
     start = I_FloatTime();
     {
-        int i;
-
         // Now setup to get the miptex data (or just the headers if using -wadtextures) from the wadfile
-        l = (dmiptexlump_t *)g_dtexdata;
-        data = (byte *)&l->dataofs[nummiptex];
+        auto *l = (dmiptexlump_t *)g_dtexdata;
+        auto *data = (byte *)&l->dataofs[nummiptex];
         l->nummiptex = nummiptex;
         char writewad_name[_MAX_PATH]; // Write temp wad file with processed textures
-        FILE *writewad_file;
-        int writewad_maxlumpinfos;
-        typedef struct // Lump info in temp wad
+        typedef struct                 // Lump info in temp wad
         {
             int filepos;
             int disksize;
@@ -672,15 +653,14 @@ void WriteMiptex()
             char pad1, pad2;
             char name[MAXWADNAME];
         } dlumpinfo_t;
-        dlumpinfo_t *writewad_lumpinfos;
         wadinfo_t writewad_header;
 
         safe_snprintf(writewad_name, _MAX_PATH, "%s.wa_", g_Mapname); // Generate temp wad file name based on mapname
-        writewad_file = SafeOpenWrite(writewad_name);
+        auto *writewad_file = SafeOpenWrite(writewad_name);
 
         // Malloc for storing lump info
-        writewad_maxlumpinfos = nummiptex;
-        writewad_lumpinfos = (dlumpinfo_t *)malloc(writewad_maxlumpinfos * sizeof(dlumpinfo_t));
+        auto writewad_maxlumpinfos = nummiptex;
+        auto *writewad_lumpinfos = (dlumpinfo_t *)malloc(writewad_maxlumpinfos * sizeof(dlumpinfo_t));
         hlassume(writewad_lumpinfos != nullptr, assume_NoMemory);
 
         // Header for the temp wad file
@@ -692,12 +672,12 @@ void WriteMiptex()
 
         if (fseek(writewad_file, sizeof(wadinfo_t), SEEK_SET)) // Move file pointer to skip header
             Error("File write failure");
-        for (i = 0; i < nummiptex; i++) // Process each miptex, writing its data to the temp wad file
+        for (int i = 0; i < nummiptex; i++) // Process each miptex, writing its data to the temp wad file
         {
             l->dataofs[i] = data - (byte *)l;
             byte *writewad_data;
             int writewad_datasize;
-            len = LoadLump(miptex + i, data, &texsize, &g_dtexdata[g_max_map_miptex] - data, writewad_data, writewad_datasize); // Load lump data
+            auto len = LoadLump(miptex + i, data, &texsize, &g_dtexdata[g_max_map_miptex] - data, writewad_data, writewad_datasize); // Load lump data
 
             if (writewad_data)
             {
@@ -753,7 +733,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
     }
     char currentwadName[_MAX_PATH];
     ExtractFile(currentwad->path, currentwadName);
-    double percentUsed = (double)currentwad->usedtextures / (double)nummiptex * 100;
+    auto percentUsed = (double)currentwad->usedtextures / (double)nummiptex * 100;
 
     Log("[%s] %i/%i texture%s (%2.2f%%)\n - %s\n", currentwadName, currentwad->usedtextures, currentwad->totaltextures, currentwad->usedtextures == 1 ? "" : "s", percentUsed, currentwad->path);
 }
@@ -763,13 +743,8 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int
 {
-    vec3_t vecs[2];
-    int sv, tv;
-    vec_t ang, sinv, cosv;
-    vec_t ns, nt;
     texinfo_t tx;
-    texinfo_t *tc;
-    int i, j, k;
+    int i;
 
     if (!strncasecmp(bt->name, "NULL", 4))
     {
@@ -804,8 +779,7 @@ auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, con
         }
         else
         {
-            vec_t scale;
-            scale = 1 / bt->vects.valve.scale[0];
+            auto scale = 1 / bt->vects.valve.scale[0];
             VectorScale(bt->vects.valve.UAxis, scale, tx.vecs[0]);
             scale = 1 / bt->vects.valve.scale[1];
             VectorScale(bt->vects.valve.VAxis, scale, tx.vecs[1]);
@@ -819,7 +793,7 @@ auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, con
     // find the g_texinfo
     //
     ThreadLock();
-    tc = g_texinfo;
+    auto *tc = g_texinfo;
     for (i = 0; i < g_numtexinfo; i++, tc++)
     {
         // Sleazy hack 104, Pt 3 - Use strcmp on names to avoid dups
@@ -831,9 +805,9 @@ auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, con
         {
             continue;
         }
-        for (j = 0; j < 2; j++)
+        for (int j = 0; j < 2; j++)
         {
-            for (k = 0; k < 4; k++)
+            for (int k = 0; k < 4; k++)
             {
                 if (tc->vecs[j][k] != tx.vecs[j][k])
                 {
