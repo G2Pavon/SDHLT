@@ -1,11 +1,7 @@
-#================================
-# SDHLT
-#================================
-
 cmake_minimum_required(VERSION 3.20)
 
-project(sdhlt
-    DESCRIPTION "seedee's Half-Life Compilation Tools"
+project(smct
+    DESCRIPTION "Simplified Map Compile Tools"
     LANGUAGES CXX
 )
 
@@ -18,19 +14,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tools)
 # Configuration
 #================
 
-set(SDHLT_PREFIX "sd" CACHE STRING "Executable prefix.")
-set(SDHLT_GAME_PREFIX "HL" CACHE STRING "Executable game prefix.")
-
-message("${CMAKE_PROJECT_NAME} > Tools will use prefix \"${SDHLT_PREFIX}${SDHLT_GAME_PREFIX}\"")
-
-set(SDHLT_DIR ${CMAKE_SOURCE_DIR}/src/sdhlt)
+set(DIR ${CMAKE_SOURCE_DIR}/src/sMCT)
 
 #================
 # Common
 #================
 
-set(COMMON_DIR ${SDHLT_DIR}/common)
-set(TEMPLATE_DIR ${SDHLT_DIR}/template)
+set(COMMON_DIR ${DIR}/common)
 
 set(COMMON_SOURCES
     ${COMMON_DIR}/arguments.cpp
@@ -70,7 +60,7 @@ set(COMMON_HEADERS
 # BSP
 #================
 
-set(BSP_DIR ${SDHLT_DIR}/sdHLBSP)
+set(BSP_DIR ${DIR}/sBSP)
 
 set(BSP_SOURCES
     ${COMMON_SOURCES}
@@ -94,7 +84,7 @@ set(BSP_HEADERS
 # CSG
 #================
 
-set(CSG_DIR ${SDHLT_DIR}/sdHLCSG)
+set(CSG_DIR ${DIR}/sCSG)
 
 set(CSG_SOURCES
     ${COMMON_SOURCES}
@@ -118,7 +108,7 @@ set(CSG_HEADERS
 # RAD
 #================
 
-set(RAD_DIR ${SDHLT_DIR}/sdHLRAD)
+set(RAD_DIR ${DIR}/sRAD)
 
 set(RAD_SOURCES
     ${COMMON_SOURCES}
@@ -155,7 +145,7 @@ set(RAD_HEADERS
 # VIS
 #================
 
-set(VIS_DIR ${SDHLT_DIR}/sdHLVIS)
+set(VIS_DIR ${DIR}/sVIS)
 
 set(VIS_SOURCES
     ${COMMON_SOURCES}
@@ -173,8 +163,7 @@ set(VIS_HEADERS
 #================
 
 include_directories(
-    ${SDHLT_DIR}/common
-    ${SDHLT_DIR}/template
+    ${DIR}/common
 )
 
 #================
@@ -230,7 +219,7 @@ add_executable(VIS ${VIS_SOURCES} ${VIS_HEADERS})
 
 set_target_properties(BSP CSG RAD VIS
     PROPERTIES
-        PREFIX ${SDHLT_PREFIX}${SDHLT_GAME_PREFIX}
+        PREFIX "s"
 )
 
 target_compile_definitions(BSP PRIVATE SDHLBSP DOUBLEVEC_T)

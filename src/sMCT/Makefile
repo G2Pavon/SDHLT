@@ -5,10 +5,10 @@
 # Usage:
 #   make            - Build all tools. They will be copied into 'bin' directory.
 #   make clean      - Clean.
-#   make sdHLCSG      - Build sdHLCSG.
-#   make sdHLBSP      - Build sdHLBSP.
-#   make sdHLVIS      - Build sdHLVIS.
-#   make sdHLRAD      - Build sdHLRAD.
+#   make sCSG      - Build sCSG.
+#   make sBSP      - Build sBSP.
+#   make sVIS      - Build sVIS.
+#   make sRAD      - Build sRAD.
 #
 # Before running the tools, please make sure the default maximum stack size on your computer
 #   is more than 4MB.
@@ -96,177 +96,177 @@ COMMON_FLAGS = -Wall -O2 -fno-strict-aliasing -pthread -pipe
 
 HLCSG_CPPFILES = \
 			$(COMMON_CPPFILES) \
-			sdHLCSG/ansitoutf8.cpp \
-			sdHLCSG/brush.cpp \
-			sdHLCSG/brushunion.cpp \
-			sdHLCSG/hullfile.cpp \
-			sdHLCSG/map.cpp \
-			sdHLCSG/qcsg.cpp \
-			sdHLCSG/textures.cpp \
-			sdHLCSG/wadpath.cpp \
+			sCSG/ansitoutf8.cpp \
+			sCSG/brush.cpp \
+			sCSG/brushunion.cpp \
+			sCSG/hullfile.cpp \
+			sCSG/map.cpp \
+			sCSG/qcsg.cpp \
+			sCSG/textures.cpp \
+			sCSG/wadpath.cpp \
 
 HLCSG_INCLUDEDIRS = \
 			$(COMMON_INCLUDEDIRS) \
-			sdHLCSG \
+			sCSG \
 
 HLCSG_INCLUDEFILES = \
 			$(COMMON_INCLUDEFILES) \
-			sdHLCSG/csg.h \
-			sdHLCSG/wadpath.h \
+			sCSG/csg.h \
+			sCSG/wadpath.h \
 
 HLCSG_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
-			SDHLCSG \
+			sCSG \
 			DOUBLEVEC_T \
 			
 HLBSP_CPPFILES = \
 			$(COMMON_CPPFILES) \
-			sdHLBSP/brink.cpp \
-			sdHLBSP/merge.cpp \
-			sdHLBSP/outside.cpp \
-			sdHLBSP/portals.cpp \
-			sdHLBSP/qbsp.cpp \
-			sdHLBSP/solidbsp.cpp \
-			sdHLBSP/surfaces.cpp \
-			sdHLBSP/tjunc.cpp \
-			sdHLBSP/writebsp.cpp \
+			sBSP/brink.cpp \
+			sBSP/merge.cpp \
+			sBSP/outside.cpp \
+			sBSP/portals.cpp \
+			sBSP/qbsp.cpp \
+			sBSP/solidbsp.cpp \
+			sBSP/surfaces.cpp \
+			sBSP/tjunc.cpp \
+			sBSP/writebsp.cpp \
 
 HLBSP_INCLUDEDIRS = \
 			$(COMMON_INCLUDEDIRS) \
-			sdHLBSP \
+			sBSP \
 
 HLBSP_INCLUDEFILES = \
 			$(COMMON_INCLUDEFILES) \
-			sdHLBSP/bsp5.h \
+			sBSP/bsp5.h \
 
 HLBSP_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
-			SDHLBSP \
+			sBSP \
 			DOUBLEVEC_T \
 
 HLVIS_CPPFILES = \
 			$(COMMON_CPPFILES) \
-			sdHLVIS/flow.cpp \
-			sdHLVIS/vis.cpp \
+			sVIS/flow.cpp \
+			sVIS/vis.cpp \
 
 HLVIS_INCLUDEDIRS = \
 			$(COMMON_INCLUDEDIRS) \
-			sdHLVIS \
+			sVIS \
 
 HLVIS_INCLUDEFILES = \
 			$(COMMON_INCLUDEFILES) \
-			sdHLVIS/vis.h \
+			sVIS/vis.h \
 
 HLVIS_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
-			SDHLVIS \
+			sVIS \
 
 HLRAD_CPPFILES = \
 			$(COMMON_CPPFILES) \
-			sdHLRAD/compress.cpp \
-			sdHLRAD/lerp.cpp \
-			sdHLRAD/lightmap.cpp \
-			sdHLRAD/loadtextures.cpp \
-			sdHLRAD/mathutil.cpp \
-			sdHLRAD/meshdesc.cpp \
-			sdHLRAD/meshtrace.cpp \
-			sdHLRAD/progmesh.cpp \
-			sdHLRAD/qrad.cpp \
-			sdHLRAD/qradutil.cpp \
-			sdHLRAD/sparse.cpp \
-			sdHLRAD/stringlib.cpp \
-			sdHLRAD/studio.cpp \
-			sdHLRAD/trace.cpp \
-			sdHLRAD/transfers.cpp \
-			sdHLRAD/transparency.cpp \
-			sdHLRAD/vismatrix.cpp \
-			sdHLRAD/vismatrixutil.cpp \
+			sRAD/compress.cpp \
+			sRAD/lerp.cpp \
+			sRAD/lightmap.cpp \
+			sRAD/loadtextures.cpp \
+			sRAD/mathutil.cpp \
+			sRAD/meshdesc.cpp \
+			sRAD/meshtrace.cpp \
+			sRAD/progmesh.cpp \
+			sRAD/qrad.cpp \
+			sRAD/qradutil.cpp \
+			sRAD/sparse.cpp \
+			sRAD/stringlib.cpp \
+			sRAD/studio.cpp \
+			sRAD/trace.cpp \
+			sRAD/transfers.cpp \
+			sRAD/transparency.cpp \
+			sRAD/vismatrix.cpp \
+			sRAD/vismatrixutil.cpp \
 
 HLRAD_INCLUDEDIRS = \
 			$(COMMON_INCLUDEDIRS) \
-			sdHLRAD \
+			sRAD \
 
 HLRAD_INCLUDEFILES = \
 			$(COMMON_INCLUDEFILES) \
-			sdHLRAD/compress.h \
-			sdHLRAD/list.h \
-			sdHLRAD/meshdesc.h \
-			sdHLRAD/meshtrace.h \
-			sdHLRAD/qrad.h \
+			sRAD/compress.h \
+			sRAD/list.h \
+			sRAD/meshdesc.h \
+			sRAD/meshtrace.h \
+			sRAD/qrad.h \
 
 HLRAD_DEFINITIONS = \
 			$(COMMON_DEFINITIONS) \
-			SDHLRAD \
+			sRAD \
 
 #
 # Build commands
 #
 
 .PHONY : all
-all : bin/sdHLCSG bin/sdHLBSP bin/sdHLVIS bin/sdHLRAD printusage
+all : bin/sCSG bin/sBSP bin/sVIS bin/sRAD printusage
 	@echo ======== OK ========
 
-.PHONY : sdHLCSG
-sdHLCSG : bin/sdHLCSG printusage
+.PHONY : sCSG
+sCSG : bin/sCSG printusage
 	@echo ======== OK ========
 
-.PHONY : sdHLBSP
-sdHLBSP : bin/sdHLBSP printusage
+.PHONY : sBSP
+sBSP : bin/sBSP printusage
 	@echo ======== OK ========
 
-.PHONY : sdHLVIS
-sdHLVIS : bin/sdHLVIS printusage
+.PHONY : sVIS
+sVIS : bin/sVIS printusage
 	@echo ======== OK ========
 
-.PHONY : sdHLRAD
-sdHLRAD : bin/sdHLRAD printusage
+.PHONY : sRAD
+sRAD : bin/sRAD printusage
 	@echo ======== OK ========
 
-bin/sdHLCSG : $(HLCSG_CPPFILES:%.cpp=sdHLCSG/release/%.o) printusage
-	@echo ======== sdHLCSG : linking ========
-	mkdir -p sdHLCSG/release/bin
-	g++ $(COMMON_FLAGS) -o sdHLCSG/release/bin/sdHLCSG $(addprefix -I,$(HLCSG_INCLUDEDIRS)) $(addprefix -D,$(HLCSG_DEFINITIONS)) $(HLCSG_CPPFILES:%.cpp=sdHLCSG/release/%.o)
+bin/sCSG : $(HLCSG_CPPFILES:%.cpp=sCSG/release/%.o) printusage
+	@echo ======== sCSG : linking ========
+	mkdir -p sCSG/release/bin
+	g++ $(COMMON_FLAGS) -o sCSG/release/bin/sCSG $(addprefix -I,$(HLCSG_INCLUDEDIRS)) $(addprefix -D,$(HLCSG_DEFINITIONS)) $(HLCSG_CPPFILES:%.cpp=sCSG/release/%.o)
 	mkdir -p bin
-	cp sdHLCSG/release/bin/sdHLCSG bin/sdHLCSG
+	cp sCSG/release/bin/sCSG bin/sCSG
 
-$(HLCSG_CPPFILES:%.cpp=sdHLCSG/release/%.o) : sdHLCSG/release/%.o : %.cpp $(HLCSG_INCLUDEFILES) printusage
-	@echo ======== sdHLCSG : compiling $< ========
+$(HLCSG_CPPFILES:%.cpp=sCSG/release/%.o) : sCSG/release/%.o : %.cpp $(HLCSG_INCLUDEFILES) printusage
+	@echo ======== sCSG : compiling $< ========
 	mkdir -p $(dir $@)
 	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(HLCSG_INCLUDEDIRS)) $(addprefix -D,$(HLCSG_DEFINITIONS)) $<
 
-bin/sdHLBSP : $(HLBSP_CPPFILES:%.cpp=sdHLBSP/release/%.o) printusage
-	@echo ======== sdHLBSP : linking ========
-	mkdir -p sdHLBSP/release/bin
-	g++ $(COMMON_FLAGS) -o sdHLBSP/release/bin/sdHLBSP $(addprefix -I,$(HLBSP_INCLUDEDIRS)) $(addprefix -D,$(HLBSP_DEFINITIONS)) $(HLBSP_CPPFILES:%.cpp=sdHLBSP/release/%.o)
+bin/sBSP : $(HLBSP_CPPFILES:%.cpp=sBSP/release/%.o) printusage
+	@echo ======== sBSP : linking ========
+	mkdir -p sBSP/release/bin
+	g++ $(COMMON_FLAGS) -o sBSP/release/bin/sBSP $(addprefix -I,$(HLBSP_INCLUDEDIRS)) $(addprefix -D,$(HLBSP_DEFINITIONS)) $(HLBSP_CPPFILES:%.cpp=sBSP/release/%.o)
 	mkdir -p bin
-	cp sdHLBSP/release/bin/sdHLBSP bin/sdHLBSP
+	cp sBSP/release/bin/sBSP bin/sBSP
 
-$(HLBSP_CPPFILES:%.cpp=sdHLBSP/release/%.o) : sdHLBSP/release/%.o : %.cpp $(HLBSP_INCLUDEFILES) printusage
-	@echo ======== sdHLBSP : compiling $< ========
+$(HLBSP_CPPFILES:%.cpp=sBSP/release/%.o) : sBSP/release/%.o : %.cpp $(HLBSP_INCLUDEFILES) printusage
+	@echo ======== sBSP : compiling $< ========
 	mkdir -p $(dir $@)
 	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(HLBSP_INCLUDEDIRS)) $(addprefix -D,$(HLBSP_DEFINITIONS)) $<
 
-bin/sdHLVIS : $(HLVIS_CPPFILES:%.cpp=sdHLVIS/release/%.o) printusage
-	@echo ======== sdHLVIS : linking ========
-	mkdir -p sdHLVIS/release/bin
-	g++ $(COMMON_FLAGS) -o sdHLVIS/release/bin/sdHLVIS $(addprefix -I,$(HLVIS_INCLUDEDIRS)) $(addprefix -D,$(HLVIS_DEFINITIONS)) $(HLVIS_CPPFILES:%.cpp=sdHLVIS/release/%.o)
+bin/sVIS : $(HLVIS_CPPFILES:%.cpp=sVIS/release/%.o) printusage
+	@echo ======== sVIS : linking ========
+	mkdir -p sVIS/release/bin
+	g++ $(COMMON_FLAGS) -o sVIS/release/bin/sVIS $(addprefix -I,$(HLVIS_INCLUDEDIRS)) $(addprefix -D,$(HLVIS_DEFINITIONS)) $(HLVIS_CPPFILES:%.cpp=sVIS/release/%.o)
 	mkdir -p bin
-	cp sdHLVIS/release/bin/sdHLVIS bin/sdHLVIS
+	cp sVIS/release/bin/sVIS bin/sVIS
 
-$(HLVIS_CPPFILES:%.cpp=sdHLVIS/release/%.o) : sdHLVIS/release/%.o : %.cpp $(HLVIS_INCLUDEFILES) printusage
-	@echo ======== sdHLVIS : compiling $< ========
+$(HLVIS_CPPFILES:%.cpp=sVIS/release/%.o) : sVIS/release/%.o : %.cpp $(HLVIS_INCLUDEFILES) printusage
+	@echo ======== sVIS : compiling $< ========
 	mkdir -p $(dir $@)
 	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(HLVIS_INCLUDEDIRS)) $(addprefix -D,$(HLVIS_DEFINITIONS)) $<
 
-bin/sdHLRAD : $(HLRAD_CPPFILES:%.cpp=sdHLRAD/release/%.o) printusage
-	@echo ======== sdHLRAD : linking ========
-	mkdir -p sdHLRAD/release/bin
-	g++ $(COMMON_FLAGS) -o sdHLRAD/release/bin/sdHLRAD $(addprefix -I,$(HLRAD_INCLUDEDIRS)) $(addprefix -D,$(HLRAD_DEFINITIONS)) $(HLRAD_CPPFILES:%.cpp=sdHLRAD/release/%.o)
+bin/sRAD : $(HLRAD_CPPFILES:%.cpp=sRAD/release/%.o) printusage
+	@echo ======== sRAD : linking ========
+	mkdir -p sRAD/release/bin
+	g++ $(COMMON_FLAGS) -o sRAD/release/bin/sRAD $(addprefix -I,$(HLRAD_INCLUDEDIRS)) $(addprefix -D,$(HLRAD_DEFINITIONS)) $(HLRAD_CPPFILES:%.cpp=sRAD/release/%.o)
 	mkdir -p bin
-	cp sdHLRAD/release/bin/sdHLRAD bin/sdHLRAD
+	cp sRAD/release/bin/sRAD bin/sRAD
 
-$(HLRAD_CPPFILES:%.cpp=sdHLRAD/release/%.o) : sdHLRAD/release/%.o : %.cpp $(HLRAD_INCLUDEFILES) printusage
-	@echo ======== sdHLRAD : compiling $< ========
+$(HLRAD_CPPFILES:%.cpp=sRAD/release/%.o) : sRAD/release/%.o : %.cpp $(HLRAD_INCLUDEFILES) printusage
+	@echo ======== sRAD : compiling $< ========
 	mkdir -p $(dir $@)
 	g++ -c $(COMMON_FLAGS) -o $@ $(addprefix -I,$(HLRAD_INCLUDEDIRS)) $(addprefix -D,$(HLRAD_DEFINITIONS)) $<
 
@@ -280,10 +280,10 @@ printusage :
 
 .PHONY : clean
 clean : printusage
-	rm -rf sdHLCSG/release
-	rm -rf sdHLBSP/release
-	rm -rf sdHLVIS/release
-	rm -rf sdHLRAD/release
+	rm -rf sCSG/release
+	rm -rf sBSP/release
+	rm -rf sVIS/release
+	rm -rf sRAD/release
 	rm -rf bin
 	@echo ======== OK ========
 
