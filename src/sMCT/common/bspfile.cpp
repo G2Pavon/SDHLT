@@ -541,49 +541,9 @@ void WriteBSPFile(const char *const filename)
 	fclose(bspfile);
 }
 
-#ifdef PLATFORM_CAN_CALC_EXTENT
 // =====================================================================================
 //  GetFaceExtents (with PLATFORM_CAN_CALC_EXTENT on)
 // =====================================================================================
-#ifdef SYSTEM_WIN32
-#ifdef VERSION_32BIT
-static void CorrectFPUPrecision()
-{
-	unsigned int currentcontrol;
-	if (_controlfp_s(&currentcontrol, 0, 0))
-	{
-		Warning("Couldn't get FPU precision");
-	}
-	else
-	{
-		unsigned int val = (currentcontrol & _MCW_PC);
-		if (val != _PC_53)
-		{
-			Warning("FPU precision is %s. Setting to %s.", (val == _PC_24 ? "24" : val == _PC_64 ? "64"
-																								 : "invalid"),
-					"53");
-			if (_controlfp_s(&currentcontrol, _PC_53, _MCW_PC) || (currentcontrol & _MCW_PC) != _PC_53)
-			{
-				Warning("Couldn't set FPU precision");
-			}
-		}
-	}
-}
-#endif
-#ifdef VERSION_64BIT
-static void CorrectFPUPrecision()
-{
-	// do nothing, because we use SSE registers
-}
-#endif
-#endif
-
-#ifdef SYSTEM_POSIX
-static void CorrectFPUPrecision()
-{
-	// just leave it to default and see if CalcFaceExtents_test gives us any error
-}
-#endif
 
 auto CalculatePointVecsProduct(const volatile float *point, const volatile float *vecs) -> float
 {
@@ -616,8 +576,6 @@ auto CalcFaceExtents_test() -> bool
 	//   1. whether the calculation is performed on FPU
 	//   2. whether the register precision is too low
 
-	CorrectFPUPrecision();
-
 	ok = true;
 	for (int i = 0; i < 6; i++)
 	{
@@ -633,8 +591,6 @@ auto CalcFaceExtents_test() -> bool
 
 void GetFaceExtents(int facenum, int mins_out[2], int maxs_out[2])
 {
-	CorrectFPUPrecision();
-
 	dface_t *f;
 	float mins[2], maxs[2], val;
 	int i, j, e;
@@ -717,76 +673,6 @@ void WriteExtentFile(const char *const filename)
 	fclose(f);
 }
 
-#else
-
-typedef struct
-{
-	int mins[2];
-	int maxs[2];
-} faceextent_t;
-
-bool g_faceextents_loaded = false;
-faceextent_t g_faceextents[MAX_MAP_FACES]; //[g_numfaces]
-
-// =====================================================================================
-//  LoadExtentFile
-// =====================================================================================
-void LoadExtentFile(const char *const filename)
-{
-	FILE *f;
-	f = fopen(filename, "r");
-	if (!f)
-	{
-		Error("Error opening %s: %s", filename, strerror(errno));
-	}
-	int count;
-	int numfaces;
-	count = fscanf(f, "%i\n", (int *)&numfaces);
-	if (count != 1)
-	{
-		Error("LoadExtentFile (line %i): scanf failure", 1);
-	}
-	if (numfaces != g_numfaces)
-	{
-		Error("LoadExtentFile: numfaces(%i) doesn't match g_numfaces(%i)", numfaces, g_numfaces);
-	}
-	for (int i = 0; i < g_numfaces; i++)
-	{
-		faceextent_t *e = &g_faceextents[i];
-		count = fscanf(f, "%i %i %i %i\n", (int *)&e->mins[0], (int *)&e->mins[1], (int *)&e->maxs[0], (int *)&e->maxs[1]);
-		if (count != 4)
-		{
-			Error("LoadExtentFile (line %i): scanf failure", i + 2);
-		}
-	}
-	fclose(f);
-	g_faceextents_loaded = true;
-}
-
-// =====================================================================================
-//  GetFaceExtents (with PLATFORM_CAN_CALC_EXTENT off)
-// =====================================================================================
-// ZHLT_EMBEDLIGHTMAP: the result of "GetFaceExtents" and the values stored in ".ext" file should always be the original extents;
-//                     the new extents of the "?_rad" textures should never appear ("?_rad" textures should be transparent to the tools).
-//                     As a consequance, the reported AllocBlock might be inaccurate (usually falsely larger), but it accurately predicts the amount of AllocBlock after the embedded lightmaps are deleted.
-void GetFaceExtents(int facenum, int mins_out[2], int maxs_out[2])
-{
-	if (!g_faceextents_loaded)
-	{
-		Error("GetFaceExtents: internal error: extent file has not been loaded.");
-	}
-
-	faceextent_t *e = &g_faceextents[facenum];
-	int i;
-
-	for (i = 0; i < 2; i++)
-	{
-		mins_out[i] = e->mins[i];
-		maxs_out[i] = e->maxs[i];
-	}
-}
-#endif
-
 //
 // =====================================================================================
 //
@@ -852,9 +738,6 @@ void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 }
 auto CountBlocks() -> int
 {
-#if !defined(PLATFORM_CAN_CALC_EXTENT) && !defined(SRAD)
-	return -1; // otherwise GetFaceExtents will error
-#endif
 	lightmapblock_t *blocks;
 	blocks = (lightmapblock_t *)malloc(sizeof(lightmapblock_t));
 	hlassume(blocks != nullptr, assume_NoMemory);

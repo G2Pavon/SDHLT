@@ -2464,9 +2464,7 @@ auto main(const int argc, char **argv) -> int
 			CheckForErrorLog();
 
 			compress_compatability_test();
-#ifdef PLATFORM_CAN_CALC_EXTENT
 			hlassume(CalcFaceExtents_test(), assume_first);
-#endif
 			dtexdata_init();
 			atexit(dtexdata_free);
 			// END INIT
@@ -2478,16 +2476,6 @@ auto main(const int argc, char **argv) -> int
 
 			safe_snprintf(g_source, _MAX_PATH, "%s.bsp", g_Mapname);
 			LoadBSPFile(g_source);
-#ifndef PLATFORM_CAN_CALC_EXTENT
-			char extentfilename[_MAX_PATH];
-			safe_snprintf(extentfilename, _MAX_PATH, "%s.ext", g_Mapname);
-			Log("Loading extent file '%s'\n", extentfilename);
-			if (!q_exists(extentfilename))
-			{
-				hlassume(false, assume_NO_EXTENT_FILE);
-			}
-			LoadExtentFile(extentfilename);
-#endif
 			ParseEntities();
 			DeleteEmbeddedLightmaps();
 			LoadTextures();

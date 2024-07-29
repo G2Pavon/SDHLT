@@ -781,12 +781,7 @@ void FinishBSPFile()
 	free(brinkinfo);
 	free(headnode);
 	free(clipnodes);
-
-#ifdef PLATFORM_CAN_CALC_EXTENT
 	WriteExtentFile(g_extentfilename);
-#else
-	Warning("The " PLATFORM_VERSIONSTRING " version of hlbsp couldn't create extent file. The lack of extent file may cause hlrad error.");
-#endif
 
 	PrintBSPFileSizes();
 

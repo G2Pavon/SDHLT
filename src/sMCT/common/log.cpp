@@ -404,9 +404,7 @@ static void LogArgs(int argc, char **argv)
 void Banner()
 {
     Log("%s " SDHLT_VERSIONSTRING
-#ifndef VERSION_32BIT
         " " PLATFORM_VERSIONSTRING
-#endif
         " (%s)\n",
         g_Program, __DATE__);
     // Log("BUGGY %s (built: %s)\nUse at own risk.\n", g_Program, __DATE__);

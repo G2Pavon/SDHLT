@@ -1072,9 +1072,7 @@ auto main(const int argc, char **argv) -> int
     ResetErrorLog();
     atexit(CloseLog);
     LogArguments(argc, argv);
-#ifdef PLATFORM_CAN_CALC_EXTENT
     hlassume(CalcFaceExtents_test(), assume_first);
-#endif
     atexit(CSGCleanup); // AJM
     dtexdata_init();
     atexit(dtexdata_free);
