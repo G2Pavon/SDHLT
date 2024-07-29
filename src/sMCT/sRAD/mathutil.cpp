@@ -290,7 +290,7 @@ inline auto LineSegmentIntersectsBounds(const vec3_t p1, const vec3_t p2, const 
 //      Returns true if the segment intersects an item in the opaque list
 // =====================================================================================
 auto TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scaleout, int &opaquestyleout // light must convert to this style. -1 = no convert
-) -> bool
+								  ) -> bool
 {
 	int x;
 	VectorFill(scaleout, 1.0);
@@ -311,12 +311,6 @@ auto TestSegmentAgainstOpaqueList(const vec_t *p1, const vec_t *p2, vec3_t &scal
 			opaquestyleout = g_opaque_face_list[x].style;
 			continue;
 		}
-		VectorFill(scaleout, 0.0);
-		opaquestyleout = -1;
-		return true;
-	}
-	if (TestSegmentAgainstStudioList(p1, p2)) // seedee
-	{
 		VectorFill(scaleout, 0.0);
 		opaquestyleout = -1;
 		return true;

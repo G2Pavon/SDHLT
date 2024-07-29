@@ -466,8 +466,3 @@ extern void SnapToPlane(const dplane_t *const plane, vec_t *const point, vec_t o
 extern auto CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
 extern auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
 extern void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const patch_t *patch, vec3_t &origin);
-
-// studio.cpp
-extern void LoadStudioModels();
-extern void FreeStudioModels();
-extern auto TestSegmentAgainstStudioList(const vec_t *p1, const vec_t *p2) -> bool;

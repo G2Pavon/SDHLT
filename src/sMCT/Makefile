@@ -166,14 +166,9 @@ HLRAD_CPPFILES = \
 			sRAD/lightmap.cpp \
 			sRAD/loadtextures.cpp \
 			sRAD/mathutil.cpp \
-			sRAD/meshdesc.cpp \
-			sRAD/meshtrace.cpp \
-			sRAD/progmesh.cpp \
 			sRAD/qrad.cpp \
 			sRAD/qradutil.cpp \
 			sRAD/sparse.cpp \
-			sRAD/stringlib.cpp \
-			sRAD/studio.cpp \
 			sRAD/trace.cpp \
 			sRAD/transfers.cpp \
 			sRAD/transparency.cpp \

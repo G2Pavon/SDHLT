@@ -288,5 +288,3 @@ inline auto PlaneTypeForNormal(vec3_t normal) -> planetypes
     }
     return plane_anyz;
 }
-auto FloatToHalf(float v) -> unsigned short;
-auto HalfToFloat(unsigned short h) -> float;

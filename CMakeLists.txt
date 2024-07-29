@@ -115,14 +115,9 @@ set(RAD_SOURCES
     ${RAD_DIR}/lightmap.cpp
     ${RAD_DIR}/loadtextures.cpp
     ${RAD_DIR}/mathutil.cpp
-	${RAD_DIR}/meshdesc.cpp
-	${RAD_DIR}/meshtrace.cpp
-    ${RAD_DIR}/progmesh.cpp
     ${RAD_DIR}/qrad.cpp
     ${RAD_DIR}/qradutil.cpp
     ${RAD_DIR}/sparse.cpp
-	${RAD_DIR}/stringlib.cpp
-	${RAD_DIR}/studio.cpp
     ${RAD_DIR}/trace.cpp
     ${RAD_DIR}/transfers.cpp
     ${RAD_DIR}/transparency.cpp
@@ -133,9 +128,6 @@ set(RAD_SOURCES
 set(RAD_HEADERS
     ${COMMON_HEADERS}
     ${RAD_DIR}/compress.h
-	${RAD_DIR}/list.h
-	${RAD_DIR}/meshdesc.h
-	${RAD_DIR}/meshtrace.h
     ${RAD_DIR}/qrad.h
 )
 

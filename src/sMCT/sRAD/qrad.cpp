@@ -2093,7 +2093,6 @@ static void RadWorld()
 	BuildDiffuseNormals();
 	// create directlights out of g_patches and lights
 	CreateDirectLights();
-	LoadStudioModels(); // seedee
 	Log("\n");
 
 	// generate a position map for each face
@@ -2495,7 +2494,6 @@ auto main(const int argc, char **argv) -> int
 		Warning("No vis information.");
 	}
 	RadWorld();
-	FreeStudioModels(); // seedee
 	FreeOpaqueFaceList();
 	FreePatches();
 	DeleteOpaqueNodes();
