@@ -47,9 +47,7 @@ static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> i
 
 void OpenWadFile(const char *name, bool fullpath = false)
 {
-	int i;
-	wadfile_t *wad;
-	wad = (wadfile_t *)malloc(sizeof(wadfile_t));
+	auto *wad = (wadfile_t *)malloc(sizeof(wadfile_t));
 	hlassume(wad != nullptr, assume_NoMemory);
 	{
 		wadfile_t **pos;
@@ -111,7 +109,7 @@ void OpenWadFile(const char *name, bool fullpath = false)
 	hlassume(wad->lumpinfos != nullptr, assume_NoMemory);
 	if (fseek(wad->file, wadinfo.infotableofs, SEEK_SET))
 		Error("File read failure: %s", wad->path);
-	for (i = 0; i < wad->numlumps; i++)
+	for (int i = 0; i < wad->numlumps; i++)
 	{
 		SafeRead(wad->file, &wad->lumpinfos[i], sizeof(lumpinfo_t));
 		if (!TerminatedString(wad->lumpinfos[i].name, 16))
@@ -153,10 +151,10 @@ void TryOpenWadFiles()
 					Log("  %s\n", dir->path);
 				}
 			}
-			const char *value = ValueForKey(&g_entities[0], "wad");
+			const auto *value = ValueForKey(&g_entities[0], "wad");
 			char path[MAX_VAL];
-			int i, j;
-			for (i = 0, j = 0; i < strlen(value) + 1; i++)
+			int j;
+			for (int i = 0, j = 0; i < strlen(value) + 1; i++)
 			{
 				if (value[i] == ';' || value[i] == '\0')
 				{
@@ -220,8 +218,8 @@ void DefaultTexture(radtexture_t *tex, const char *name)
 void LoadTexture(radtexture_t *tex, const miptex_t *mt, int size)
 {
 	int i, j;
-	const miptex_t *header = mt;
-	const byte *data = (const byte *)mt;
+	const auto *header = mt;
+	const auto *data = (const byte *)mt;
 	tex->width = header->width;
 	tex->height = header->height;
 	strcpy(tex->name, header->name);
@@ -275,9 +273,9 @@ void LoadTextureFromWad(radtexture_t *tex, const miptex_t *header)
 	wadfile_t *wad;
 	for (wad = g_wadfiles; wad; wad = wad->next)
 	{
-		lumpinfo_t temp, *found;
+		lumpinfo_t temp;
 		strcpy(temp.name, tex->name);
-		found = (lumpinfo_t *)bsearch(&temp, wad->lumpinfos, wad->numlumps, sizeof(lumpinfo_t), lump_sorter_by_name);
+		auto *found = (lumpinfo_t *)bsearch(&temp, wad->lumpinfos, wad->numlumps, sizeof(lumpinfo_t), lump_sorter_by_name);
 		if (found)
 		{
 			if (found->type != 67 || found->compression != 0)
@@ -321,12 +319,11 @@ void LoadTextures()
 	g_numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
 	g_textures = (radtexture_t *)malloc(g_numtextures * sizeof(radtexture_t));
 	hlassume(g_textures != nullptr, assume_NoMemory);
-	int i;
-	for (i = 0; i < g_numtextures; i++)
+	for (int i = 0; i < g_numtextures; i++)
 	{
-		int offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
-		int size = g_texdatasize - offset;
-		radtexture_t *tex = &g_textures[i];
+		auto offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
+		auto size = g_texdatasize - offset;
+		auto *tex = &g_textures[i];
 		if (offset < 0 || size < (int)sizeof(miptex_t))
 		{
 			Warning("Invalid texture data in '%s'.", g_source);
@@ -554,8 +551,7 @@ static void CQ_SelectPartition(cq_node_t *node)
 
 static auto CQ_AllocSearchTree(int maxcolors) -> cq_searchnode_t *
 {
-	cq_searchnode_t *searchtree;
-	searchtree = (cq_searchnode_t *)malloc((2 * maxcolors - 1) * sizeof(cq_searchnode_t));
+	auto *searchtree = (cq_searchnode_t *)malloc((2 * maxcolors - 1) * sizeof(cq_searchnode_t));
 	hlassume(searchtree != nullptr, assume_NoMemory);
 	return searchtree;
 }
@@ -580,14 +576,13 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 	hlassume(pointarray != nullptr, assume_NoMemory);
 	memcpy(pointarray, points, numpoints * sizeof(unsigned char[CQ_DIM]));
 
-	cq_node_t *n;
 	cq_searchnode_t *s;
 	int numnodes = 0;
 	int maxnodes = 2 * maxcolors - 1;
 	auto *nodes = (cq_node_t *)malloc(maxnodes * sizeof(cq_node_t));
 	hlassume(nodes != nullptr, assume_NoMemory);
 
-	n = &nodes[0];
+	auto *n = &nodes[0];
 	numnodes++;
 
 	n->isleafnode = true;
@@ -598,11 +593,10 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 
 	for (int i = 1; i < maxcolors; i++)
 	{
-		bool needsplit;
 		double bestpriority;
 		cq_node_t *bestnode;
 
-		needsplit = false;
+		auto needsplit = false;
 		for (int j = 0; j < numnodes; j++)
 		{
 			n = &nodes[j];
@@ -718,7 +712,7 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 		s->result = numcolors_out;
 		for (int k = 0; k < CQ_DIM; k++)
 		{
-			int val = (int)floor(n->centerofpoints[k] + 0.5 + 0.00001);
+			auto val = (int)floor(n->centerofpoints[k] + 0.5 + 0.00001);
 			val = qmax(0, qmin(val, 255));
 			colors_out[numcolors_out][k] = val;
 		}
@@ -753,7 +747,7 @@ static void CQ_MapPoint_r(int *bestdist, int *best,
 {
 	while (!node->isleafnode)
 	{
-		int dist = point[node->planeaxis] - node->planedist;
+		auto dist = point[node->planeaxis] - node->planedist;
 		if (dist <= -searchradius)
 		{
 			node = node->childrennode[0];
@@ -769,7 +763,7 @@ static void CQ_MapPoint_r(int *bestdist, int *best,
 			return;
 		}
 	}
-	int dist = 0;
+	auto dist = 0;
 	for (int k = 0; k < CQ_DIM; k++)
 	{
 		dist += (colors[node->result][k] - point[k]) * (colors[node->result][k] - point[k]);
@@ -792,22 +786,18 @@ static auto CQ_MapPoint(const unsigned char point[CQ_DIM], const unsigned char (
 	}
 
 	cq_searchnode_t *node;
-	int bestdist;
-	int best;
-	int searchradius;
 
 	for (node = searchtree; !node->isleafnode;)
 	{
 		node = node->childrennode[point[node->planeaxis] >= node->planedist];
 	}
-	best = node->result;
-	bestdist = 0;
+	auto best = node->result;
+	auto bestdist = 0;
 	for (int k = 0; k < CQ_DIM; k++)
 	{
 		bestdist += (colors[best][k] - point[k]) * (colors[best][k] - point[k]);
 	}
-
-	searchradius = (int)ceil(sqrt((double)bestdist) + 0.1);
+	auto searchradius = (int)ceil(sqrt((double)bestdist) + 0.1);
 	CQ_MapPoint_r(&bestdist, &best, searchtree, colors, point, searchradius);
 	return best;
 }
@@ -851,9 +841,9 @@ void NewTextures_Write()
 	int i;
 	auto *texdata = (dmiptexlump_t *)g_dtexdata;
 
-	byte *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
-	int datasize = (g_dtexdata + g_texdatasize) - dataaddr;
-	byte *newdataaddr = (byte *)&texdata->dataofs[texdata->nummiptex + g_newtextures_num];
+	auto *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
+	auto datasize = (g_dtexdata + g_texdatasize) - dataaddr;
+	auto *newdataaddr = (byte *)&texdata->dataofs[texdata->nummiptex + g_newtextures_num];
 	hlassume(g_texdatasize + (newdataaddr - dataaddr) <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
 	memmove(newdataaddr, dataaddr, datasize);
 	g_texdatasize += newdataaddr - dataaddr;
@@ -904,7 +894,7 @@ static void GetLightInt(dface_t *face, const int texsize[2], int ix, int iy, vec
 	}
 	for (int k = 0; k < MAXLIGHTMAPS && face->styles[k] != 255; k++)
 	{
-		byte *samples = &g_dlightdata[face->lightofs + k * (texsize[0] + 1) * (texsize[1] + 1) * 3];
+		auto *samples = &g_dlightdata[face->lightofs + k * (texsize[0] + 1) * (texsize[1] + 1) * 3];
 		if (face->styles[k] == 0)
 		{
 			VectorAdd(light, &samples[(iy * (texsize[0] + 1) + ix) * 3], light);
@@ -914,13 +904,11 @@ static void GetLightInt(dface_t *face, const int texsize[2], int ix, int iy, vec
 
 static void GetLight(dface_t *face, const int texsize[2], double x, double y, vec3_t &light)
 {
-	int ix, iy;
-	double dx, dy;
-	ix = (int)floor(x);
-	iy = (int)floor(y);
-	dx = x - ix;
+	auto ix = (int)floor(x);
+	auto iy = (int)floor(y);
+	auto dx = x - ix;
 	dx = qmax(0, qmin(dx, 1));
-	dy = y - iy;
+	auto dy = y - iy;
 	dy = qmax(0, qmin(dy, 1));
 
 	// do bilinear interpolation
@@ -940,24 +928,21 @@ static void GetLight(dface_t *face, const int texsize[2], double x, double y, ve
 
 static auto GetValidTextureName(int miptex, char name[16]) -> bool
 {
-	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
-	int offset;
-	int size;
-	miptex_t *mt;
+	auto numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
 
 	if (miptex < 0 || miptex >= numtextures)
 	{
 		return false;
 	}
-	offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[miptex];
-	size = g_texdatasize - offset;
+	auto offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[miptex];
+	auto size = g_texdatasize - offset;
 	if (offset < 0 || g_dtexdata + offset < (byte *)&((dmiptexlump_t *)g_dtexdata)->dataofs[numtextures] ||
 		size < (int)sizeof(miptex_t))
 	{
 		return false;
 	}
 
-	mt = (miptex_t *)&g_dtexdata[offset];
+	auto *mt = (miptex_t *)&g_dtexdata[offset];
 	safe_strncpy(name, mt->name, 16);
 
 	if (strcmp(name, mt->name))
@@ -986,15 +971,15 @@ void EmbedLightmapInTextures()
 		return;
 	}
 
-	int i, j, k;
+	int j, k;
 	int miplevel;
 	int count = 0;
 	int count_bytes = 0;
-	bool logged = false;
+	auto logged = false;
 
-	for (i = 0; i < g_numfaces; i++)
+	for (int i = 0; i < g_numfaces; i++)
 	{
-		dface_t *f = &g_dfaces[i];
+		auto *f = &g_dfaces[i];
 
 		if (f->lightofs == -1) // some faces don't have lightmap
 		{
@@ -1005,15 +990,15 @@ void EmbedLightmapInTextures()
 			continue;
 		}
 
-		entity_t *ent = g_face_entity[i];
-		int originaltexinfonum = f->texinfo;
-		texinfo_t *originaltexinfo = &g_texinfo[originaltexinfonum];
+		auto *ent = g_face_entity[i];
+		auto originaltexinfonum = f->texinfo;
+		auto *originaltexinfo = &g_texinfo[originaltexinfonum];
 		char texname[16];
 		if (!GetValidTextureName(originaltexinfo->miptex, texname))
 		{
 			continue;
 		}
-		radtexture_t *tex = &g_textures[originaltexinfo->miptex];
+		auto *tex = &g_textures[originaltexinfo->miptex];
 
 		if (ent == &g_entities[0]) // world
 		{
@@ -1035,10 +1020,10 @@ void EmbedLightmapInTextures()
 			logged = true;
 		}
 
-		bool poweroftwo = DEFAULT_EMBEDLIGHTMAP_POWEROFTWO;
-		vec_t denominator = DEFAULT_EMBEDLIGHTMAP_DENOMINATOR;
-		vec_t gamma = DEFAULT_EMBEDLIGHTMAP_GAMMA;
-		int resolution = DEFAULT_EMBEDLIGHTMAP_RESOLUTION;
+		auto poweroftwo = DEFAULT_EMBEDLIGHTMAP_POWEROFTWO;
+		auto denominator = DEFAULT_EMBEDLIGHTMAP_DENOMINATOR;
+		auto gamma = DEFAULT_EMBEDLIGHTMAP_GAMMA;
+		auto resolution = DEFAULT_EMBEDLIGHTMAP_RESOLUTION;
 		if (IntForKey(ent, "zhlt_embedlightmapresolution"))
 		{
 			resolution = IntForKey(ent, "zhlt_embedlightmapresolution");
@@ -1050,8 +1035,7 @@ void EmbedLightmapInTextures()
 
 		// calculate texture size and allocate memory for all miplevels
 
-		int texturesize[2];
-		float(*texture)[5];				  // red, green, blue and alpha channel; the last one is number of samples
+		int texturesize[2];				  // red, green, blue and alpha channel; the last one is number of samples
 		byte(*texturemips[MIPLEVELS])[4]; // red, green, blue and alpha channel
 		int s, t;
 		int texmins[2];
@@ -1060,7 +1044,7 @@ void EmbedLightmapInTextures()
 		int side[2];
 
 		GetFaceExtents(i, texmins, texmaxs);
-		texsize[0] = texmaxs[0] - texmins[0];
+		texsize[0] = texmaxs[0] - texmins[0]; // texturesize = (texsize + 1) * TEXTURE_STEP
 		texsize[1] = texmaxs[1] - texmins[1];
 		if (texsize[0] < 0 || texsize[1] < 0 || texsize[0] > MAX_SURFACE_EXTENT || texsize[1] > MAX_SURFACE_EXTENT)
 		{
@@ -1090,7 +1074,7 @@ void EmbedLightmapInTextures()
 			}
 			side[k] = (texturesize[k] * resolution - texsize[k] * TEXTURE_STEP) / 2;
 		}
-		texture = (float(*)[5])malloc(texturesize[0] * texturesize[1] * sizeof(float[5]));
+		auto texture = (float(*)[5])malloc(texturesize[0] * texturesize[1] * sizeof(float[5]));
 		hlassume(texture != nullptr, assume_NoMemory);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
@@ -1114,19 +1098,12 @@ void EmbedLightmapInTextures()
 		{
 			for (s = -side[0]; s < texsize[0] * TEXTURE_STEP + side[0]; s++)
 			{
-				double s_vec, t_vec;
-				double src_s, src_t;
-				int src_is, src_it;
-				byte src_index;
 				byte src_color[3];
 				double dest_s, dest_t;
-				int dest_is, dest_it;
-				float(*dest)[5];
-				double light_s, light_t;
 				vec3_t light;
 
-				s_vec = s + texmins[0] * TEXTURE_STEP + 0.5;
-				t_vec = t + texmins[1] * TEXTURE_STEP + 0.5;
+				auto s_vec = s + texmins[0] * TEXTURE_STEP + 0.5;
+				auto t_vec = t + texmins[1] * TEXTURE_STEP + 0.5;
 
 				if (resolution == 1)
 				{
@@ -1140,26 +1117,26 @@ void EmbedLightmapInTextures()
 				}
 				dest_s = dest_s - texturesize[0] * floor(dest_s / texturesize[0]);
 				dest_t = dest_t - texturesize[1] * floor(dest_t / texturesize[1]);
-				dest_is = (int)floor(dest_s); // dest_is = dest_s % texturesize[0]
-				dest_it = (int)floor(dest_t); // dest_it = dest_t % texturesize[1]
+				auto dest_is = (int)floor(dest_s); // dest_is = dest_s % texturesize[0]
+				auto dest_it = (int)floor(dest_t); // dest_it = dest_t % texturesize[1]
 				dest_is = qmax(0, qmin(dest_is, texturesize[0] - 1));
 				dest_it = qmax(0, qmin(dest_it, texturesize[1] - 1));
-				dest = &texture[dest_it * texturesize[0] + dest_is];
+				auto dest = &texture[dest_it * texturesize[0] + dest_is];
 
-				src_s = s_vec;
-				src_t = t_vec;
+				auto src_s = s_vec;
+				auto src_t = t_vec;
 				src_s = src_s - tex->width * floor(src_s / tex->width);
 				src_t = src_t - tex->height * floor(src_t / tex->height);
-				src_is = (int)floor(src_s); // src_is = src_s % tex->width
-				src_it = (int)floor(src_t); // src_it = src_t % tex->height
+				auto src_is = (int)floor(src_s); // src_is = src_s % tex->width
+				auto src_it = (int)floor(src_t); // src_it = src_t % tex->height
 				src_is = qmax(0, qmin(src_is, tex->width - 1));
 				src_it = qmax(0, qmin(src_it, tex->height - 1));
-				src_index = tex->canvas[src_it * tex->width + src_is];
+				auto src_index = tex->canvas[src_it * tex->width + src_is];
 				VectorCopy(tex->palette[src_index], src_color);
 
 				// get light from the center of the destination pixel
-				light_s = (s_vec + resolution * (dest_is + 0.5 - dest_s)) / TEXTURE_STEP - texmins[0];
-				light_t = (t_vec + resolution * (dest_it + 0.5 - dest_t)) / TEXTURE_STEP - texmins[1];
+				auto light_s = (s_vec + resolution * (dest_is + 0.5 - dest_s)) / TEXTURE_STEP - texmins[0];
+				auto light_t = (t_vec + resolution * (dest_it + 0.5 - dest_t)) / TEXTURE_STEP - texmins[1];
 				GetLight(f, texsize, light_s, light_t, light);
 
 				(*dest)[4] += 1;
@@ -1167,7 +1144,7 @@ void EmbedLightmapInTextures()
 				{
 					for (k = 0; k < 3; k++)
 					{
-						float v = src_color[k] * pow(light[k] / denominator, gamma);
+						auto v = src_color[k] * pow(light[k] / denominator, gamma);
 						(*dest)[k] += 255 * qmax(0, qmin(v, 255));
 					}
 					(*dest)[3] += 255;
@@ -1197,7 +1174,7 @@ void EmbedLightmapInTextures()
 					{
 						for (j = 0; j < 3; j++)
 						{
-							int val = (int)floor((*src)[j] / (*src)[3] + 0.5);
+							auto val = (int)floor((*src)[j] / (*src)[3] + 0.5);
 							(*dest)[j] = qmax(0, qmin(val, 255));
 						}
 						(*dest)[3] = 255;
@@ -1213,10 +1190,9 @@ void EmbedLightmapInTextures()
 				for (s = 0; s < (texturesize[0] >> miplevel); s++)
 				{
 					byte(*src[4])[4];
-					byte(*dest)[4];
 					double average[4];
 
-					dest = &texturemips[miplevel][t * (texturesize[0] >> miplevel) + s];
+					auto dest = &texturemips[miplevel][t * (texturesize[0] >> miplevel) + s];
 					src[0] = &texturemips[miplevel - 1][(2 * t) * (texturesize[0] >> (miplevel - 1)) + (2 * s)];
 					src[1] = &texturemips[miplevel - 1][(2 * t) * (texturesize[0] >> (miplevel - 1)) + (2 * s + 1)];
 					src[2] = &texturemips[miplevel - 1][(2 * t + 1) * (texturesize[0] >> (miplevel - 1)) + (2 * s)];
@@ -1242,7 +1218,7 @@ void EmbedLightmapInTextures()
 					{
 						for (j = 0; j < 3; j++)
 						{
-							int val = (int)floor(average[j] / average[3] + 0.5);
+							auto val = (int)floor(average[j] / average[3] + 0.5);
 							(*dest)[j] = qmax(0, qmin(val, 255));
 						}
 						(*dest)[3] = 255;
@@ -1254,14 +1230,12 @@ void EmbedLightmapInTextures()
 		// create its palette
 
 		byte palette[256][3];
-		cq_searchnode_t *palettetree = CQ_AllocSearchTree(256);
+		auto *palettetree = CQ_AllocSearchTree(256);
 		int paletteoffset;
 		int palettenumcolors;
 
 		{
 			int palettemaxcolors;
-			int numsamplepoints;
-			unsigned char(*samplepoints)[3];
 
 			if (texname[0] == '{')
 			{
@@ -1284,9 +1258,9 @@ void EmbedLightmapInTextures()
 				palettemaxcolors = 256;
 			}
 
-			samplepoints = (unsigned char(*)[3])malloc(texturesize[0] * texturesize[1] * sizeof(unsigned char[3]));
+			auto samplepoints = (unsigned char(*)[3])malloc(texturesize[0] * texturesize[1] * sizeof(unsigned char[3]));
 			hlassume(samplepoints != nullptr, assume_NoMemory);
-			numsamplepoints = 0;
+			auto numsamplepoints = 0;
 			for (t = 0; t < texturesize[1]; t++)
 			{
 				for (s = 0; s < texturesize[0]; s++)
@@ -1313,7 +1287,7 @@ void EmbedLightmapInTextures()
 
 		hlassume(g_numtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
 		f->texinfo = g_numtexinfo;
-		texinfo_t *info = &g_texinfo[g_numtexinfo];
+		auto *info = &g_texinfo[g_numtexinfo];
 		g_numtexinfo++;
 
 		*info = g_texinfo[originaltexinfonum];
@@ -1330,9 +1304,7 @@ void EmbedLightmapInTextures()
 
 		// emit a texture
 
-		int miptexsize;
-
-		miptexsize = (int)sizeof(miptex_t);
+		auto miptexsize = (int)sizeof(miptex_t);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptexsize += (texturesize[0] >> miplevel) * (texturesize[1] >> miplevel);
@@ -1344,7 +1316,7 @@ void EmbedLightmapInTextures()
 		memset(miptex, 0, sizeof(miptex_t));
 		miptex->width = texturesize[0];
 		miptex->height = texturesize[1];
-		byte *p = (byte *)miptex + sizeof(miptex_t);
+		auto *p = (byte *)miptex + sizeof(miptex_t);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptex->offsets[miplevel] = p - (byte *)miptex;
@@ -1418,7 +1390,7 @@ void EmbedLightmapInTextures()
 		miptex->name[13] = '\0';
 		miptex->name[14] = '\0';
 		miptex->name[15] = '\0';
-		unsigned int hash = Hash(miptexsize, miptex);
+		auto hash = Hash(miptexsize, miptex);
 		miptex->name[10] = table[(hash / 62 / 62) % 52 + 10];
 		miptex->name[11] = table[(hash / 62) % 62];
 		miptex->name[12] = table[(hash) % 62];
