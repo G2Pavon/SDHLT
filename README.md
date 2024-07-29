@@ -1,4 +1,4 @@
-Is this a replacement for the current map compile tools? No, this project aims to simplify and "clean up" the source code of the HL map compile tools in order to make it easier to understand how the tools work, as the original codebase is complex and hard to understand. I probably got fucked up some function along the way, but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
+Is this a replacement for the current map compile tools? No, this project aims to simplify and "clean up" the source code of the HL map compile tools in order to make it easier to understand how the tools work, as the original codebase is complex and hard to understand. It's still difficult to read, but at least there are fewer lines of code. I probably got fucked up some function along the way, but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
 
 is a fork of SHDLT (because is ease build on Linux), which itself is a fork of VHLT cleaned up from twhl, which in turn is a fork of VHLT, which is a fork of ZHLT, and so on.
 
