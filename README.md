@@ -1,10 +1,3 @@
-I will try to remove things and features (compiler parameters) that i never used, use or will use. I hope I don't break anything.
+The idea is to have a "clean" code to investigate and understand how the compilation tool works since the original zhlt/vhlt is a mess that is very difficult to understand.It is a fork of shdlt because it is easy to build on linux. (btw idk how to program in C++ i'm learning with this project)
 
-\- less features - less code = less paintfull code to read
-
-Commands or functions that I only want to keep:
-
-***CSG***: -cliptype -noskyclip -nowadtextures -wadautodetect
-***BSP***: -subdivide -maxnodesize
-***VIS***: -fast -full
-***RAD***: -bounce -chop -extra -blur -gamma -fade -scale -sparse -texchop
+In the future I would like to convert the C-style data structures into classes.
