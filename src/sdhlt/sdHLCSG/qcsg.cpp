@@ -12,10 +12,10 @@ static int c_outfaces;
 static int c_csgfaces;
 BoundingBox world_bounds;
 
-auto g_skyclip = DEFAULT_SKYCLIP;    // no sky clipping "-noskyclip"
-auto g_estimate = DEFAULT_ESTIMATE;  // progress estimates "-estimate"
-auto g_cliptype = DEFAULT_CLIPTYPE;  // "-cliptype <value>"
-auto g_bClipNazi = DEFAULT_CLIPNAZI; // "-noclipeconomy"
+bool g_skyclip = DEFAULT_SKYCLIP;       // no sky clipping "-noskyclip"
+bool g_estimate = DEFAULT_ESTIMATE;     // progress estimates "-estimate"
+cliptype g_cliptype = DEFAULT_CLIPTYPE; // "-cliptype <value>"
+bool g_bClipNazi = DEFAULT_CLIPNAZI;    // "-noclipeconomy"
 
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 {
