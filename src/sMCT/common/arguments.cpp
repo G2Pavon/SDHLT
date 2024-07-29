@@ -51,22 +51,9 @@ void Usage(ProgramType programType)
         Log("    -texchop #      : Set radiosity patch size for texture light faces\n\n");
         Log("    -fade #         : Set global fade (larger values = shorter lights)\n");
         Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
-        Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
         Log("    -low | -high    : run program an altered priority level\n");
+        Log("    -lightdata #    : Alter maximum lighting memory limit (in kb)\n");
         Log("    -threads #      : manually specify the number of threads to run\n");
-        Log("    -texreflectscale # : Reflectivity for 255-white texture.\n");
-        Log("    -noattic       : Skip shadow processing for small attic lights.\n");
-        Log("    -nooutside     : Skip shadow processing for small outside lights.\n");
-        Log("    -fixsunlight   : Force correct sun lighting (overrides debug modes).\n");
-        Log("    -nooverlay     : Do not use overlay textures for the sky (for debugging)\n");
-        Log("    -nosunlight    : Do not use sunlight as ambient light.\n");
-        Log("    -nobloom       : Disable bloom effect (default is enabled).\n");
-        Log("    -notexlight    : Disable texture lighting\n");
-        Log("    -notexsmoothing: Disable texture smoothing (default is enabled).\n");
-        Log("    -noexposure    : Disable exposure adjustment (default is enabled).\n");
-        Log("    -lineargamma   : Enable linear gamma correction\n");
-        Log("    -low | -high   : run program an altered priority level\n");
-        Log("    -threads #     : manually specify the number of threads to run\n");
         break;
 
     default:
