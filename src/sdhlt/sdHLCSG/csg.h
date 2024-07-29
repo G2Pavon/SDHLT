@@ -47,8 +47,6 @@ constexpr int NUM_HULLS = 4;        // NUM_HULLS should be no larger than MAX_MA
 
 #define BOGUS_RANGE g_iWorldExtent // seedee
 
-extern int g_nMapFileVersion; // map file version * 100 (ie 201), zero for pre-Worldcraft 2.0.1 maps
-
 typedef struct
 {
     vec3_t normal;
@@ -141,7 +139,6 @@ typedef struct
 {
     vec3_t normals[2];
     vec3_t point;
-
     vec3_t vertexes[2];
     vec3_t delta; // delta has the same direction as CrossProduct(normals[0],normals[1])
 } hullbrushedge_t;

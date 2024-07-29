@@ -12,10 +12,107 @@ static int c_outfaces;
 static int c_csgfaces;
 BoundingBox world_bounds;
 
-bool g_skyclip = DEFAULT_SKYCLIP;       // no sky clipping "-noskyclip"
-bool g_estimate = DEFAULT_ESTIMATE;     // progress estimates "-estimate"
-cliptype g_cliptype = DEFAULT_CLIPTYPE; // "-cliptype <value>"
-bool g_bClipNazi = DEFAULT_CLIPNAZI;    // "-noclipeconomy"
+auto g_skyclip = DEFAULT_SKYCLIP;    // no sky clipping "-noskyclip"
+auto g_estimate = DEFAULT_ESTIMATE;  // progress estimates "-estimate"
+auto g_cliptype = DEFAULT_CLIPTYPE;  // "-cliptype <value>"
+auto g_bClipNazi = DEFAULT_CLIPNAZI; // "-noclipeconomy"
+
+void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
+{
+    int i;
+    for (i = 1; i < argc; i++)
+    {
+        if (!strcasecmp(argv[i], "-worldextent"))
+        {
+            g_iWorldExtent = atoi(argv[++i]);
+        }
+        else if (!strcasecmp(argv[i], "-noskyclip"))
+        {
+            g_skyclip = false;
+        }
+        else if (!strcasecmp(argv[i], "-clipeconomy"))
+        {
+            g_bClipNazi = true;
+        }
+
+        else if (!strcasecmp(argv[i], "-cliptype"))
+        {
+            if (i + 1 < argc)
+            {
+                ++i;
+                if (!strcasecmp(argv[i], "smallest"))
+                {
+                    g_cliptype = clip_smallest;
+                }
+                else if (!strcasecmp(argv[i], "normalized"))
+                {
+                    g_cliptype = clip_normalized;
+                }
+                else if (!strcasecmp(argv[i], "simple"))
+                {
+                    g_cliptype = clip_simple;
+                }
+                else if (!strcasecmp(argv[i], "precise"))
+                {
+                    g_cliptype = clip_precise;
+                }
+                else if (!strcasecmp(argv[i], "legacy"))
+                {
+                    g_cliptype = clip_legacy;
+                }
+            }
+            else
+            {
+                Log("Error: -cliptype: incorrect usage of parameter\n");
+                Usage(PROGRAM_CSG);
+            }
+        }
+        else if (!strcasecmp(argv[i], "-texdata"))
+        {
+            if (i + 1 < argc)
+            {
+                int x = atoi(argv[++i]) * 1024;
+                {
+                    g_max_map_miptex = x;
+                }
+            }
+            else
+            {
+                Usage(PROGRAM_CSG);
+            }
+        }
+        else if (!strcasecmp(argv[i], "-lightdata"))
+        {
+            if (i + 1 < argc)
+            {
+                int x = atoi(argv[++i]) * 1024;
+
+                {
+                    g_max_map_lightdata = x;
+                }
+            }
+            else
+            {
+                Usage(PROGRAM_CSG);
+            }
+        }
+        else if (!mapname_from_arg)
+        {
+            const char *temp = argv[i];
+            mapname_from_arg = temp;
+        }
+        else
+        {
+            Log("Unknown option \"%s\"\n", argv[i]);
+            Usage(PROGRAM_CSG);
+        }
+    }
+    if (!mapname_from_arg)
+    {
+        Log("No mapfile specified\n");
+        Usage(PROGRAM_CSG);
+    }
+}
 
 auto NewFaceFromFace(const bface_t *const in) -> bface_t * // Duplicates the non point information of a face, used by SplitFace
 {
@@ -81,7 +178,6 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
     bface_t *face;
     bface_t *face2;
     bface_t *next;
-    int i;
     vec3_t temp;
 
     for (face = outside; face; face = next)
@@ -89,8 +185,8 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
         next = face->next;
 
         int frontcontents, backcontents;
-        int texinfo = face->texinfo;
-        const char *texname = GetTextureByNumber_CSG(texinfo);
+        auto texinfo = face->texinfo;
+        const auto *texname = GetTextureByNumber_CSG(texinfo);
         frontcontents = face->contents;
         if (mirrorcontents == CONTENTS_TOEMPTY)
         {
@@ -108,10 +204,8 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
         {
             backcontents = CONTENTS_EMPTY;
         }
-
-        bool frontnull, backnull;
-        frontnull = false;
-        backnull = false;
+        auto frontnull = false;
+        auto backnull = false;
         if (mirrorcontents == CONTENTS_TOEMPTY)
         {
             if (strncasecmp(texname, "SKIP", 4) && strncasecmp(texname, "HINT", 4) && strncasecmp(texname, "SOLIDHINT", 9) && strncasecmp(texname, "BEVELHINT", 9))
@@ -151,9 +245,9 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
 
         if (!hull) // check the texture alignment of this face
         {
-            int texinfo = face->texinfo;
-            const char *texname = GetTextureByNumber_CSG(texinfo);
-            texinfo_t *tex = &g_texinfo[texinfo];
+            auto texinfo = face->texinfo;
+            const auto *texname = GetTextureByNumber_CSG(texinfo);
+            auto *tex = &g_texinfo[texinfo];
 
             if (texinfo != -1                                                         // nullified textures (NULL, BEVEL, aaatrigger, etc.)
                 && !(tex->flags & TEX_SPECIAL)                                        // sky
@@ -170,17 +264,12 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
                             texname);
                 }
 
-                bool bad; // check for "Bad surface extents"
-                int i;
-                int j;
-                vec_t val;
-
-                bad = false;
-                for (i = 0; i < face->w->m_NumPoints; i++)
+                auto bad = false;
+                for (int i = 0; i < face->w->m_NumPoints; i++)
                 {
-                    for (j = 0; j < 2; j++)
+                    for (int j = 0; j < 2; j++)
                     {
-                        val = DotProduct(face->w->m_Points[i], tex->vecs[j]) + tex->vecs[j][3];
+                        auto val = DotProduct(face->w->m_Points[i], tex->vecs[j]) + tex->vecs[j][3];
                         if (val < -99999 || val > 999999)
                         {
                             bad = true;
@@ -202,7 +291,7 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
             face->contents = backcontents;
             face->texinfo = backnull ? -1 : texinfo;
 
-            for (i = 0; i < face->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
+            for (int i = 0; i < face->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
             {
                 VectorCopy(face->w->m_Points[i], temp);
                 VectorCopy(face->w->m_Points[face->w->m_NumPoints - 1 - i], face->w->m_Points[i]);
@@ -210,16 +299,13 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
             }
             WriteFace(hull, face, (hull ? brush->clipnodedetaillevel : brush->detaillevel));
         }
-
         FreeFace(face);
     }
 }
 
 auto CopyFace(const bface_t *const face) -> bface_t *
 {
-    bface_t *newFace;
-
-    newFace = NewFaceFromFace(face);
+    auto *newFace = NewFaceFromFace(face);
     newFace->w = face->w->Copy();
     newFace->bounds = face->bounds;
     return newFace;
@@ -237,17 +323,13 @@ void FreeFaceList(bface_t *f)
     }
 }
 
-static auto CopyFacesToOutside(brushhull_t *bh) -> bface_t * // Make a copy of all the faces of the brush, so they can be chewed up by other brushes.
-{                                                   // All of the faces start on the outside list. As other brushes take bites out of the faces, the fragments are moved to the  inside list, so they can be freed when they are determined to be completely enclosed in solid.
-    bface_t *f;
-    bface_t *newf;
-    bface_t *outside;
+static auto CopyFacesToOutside(brushhull_t *bh) -> bface_t *
+{
+    bface_t *outside = nullptr;
 
-    outside = nullptr;
-
-    for (f = bh->faces; f; f = f->next)
+    for (auto *f = bh->faces; f; f = f->next)
     {
-        newf = CopyFace(f);
+        auto *newf = CopyFace(f);
         newf->w->getBounds(newf->bounds);
         newf->next = outside;
         outside = newf;
@@ -259,26 +341,16 @@ extern auto ContentsToString(const contents_t type) -> const char *;
 
 static void CSGBrush(int brushnum)
 {
-    int hull;
-    brush_t *brush1; // b1
-    brush_t *brush2; // b2
-    brushhull_t *brushHull1;
-    brushhull_t *brushHull2;
-    int brushNumber;
-    bool shouldOverwrite;
-    bface_t *face;  // f
+    bface_t *face;
     bface_t *face2; // f2
     bface_t *nextFace;
-    bface_t *outsideFaceList; // All of the faces start on the outside list
-    entity_t *entity;
-    vec_t faceArea;
 
-    brush1 = &g_mapbrushes[brushnum];        // get brush info from the given brushnum that we can work with
-    entity = &g_entities[brush1->entitynum]; // get entity info from the given brushnum that we can work with
+    auto *brush1 = &g_mapbrushes[brushnum];        // get brush info from the given brushnum that we can work with
+    auto *entity = &g_entities[brush1->entitynum]; // get entity info from the given brushnum that we can work with
 
-    for (hull = 0; hull < NUM_HULLS; hull++) // for each of the hulls
+    for (int hull = 0; hull < NUM_HULLS; hull++) // for each of the hulls
     {
-        brushHull1 = &brush1->hulls[hull];
+        auto *brushHull1 = &brush1->hulls[hull];
         if (brushHull1->faces &&
             (hull ? brush1->clipnodedetaillevel : brush1->detaillevel))
         {
@@ -300,8 +372,8 @@ static void CSGBrush(int brushnum)
             }
         }
 
-        outsideFaceList = CopyFacesToOutside(brushHull1); // set outside to a copy of the brush's faces
-        shouldOverwrite = false;
+        auto *outsideFaceList = CopyFacesToOutside(brushHull1); // set outside to a copy of the brush's faces
+        auto shouldOverwrite = false;
         if (brush1->contents == CONTENTS_TOEMPTY)
         {
             for (face = outsideFaceList; face; face = face->next)
@@ -311,7 +383,7 @@ static void CSGBrush(int brushnum)
             }
         }
 
-        for (brushNumber = 0; brushNumber < entity->numbrushes; brushNumber++) // for each brush in entity e
+        for (int brushNumber = 0; brushNumber < entity->numbrushes; brushNumber++) // for each brush in entity e
         {
             if (entity->firstbrush + brushNumber == brushnum) // see if b2 needs to clip a chunk out of b1
             {
@@ -319,8 +391,8 @@ static void CSGBrush(int brushnum)
             }
             shouldOverwrite = entity->firstbrush + brushNumber > brushnum;
 
-            brush2 = &g_mapbrushes[entity->firstbrush + brushNumber];
-            brushHull2 = &brush2->hulls[hull];
+            auto *brush2 = &g_mapbrushes[entity->firstbrush + brushNumber];
+            auto *brushHull2 = &brush2->hulls[hull];
             if (brush2->contents == CONTENTS_TOEMPTY)
                 continue;
             if (
@@ -459,7 +531,7 @@ static void CSGBrush(int brushnum)
                 }
                 delete w;
 
-                faceArea = face ? face->w->getArea() : 0;
+                auto faceArea = face ? face->w->getArea() : 0;
                 if (face) // there is one convex fragment of the original, face left inside brush2
                 {
                     if ((hull ? (brush2->clipnodedetaillevel > brush1->clipnodedetaillevel) : (brush2->detaillevel > brush1->detaillevel)))
@@ -518,28 +590,11 @@ static void CSGBrush(int brushnum)
     }
 }
 
-static void EmitPlanes()
-{
-    g_numplanes = g_nummapplanes;
-    {
-        char name[_MAX_PATH];
-        safe_snprintf(name, _MAX_PATH, "%s.pln", g_Mapname);
-        FILE *planeout = fopen(name, "wb");
-        if (!planeout)
-            Error("Couldn't open %s", name);
-        SafeWrite(planeout, g_mapplanes, g_nummapplanes * sizeof(plane_t));
-        fclose(planeout);
-    }
-}
-
 static void SetModelNumbers()
 {
-    int i;
-    int models;
     char value[10];
-
-    models = 1;
-    for (i = 1; i < g_numentities; i++)
+    auto models = 1;
+    for (int i = 1; i < g_numentities; i++)
     {
         if (g_entities[i].numbrushes)
         {
@@ -552,10 +607,9 @@ static void SetModelNumbers()
 
 void ReuseModel()
 {
-    int i;
-    for (i = g_numentities - 1; i >= 1; i--) // so it won't affect the remaining entities in the loop when we move this entity backward
+    for (int i = g_numentities - 1; i >= 1; i--) // so it won't affect the remaining entities in the loop when we move this entity backward
     {
-        const char *name = ValueForKey(&g_entities[i], "zhlt_usemodel");
+        auto *name = ValueForKey(&g_entities[i], "zhlt_usemodel");
         if (!*name)
         {
             continue;
@@ -594,21 +648,18 @@ void ReuseModel()
 
 static void SetLightStyles()
 {
-    int stylenum;
-    const char *t;
-    entity_t *e;
-    int i, j;
+    int j;
     char value[10];
     char lighttargets[MAX_SWITCHED_LIGHTS][MAX_LIGHTTARGETS_NAME];
 
-    bool newtexlight = false;
+    auto newtexlight = false;
 
-    stylenum = 0; // any light that is controlled (has a targetname) must have a unique style number generated for it
-    for (i = 1; i < g_numentities; i++)
+    auto stylenum = 0; // any light that is controlled (has a targetname) must have a unique style number generated for it
+    for (int i = 1; i < g_numentities; i++)
     {
-        e = &g_entities[i];
+        auto *e = &g_entities[i];
 
-        t = ValueForKey(e, "classname");
+        auto *t = ValueForKey(e, "classname");
         if (strncasecmp(t, "light", 5))
         {
             t = ValueForKey(e, "style"); // if it's not a normal light entity, allocate it a new style if necessary.
@@ -665,8 +716,7 @@ static void SetLightStyles()
 
 static void ConvertHintToEmpty()
 {
-    int i;
-    for (i = 0; i < MAX_MAP_BRUSHES; i++) // Convert HINT brushes to EMPTY after they have been carved by csg
+    for (int i = 0; i < MAX_MAP_BRUSHES; i++) // Convert HINT brushes to EMPTY after they have been carved by csg
     {
         if (g_mapbrushes[i].contents == CONTENTS_HINT)
         {
@@ -681,7 +731,7 @@ void LoadWadValue()
     ParseFromMemory(g_dentdata, g_entdatasize);
     epair_t *e;
     entity_t ent0;
-    entity_t *mapent = &ent0;
+    auto *mapent = &ent0;
     memset(mapent, 0, sizeof(entity_t));
     if (!GetToken(true))
     {
@@ -721,37 +771,23 @@ void LoadWadValue()
     free(wadvalue);
 }
 
-void WriteBSP(const char *const name)
-{
-    char path[_MAX_PATH];
-
-    safe_snprintf(path, _MAX_PATH, "%s.bsp", name);
-
-    SetModelNumbers();
-    ReuseModel();
-    SetLightStyles();
-
-    WriteMiptex();
-    UnparseEntities();
-    ConvertHintToEmpty(); // this is ridiculous. --vluzacn
-    WriteBSPFile(path);
-}
-
 unsigned int BrushClipHullsDiscarded = 0;
 unsigned int ClipNodesDiscarded = 0;
 static void MarkEntForNoclip(entity_t *ent)
 {
-    int i;
-    brush_t *b;
-
-    for (i = ent->firstbrush; i < ent->firstbrush + ent->numbrushes; i++)
+    for (int i = ent->firstbrush; i < ent->firstbrush + ent->numbrushes; i++)
     {
-        b = &g_mapbrushes[i];
+        auto *b = &g_mapbrushes[i];
         b->noclip = 1;
 
         BrushClipHullsDiscarded++;
         ClipNodesDiscarded += b->numsides;
     }
+}
+
+void CSGCleanup()
+{
+    FreeWadPaths();
 }
 
 static void CheckForNoClip()
@@ -763,7 +799,7 @@ static void CheckForNoClip()
     int count = 0;
     for (int i = 0; i < g_numentities; i++)
     {
-        entity_t *ent = &g_entities[i];
+        auto *ent = &g_entities[i];
 
         if (!ent->numbrushes || i == 0) // Skip entities that are not models or worldspawn
             continue;
@@ -771,9 +807,9 @@ static void CheckForNoClip()
         char entclassname[MAX_KEY];
         strcpy_s(entclassname, ValueForKey(ent, "classname"));
         int spawnflags = atoi(ValueForKey(ent, "spawnflags"));
-        int skin = IntForKey(ent, "skin"); // vluzacn
+        auto skin = IntForKey(ent, "skin"); // vluzacn
 
-        bool markForNoclip = false;
+        auto markForNoclip = false;
 
         if (skin != -16)
         {
@@ -832,19 +868,99 @@ static void CheckForNoClip()
     Log("%i entities discarded from clipping hulls\n", count);
 }
 
-static void ProcessModels()
+static void BoundWorld()
 {
-    int i, j;
-    int placed;
-    int first, contents;
-    brush_t temp;
+    world_bounds.reset();
+    for (int i = 0; i < g_nummapbrushes; i++)
+    {
+        auto *h = &g_mapbrushes[i].hulls[0];
+        if (!h->faces)
+        {
+            continue;
+        }
+        world_bounds.add(h->bounds);
+    }
+}
 
-    for (i = 0; i < g_numentities; i++)
+static void SetModelCenters(int entitynum)
+{
+    int last;
+    char string[MAXTOKEN];
+    auto *e = &g_entities[entitynum];
+    BoundingBox bounds;
+    vec3_t center;
+
+    if ((entitynum == 0) || (e->numbrushes == 0)) // skip worldspawn and point entities
+        return;
+
+    if (!*ValueForKey(e, "light_origin")) // skip if its not a zhlt_flags light_origin
+        return;
+
+    for (int i = e->firstbrush, last = e->firstbrush + e->numbrushes; i < last; i++)
+    {
+        if (g_mapbrushes[i].contents != CONTENTS_ORIGIN && g_mapbrushes[i].contents != CONTENTS_BOUNDINGBOX)
+        {
+            bounds.add(g_mapbrushes[i].hulls->bounds);
+        }
+    }
+
+    VectorAdd(bounds.m_Mins, bounds.m_Maxs, center);
+    VectorScale(center, 0.5, center);
+
+    safe_snprintf(string, MAXTOKEN, "%i %i %i", (int)center[0], (int)center[1], (int)center[2]);
+    SetKeyValue(e, "model_center", string);
+}
+
+void OpenHullFiles()
+{
+    for (int i = 0; i < NUM_HULLS; i++)
+    {
+        char name[_MAX_PATH];
+
+        safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
+        out[i] = fopen(name, "w");
+        if (!out[i])
+            Error("Couldn't open %s", name);
+
+        safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
+        out_detailbrush[i] = fopen(name, "w");
+        if (!out_detailbrush[i])
+            Error("Couldn't open %s", name);
+    }
+}
+
+void WriteHullSizeFile()
+{
+    char name[_MAX_PATH];
+    safe_snprintf(name, _MAX_PATH, "%s.hsz", g_Mapname);
+    auto *f = fopen(name, "w");
+    if (!f)
+        Error("Couldn't open %s", name);
+
+    for (int i = 0; i < NUM_HULLS; i++)
+    {
+        float x1 = g_hull_size[i][0][0];
+        float y1 = g_hull_size[i][0][1];
+        float z1 = g_hull_size[i][0][2];
+        float x2 = g_hull_size[i][1][0];
+        float y2 = g_hull_size[i][1][1];
+        float z2 = g_hull_size[i][1][2];
+        fprintf(f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
+    }
+    fclose(f);
+}
+
+static void ProcessModels() // a.k.a brush entity
+{
+    int j;
+    int contents;
+
+    for (int i = 0; i < g_numentities; i++)
     {
         if (!g_entities[i].numbrushes) // only models
             continue;
 
-        first = g_entities[i].firstbrush; // sort the contents down so stone bites water, etc
+        auto first = g_entities[i].firstbrush; // sort the contents down so stone bites water, etc
         auto *temps = (brush_t *)malloc(g_entities[i].numbrushes * sizeof(brush_t));
         hlassume(temps, assume_NoMemory);
         for (j = 0; j < g_entities[i].numbrushes; j++)
@@ -852,10 +968,10 @@ static void ProcessModels()
             temps[j] = g_mapbrushes[first + j];
         }
         int placedcontents;
-        bool b_placedcontents = false;
-        for (placed = 0; placed < g_entities[i].numbrushes;)
+        auto b_placedcontents = false;
+        for (auto placed = 0; placed < g_entities[i].numbrushes;)
         {
-            bool b_contents = false;
+            auto b_contents = false;
             for (j = 0; j < g_entities[i].numbrushes; j++)
             {
                 brush_t *brush = &temps[j];
@@ -901,239 +1017,41 @@ static void ProcessModels()
     }
 }
 
-static void SetModelCenters(int entitynum)
+static void EmitPlanes()
 {
-    int i;
-    int last;
-    char string[MAXTOKEN];
-    entity_t *e = &g_entities[entitynum];
-    BoundingBox bounds;
-    vec3_t center;
-
-    if ((entitynum == 0) || (e->numbrushes == 0)) // skip worldspawn and point entities
-        return;
-
-    if (!*ValueForKey(e, "light_origin")) // skip if its not a zhlt_flags light_origin
-        return;
-
-    for (i = e->firstbrush, last = e->firstbrush + e->numbrushes; i < last; i++)
-    {
-        if (g_mapbrushes[i].contents != CONTENTS_ORIGIN && g_mapbrushes[i].contents != CONTENTS_BOUNDINGBOX)
-        {
-            bounds.add(g_mapbrushes[i].hulls->bounds);
-        }
-    }
-
-    VectorAdd(bounds.m_Mins, bounds.m_Maxs, center);
-    VectorScale(center, 0.5, center);
-
-    safe_snprintf(string, MAXTOKEN, "%i %i %i", (int)center[0], (int)center[1], (int)center[2]);
-    SetKeyValue(e, "model_center", string);
-}
-
-static void BoundWorld()
-{
-    int i;
-    brushhull_t *h;
-
-    world_bounds.reset();
-
-    for (i = 0; i < g_nummapbrushes; i++)
-    {
-        h = &g_mapbrushes[i].hulls[0];
-        if (!h->faces)
-        {
-            continue;
-        }
-        world_bounds.add(h->bounds);
-    }
-}
-
-void CSGCleanup()
-{
-    FreeWadPaths();
-}
-
-void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
-{
-    int i;
-    for (i = 1; i < argc; i++)
-    {
-        if (!strcasecmp(argv[i], "-worldextent"))
-        {
-            g_iWorldExtent = atoi(argv[++i]);
-        }
-        else if (!strcasecmp(argv[i], "-noskyclip"))
-        {
-            g_skyclip = false;
-        }
-        else if (!strcasecmp(argv[i], "-clipeconomy"))
-        {
-            g_bClipNazi = true;
-        }
-
-        else if (!strcasecmp(argv[i], "-cliptype"))
-        {
-            if (i + 1 < argc)
-            {
-                ++i;
-                if (!strcasecmp(argv[i], "smallest"))
-                {
-                    g_cliptype = clip_smallest;
-                }
-                else if (!strcasecmp(argv[i], "normalized"))
-                {
-                    g_cliptype = clip_normalized;
-                }
-                else if (!strcasecmp(argv[i], "simple"))
-                {
-                    g_cliptype = clip_simple;
-                }
-                else if (!strcasecmp(argv[i], "precise"))
-                {
-                    g_cliptype = clip_precise;
-                }
-                else if (!strcasecmp(argv[i], "legacy"))
-                {
-                    g_cliptype = clip_legacy;
-                }
-            }
-            else
-            {
-                Log("Error: -cliptype: incorrect usage of parameter\n");
-                Usage(PROGRAM_CSG);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-texdata"))
-        {
-            if (i + 1 < argc)
-            {
-                int x = atoi(argv[++i]) * 1024;
-                {
-                    g_max_map_miptex = x;
-                }
-            }
-            else
-            {
-                Usage(PROGRAM_CSG);
-            }
-        }
-        else if (!strcasecmp(argv[i], "-lightdata"))
-        {
-            if (i + 1 < argc)
-            {
-                int x = atoi(argv[++i]) * 1024;
-
-                {
-                    g_max_map_lightdata = x;
-                }
-            }
-            else
-            {
-                Usage(PROGRAM_CSG);
-            }
-        }
-        else if (!mapname_from_arg)
-        {
-            const char *temp = argv[i];
-            mapname_from_arg = temp;
-        }
-        else
-        {
-            Log("Unknown option \"%s\"\n", argv[i]);
-            Usage(PROGRAM_CSG);
-        }
-    }
-    if (!mapname_from_arg)
-    {
-        Log("No mapfile specified\n");
-        Usage(PROGRAM_CSG);
-    }
-}
-
-void OpenHullFiles()
-{
-    for (int i = 0; i < NUM_HULLS; i++)
+    g_numplanes = g_nummapplanes;
     {
         char name[_MAX_PATH];
-
-        safe_snprintf(name, _MAX_PATH, "%s.p%i", g_Mapname, i);
-        out[i] = fopen(name, "w");
-        if (!out[i])
+        safe_snprintf(name, _MAX_PATH, "%s.pln", g_Mapname);
+        auto *planeout = fopen(name, "wb");
+        if (!planeout)
             Error("Couldn't open %s", name);
-
-        safe_snprintf(name, _MAX_PATH, "%s.b%i", g_Mapname, i);
-        out_detailbrush[i] = fopen(name, "w");
-        if (!out_detailbrush[i])
-            Error("Couldn't open %s", name);
+        SafeWrite(planeout, g_mapplanes, g_nummapplanes * sizeof(plane_t));
+        fclose(planeout);
     }
 }
 
-void WriteHullSizeFile()
+void WriteBSP(const char *const name)
 {
-    FILE *f;
-    char name[_MAX_PATH];
-    safe_snprintf(name, _MAX_PATH, "%s.hsz", g_Mapname);
-    f = fopen(name, "w");
-    if (!f)
-        Error("Couldn't open %s", name);
+    char path[_MAX_PATH];
 
-    for (int i = 0; i < NUM_HULLS; i++)
-    {
-        float x1 = g_hull_size[i][0][0];
-        float y1 = g_hull_size[i][0][1];
-        float z1 = g_hull_size[i][0][2];
-        float x2 = g_hull_size[i][1][0];
-        float y2 = g_hull_size[i][1][1];
-        float z2 = g_hull_size[i][1][2];
-        fprintf(f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
-    }
-    fclose(f);
+    safe_snprintf(path, _MAX_PATH, "%s.bsp", name);
+
+    SetModelNumbers();
+    ReuseModel();
+    SetLightStyles();
+
+    WriteMiptex();
+    UnparseEntities();
+    ConvertHintToEmpty(); // this is ridiculous. --vluzacn
+    WriteBSPFile(path);
 }
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-void ConvertGameTextMessages()
-{
-    int count = 0;
-    for (int i = 0; i < g_numentities; i++)
-    {
-        entity_t *ent = &g_entities[i];
-        const char *value;
-        char *newvalue;
-
-        // Check if the entity is a "game_text"
-        if (strcmp(ValueForKey(ent, "classname"), "game_text"))
-        {
-            continue;
-        }
-
-        // Get the current value of the "message" key
-        value = ValueForKey(ent, "message");
-        if (*value)
-        {
-            // Convert the ANSI value to UTF-8
-            newvalue = ANSItoUTF8(value);
-            if (strcmp(newvalue, value))
-            {
-                // Set the new UTF-8 value
-                SetKeyValue(ent, "message", newvalue);
-                count++;
-            }
-            free(newvalue);
-        }
-    }
-    if (count)
-    {
-        Log("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
-    }
-}
-#endif
 
 auto main(const int argc, char **argv) -> int
 {
     int i;
-    char name[_MAX_PATH];                // mapanme
-    double start, end;                   // start/end time log
+    char name[_MAX_PATH];                   // mapanme
+    double start, end;                      // start/end time log
     const char *mapname_from_arg = nullptr; // mapname path from passed argvar
 
     g_Program = "sdHLCSG";
@@ -1205,3 +1123,41 @@ auto main(const int argc, char **argv) -> int
     LogTimeElapsed(end - start);
     return 0;
 }
+
+#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
+void ConvertGameTextMessages()
+{
+    int count = 0;
+    for (int i = 0; i < g_numentities; i++)
+    {
+        entity_t *ent = &g_entities[i];
+        const char *value;
+        char *newvalue;
+
+        // Check if the entity is a "game_text"
+        if (strcmp(ValueForKey(ent, "classname"), "game_text"))
+        {
+            continue;
+        }
+
+        // Get the current value of the "message" key
+        value = ValueForKey(ent, "message");
+        if (*value)
+        {
+            // Convert the ANSI value to UTF-8
+            newvalue = ANSItoUTF8(value);
+            if (strcmp(newvalue, value))
+            {
+                // Set the new UTF-8 value
+                SetKeyValue(ent, "message", newvalue);
+                count++;
+            }
+            free(newvalue);
+        }
+    }
+    if (count)
+    {
+        Log("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
+    }
+}
+#endif
