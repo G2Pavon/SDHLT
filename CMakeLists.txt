@@ -170,7 +170,9 @@ include_directories(
 # System config
 #================
 
+# Enforce 64-bit build
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
     add_compile_options(
         -Wall
         -O2
@@ -190,19 +192,17 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         HAVE_SYS_TIME_H
         HAVE_UNISTD_H
     )
-    message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME}")
+    message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    option(SDHLT_64BIT "Flag targets as 64-bit." ON)
-    if (SDHLT_64BIT)
-        add_compile_definitions(VERSION_64BIT)
-    else()
-        add_compile_definitions(VERSION_32BIT)
+    if (NOT DEFINED CMAKE_GENERATOR_PLATFORM)
+        set(CMAKE_GENERATOR_PLATFORM x64)
     endif()
     add_compile_definitions(
+        VERSION_64BIT
         SYSTEM_WIN32
         STDC_HEADERS
     )
-    message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME}")
+    message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 else()
     add_compile_definitions(VERSION_OTHER)
     message("${CMAKE_PROJECT_NAME} > WARNING: Unknown system \"${CMAKE_SYSTEM_NAME}\"")
