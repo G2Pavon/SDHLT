@@ -18,7 +18,7 @@ constexpr int SIDE_ON = 2;
 constexpr int SIDE_BACK = 1;
 constexpr int SIDE_CROSS = -2;
 
-#ifdef SDHLBSP // seedee
+#ifdef SBSP // seedee
 #ifndef DOUBLEVEC_T
 #error you must add -dDOUBLEVEC_T to the project!
 #endif

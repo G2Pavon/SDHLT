@@ -1054,7 +1054,7 @@ auto main(const int argc, char **argv) -> int
     double start, end;                      // start/end time log
     const char *mapname_from_arg = nullptr; // mapname path from passed argvar
 
-    g_Program = "sdHLCSG";
+    g_Program = "sCSG";
     if (InitConsole(argc, argv) < 0)
         Usage(PROGRAM_CSG);
     if (argc == 1)

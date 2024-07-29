@@ -852,7 +852,7 @@ void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 }
 auto CountBlocks() -> int
 {
-#if !defined(PLATFORM_CAN_CALC_EXTENT) && !defined(SDHLRAD)
+#if !defined(PLATFORM_CAN_CALC_EXTENT) && !defined(SRAD)
 	return -1; // otherwise GetFaceExtents will error
 #endif
 	lightmapblock_t *blocks;
@@ -1562,7 +1562,7 @@ void UnparseEntities()
 			SetKeyValue(mapent, "convertto", "");
 		}
 	}
-#ifdef SDHLCSG // seedee
+#ifdef SCSG // seedee
 	{
 		int i, j;
 		int count = 0;

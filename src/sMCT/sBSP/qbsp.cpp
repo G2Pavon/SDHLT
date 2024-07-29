@@ -1417,7 +1417,7 @@ auto main(const int argc, char **argv) -> int
 	double start, end;
 	const char *mapname_from_arg = nullptr;
 
-	g_Program = "sdHLBSP";
+	g_Program = "sBSP";
 	if (InitConsole(argc, argv) < 0)
 		Usage(PROGRAM_BSP);
 	// if we dont have any command line argvars, print out usage and die

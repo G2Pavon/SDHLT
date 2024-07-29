@@ -2252,7 +2252,7 @@ auto main(const int argc, char **argv) -> int
 	const char *mapname_from_arg = nullptr;
 	char temp[_MAX_PATH]; // seedee
 
-	g_Program = "sdHLRAD";
+	g_Program = "sRAD";
 
 	int argcold = argc;
 	char **argvold = argv;

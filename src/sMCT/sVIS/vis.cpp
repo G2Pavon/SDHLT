@@ -678,7 +678,7 @@ auto main(const int argc, char **argv) -> int
     char source[_MAX_PATH];
     double start, end;
     const char *mapname_from_arg = nullptr;
-    g_Program = "sdHLVIS";
+    g_Program = "sVIS";
 
     if (InitConsole(argc, argv) < 0)
         Usage(PROGRAM_VIS);

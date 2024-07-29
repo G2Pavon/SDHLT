@@ -16,7 +16,7 @@
 
 #define SDHLT_VERSIONSTRING "v1.2.0"
 
-#if !defined(SDHLCSG) && !defined(SDHLBSP) && !defined(SDHLVIS) && !defined(SDHLRAD) // seedee
+#if !defined(SCSG) && !defined(SBSP) && !defined(SVIS) && !defined(SRAD) // seedee
 #error "You must define one of these in the settings of each project: SDHLCSG, SDHLBSP, SDHLVIS, SDHLRAD. The most likely cause is that you didn't load the project from the .sln file."
 #endif
 #if !defined(VERSION_32BIT) && !defined(VERSION_64BIT) && !defined(VERSION_LINUX) && !defined(VERSION_OTHER) //--vluzacn

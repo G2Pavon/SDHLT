@@ -222,7 +222,7 @@ set_target_properties(BSP CSG RAD VIS
         PREFIX "s"
 )
 
-target_compile_definitions(BSP PRIVATE SDHLBSP DOUBLEVEC_T)
-target_compile_definitions(CSG PRIVATE SDHLCSG DOUBLEVEC_T)
-target_compile_definitions(RAD PRIVATE SDHLRAD)
-target_compile_definitions(VIS PRIVATE SDHLVIS)
+target_compile_definitions(BSP PRIVATE SBSP DOUBLEVEC_T)
+target_compile_definitions(CSG PRIVATE SCSG DOUBLEVEC_T)
+target_compile_definitions(RAD PRIVATE SRAD)
+target_compile_definitions(VIS PRIVATE SVIS)
