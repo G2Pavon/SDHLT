@@ -116,10 +116,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 
 auto NewFaceFromFace(const bface_t *const in) -> bface_t * // Duplicates the non point information of a face, used by SplitFace
 {
-    bface_t *newFace;
-
-    newFace = (bface_t *)Alloc(sizeof(bface_t));
-
+    auto *newFace = (bface_t *)Alloc(sizeof(bface_t));
     newFace->contents = in->contents;
     newFace->texinfo = in->texinfo;
     newFace->planenum = in->planenum;
@@ -137,17 +134,14 @@ void FreeFace(bface_t *face)
 
 void WriteFace(const int hull, const bface_t *const face, int detaillevel)
 {
-    unsigned int i;
-    Winding *w;
-
     ThreadLock();
     if (!hull)
         c_csgfaces++;
-    w = face->w; // .p0 format
+    auto *w = face->w; // .p0 format
 
     fprintf(out[hull], "%i %i %i %i %u\n", detaillevel, face->planenum, face->texinfo, face->contents, w->m_NumPoints); // plane summary
 
-    for (i = 0; i < w->m_NumPoints; i++) // for each of the points on the face
+    for (int i = 0; i < w->m_NumPoints; i++) // for each of the points on the face
     {
         fprintf(out[hull], "%5.8f %5.8f %5.8f\n", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]); // write the co-ords
     }
@@ -162,7 +156,7 @@ void WriteDetailBrush(int hull, const bface_t *faces)
     fprintf(out_detailbrush[hull], "0\n");
     for (const bface_t *face = faces; face; face = face->next)
     {
-        Winding *w = face->w;
+        auto *w = face->w;
         fprintf(out_detailbrush[hull], "%i %u\n", face->planenum, w->m_NumPoints);
         for (int i = 0; i < w->m_NumPoints; i++)
         {
@@ -226,7 +220,15 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
         }
 
         face->contents = frontcontents;
-        face->texinfo = frontnull ? -1 : texinfo;
+        if (frontnull)
+        {
+            face->texinfo = -1;
+        }
+        else
+        {
+            face->texinfo = texinfo;
+        }
+
         if (!hull) // count unique faces
         {
             for (face2 = brush->hulls[hull].faces; face2; face2 = face2->next)
