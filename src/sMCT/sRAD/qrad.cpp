@@ -2242,6 +2242,191 @@ void ReadInfoTexAndMinlights()
 	}
 }
 
+void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
+{
+	for (int i = 1; i < argc; i++)
+	{
+		if (!strcasecmp(argv[i], "-console"))
+		{
+#ifndef SYSTEM_WIN32
+			Warning("The option '-console #' is only valid for Windows.");
+#endif
+			if (i + 1 < argc)
+				++i;
+			else
+				Usage(PROGRAM_RAD);
+		}
+		else if (!strcasecmp(argv[i], "-extra"))
+		{
+			g_extra = true;
+
+			if (g_numbounce < 12)
+			{
+				g_numbounce = 12;
+			}
+		}
+		else if (!strcasecmp(argv[i], "-bounce"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_numbounce = atoi(argv[++i]);
+
+				if (g_numbounce > 1000)
+				{
+					Log("Unexpectedly large value (>1000) for '-bounce'\n");
+					Usage(PROGRAM_RAD);
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-threads"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_numthreads = atoi(argv[++i]);
+				if (g_numthreads < 1)
+				{
+					Log("Expected value of at least 1 for '-threads'\n");
+					Usage(PROGRAM_RAD);
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-chop"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_chop = atof(argv[++i]);
+				if (g_chop < 1)
+				{
+					Log("expected value greater than 1 for '-chop'\n");
+					Usage(PROGRAM_RAD);
+				}
+				if (g_chop < 32)
+				{
+					Log("Warning: Chop values below 32 are not recommended.");
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-texchop"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_texchop = atof(argv[++i]);
+				if (g_texchop < 1)
+				{
+					Log("expected value greater than 1 for '-texchop'\n");
+					Usage(PROGRAM_RAD);
+				}
+				if (g_texchop < 32)
+				{
+					Log("Warning: texchop values below 16 are not recommended.");
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-fade"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				g_fade = (float)atof(argv[++i]);
+				if (g_fade < 0.0)
+				{
+					Log("-fade must be a positive number\n");
+					Usage(PROGRAM_RAD);
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-limiter"))
+		{
+			if (i + 1 < argc) //"1" was added to check if there is another argument afterwards (expected value) //seedee
+			{
+				g_limitthreshold = atof(argv[++i]);
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-low"))
+		{
+			g_threadpriority = eThreadPriorityLow;
+		}
+		else if (!strcasecmp(argv[i], "-high"))
+		{
+			g_threadpriority = eThreadPriorityHigh;
+		}
+		else if (!strcasecmp(argv[i], "-texdata"))
+		{
+			if (i + 1 < argc) // added "1" .--vluzacn
+			{
+				int x = atoi(argv[++i]) * 1024;
+
+				// if (x > g_max_map_miptex) //--vluzacn
+				{
+					g_max_map_miptex = x;
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (!strcasecmp(argv[i], "-lightdata")) // lightdata
+		{
+			if (i + 1 < argc) //--vluzacn
+			{
+				int x = atoi(argv[++i]) * 1024;
+
+				// if (x > g_max_map_lightdata) //--vluzacn
+				{
+					g_max_map_lightdata = x;
+				}
+			}
+			else
+			{
+				Usage(PROGRAM_RAD);
+			}
+		}
+		else if (argv[i][0] == '-')
+		{
+			Log("Unknown option \"%s\"\n", argv[i]);
+			Usage(PROGRAM_RAD);
+		}
+		else if (!mapname_from_arg)
+		{
+			mapname_from_arg = argv[i];
+		}
+		else
+		{
+			Log("Unknown option \"%s\"\n", argv[i]);
+			Usage(PROGRAM_RAD);
+		}
+	}
+
+	if (!mapname_from_arg)
+	{
+		Log("No mapname specified\n");
+		Usage(PROGRAM_RAD);
+	}
+}
 // =====================================================================================
 //  main
 // =====================================================================================
@@ -2253,269 +2438,76 @@ auto main(const int argc, char **argv) -> int
 	char temp[_MAX_PATH]; // seedee
 
 	g_Program = "sRAD";
+	if (InitConsole(argc, argv) < 0)
+		Usage(PROGRAM_RAD);
+	if (argc == 1)
+		Usage(PROGRAM_RAD);
+	HandleArgs(argc, argv, mapname_from_arg);
+	g_smoothing_threshold = (float)cos(50.0 * (Q_PI / 180.0)); // 50.0 = DEFAULT_SMOOTHING_VALUE = g_smoothing_value =  a.k.a '-smooth'
 
-	int argcold = argc;
-	char **argvold = argv;
+	safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
+	FlipSlashes(g_Mapname);
+	ExtractFilePath(g_Mapname, temp); // skip mapname
+	ExtractFilePath(temp, g_Wadpath);
+	StripExtension(g_Mapname);
+	atexit(CloseLog);
+	ThreadSetDefault();
+	ThreadSetPriority(g_threadpriority);
+	LogArguments(argc, argv);
+	CheckForErrorLog();
+
+	compress_compatability_test();
+	hlassume(CalcFaceExtents_test(), assume_first);
+	dtexdata_init();
+	atexit(dtexdata_free);
+	// END INIT
+
+	// BEGIN RAD
+	start = I_FloatTime();
+
+	// normalise maxlight
+
+	safe_snprintf(g_source, _MAX_PATH, "%s.bsp", g_Mapname);
+	LoadBSPFile(g_source);
+	ParseEntities();
+	DeleteEmbeddedLightmaps();
+	LoadTextures();
+	ReadCustomChopValue();
+	ReadCustomSmoothValue();
+	ReadTranslucentTextures();
+	ReadLightingCone();
+
+	g_smoothing_threshold_2 = 1.0; // cos(0 * (Q_PI / 180.0)), 0 = DEFAULT_SMOOTHING2_VALUE = g_smoothing_value_2 a.k.a '-smooth2'
 	{
-		int argc;
-		char **argv;
-		ParseParamFile(argcold, argvold, argc, argv);
-		{
-			if (InitConsole(argc, argv) < 0)
-				Usage(PROGRAM_RAD);
-			if (argc == 1)
-				Usage(PROGRAM_RAD);
-
-			for (i = 1; i < argc; i++)
+		int style;
+		for (style = 0; style < ALLSTYLES; ++style)
+			if (style)
 			{
-				if (!strcasecmp(argv[i], "-console"))
-				{
-#ifndef SYSTEM_WIN32
-					Warning("The option '-console #' is only valid for Windows.");
-#endif
-					if (i + 1 < argc)
-						++i;
-					else
-						Usage(PROGRAM_RAD);
-				}
-				else if (!strcasecmp(argv[i], "-extra"))
-				{
-					g_extra = true;
-
-					if (g_numbounce < 12)
-					{
-						g_numbounce = 12;
-					}
-				}
-				else if (!strcasecmp(argv[i], "-bounce"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_numbounce = atoi(argv[++i]);
-
-						if (g_numbounce > 1000)
-						{
-							Log("Unexpectedly large value (>1000) for '-bounce'\n");
-							Usage(PROGRAM_RAD);
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-threads"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_numthreads = atoi(argv[++i]);
-						if (g_numthreads < 1)
-						{
-							Log("Expected value of at least 1 for '-threads'\n");
-							Usage(PROGRAM_RAD);
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-chop"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_chop = atof(argv[++i]);
-						if (g_chop < 1)
-						{
-							Log("expected value greater than 1 for '-chop'\n");
-							Usage(PROGRAM_RAD);
-						}
-						if (g_chop < 32)
-						{
-							Log("Warning: Chop values below 32 are not recommended.");
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-texchop"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_texchop = atof(argv[++i]);
-						if (g_texchop < 1)
-						{
-							Log("expected value greater than 1 for '-texchop'\n");
-							Usage(PROGRAM_RAD);
-						}
-						if (g_texchop < 32)
-						{
-							Log("Warning: texchop values below 16 are not recommended.");
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-fade"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						g_fade = (float)atof(argv[++i]);
-						if (g_fade < 0.0)
-						{
-							Log("-fade must be a positive number\n");
-							Usage(PROGRAM_RAD);
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-limiter"))
-				{
-					if (i + 1 < argc) //"1" was added to check if there is another argument afterwards (expected value) //seedee
-					{
-						g_limitthreshold = atof(argv[++i]);
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-low"))
-				{
-					g_threadpriority = eThreadPriorityLow;
-				}
-				else if (!strcasecmp(argv[i], "-high"))
-				{
-					g_threadpriority = eThreadPriorityHigh;
-				}
-				else if (!strcasecmp(argv[i], "-texdata"))
-				{
-					if (i + 1 < argc) // added "1" .--vluzacn
-					{
-						int x = atoi(argv[++i]) * 1024;
-
-						// if (x > g_max_map_miptex) //--vluzacn
-						{
-							g_max_map_miptex = x;
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (!strcasecmp(argv[i], "-lightdata")) // lightdata
-				{
-					if (i + 1 < argc) //--vluzacn
-					{
-						int x = atoi(argv[++i]) * 1024;
-
-						// if (x > g_max_map_lightdata) //--vluzacn
-						{
-							g_max_map_lightdata = x;
-						}
-					}
-					else
-					{
-						Usage(PROGRAM_RAD);
-					}
-				}
-				else if (argv[i][0] == '-')
-				{
-					Log("Unknown option \"%s\"\n", argv[i]);
-					Usage(PROGRAM_RAD);
-				}
-				else if (!mapname_from_arg)
-				{
-					mapname_from_arg = argv[i];
-				}
-				else
-				{
-					Log("Unknown option \"%s\"\n", argv[i]);
-					Usage(PROGRAM_RAD);
-				}
+				g_corings[style] = 0.01; // 0.01 = DEFAULT_CORING = g_coring a.k.a -coring
 			}
-
-			if (!mapname_from_arg)
+			else
 			{
-				Log("No mapname specified\n");
-				Usage(PROGRAM_RAD);
+				g_corings[style] = 0;
 			}
-
-			g_smoothing_threshold = (float)cos(50.0 * (Q_PI / 180.0)); // 50.0 = DEFAULT_SMOOTHING_VALUE = g_smoothing_value =  a.k.a '-smooth'
-
-			safe_strncpy(g_Mapname, mapname_from_arg, _MAX_PATH);
-			FlipSlashes(g_Mapname);
-			ExtractFilePath(g_Mapname, temp); // skip mapname
-			ExtractFilePath(temp, g_Wadpath);
-			StripExtension(g_Mapname);
-			atexit(CloseLog);
-			ThreadSetDefault();
-			ThreadSetPriority(g_threadpriority);
-			LogStart(argcold, argvold);
-			LogArguments(argc, argv);
-			CheckForErrorLog();
-
-			compress_compatability_test();
-			hlassume(CalcFaceExtents_test(), assume_first);
-			dtexdata_init();
-			atexit(dtexdata_free);
-			// END INIT
-
-			// BEGIN RAD
-			start = I_FloatTime();
-
-			// normalise maxlight
-
-			safe_snprintf(g_source, _MAX_PATH, "%s.bsp", g_Mapname);
-			LoadBSPFile(g_source);
-			ParseEntities();
-			DeleteEmbeddedLightmaps();
-			LoadTextures();
-			ReadCustomChopValue();
-			ReadCustomSmoothValue();
-			ReadTranslucentTextures();
-			ReadLightingCone();
-
-			g_smoothing_threshold_2 = 1.0; // cos(0 * (Q_PI / 180.0)), 0 = DEFAULT_SMOOTHING2_VALUE = g_smoothing_value_2 a.k.a '-smooth2'
-			{
-				int style;
-				for (style = 0; style < ALLSTYLES; ++style)
-					if (style)
-					{
-						g_corings[style] = 0.01; // 0.01 = DEFAULT_CORING = g_coring a.k.a -coring
-					}
-					else
-					{
-						g_corings[style] = 0;
-					}
-			}
-			if (!g_visdatasize)
-			{
-				Warning("No vis information.");
-			}
-			RadWorld();
-			FreeStudioModels(); // seedee
-			FreeOpaqueFaceList();
-			FreePatches();
-			DeleteOpaqueNodes();
-
-			EmbedLightmapInTextures();
-
-			PrintBSPFileSizes();
-			WriteBSPFile(g_source);
-
-			end = I_FloatTime();
-			LogTimeElapsed(end - start);
-			// END RAD
-		}
 	}
+	if (!g_visdatasize)
+	{
+		Warning("No vis information.");
+	}
+	RadWorld();
+	FreeStudioModels(); // seedee
+	FreeOpaqueFaceList();
+	FreePatches();
+	DeleteOpaqueNodes();
+
+	EmbedLightmapInTextures();
+
+	PrintBSPFileSizes();
+	WriteBSPFile(g_source);
+
+	end = I_FloatTime();
+	LogTimeElapsed(end - start);
+	// END RAD
+
 	return 0;
 }
