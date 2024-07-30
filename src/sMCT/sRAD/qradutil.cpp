@@ -26,9 +26,9 @@ auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> dleaf_t *
 			dleaf_t *result[2];
 			result[0] = PointInLeaf_Worst_r(node->children[0], point);
 			result[1] = PointInLeaf_Worst_r(node->children[1], point);
-			if (result[0] == g_dleafs || result[0]->contents == CONTENTS_SOLID)
+			if (result[0] == g_dleafs || result[0]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 				return result[0];
-			if (result[1] == g_dleafs || result[1]->contents == CONTENTS_SOLID)
+			if (result[1] == g_dleafs || result[1]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 				return result[1];
 			if (result[0]->contents == CONTENTS_SKY)
 				return result[0];
@@ -159,7 +159,7 @@ void TranslatePlane(dplane_t *plane, const vec_t *delta)
 	plane->dist += DotProduct(plane->normal, delta);
 }
 
-// HuntForWorld will never return CONTENTS_SKY or CONTENTS_SOLID leafs
+// HuntForWorld will never return CONTENTS_SKY or contents_t::CONTENTS_SOLID leafs
 auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *
 {
 	dleaf_t *leaf;
@@ -224,7 +224,7 @@ auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane
 					{
 						if ((leaf = PointInLeaf_Worst(current_point)) != g_dleafs)
 						{
-							if ((leaf->contents != CONTENTS_SKY) && (leaf->contents != CONTENTS_SOLID))
+							if ((leaf->contents != CONTENTS_SKY) && (leaf->contents != static_cast<int>(contents_t::CONTENTS_SOLID)))
 							{
 								if (x || y || z)
 								{

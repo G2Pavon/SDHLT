@@ -64,7 +64,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
             else
             {
                 Log("Error: -cliptype: incorrect usage of parameter\n");
-                Usage(PROGRAM_CSG);
+                Usage(ProgramType::PROGRAM_CSG);
             }
         }
         else if (!strcasecmp(argv[i], "-texdata"))
@@ -78,7 +78,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
             }
             else
             {
-                Usage(PROGRAM_CSG);
+                Usage(ProgramType::PROGRAM_CSG);
             }
         }
         else if (!strcasecmp(argv[i], "-lightdata"))
@@ -93,7 +93,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
             }
             else
             {
-                Usage(PROGRAM_CSG);
+                Usage(ProgramType::PROGRAM_CSG);
             }
         }
         else if (!mapname_from_arg)
@@ -104,13 +104,13 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
         else
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage(PROGRAM_CSG);
+            Usage(ProgramType::PROGRAM_CSG);
         }
     }
     if (!mapname_from_arg)
     {
         Log("No mapfile specified\n");
-        Usage(PROGRAM_CSG);
+        Usage(ProgramType::PROGRAM_CSG);
     }
 }
 
@@ -287,7 +287,7 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
 
         WriteFace(hull, face, (hull ? brush->clipnodedetaillevel : brush->detaillevel));
 
-        { // if (mirrorcontents != CONTENTS_SOLID)
+        { // if (mirrorcontents != static_cast<int>(contents_t::CONTENTS_SOLID))
             face->planenum ^= 1;
             face->plane = &g_mapplanes[face->planenum];
             face->contents = backcontents;
@@ -368,7 +368,7 @@ static void CSGBrush(int brushnum)
                       brush1->originalentitynum, brush1->originalbrushnum,
                       ContentsToString((contents_t)brush1->contents));
                 break;
-            case CONTENTS_SOLID:
+            case contents_t::CONTENTS_SOLID:
                 WriteDetailBrush(hull, brushHull1->faces);
                 break;
             }
@@ -543,7 +543,7 @@ static void CSGBrush(int brushnum)
                         face->texinfo = -1;
                         continue;
                     }
-                    if ((hull ? brush2->clipnodedetaillevel < brush1->clipnodedetaillevel : brush2->detaillevel < brush1->detaillevel) && brush2->contents == CONTENTS_SOLID)
+                    if ((hull ? brush2->clipnodedetaillevel < brush1->clipnodedetaillevel : brush2->detaillevel < brush1->detaillevel) && brush2->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
                     { // real solid
                         FreeFace(face);
                         continue;
@@ -562,7 +562,7 @@ static void CSGBrush(int brushnum)
                             face->contents = brush2->contents;
                         if (onback && face->backcontents < brush2->contents)
                             face->backcontents = brush2->contents;
-                        if (face->contents == CONTENTS_SOLID && face->backcontents == CONTENTS_SOLID && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "SOLIDHINT", 9) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "BEVELHINT", 9))
+                        if (face->contents == static_cast<int>(contents_t::CONTENTS_SOLID) && face->backcontents == static_cast<int>(contents_t::CONTENTS_SOLID) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "SOLIDHINT", 9) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "BEVELHINT", 9))
                         {
                             FreeFace(face);
                         }
@@ -1095,9 +1095,9 @@ auto main(const int argc, char **argv) -> int
 
     g_Program = "sCSG";
     if (InitConsole(argc, argv) < 0)
-        Usage(PROGRAM_CSG);
+        Usage(ProgramType::PROGRAM_CSG);
     if (argc == 1)
-        Usage(PROGRAM_CSG);
+        Usage(ProgramType::PROGRAM_CSG);
 
     InitDefaultHulls();
     HandleArgs(argc, argv, mapname_from_arg);

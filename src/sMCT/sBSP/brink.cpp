@@ -1520,11 +1520,11 @@ void AnalyzeBrinks(bbrinkinfo_t *info)
 			for (j = 1; j < c.numwedges[side]; j++) // we will later consider the surfaces on the first split
 			{
 				bsurface_t *s = &c.surfaces[side][j];
-				if ((s->prev->content == CONTENTS_SOLID) != (s->next->content == CONTENTS_SOLID))
+				if ((s->prev->content == static_cast<int>(contents_t::CONTENTS_SOLID)) != (s->next->content == static_cast<int>(contents_t::CONTENTS_SOLID)))
 				{
 					transitionfound[side]++;
 					transitionpos[side] = s;
-					transitionside[side] = (s->prev->content == CONTENTS_SOLID);
+					transitionside[side] = (s->prev->content == static_cast<int>(contents_t::CONTENTS_SOLID));
 				}
 			}
 		}
@@ -1537,8 +1537,8 @@ void AnalyzeBrinks(bbrinkinfo_t *info)
 		}
 
 		if (transitionfound[0] > 1 || transitionfound[1] > 1 ||
-			(c.surfaces[0][0].prev->content == CONTENTS_SOLID) != (c.surfaces[0][0].next->content == CONTENTS_SOLID) ||
-			(c.surfaces[1][0].prev->content == CONTENTS_SOLID) != (c.surfaces[1][0].next->content == CONTENTS_SOLID))
+			(c.surfaces[0][0].prev->content == static_cast<int>(contents_t::CONTENTS_SOLID)) != (c.surfaces[0][0].next->content == static_cast<int>(contents_t::CONTENTS_SOLID)) ||
+			(c.surfaces[1][0].prev->content == static_cast<int>(contents_t::CONTENTS_SOLID)) != (c.surfaces[1][0].next->content == static_cast<int>(contents_t::CONTENTS_SOLID)))
 		{
 			// there must at least 3 transition surfaces now, which is too complicated. just leave it unfixed
 			countskipped++;
@@ -1590,7 +1590,7 @@ void AnalyzeBrinks(bbrinkinfo_t *info)
 						{
 							vec3_t normal;
 							VectorScale(fi->f->plane->normal, (fi->f->planeside != (bool)side3) ? -1 : 1, normal);
-							if (DotProduct(normal, vup) > BRINK_FLOOR_THRESHOLD && GetLeafFromFace(fi->f, side3)->clipnode->content == CONTENTS_SOLID && GetLeafFromFace(fi->f, !side3)->clipnode->content != CONTENTS_SOLID)
+							if (DotProduct(normal, vup) > BRINK_FLOOR_THRESHOLD && GetLeafFromFace(fi->f, side3)->clipnode->content == static_cast<int>(contents_t::CONTENTS_SOLID) && GetLeafFromFace(fi->f, !side3)->clipnode->content != static_cast<int>(contents_t::CONTENTS_SOLID))
 							{
 								onfloor = true;
 							}
@@ -1616,7 +1616,7 @@ void AnalyzeBrinks(bbrinkinfo_t *info)
 				{
 					break;
 				}
-				if (w->content != CONTENTS_SOLID)
+				if (w->content != static_cast<int>(contents_t::CONTENTS_SOLID))
 				{
 					break;
 				}
@@ -1641,7 +1641,7 @@ void AnalyzeBrinks(bbrinkinfo_t *info)
 				bbrinklevel_e brinktype;
 				brinktype = isfloor ? (blocking ? BrinkFloorBlocking : BrinkFloor) : onfloor ? (blocking ? BrinkWallBlocking : BrinkWall)
 																							 : BrinkAny;
-				if (!AddPartition(clipnode, planenum, planeside, CONTENTS_EMPTY, brinktype))
+				if (!AddPartition(clipnode, planenum, planeside, contents_t::CONTENTS_EMPTY, brinktype))
 				{
 					berror = true;
 				}
@@ -1700,7 +1700,7 @@ void SortPartitions(bbrinkinfo_t *info) // to merge same partition planes and co
 		while ((current = partitions) != nullptr)
 		{
 			partitions = current->next;
-			if (current->content != CONTENTS_EMPTY)
+			if (current->content != contents_t::CONTENTS_EMPTY)
 			{
 				PrintOnce("SortPartitions: content of partition was not empty.");
 				hlassume(false, assume_first);

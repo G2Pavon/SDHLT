@@ -427,7 +427,7 @@ static void ParseBrush(entity_t *mapent)
 		char string[MAXTOKEN];
 		vec3_t origin;
 
-		b->contents = CONTENTS_SOLID;
+		b->contents = contents_t::CONTENTS_SOLID;
 		CreateBrush(mapent->firstbrush + b->brushnum); // to get sizes
 		b->contents = contents;
 
@@ -482,7 +482,7 @@ static void ParseBrush(entity_t *mapent)
 			SetKeyValue(mapent, "origin", "");
 		}
 
-		b->contents = CONTENTS_SOLID;
+		b->contents = contents_t::CONTENTS_SOLID;
 		CreateBrush(mapent->firstbrush + b->brushnum); // to get sizes
 		b->contents = contents;
 
@@ -509,7 +509,7 @@ static void ParseBrush(entity_t *mapent)
 	if (g_skyclip && b->contents == CONTENTS_SKY && !b->noclip)
 	{
 		auto newb = CopyCurrentBrush(mapent, b);
-		newb->contents = CONTENTS_SOLID;
+		newb->contents = contents_t::CONTENTS_SOLID;
 		newb->cliphull = ~0;
 		for (j = 0; j < newb->numsides; j++)
 		{
@@ -536,7 +536,7 @@ static void ParseBrush(entity_t *mapent)
 			auto newb = CopyCurrentBrush(mapent, b);
 			newb->cliphull = 0;
 		}
-		b->contents = CONTENTS_SOLID;
+		b->contents = contents_t::CONTENTS_SOLID;
 		for (j = 0; j < b->numsides; j++)
 		{
 			side = &g_brushsides[b->firstside + j];

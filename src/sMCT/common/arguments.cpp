@@ -5,7 +5,7 @@ void Usage(ProgramType programType)
     Log("Usage:");
     switch (programType)
     {
-    case PROGRAM_CSG:
+    case ProgramType::PROGRAM_CSG:
         Log(" %s.exe map_name.map -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
         Log("    -clipeconomy     : turn clipnode economy mode on\n");
@@ -16,7 +16,7 @@ void Usage(ProgramType programType)
         Log("    -worldextent #   : Extend map geometry limits beyond +/-32768.\n");
         break;
 
-    case PROGRAM_BSP:
+    case ProgramType::PROGRAM_BSP:
         Log(" %s.exe map_name.map -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
         Log("    -console #     : Set to 0 to turn off the pop-up console (default is 1)\n");
@@ -27,7 +27,7 @@ void Usage(ProgramType programType)
         Log("    -nohull2       : Don't generate hull 2 (the clipping hull for large monsters and pushables)\n");
         break;
 
-    case PROGRAM_VIS:
+    case ProgramType::PROGRAM_VIS:
         Log(" %s.exe <mapname.map> -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
         Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
@@ -40,7 +40,7 @@ void Usage(ProgramType programType)
         Log("    -threads #      : manually specify the number of threads to run\n");
         break;
 
-    case PROGRAM_RAD:
+    case ProgramType::PROGRAM_RAD:
         Log(" %s.exe <mapname.map> -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
         Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");

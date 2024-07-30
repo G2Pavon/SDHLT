@@ -103,7 +103,7 @@ void MakeHeadnodePortals(node_t *node, const vec3_t mins, const vec3_t maxs)
         bounds[1][i] = maxs[i] + SIDESPACE;
     }
 
-    g_outside_node.contents = CONTENTS_SOLID;
+    g_outside_node.contents = contents_t::CONTENTS_SOLID;
     g_outside_node.portals = nullptr;
 
     for (i = 0; i < 3; i++)
@@ -174,7 +174,7 @@ static void WritePortalFile_r(const node_t *const node)
         return;
     }
 
-    if (node->contents == CONTENTS_SOLID)
+    if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
     {
         return;
     }
@@ -247,7 +247,7 @@ static void NumberLeafs_r(node_t *node)
         return;
     }
 
-    if (node->contents == CONTENTS_SOLID)
+    if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
     { // solid block, viewpoint never inside
         node->visleafnum = -1;
         return;
@@ -302,7 +302,7 @@ static void WriteLeafCount_r(node_t *node)
     }
     else
     {
-        if (node->contents == CONTENTS_SOLID)
+        if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
         {
             return;
         }

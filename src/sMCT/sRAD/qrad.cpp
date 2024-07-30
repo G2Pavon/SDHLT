@@ -2253,7 +2253,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			if (i + 1 < argc)
 				++i;
 			else
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 		}
 		else if (!strcasecmp(argv[i], "-extra"))
 		{
@@ -2273,12 +2273,12 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 				if (g_numbounce > 1000)
 				{
 					Log("Unexpectedly large value (>1000) for '-bounce'\n");
-					Usage(PROGRAM_RAD);
+					Usage(ProgramType::PROGRAM_RAD);
 				}
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-threads"))
@@ -2289,12 +2289,12 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 				if (g_numthreads < 1)
 				{
 					Log("Expected value of at least 1 for '-threads'\n");
-					Usage(PROGRAM_RAD);
+					Usage(ProgramType::PROGRAM_RAD);
 				}
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-chop"))
@@ -2305,7 +2305,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 				if (g_chop < 1)
 				{
 					Log("expected value greater than 1 for '-chop'\n");
-					Usage(PROGRAM_RAD);
+					Usage(ProgramType::PROGRAM_RAD);
 				}
 				if (g_chop < 32)
 				{
@@ -2314,7 +2314,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-texchop"))
@@ -2325,7 +2325,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 				if (g_texchop < 1)
 				{
 					Log("expected value greater than 1 for '-texchop'\n");
-					Usage(PROGRAM_RAD);
+					Usage(ProgramType::PROGRAM_RAD);
 				}
 				if (g_texchop < 32)
 				{
@@ -2334,7 +2334,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-fade"))
@@ -2345,12 +2345,12 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 				if (g_fade < 0.0)
 				{
 					Log("-fade must be a positive number\n");
-					Usage(PROGRAM_RAD);
+					Usage(ProgramType::PROGRAM_RAD);
 				}
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-limiter"))
@@ -2361,7 +2361,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-low"))
@@ -2385,7 +2385,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-lightdata")) // lightdata
@@ -2401,13 +2401,13 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_RAD);
+				Usage(ProgramType::PROGRAM_RAD);
 			}
 		}
 		else if (argv[i][0] == '-')
 		{
 			Log("Unknown option \"%s\"\n", argv[i]);
-			Usage(PROGRAM_RAD);
+			Usage(ProgramType::PROGRAM_RAD);
 		}
 		else if (!mapname_from_arg)
 		{
@@ -2416,14 +2416,14 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 		else
 		{
 			Log("Unknown option \"%s\"\n", argv[i]);
-			Usage(PROGRAM_RAD);
+			Usage(ProgramType::PROGRAM_RAD);
 		}
 	}
 
 	if (!mapname_from_arg)
 	{
 		Log("No mapname specified\n");
-		Usage(PROGRAM_RAD);
+		Usage(ProgramType::PROGRAM_RAD);
 	}
 }
 // =====================================================================================
@@ -2438,9 +2438,9 @@ auto main(const int argc, char **argv) -> int
 
 	g_Program = "sRAD";
 	if (InitConsole(argc, argv) < 0)
-		Usage(PROGRAM_RAD);
+		Usage(ProgramType::PROGRAM_RAD);
 	if (argc == 1)
-		Usage(PROGRAM_RAD);
+		Usage(ProgramType::PROGRAM_RAD);
 	HandleArgs(argc, argv, mapname_from_arg);
 	g_smoothing_threshold = (float)cos(50.0 * (Q_PI / 180.0)); // 50.0 = DEFAULT_SMOOTHING_VALUE = g_smoothing_value =  a.k.a '-smooth'
 

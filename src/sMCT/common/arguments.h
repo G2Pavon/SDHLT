@@ -2,13 +2,13 @@
 
 #include "log.h"
 
-typedef enum
+enum class ProgramType
 {
     PROGRAM_CSG,
     PROGRAM_BSP,
     PROGRAM_VIS,
     PROGRAM_RAD
-} ProgramType;
+};
 
 void Usage(ProgramType programType);
 

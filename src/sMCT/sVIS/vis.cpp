@@ -648,7 +648,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
             }
             else
             {
-                Usage(PROGRAM_VIS);
+                Usage(ProgramType::PROGRAM_VIS);
             }
         }
         else if (!mapname_from_arg)
@@ -658,14 +658,14 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
         else
         {
             Log("Unknown option \"%s\"\n", argv[i]);
-            Usage(PROGRAM_VIS);
+            Usage(ProgramType::PROGRAM_VIS);
         }
     }
 
     if (!mapname_from_arg)
     {
         Log("No mapfile specified\n");
-        Usage(PROGRAM_VIS);
+        Usage(ProgramType::PROGRAM_VIS);
     }
 }
 
@@ -681,10 +681,10 @@ auto main(const int argc, char **argv) -> int
     g_Program = "sVIS";
 
     if (InitConsole(argc, argv) < 0)
-        Usage(PROGRAM_VIS);
+        Usage(ProgramType::PROGRAM_VIS);
     if (argc == 1)
     {
-        Usage(PROGRAM_VIS);
+        Usage(ProgramType::PROGRAM_VIS);
     }
     HandleArgs(argc, argv, mapname_from_arg);
 

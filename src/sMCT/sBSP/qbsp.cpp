@@ -1333,7 +1333,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_BSP);
+				Usage(ProgramType::PROGRAM_BSP);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-maxnodesize"))
@@ -1356,7 +1356,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_BSP);
+				Usage(ProgramType::PROGRAM_BSP);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-texdata"))
@@ -1372,7 +1372,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_BSP);
+				Usage(ProgramType::PROGRAM_BSP);
 			}
 		}
 		else if (!strcasecmp(argv[i], "-lightdata"))
@@ -1388,7 +1388,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 			}
 			else
 			{
-				Usage(PROGRAM_BSP);
+				Usage(ProgramType::PROGRAM_BSP);
 			}
 		}
 		else if (!mapname_from_arg)
@@ -1398,14 +1398,14 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 		else
 		{
 			Log("Unknown option \"%s\"\n", argv[i]);
-			Usage(PROGRAM_BSP);
+			Usage(ProgramType::PROGRAM_BSP);
 		}
 	}
 
 	if (!mapname_from_arg)
 	{
 		Log("No mapfile specified\n");
-		Usage(PROGRAM_BSP);
+		Usage(ProgramType::PROGRAM_BSP);
 	}
 }
 
@@ -1419,10 +1419,10 @@ auto main(const int argc, char **argv) -> int
 
 	g_Program = "sBSP";
 	if (InitConsole(argc, argv) < 0)
-		Usage(PROGRAM_BSP);
+		Usage(ProgramType::PROGRAM_BSP);
 	// if we dont have any command line argvars, print out usage and die
 	if (argc == 1)
-		Usage(PROGRAM_BSP);
+		Usage(ProgramType::PROGRAM_BSP);
 
 	HandleArgs(argc, argv, mapname_from_arg);
 

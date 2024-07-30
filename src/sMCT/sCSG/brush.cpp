@@ -859,7 +859,7 @@ auto MakeBrushPlanes(brush_t *b) -> bool
 static auto TextureContents(const char *const name) -> contents_t
 {
 	if (!strncasecmp(name, "contentsolid", 12))
-		return CONTENTS_SOLID;
+		return contents_t::CONTENTS_SOLID;
 	if (!strncasecmp(name, "contentwater", 12))
 		return CONTENTS_WATER;
 	if (!strncasecmp(name, "contentempty", 12))
@@ -931,7 +931,7 @@ static auto TextureContents(const char *const name) -> contents_t
 	if (!strncasecmp(name, "bevel", 5))
 		return CONTENTS_NULL;
 
-	return CONTENTS_SOLID;
+	return contents_t::CONTENTS_SOLID;
 }
 
 // =====================================================================================
@@ -943,7 +943,7 @@ auto ContentsToString(const contents_t type) -> const char *
 	{
 	case CONTENTS_EMPTY:
 		return "EMPTY";
-	case CONTENTS_SOLID:
+	case contents_t::CONTENTS_SOLID:
 		return "SOLID";
 	case CONTENTS_WATER:
 		return "WATER";
@@ -1055,7 +1055,7 @@ auto CheckBrushContents(const brush_t *const b) -> contents_t
 		}
 	}
 	if (contents == CONTENTS_NULL)
-		contents = CONTENTS_SOLID;
+		contents = contents_t::CONTENTS_SOLID;
 
 	// check to make sure we dont have an origin brush as part of worldspawn
 	if ((b->entitynum == 0) || (strcmp("func_group", ValueForKey(&g_entities[b->entitynum], "classname")) == 0))
@@ -1073,7 +1073,7 @@ auto CheckBrushContents(const brush_t *const b) -> contents_t
 		//  to be an entity.
 		switch (contents)
 		{
-		case CONTENTS_SOLID:
+		case contents_t::CONTENTS_SOLID:
 		case CONTENTS_WATER:
 		case CONTENTS_SLIME:
 		case CONTENTS_LAVA:
@@ -1126,7 +1126,7 @@ void CreateBrush(const int brushnum) //--vluzacn
 				MakeHullFaces(b, &b->hulls[h]);
 			}
 		}
-		b->contents = CONTENTS_SOLID;
+		b->contents = contents_t::CONTENTS_SOLID;
 		b->hulls[0].faces = nullptr;
 	}
 	else

@@ -142,7 +142,7 @@ void ViewTNode ()
 						cprintf ("%3d", i);
 					for (j=i; j=parents[j], j>=0;)
 						cprintf ("|");
-					if (nodes[i] == CONTENTS_SOLID)
+					if (nodes[i] == static_cast<int>(contents_t::CONTENTS_SOLID))
 						cprintf ("SOLID");
 					else if (nodes[i] == CONTENTS_SKY)
 						cprintf ("SKY");
@@ -323,9 +323,9 @@ auto TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &line
 	{
 		if (node == linecontent)
 			return CONTENTS_EMPTY;
-		if (node == CONTENTS_SOLID)
+		if (node == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
-			return CONTENTS_SOLID;
+			return contents_t::CONTENTS_SOLID;
 		}
 		if (node == CONTENTS_SKY)
 		{
@@ -337,7 +337,7 @@ auto TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &line
 		}
 		if (linecontent)
 		{
-			return CONTENTS_SOLID;
+			return contents_t::CONTENTS_SOLID;
 		}
 		linecontent = node;
 		return CONTENTS_EMPTY;
@@ -375,11 +375,11 @@ auto TestLine_r(const int node, const vec3_t start, const vec3_t stop, int &line
 	if (fabs(front) <= ON_EPSILON && fabs(back) <= ON_EPSILON)
 	{
 		int r1 = TestLine_r(tnode->children[0], start, stop, linecontent, skyhit);
-		if (r1 == CONTENTS_SOLID)
-			return CONTENTS_SOLID;
+		if (r1 == static_cast<int>(contents_t::CONTENTS_SOLID))
+			return contents_t::CONTENTS_SOLID;
 		int r2 = TestLine_r(tnode->children[1], start, stop, linecontent, skyhit);
-		if (r2 == CONTENTS_SOLID)
-			return CONTENTS_SOLID;
+		if (r2 == static_cast<int>(contents_t::CONTENTS_SOLID))
+			return contents_t::CONTENTS_SOLID;
 		if (r1 == CONTENTS_SKY || r2 == CONTENTS_SKY)
 			return CONTENTS_SKY;
 		return CONTENTS_EMPTY;
@@ -882,7 +882,7 @@ auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int
 	{
 		if (nodenum < 0)
 		{
-			if (solid && g_dleafs[-nodenum - 1].contents == CONTENTS_SOLID)
+			if (solid && g_dleafs[-nodenum - 1].contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 				return 1;
 			else
 				return 0;

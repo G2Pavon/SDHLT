@@ -47,7 +47,7 @@ static auto PlaceOccupant(const int num, const vec3_t point, node_t *headnode) -
     node_t *n;
 
     n = PointInLeaf(headnode, point);
-    if (n->contents == CONTENTS_SOLID)
+    if (n->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
     {
         return false;
     }
@@ -111,7 +111,7 @@ static void FreeDetailNode_r(node_t *n)
     int i;
     if (n->planenum == -1)
     {
-        if (!(n->isportalleaf && n->contents == CONTENTS_SOLID))
+        if (!(n->isportalleaf && n->contents == static_cast<int>(contents_t::CONTENTS_SOLID)))
         {
             free(n->markfaces);
             n->markfaces = nullptr;
@@ -139,13 +139,13 @@ static void FillLeaf(node_t *l)
         Warning("FillLeaf: not leaf");
         return;
     }
-    if (l->contents == CONTENTS_SOLID)
+    if (l->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
     {
         Warning("FillLeaf: fill solid");
         return;
     }
     FreeDetailNode_r(l);
-    l->contents = CONTENTS_SOLID;
+    l->contents = contents_t::CONTENTS_SOLID;
     l->planenum = -1;
 }
 static int hit_occupied;
@@ -155,9 +155,9 @@ static auto RecursiveFillOutside(node_t *l, const bool fill) -> bool
     portal_t *p;
     int s;
 
-    if ((l->contents == CONTENTS_SOLID) || (l->contents == CONTENTS_SKY))
+    if ((l->contents == static_cast<int>(contents_t::CONTENTS_SOLID)) || (l->contents == CONTENTS_SKY))
     {
-        /*if (l->contents != CONTENTS_SOLID)
+        /*if (l->contents != static_cast<int>(contents_t::CONTENTS_SOLID))
             Log("RecursiveFillOutside::l->contents == %i \n", l->contents);*/
 
         return false;
@@ -272,20 +272,20 @@ static auto ClearOutFaces_r(node_t *node) -> node_t *
             // this node does not touch any interior leafs
 
             // if both children are solid, just make this node solid
-            if (node->children[0]->contents == CONTENTS_SOLID && node->children[1]->contents == CONTENTS_SOLID)
+            if (node->children[0]->contents == static_cast<int>(contents_t::CONTENTS_SOLID) && node->children[1]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
             {
-                node->contents = CONTENTS_SOLID;
+                node->contents = contents_t::CONTENTS_SOLID;
                 node->planenum = -1;
                 node->isportalleaf = true;
                 return node;
             }
 
             // if one child is solid, shortcut down the other side
-            if (node->children[0]->contents == CONTENTS_SOLID)
+            if (node->children[0]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
             {
                 return node->children[1];
             }
-            if (node->children[1]->contents == CONTENTS_SOLID)
+            if (node->children[1]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
             {
                 return node->children[0];
             }
@@ -298,7 +298,7 @@ static auto ClearOutFaces_r(node_t *node) -> node_t *
     //
     // leaf node
     //
-    if (node->contents != CONTENTS_SOLID)
+    if (node->contents != static_cast<int>(contents_t::CONTENTS_SOLID))
     {
         // this node is still inside
 
@@ -592,7 +592,7 @@ void ResetMark_r(node_t *node)
 {
     if (node->isportalleaf)
     {
-        if (node->contents == CONTENTS_SOLID || node->contents == CONTENTS_SKY)
+        if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID) || node->contents == CONTENTS_SKY)
         {
             node->empty = 0;
         }

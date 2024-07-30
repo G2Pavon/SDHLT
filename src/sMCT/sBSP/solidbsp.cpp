@@ -503,9 +503,9 @@ static auto ChooseMidPlaneFromList(surface_t *surfaces, const vec3_t mins, const
 //      Choose the plane that splits the least faces
 // =====================================================================================
 static auto ChoosePlaneFromList(surface_t *surfaces, const vec3_t mins, const vec3_t maxs
-									  // mins and maxs are invalid when detaillevel > 0
-									  ,
-									  int detaillevel) -> surface_t *
+								// mins and maxs are invalid when detaillevel > 0
+								,
+								int detaillevel) -> surface_t *
 {
 	surface_t *p;
 	surface_t *bestsurface;
@@ -998,7 +998,7 @@ static auto RankForContents(const int contents) -> int
 	case CONTENTS_SKY:
 		// Log("(sky)\n");
 		return 11;
-	case CONTENTS_SOLID:
+	case contents_t::CONTENTS_SOLID:
 		// Log("(solid)\n");
 		return 12;
 
@@ -1044,7 +1044,7 @@ static auto ContentsForRank(const int rank) -> int
 	case 11:
 		return CONTENTS_SKY;
 	case 12:
-		return CONTENTS_SOLID;
+		return contents_t::CONTENTS_SOLID;
 
 	default:
 		hlassert(false);
@@ -1100,7 +1100,7 @@ auto ContentsToString(int contents) -> const char *
 	{
 	case CONTENTS_EMPTY:
 		return "EMPTY";
-	case CONTENTS_SOLID:
+	case contents_t::CONTENTS_SOLID:
 		return "SOLID";
 	case CONTENTS_WATER:
 		return "WATER";
@@ -1213,7 +1213,7 @@ static void MakeLeaf(node_t *leafnode)
 	}
 	leafnode->boundsbrush = nullptr;
 
-	if (!(leafnode->isportalleaf && leafnode->contents == CONTENTS_SOLID))
+	if (!(leafnode->isportalleaf && leafnode->contents == static_cast<int>(contents_t::CONTENTS_SOLID)))
 	{
 		nummarkfaces = 0;
 		for (surf = leafnode->surfaces; surf; surf = surf->next)
@@ -1518,7 +1518,7 @@ static void CopyFacesToNode(node_t *node, surface_t *surf)
 		{
 			continue;
 		}
-		if (f->contents != CONTENTS_SOLID)
+		if (f->contents != static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
 			newf = AllocFace();
 			*newf = *f;
@@ -1557,7 +1557,7 @@ static void BuildBspTree_r(node_t *node)
 	{
 		node->isportalleaf = true;
 		LinkLeafFaces(node->surfaces, node); // set contents
-		if (node->contents == CONTENTS_SOLID)
+		if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
 			split = nullptr;
 		}
@@ -1638,8 +1638,8 @@ static void BuildBspTree_r(node_t *node)
 //      The original surface chain will be completely freed.
 // =====================================================================================
 auto SolidBSP(const surfchain_t *const surfhead,
-				 brush_t *detailbrushes,
-				 bool report_progress) -> node_t *
+			  brush_t *detailbrushes,
+			  bool report_progress) -> node_t *
 {
 	node_t *headnode;
 

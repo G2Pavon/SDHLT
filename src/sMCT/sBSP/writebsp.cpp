@@ -87,10 +87,10 @@ static auto WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap
 
 	if (node->isportalleaf)
 	{
-		if (node->contents == CONTENTS_SOLID)
+		if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
 			free(node);
-			return CONTENTS_SOLID;
+			return contents_t::CONTENTS_SOLID;
 		}
 		else
 		{
@@ -101,7 +101,7 @@ static auto WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap
 	{
 		if (node->iscontentsdetail)
 		{
-			num = CONTENTS_SOLID;
+			num = contents_t::CONTENTS_SOLID;
 		}
 		else
 		{
@@ -304,7 +304,7 @@ static auto WriteDrawNodes_r(node_t *node, const node_t *portalleaf) -> int
 {
 	if (node->isportalleaf)
 	{
-		if (node->contents == CONTENTS_SOLID)
+		if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
 			return -1;
 		}
@@ -474,7 +474,7 @@ static void RemoveCoveredFaces_r(node_t *node)
 {
 	if (node->isportalleaf)
 	{
-		if (node->contents == CONTENTS_SOLID)
+		if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
 			return; // stop here, don't go deeper into children
 		}
@@ -548,7 +548,7 @@ void BeginBSPFile()
 
 	// leaf 0 is common solid with no faces
 	g_numleafs = 1;
-	g_dleafs[0].contents = CONTENTS_SOLID;
+	g_dleafs[0].contents = contents_t::CONTENTS_SOLID;
 }
 
 // =====================================================================================

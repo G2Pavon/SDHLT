@@ -11,13 +11,13 @@
 class BoundingBox
 {
 public:
-    typedef enum
+    enum class eBoundingState
     {
         eDisjoint, // neither boxes touch
         eUnion,    // this box intersects with the other box
         eSubset,   // this box is inside the other box
         eSuperset  // this box is completly envelops the other box
-    } eBoundingState;
+    };
 
     // Tests if other box is completely outside of this box
     auto testDisjoint(const BoundingBox &other) const -> bool
@@ -77,19 +77,19 @@ public:
         eBoundingState rval;
         if (testDisjoint(other))
         {
-            rval = eDisjoint;
+            rval = eBoundingState::eDisjoint;
         }
         else if (testSubset(other))
         {
-            rval = eSubset;
+            rval = eBoundingState::eSubset;
         }
         else if (testSuperset(other))
         {
-            rval = eSuperset;
+            rval = eBoundingState::eSuperset;
         }
         else
         {
-            rval = eUnion;
+            rval = eBoundingState::eUnion;
         }
         return rval;
     }
