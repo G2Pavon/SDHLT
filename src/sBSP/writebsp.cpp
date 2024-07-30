@@ -1,3 +1,5 @@
+#include <map>
+
 #include "bsp5.h"
 #include "log.h"
 
@@ -10,8 +12,6 @@
 //  WriteDrawNodes
 //  BeginBSPFile
 //  FinishBSPFile
-
-#include <map>
 
 typedef std::map<int, int> PlaneMap;
 static PlaneMap gPlaneMap;
