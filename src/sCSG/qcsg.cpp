@@ -1,14 +1,14 @@
+#ifdef SYSTEM_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h> //--vluzacn
+#endif
+
 #include "csg.h"
 #include "scriplib.h"
 #include "arguments.h"
 #include "threads.h"
 #include "blockmem.h"
 #include "filelib.h"
-
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> //--vluzacn
-#endif
 
 static FILE *out[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)
 static FILE *out_detailbrush[NUM_HULLS];

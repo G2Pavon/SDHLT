@@ -1,9 +1,40 @@
 #pragma once
 
-// #define MODIFICATIONS_STRING "Submit detailed bug reports to (zoner@gearboxsoftware.com)\n"
-// #define MODIFICATIONS_STRING "Submit detailed bug reports to (merlinis@bigpond.net.au)\n"
-// #define MODIFICATIONS_STRING "Submit detailed bug reports to (amckern@yahoo.com)\n"
-// #define MODIFICATIONS_STRING "Submit detailed bug reports to (vluzacn@163.com)\n" //--vluzacn
+//=====================================================================
+// AJM: Different features of the tools can be undefined here
+//      these are not officially beta tested, but seem to work okay
+
+// ZHLT_* features are spread across more than one tool. Hence, changing
+//      one of these settings probably means recompiling the whole set
+
+// tool specific settings below only mean a recompile of the tool affected
+
+//=====================================================================
+#ifdef __MINGW32__
+#include <io.h>
+#endif
+
+#ifdef SYSTEM_POSIX
+#include <sys/time.h>
+#endif
+#include <unistd.h>
+
+#include "win32fix.h"
+
+#ifdef SYSTEM_WIN32
+#define HLCSG_GAMETEXTMESSAGE_UTF8 //--vluzacn
+#endif
+
+#ifdef SYSTEM_WIN32
+#pragma warning(disable : 4127) // conditional expression is constant
+#pragma warning(disable : 4115) // named type definition in parentheses
+#pragma warning(disable : 4244) // conversion from 'type' to type', possible loss of data
+// AJM
+#pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
+#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
+#pragma warning(disable : 4800) // forcing value to bool 'true' or 'false' (performance warning)
+#endif
+
 #define MODIFICATIONS_STRING "Submit detailed bug reports to (github.com/seedee/SDHLT/issues)\n"
 
 #ifdef _DEBUG
@@ -30,54 +61,6 @@
 #ifdef VERSION_OTHER
 #define PLATFORM_VERSIONSTRING "???"
 #endif
-
-//=====================================================================
-// AJM: Different features of the tools can be undefined here
-//      these are not officially beta tested, but seem to work okay
-
-// ZHLT_* features are spread across more than one tool. Hence, changing
-//      one of these settings probably means recompiling the whole set
-
-// tool specific settings below only mean a recompile of the tool affected
-
-#ifdef SYSTEM_WIN32
-#define HLCSG_GAMETEXTMESSAGE_UTF8 //--vluzacn
-#endif
-
-//=====================================================================
-
-#ifdef __MINGW32__
-#include <io.h>
-#endif
-
-#include "win32fix.h"
-#include "mathtypes.h"
-
-#ifdef SYSTEM_WIN32
-#pragma warning(disable : 4127) // conditional expression is constant
-#pragma warning(disable : 4115) // named type definition in parentheses
-#pragma warning(disable : 4244) // conversion from 'type' to type', possible loss of data
-// AJM
-#pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
-#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
-#pragma warning(disable : 4800) // forcing value to bool 'true' or 'false' (performance warning)
-#endif
-
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
-#include <cerrno>
-#include <cctype>
-#include <ctime>
-#include <cstdarg>
-#include <climits>
-
-#include <cstdint> //--vluzacn
-
-#ifdef SYSTEM_POSIX
-#include <sys/time.h>
-#endif
-#include <unistd.h>
 
 #ifdef SYSTEM_WIN32
 #define SYSTEM_SLASH_CHAR '\\'

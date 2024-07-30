@@ -1,6 +1,7 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <cstring>
 
 #include "bsp5.h"
 #include "log.h"

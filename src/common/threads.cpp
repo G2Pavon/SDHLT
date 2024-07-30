@@ -4,6 +4,8 @@
 #include <cstdlib>
 #endif
 
+#include <cstdio>
+
 #include "cmdlib.h"
 #include "messages.h"
 #include "log.h"

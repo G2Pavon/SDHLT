@@ -1,4 +1,6 @@
-#include "cmdlib.h"
+#include <cstring>
+#include <cerrno>
+
 #include "filelib.h"
 #include "messages.h"
 #include "hlassert.h"

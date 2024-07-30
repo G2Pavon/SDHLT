@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cmdlib.h" //--vluzacn
-
 constexpr int MAX_WADPATHS = 128; // arbitrary
 
 typedef struct

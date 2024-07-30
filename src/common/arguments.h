@@ -1,7 +1,5 @@
 #pragma once
 
-#include "log.h"
-
 enum class ProgramType
 {
     PROGRAM_CSG,

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "cmdlib.h" //--vluzacn
 #include <cstdlib>
+#include <string.h>
 
 /////////////////////////////
 #ifdef SYSTEM_WIN32

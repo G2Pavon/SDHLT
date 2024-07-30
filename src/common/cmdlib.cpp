@@ -3,18 +3,23 @@
 #include <windows.h>
 #endif
 
+#ifdef SYSTEM_POSIX
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
+#include <cstring>
+#include <cstdio>
+#include <cctype>
+#include <cstdarg>
+
 #include "cmdlib.h"
 #include "messages.h"
 #include "hlassert.h"
 #include "blockmem.h"
 #include "log.h"
 #include "mathlib.h"
-
-#ifdef SYSTEM_POSIX
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
 
 #define PATHSEPARATOR(c) ((c) == '\\' || (c) == '/')
 

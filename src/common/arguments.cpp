@@ -1,4 +1,5 @@
 #include "arguments.h"
+#include "log.h"
 
 void Usage(ProgramType programType)
 {

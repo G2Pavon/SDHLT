@@ -1,5 +1,7 @@
 // AJM: added this file in
 
+#include <string.h>
+
 #include "csg.h"
 #include "log.h"
 

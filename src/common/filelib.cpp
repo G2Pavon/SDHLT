@@ -1,3 +1,9 @@
+
+#include <cstdio>
+#include <ctime>
+#include <cstring>
+#include <cerrno>
+
 #ifdef SYSTEM_WIN32
 #include <sys/stat.h>
 #include <io.h>

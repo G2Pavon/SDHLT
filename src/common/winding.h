@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cmdlib.h" //--vluzacn
+#include <cstdint>
 
 #include "mathtypes.h"
 #include "win32fix.h"
