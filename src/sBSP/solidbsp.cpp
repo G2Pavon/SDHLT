@@ -1,6 +1,8 @@
 // #pragma warning(disable: 4018) // '<' : signed/unsigned mismatch
 
 #include "bsp5.h"
+#include "log.h"
+#include "hlassert.h"
 
 //  FaceSide
 //  ChooseMidPlaneFromList

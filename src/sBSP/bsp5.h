@@ -1,15 +1,8 @@
 #pragma once
 
-#include "cmdlib.h"
 #include "messages.h"
 #include "win32fix.h"
-#include "log.h"
-#include "hlassert.h"
 #include "mathlib.h"
-#include "bspfile.h"
-#include "blockmem.h"
-#include "filelib.h"
-#include "threads.h"
 #include "winding.h"
 
 constexpr int BOGUS_RANGE = 144000;

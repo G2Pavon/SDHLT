@@ -17,6 +17,8 @@
 
 #include "bsp5.h"
 #include "arguments.h"
+#include "filelib.h"
+#include "threads.h"
 
 vec3_t g_hull_size[NUM_HULLS][2] =
 	{

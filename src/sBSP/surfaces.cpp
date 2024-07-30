@@ -1,4 +1,6 @@
 #include "bsp5.h"
+#include "log.h"
+#include "hlassert.h"
 
 //  SubdivideFace
 
