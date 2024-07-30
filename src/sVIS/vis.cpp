@@ -12,21 +12,19 @@
 
 */
 
-#include "vis.h"
-#include "arguments.h"
-#include "threads.h"
-#include "filelib.h"
-
+#ifdef SYSTEM_POSIX
+#include <algorithm>
+#endif
+#include <string>
 #ifdef SYSTEM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
-#ifdef SYSTEM_POSIX
-#include <algorithm>
-#endif
-
-#include <string>
+#include "vis.h"
+#include "arguments.h"
+#include "threads.h"
+#include "filelib.h"
 
 /*
 
