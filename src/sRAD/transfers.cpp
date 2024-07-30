@@ -1,7 +1,3 @@
-#include "qrad.h"
-#include "blockmem.h"
-#include "log.h"
-
 #ifdef SYSTEM_WIN32
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -11,6 +7,10 @@
 #ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 #endif
+
+#include "qrad.h"
+#include "blockmem.h"
+#include "log.h"
 
 /*
  * =============

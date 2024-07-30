@@ -16,8 +16,8 @@
 #include <windows.h>
 #endif
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "qrad.h"
 #include "arguments.h"

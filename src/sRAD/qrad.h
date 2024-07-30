@@ -1,28 +1,20 @@
 #pragma once
-
-#include "messages.h"
-#include "win32fix.h"
-#include "mathlib.h"
-#include "winding.h"
-#include "compress.h"
-
 #include <vector>
-
+#include <string>
 #ifdef SYSTEM_WIN32
 #pragma warning(disable : 4142 4028)
 #include <io.h>
 #pragma warning(default : 4142 4028)
 #endif
-
-#include <unistd.h>
-#include <fcntl.h>
-
-#include <cctype>
-
 #ifdef SYSTEM_WIN32
 #include <direct.h>
 #endif
-#include <string>
+
+#include "compress.h"
+#include "mathlib.h"
+#include "messages.h"
+#include "win32fix.h"
+#include "winding.h"
 
 constexpr float DEFAULT_FADE = 1.0f;
 constexpr int DEFAULT_BOUNCE = 8;
@@ -359,7 +351,7 @@ extern auto CountOpaqueFaces(int modelnum) -> int;
 extern void DeleteOpaqueNodes();
 #ifdef OPAQUE_NODE_INLINECALL
 extern auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int;
-FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point) // use "forceinline" because "inline" does nothing here
+FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point) // use "forceinline" because "inline" does nothing here (TODO: move to trace.cpp)
 {
 	opaquemodel_t *thismodel = &opaquemodels[modelnum];
 	vec3_t newpoint;

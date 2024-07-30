@@ -1,9 +1,5 @@
-#include "cmdlib.h"
 #include "compress.h"
 #include "log.h"
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 
 constexpr size_t unused_size = 3u; // located at the end of a block
 
