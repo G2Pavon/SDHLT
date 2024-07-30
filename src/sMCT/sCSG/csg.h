@@ -46,44 +46,44 @@ constexpr int NUM_HULLS = 4;        // NUM_HULLS should be no larger than MAX_MA
 
 #define BOGUS_RANGE g_iWorldExtent // seedee
 
-typedef struct
+struct plane_t
 {
     vec3_t normal;
     vec3_t origin;
     vec_t dist;
     planetypes type;
-} plane_t;
+};
 
-typedef struct
+struct valve_vects
 {
     vec3_t UAxis;
     vec3_t VAxis;
     vec_t shift[2];
     vec_t rotate;
     vec_t scale[2];
-} valve_vects;
+};
 
-typedef union
+struct vects_union
 {
     valve_vects valve;
-} vects_union;
+};
 
-typedef struct
+struct brush_texture_t
 {
     vects_union vects;
     char name[32];
-} brush_texture_t;
+};
 
-typedef struct side_s
+struct side_t
 {
     brush_texture_t td;
     bool bevel;
     vec_t planepts[3][3];
-} side_t;
+};
 
-typedef struct bface_s
+struct bface_t
 {
-    struct bface_s *next;
+    struct bface_t *next;
     int planenum;
     plane_t *plane;
     Winding *w;
@@ -93,15 +93,15 @@ typedef struct bface_s
     int backcontents;
     bool bevel; // used for ExpandBrush
     BoundingBox bounds;
-} bface_t;
+};
 
-typedef struct
+struct brushhull_t
 {
     BoundingBox bounds;
     bface_t *faces;
-} brushhull_t;
+};
 
-typedef struct brush_s
+struct brush_t
 {
     int originalentitynum;
     int originalbrushnum;
@@ -123,31 +123,31 @@ typedef struct brush_s
 
     int contents;
     brushhull_t hulls[NUM_HULLS];
-} brush_t;
+};
 
-typedef struct
+struct hullbrushface_t
 {
     vec3_t normal;
     vec3_t point;
 
     int numvertexes;
     vec3_t *vertexes;
-} hullbrushface_t;
+};
 
-typedef struct
+struct hullbrushedge_t
 {
     vec3_t normals[2];
     vec3_t point;
     vec3_t vertexes[2];
     vec3_t delta; // delta has the same direction as CrossProduct(normals[0],normals[1])
-} hullbrushedge_t;
+};
 
-typedef struct
+struct hullbrushvertex_t
 {
     vec3_t point;
-} hullbrushvertex_t;
+};
 
-typedef struct
+struct hullbrush_t
 {
     int numfaces;
     hullbrushface_t *faces;
@@ -155,15 +155,15 @@ typedef struct
     hullbrushedge_t *edges;
     int numvertexes;
     hullbrushvertex_t *vertexes;
-} hullbrush_t;
+};
 
-typedef struct
+struct hullshape_t
 {
     char *id;
     bool disabled;
     int numbrushes; // must be 0 or 1
     hullbrush_t **brushes;
-} hullshape_t;
+};
 
 //=============================================================================
 // map.c

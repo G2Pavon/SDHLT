@@ -2,12 +2,12 @@
 
 #include "cmdlib.h" //--vluzacn
 
-typedef struct
+struct MessageTable_t
 {
     const char *title;
     const char *text;
     const char *howto;
-} MessageTable_t;
+};
 
 typedef enum
 {
