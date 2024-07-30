@@ -2,14 +2,8 @@
 
 #include "cmdlib.h" //--vluzacn
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifdef STDC_HEADERS
 #include <cmath>
 #include <cfloat>
-#endif
 
 #if !defined(qmax)
 #define qmax(a, b) (((a) > (b)) ? (a) : (b)) // changed 'max' to 'qmax'. --vluzacn

@@ -6,7 +6,7 @@
 #include "win32fix.h"
 #endif
 
-#ifdef HAVE_SYS_STAT_H
+#ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 #endif
 

@@ -55,10 +55,6 @@
 #include <io.h>
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "win32fix.h"
 #include "mathtypes.h"
 
@@ -72,7 +68,6 @@
 #pragma warning(disable : 4800) // forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#ifdef STDC_HEADERS
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -81,16 +76,13 @@
 #include <ctime>
 #include <cstdarg>
 #include <climits>
-#endif
 
 #include <cstdint> //--vluzacn
 
-#ifdef HAVE_SYS_TIME_H
+#ifdef SYSTEM_POSIX
 #include <sys/time.h>
 #endif
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 
 #ifdef SYSTEM_WIN32
 #define SYSTEM_SLASH_CHAR '\\'

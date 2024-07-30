@@ -173,14 +173,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_compile_definitions(
         VERSION_LINUX
         SYSTEM_POSIX
-        STDC_HEADERS
-        HAVE_FCNTL_H
-        HAVE_PTHREAD_H
-        HAVE_STDDEF_H
-        HAVE_SYS_RESOURCE_H
-        HAVE_SYS_STAT_H
-        HAVE_SYS_TIME_H
-        HAVE_UNISTD_H
     )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -190,7 +182,6 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     add_compile_definitions(
         VERSION_64BIT
         SYSTEM_WIN32
-        STDC_HEADERS
     )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 else()

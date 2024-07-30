@@ -1,16 +1,8 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifdef STDC_HEADERS
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
-#endif
 
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 
 #include "cmdlib.h"
 #include "messages.h"
