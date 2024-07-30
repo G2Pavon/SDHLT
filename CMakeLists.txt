@@ -14,7 +14,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tools)
 # Configuration
 #================
 
-set(DIR ${CMAKE_SOURCE_DIR}/src/sMCT)
+set(DIR ${CMAKE_SOURCE_DIR}/src)
 
 #================
 # Common
