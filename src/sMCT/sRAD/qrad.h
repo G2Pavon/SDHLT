@@ -147,7 +147,7 @@ struct directlight_t
 
 	vec_t patch_area;
 	vec_t patch_emitter_range;
-	struct patch_s *patch;
+	struct patch_t *patch;
 	vec_t texlightgap;
 	bool topatch;
 };

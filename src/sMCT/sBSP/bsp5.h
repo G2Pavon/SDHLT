@@ -83,7 +83,7 @@ struct surfchain_t
 
 struct side_t
 {
-    struct side_s *next;
+    struct side_t *next;
     dplane_t plane; // facing inside (reversed when loading brush file)
     Winding *w;     // (also reversed)
 };
@@ -120,7 +120,7 @@ struct node_t
     // information for leafs
     int contents;       // leaf nodes (0 for decision nodes)
     face_t **markfaces; // leaf nodes only, point to node faces
-    struct portal_s *portals;
+    struct portal_t *portals;
     int visleafnum; // -1 = solid
     int valid;      // for flood filling
     int occupied;   // light number in leaf for outside filling
@@ -191,8 +191,8 @@ extern void FillInside(node_t *node);
 extern auto AllocFace() -> face_t *;
 extern void FreeFace(face_t *f);
 
-extern auto AllocPortal() -> struct portal_s *;
-extern void FreePortal(struct portal_s *p);
+extern auto AllocPortal() -> struct portal_t *;
+extern void FreePortal(struct portal_t *p);
 
 extern auto AllocSurface() -> surface_t *;
 extern void FreeSurface(surface_t *s);
