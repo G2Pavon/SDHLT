@@ -1,4 +1,6 @@
 #include "qrad.h"
+#include "threads.h"
+#include "hlassert.h"
 
 edgeshare_t g_edgeshare[MAX_MAP_EDGES];
 vec3_t g_face_centroids[MAX_MAP_EDGES]; // BUG: should this be [MAX_MAP_FACES]?

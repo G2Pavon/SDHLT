@@ -1,17 +1,8 @@
 #pragma once
 
-#include "cmdlib.h"
 #include "messages.h"
 #include "win32fix.h"
-#include "log.h"
-#include "hlassert.h"
 #include "mathlib.h"
-#include "bspfile.h"
-#include "winding.h"
-#include "scriplib.h"
-#include "threads.h"
-#include "blockmem.h"
-#include "filelib.h"
 #include "winding.h"
 #include "compress.h"
 

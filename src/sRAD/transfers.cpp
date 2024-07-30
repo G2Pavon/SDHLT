@@ -1,4 +1,6 @@
 #include "qrad.h"
+#include "blockmem.h"
+#include "log.h"
 
 #ifdef SYSTEM_WIN32
 #include <sys/stat.h>

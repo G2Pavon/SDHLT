@@ -1,5 +1,6 @@
 #pragma once
 #include "cmdlib.h" //--vluzacn
+#include "log.h"
 
 constexpr int MAX_THREADS = 64;
 

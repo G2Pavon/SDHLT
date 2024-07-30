@@ -21,6 +21,8 @@
 
 #include "qrad.h"
 #include "arguments.h"
+#include "blockmem.h"
+#include "threads.h"
 
 /*
  * NOTES

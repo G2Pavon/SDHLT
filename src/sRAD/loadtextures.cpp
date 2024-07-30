@@ -1,4 +1,6 @@
 #include "qrad.h"
+#include "filelib.h"
+#include "log.h"
 
 #ifdef WORDS_BIGENDIAN
 #error "HLRAD_TEXTURE doesn't support WORDS_BIGENDIAN, because I have no big endian machine to test it"
