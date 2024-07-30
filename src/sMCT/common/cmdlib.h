@@ -12,8 +12,6 @@
 #define ZHLT_VERSIONSTRING "v3.4"
 #endif
 
-#define HACK_VERSIONSTRING "VL34" //--vluzacn
-
 #define SDHLT_VERSIONSTRING "v1.2.0"
 
 #if !defined(SCSG) && !defined(SBSP) && !defined(SVIS) && !defined(SRAD) // seedee
@@ -59,14 +57,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
-#if 0 //--vluzacn
-// AJM: gnu compiler fix
-#ifdef __GNUC__
-#define _alloca __builtin_alloca
-#define alloca __builtin_alloca
-#endif
 #endif
 
 #include "win32fix.h"
@@ -119,7 +109,6 @@
 extern auto strupr(char *string) -> char *;
 extern auto strlwr(char *string) -> char *;
 #endif
-extern auto stristr(const char *const string, const char *const substring) -> const char *;
 extern bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...);
 extern auto safe_strncpy(char *const dest, const char *const src, const size_t count) -> bool;
 extern auto safe_strncat(char *const dest, const char *const src, const size_t count) -> bool;
@@ -129,21 +118,12 @@ extern auto FlipSlashes(char *string) -> char *;
 
 extern auto I_FloatTime() -> double;
 
-extern auto CheckParm(char *check) -> int;
-
 extern void DefaultExtension(char *path, const char *extension);
-extern void DefaultPath(char *path, char *basepath);
-extern void StripFilename(char *path);
 extern void StripExtension(char *path);
 
 extern void ExtractFile(const char *const path, char *dest);
 extern void ExtractFilePath(const char *const path, char *dest);
-extern void ExtractFileBase(const char *const path, char *dest);
-extern void ExtractFileExtension(const char *const path, char *dest);
 
-extern auto BigShort(short l) -> short;
 extern auto LittleShort(short l) -> short;
-extern auto BigLong(int l) -> int;
 extern auto LittleLong(int l) -> int;
-extern auto BigFloat(float l) -> float;
 extern auto LittleFloat(float l) -> float;
