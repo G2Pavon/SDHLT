@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma warning(disable : 4786) // identifier was truncated to '255' characters in the browser information
-
 #include "mathlib.h"
 #include "winding.h"
 #include "boundingbox.h"

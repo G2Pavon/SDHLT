@@ -170,10 +170,6 @@ static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tR
  * It can be run multi threaded.
  * =============
  */
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#endif
 
 auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out) -> bool
 {
@@ -458,10 +454,6 @@ void MakeScales(const int threadnum)
 	ThreadUnlock();
 }
 
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif
-
 /*
  * =============
  * SwapTransfersTask
@@ -481,10 +473,6 @@ void MakeScales(const int threadnum)
  * It can be run multi threaded.
  * =============
  */
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#endif
 void MakeRGBScales(const int threadnum)
 {
 	int i;
@@ -717,11 +705,6 @@ void MakeRGBScales(const int threadnum)
 	g_total_transfer += count;
 	ThreadUnlock();
 }
-
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif
-
 /*
  * =============
  * SwapTransfersTask

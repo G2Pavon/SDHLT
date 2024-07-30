@@ -115,10 +115,6 @@ static void TestPatchToFace(const unsigned patchnum, const int facenum, const in
 // BuildVisLeafs
 //      This is run by multiple threads
 // =====================================================================================
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#endif
 static void BuildVisLeafs(int threadnum)
 {
 	int i;
@@ -178,7 +174,3 @@ static void BuildVisLeafs(int threadnum)
 		}
 	}
 }
-
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif

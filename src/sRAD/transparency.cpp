@@ -1,5 +1,3 @@
-#pragma warning(disable : 4018) // amckern - 64bit - '<' Singed/Unsigned Mismatch
-
 //
 //	Transparency Arrays for sparse and vismatrix methods
 //

@@ -1640,10 +1640,6 @@ static void CollectLight()
 //      Get light from other g_patches
 //      Run multi-threaded
 // =====================================================================================
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#endif
 static void GatherLight(int threadnum)
 {
 	int j;
@@ -1955,10 +1951,6 @@ static void GatherRGBLight(int threadnum)
 		}
 	}
 }
-
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif
 
 // =====================================================================================
 //  BounceLight

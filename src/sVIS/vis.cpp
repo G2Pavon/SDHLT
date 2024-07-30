@@ -146,11 +146,6 @@ static auto GetNextPortal() -> portal_t *
 // =====================================================================================
 //  LeafThread
 // =====================================================================================
-#ifdef SYSTEM_WIN32
-#pragma warning(push)
-#pragma warning(disable : 4100) // unreferenced formal parameter
-#endif
-
 static void LeafThread(int unused)
 {
     portal_t *p;
@@ -164,10 +159,6 @@ static void LeafThread(int unused)
         PortalFlow(p);
     }
 }
-
-#ifdef SYSTEM_WIN32
-#pragma warning(pop)
-#endif
 
 // =====================================================================================
 //  LeafFlow

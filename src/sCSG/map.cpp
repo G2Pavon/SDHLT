@@ -1,4 +1,3 @@
-// #pragma warning(disable: 4018) // '<' : signed/unsigned mismatch
 #include <string>
 
 #include "scriplib.h"

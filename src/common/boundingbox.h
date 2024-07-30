@@ -3,9 +3,6 @@
 // This file is licensed under the terms of the Lesser GNU Public License
 // (see LPGL.txt, or http://www.gnu.org/copyleft/lesser.txt)
 
-// AJM:
-#pragma warning(disable : 4305) // truncation from 'const double' to 'float'
-
 class BoundingBox
 {
 public:
