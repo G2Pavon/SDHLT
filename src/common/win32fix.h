@@ -1,11 +1,6 @@
-#ifndef WIN32FIX_H__
-#define WIN32FIX_H__
-#include "cmdlib.h" //--vluzacn
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif
 
+#include "cmdlib.h" //--vluzacn
 #include <cstdlib>
 
 /////////////////////////////
@@ -14,12 +9,7 @@
 #define alloca _alloca
 
 #define strncasecmp _strnicmp
-#define strcasecmp _stricmp
-
-#if _MSC_VER < 1400 // AdamR: Ignore this definition in Visual Studio 2005 and later
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#endif
+#define strcasecmp _stricmp_MSC_VER
 
 #define finite _finite
 
@@ -68,6 +58,3 @@ constexpr int _MAX_EXT = 4096;
 #define FORMAT_PRINTF(STRING_INDEX, FIRST_TO_CHECK) __attribute__((format(printf, STRING_INDEX, FIRST_TO_CHECK))) //--vluzacn
 
 #endif
-/////////////////////////////
-
-#endif ///////////////////////////// WIN32FIX_H__

@@ -807,7 +807,7 @@ static void CheckForNoClip()
             continue;
 
         char entclassname[MAX_KEY];
-        strcpy_s(entclassname, ValueForKey(ent, "classname"));
+        strcpy(entclassname, ValueForKey(ent, "classname"));
         int spawnflags = atoi(ValueForKey(ent, "spawnflags"));
         auto skin = IntForKey(ent, "skin"); // vluzacn
 

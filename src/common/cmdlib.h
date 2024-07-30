@@ -46,11 +46,6 @@
 
 //=====================================================================
 
-#if _MSC_VER < 1400
-#define strcpy_s strcpy   //--vluzacn
-#define sprintf_s sprintf //--vluzacn
-#endif
-
 #ifdef __MINGW32__
 #include <io.h>
 #endif
