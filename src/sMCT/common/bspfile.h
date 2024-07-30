@@ -344,21 +344,20 @@ extern void DeleteEmbeddedLightmaps();
 //
 // Entity Related Stuff
 //
-
-typedef struct epair_s
+struct epair_t
 {
-    struct epair_s *next;
+    struct epair_t *next;
     char *key;
     char *value;
-} epair_t; // alias used for declare a var like 'epair_t myEntPropety' instead of 'struct epair_s myEntProperty'
+};
 
-typedef struct
+struct entity_t
 {
     vec3_t origin;
     int firstbrush;
     int numbrushes;
     epair_t *epairs;
-} entity_t;
+};
 
 extern int g_numentities;
 extern entity_t g_entities[MAX_MAP_ENTITIES];
