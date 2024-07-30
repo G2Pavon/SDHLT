@@ -1,5 +1,9 @@
 #include "csg.h"
+#include "scriplib.h"
 #include "arguments.h"
+#include "threads.h"
+#include "blockmem.h"
+#include "filelib.h"
 
 #ifdef SYSTEM_WIN32
 #define WIN32_LEAN_AND_MEAN

@@ -1,4 +1,6 @@
 #include "csg.h"
+#include "blockmem.h"
+#include "hlassert.h"
 
 static auto NewWindingFromPlane(const brushhull_t *const hull, const int planenum) -> Winding *
 {

@@ -1,6 +1,10 @@
 // #pragma warning(disable: 4018) // '<' : signed/unsigned mismatch
+#include <string>
 
+#include "scriplib.h"
 #include "csg.h"
+#include "blockmem.h"
+#include "log.h"
 
 int g_nummapbrushes;
 brush_t g_mapbrushes[MAX_MAP_BRUSHES];

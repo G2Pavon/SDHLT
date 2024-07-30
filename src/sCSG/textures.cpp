@@ -1,5 +1,11 @@
-#include "csg.h"
 #include <vector>
+#include <map>
+#include <string>
+
+#include "csg.h"
+#include "threads.h"
+#include "log.h"
+#include "filelib.h"
 
 constexpr int MAXWADNAME = 16;
 constexpr int MAX_TEXFILES = 128;
