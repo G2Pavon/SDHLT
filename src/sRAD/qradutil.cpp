@@ -411,20 +411,20 @@ auto InvertMatrix(const matrix_t &m, matrix_t &m_inverse) -> bool
 	return true;
 }
 
-typedef struct
+struct position_t
 {
 	bool valid;
 	bool nudged;
 	vec_t best_s; // FindNearestPosition will return this value
 	vec_t best_t;
 	vec3_t pos; // with DEFAULT_HUNT_OFFSET
-} position_t;
+};
 
 // Size of potision_t (21) * positions per sample (9) * max number of samples (max AllocBlock (64) * 128 * 128)
 //   = 200MB of RAM
 // But they are freed before BuildVisLeafs, so it's not a problem.
 
-typedef struct
+struct positionmap_t
 {
 	bool valid;
 	int facenum;
@@ -444,7 +444,7 @@ typedef struct
 	int w;			  // number of s
 	int h;			  // number of t
 	position_t *grid; // [h][w]
-} positionmap_t;
+};
 
 static positionmap_t g_face_positions[MAX_MAP_FACES];
 

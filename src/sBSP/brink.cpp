@@ -27,31 +27,31 @@
 //                                     O-------X
 //
 
-typedef struct bpartition_s
+struct bpartition_t
 {
 	int planenum;
 	bool planeside;
 	int content;
 	bbrinklevel_e type;
 
-	bpartition_s *next;
-} bpartition_t;
+	bpartition_t *next;
+};
 
-typedef struct bclipnode_s
+struct bclipnode_t
 {
 	bool isleaf;
 
 	int planenum;
 	const dplane_t *plane;
-	bclipnode_s *children[2]; // children[0] is the front side of the plane (SIDE_FRONT = 0)
+	bclipnode_t *children[2]; // children[0] is the front side of the plane (SIDE_FRONT = 0)
 
 	int content;
 	bpartition_t *partitions;
 
-	struct btreeleaf_s *treeleaf;
-} bclipnode_t;
+	struct btreeleaf_t *treeleaf;
+};
 
-typedef struct bbrinknode_s
+struct bbrinknode_t
 { // we will only focus on the bsp shape which encircles a brink, so we extract the clipnodes that meets with the brink and store them here
 	bool isleaf;
 
@@ -61,9 +61,9 @@ typedef struct bbrinknode_s
 
 	int content;
 	bclipnode_t *clipnode;
-} bbrinknode_t;
+};
 
-typedef struct
+struct bbrink_t
 {
 	vec3_t start, stop;
 	vec3_t direction;
@@ -71,8 +71,8 @@ typedef struct
 	int numnodes; // including both nodes and leafs
 	std::vector<bbrinknode_t> *nodes;
 
-	struct btreeedge_s *edge; // only for use in deciding brink type
-} bbrink_t;
+	struct btreeedge_t *edge; // only for use in deciding brink type
+};
 
 auto CopyBrink(bbrink_t *other) -> bbrink_t *
 {
@@ -211,41 +211,41 @@ void BrinkReplaceClipnode(bbrink_t *b, bclipnode_t *prev, bclipnode_t *n)
 
 // compute the structure of the whole bsp tree
 
-struct btreepoint_s; // 0d object
-struct btreeedge_s;	 // 1d object
-struct btreeface_s;	 // 2d object
-struct btreeleaf_s;	 // 3d object
+struct btreepoint_t; // 0d object
+struct btreeedge_t;	 // 1d object
+struct btreeface_t;	 // 2d object
+struct btreeleaf_t;	 // 3d object
 
-typedef struct
+struct btreepoint_r
 {
-	btreepoint_s *p;
+	btreepoint_t *p;
 	bool side;
-} btreepoint_r;
+};
 
-typedef struct
+struct btreeedge_r
 {
-	btreeedge_s *e;
+	btreeedge_t *e;
 	bool side;
-} btreeedge_r;
+};
 
-typedef struct
+struct btreeface_r
 {
-	btreeface_s *f;
+	btreeface_t *f;
 	bool side;
-} btreeface_r;
+};
 
-typedef struct
+struct btreeleaf_r
 {
-	btreeleaf_s *l;
+	btreeleaf_t *l;
 	bool side;
-} btreeleaf_r;
+};
 
 typedef std::list<btreepoint_r> btreepoint_l;
 typedef std::list<btreeedge_r> btreeedge_l;
 typedef std::list<btreeface_r> btreeface_l;
 typedef std::list<btreeleaf_r> btreeleaf_l;
 
-typedef struct btreepoint_s
+struct btreepoint_t
 {
 	vec3_t v;
 	bool infinite;
@@ -255,9 +255,9 @@ typedef struct btreepoint_s
 	bool tmp_tested;
 	vec_t tmp_dist;
 	int tmp_side;
-} btreepoint_t;
+};
 
-typedef struct btreeedge_s
+struct btreeedge_t
 {
 	btreepoint_r points[2]; // pointing from points[1] to points[0]
 	bool infinite;			// both points are infinite (i.e. this edge lies on the bounding box)
@@ -269,9 +269,9 @@ typedef struct btreeedge_s
 	bool tmp_tested;
 	int tmp_side;
 	bool tmp_onleaf[2];
-} btreeedge_t;
+};
 
-typedef struct btreeface_s
+struct btreeface_t
 {
 	btreeedge_l *edges; // empty faces are allowed (in order to preserve topological correctness)
 	bool infinite;		// when the face is infinite, all its edges must also be infinite
@@ -284,15 +284,15 @@ typedef struct btreeface_s
 
 	bool tmp_tested;
 	int tmp_side;
-} btreeface_t;
+};
 
-typedef struct btreeleaf_s
+struct btreeleaf_t
 {
 	btreeface_l *faces;
 	bool infinite; // note: the infinite leaf is not convex
 
 	bclipnode_t *clipnode; // not defined for infinite leaf
-} btreeleaf_t;
+};
 
 auto AllocTreepoint(int &numobjects, bool infinite) -> btreepoint_t *
 {
@@ -1101,7 +1101,7 @@ void BuildTreeCells_r(int &numobjects, bclipnode_t *c)
 	BuildTreeCells_r(numobjects, c->children[1]);
 }
 
-typedef struct bbrinkinfo_s
+struct bbrinkinfo_t
 {
 	int numclipnodes;
 	bclipnode_t *clipnodes;
@@ -1109,7 +1109,7 @@ typedef struct bbrinkinfo_s
 	btreeleaf_t *leaf_outside;
 	int numbrinks;
 	bbrink_t **brinks;
-} bbrinkinfo_t;
+};
 
 #define MAXCLIPNODES (MAX_MAP_CLIPNODES * 8)
 
@@ -1273,36 +1273,36 @@ void FreeBrinks(bbrinkinfo_t *info)
 	free(info->brinks);
 }
 
-struct bwedge_s;
-struct bsurface_s;
+struct bwedge_t;
+struct bsurface_t;
 
-typedef struct bwedge_s
+struct bwedge_t
 {
 	int content;
 	int nodenum;
-	bsurface_s *prev;
-	bsurface_s *next;
-} bwedge_t;
+	bsurface_t *prev;
+	bsurface_t *next;
+};
 
-typedef struct bsurface_s
+struct bsurface_t
 {
 	vec3_t normal; // pointing clockwise
 	int nodenum;
 	bool nodeside;
-	bwedge_s *prev;
-	bwedge_s *next;
-} bsurface_t;
+	bwedge_t *prev;
+	bwedge_t *next;
+};
 
 #define MAXBRINKWEDGES 64
 
-typedef struct
+struct bcircle_t
 {
 	vec3_t axis;
 	vec3_t basenormal;
 	int numwedges[2];						// the front and back side of nodes[0]
 	bwedge_t wedges[2][MAXBRINKWEDGES];		// in counterclosewise order
 	bsurface_t surfaces[2][MAXBRINKWEDGES]; // the surface between two adjacent wedges
-} bcircle_t;
+};
 
 auto CalculateCircle(bbrink_t *b, bcircle_t *c) -> bool
 {

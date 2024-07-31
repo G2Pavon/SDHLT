@@ -114,15 +114,15 @@ void SubdivideFace(face_t *f, face_t **prevptr)
 
 //===========================================================================
 
-typedef struct hashvert_s
+struct hashvert_t
 {
-    struct hashvert_s *next;
+    struct hashvert_t *next;
     vec3_t point;
     int num;
     int numplanes; // for corner determination
     int planenums[2];
     int numedges;
-} hashvert_t;
+};
 
 // #define      POINT_EPSILON   0.01
 #define POINT_EPSILON (ON_EPSILON / 2) // #define POINT_EPSILON	ON_EPSILON //--vluzacn

@@ -2,17 +2,17 @@
 #include "blockmem.h"
 #include "threads.h"
 
-typedef struct
+struct sparse_row_t
 {
     unsigned offset : 24;
     unsigned values : 8;
-} sparse_row_t;
+};
 
-typedef struct
+struct sparse_column_t
 {
     sparse_row_t *row;
     int count;
-} sparse_column_t;
+};
 
 sparse_column_t *s_vismatrix;
 

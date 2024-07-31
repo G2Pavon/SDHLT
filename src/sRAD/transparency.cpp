@@ -4,12 +4,12 @@
 #include "qrad.h"
 #include "threads.h"
 
-typedef struct
+struct transList_t
 {
 	unsigned p1;
 	unsigned p2;
 	unsigned data_index;
-} transList_t;
+};
 
 static vec3_t *s_trans_list = nullptr;
 static unsigned int s_trans_count = 0;
@@ -267,12 +267,12 @@ void GetTransparency(const unsigned p1, const unsigned p2, vec3_t &trans, unsign
 	next_index = s_sorted_count;
 }
 
-typedef struct
+struct styleList_t
 {
 	unsigned p1;
 	unsigned p2;
 	char style;
-} styleList_t;
+};
 static styleList_t *s_style_list = nullptr;
 static unsigned int s_style_count = 0;
 static unsigned int s_max_style_count = 0;

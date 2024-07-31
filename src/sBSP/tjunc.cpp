@@ -1,20 +1,20 @@
 #include "bsp5.h"
 #include "log.h"
 
-typedef struct wvert_s
+struct wvert_t
 {
     vec_t t;
-    struct wvert_s *prev;
-    struct wvert_s *next;
-} wvert_t;
+    struct wvert_t *prev;
+    struct wvert_t *next;
+};
 
-typedef struct wedge_s
+struct wedge_t
 {
-    struct wedge_s *next;
+    struct wedge_t *next;
     vec3_t dir;
     vec3_t origin;
     wvert_t head;
-} wedge_t;
+};
 
 static int numwedges;
 static int numwverts;

@@ -10,11 +10,11 @@ vec3_t g_face_centroids[MAX_MAP_EDGES]; // BUG: should this be [MAX_MAP_FACES]?
 // =====================================================================================
 //  PairEdges
 // =====================================================================================
-typedef struct
+struct intersecttest_t
 {
 	int numclipplanes;
 	dplane_t *clipplanes;
-} intersecttest_t;
+};
 auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 {
 	auto *f2 = &g_dfaces[facenum];
@@ -472,7 +472,7 @@ typedef enum
 	WALLFLAG_SHADOWED = 0x4,
 } wallflag_t;
 
-typedef struct
+struct lightinfo_t
 {
 	vec_t *light;
 	vec_t facedist;
@@ -506,7 +506,7 @@ typedef struct
 	int *lmcache_wallflags;		  // wallflag_t
 	int lmcachewidth;
 	int lmcacheheight;
-} lightinfo_t;
+};
 
 // =====================================================================================
 //  TextureNameFromFace
@@ -759,7 +759,7 @@ static void SetSTFromSurf(const lightinfo_t *const l, const vec_t *surf, vec_t &
 	}
 }
 
-typedef struct
+struct samplefragedge_t
 {
 	int edgenum; // g_dedges index
 	int edgeside;
@@ -778,17 +778,17 @@ typedef struct
 	vec_t ratio; // if ratio != 1, seam is unavoidable
 	matrix_t prevtonext;
 	matrix_t nexttoprev;
-} samplefragedge_t;
+};
 
-typedef struct
+struct samplefragrect_t
 {
 	dplane_t planes[4];
-} samplefragrect_t;
+};
 
-typedef struct samplefrag_s
+struct samplefrag_t
 {
-	samplefrag_s *next;		  // since this is a node in a list
-	samplefrag_s *parentfrag; // where it grew from
+	samplefrag_t *next;		  // since this is a node in a list
+	samplefrag_t *parentfrag; // where it grew from
 	samplefragedge_t *parentedge;
 	int facenum; // facenum
 
@@ -810,14 +810,14 @@ typedef struct samplefrag_s
 
 	int numedges;			 // # of candicates for the next growth
 	samplefragedge_t *edges; // candicates for the next growth
-} samplefrag_t;
+};
 
-typedef struct
+struct samplefraginfo_t
 {
 	int maxsize;
 	int size;
 	samplefrag_t *head;
-} samplefraginfo_t;
+};
 
 void ChopFrag(samplefrag_t *frag)
 // fill winding, windingplane, mywinding, mywindingplane, numedges, edges
@@ -1489,18 +1489,18 @@ static void CalcPoints(lightinfo_t *l)
 
 //==============================================================
 
-typedef struct
+struct sample_t
 {
 	vec3_t pos;
 	vec3_t light;
 	int surface; // this sample can grow into another face
-} sample_t;
+};
 
-typedef struct
+struct facelight_t
 {
 	int numsamples;
 	sample_t *samples[MAXLIGHTMAPS];
-} facelight_t;
+};
 
 static directlight_t *directlights[MAX_MAP_LEAFS];
 static facelight_t facelight[MAX_MAP_FACES];
@@ -2138,17 +2138,17 @@ int g_numskynormals[SKYLEVELMAX + 1];
 vec3_t *g_skynormals[SKYLEVELMAX + 1];
 vec_t *g_skynormalsizes[SKYLEVELMAX + 1];
 typedef double point_t[3];
-typedef struct
+struct edge_t
 {
 	int point[2];
 	bool divided;
 	int child[2];
-} edge_t;
-typedef struct
+};
+struct triangle_t
 {
 	int edge[3];
 	int dir[3];
-} triangle_t;
+};
 void CopyToSkynormals(int skylevel, int numpoints, point_t *points, int numedges, edge_t *edges, int numtriangles, triangle_t *triangles)
 {
 	hlassume(numpoints == (1 << (2 * skylevel)) + 2, assume_first);
@@ -3998,7 +3998,7 @@ const int MLH_MAXSAMPLECOUNT = 4;
 const vec_t MLH_LEFT = 0;
 const vec_t MLH_RIGHT = 1;
 
-typedef struct
+struct mdllight_t
 {
 	vec3_t origin;
 	vec3_t floor;
@@ -4019,7 +4019,7 @@ typedef struct
 		int samplecount;
 	} face[MLH_MAXFACECOUNT];
 	int facecount;
-} mdllight_t;
+};
 
 auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 {
@@ -4227,11 +4227,11 @@ void MdlLightHack()
 		Log("Adjust mdl light: modified %d samples for %d entities\n", countsample, countent);
 }
 
-typedef struct facelightlist_s
+struct facelightlist_t
 {
 	int facenum;
-	facelightlist_s *next;
-} facelightlist_t;
+	facelightlist_t *next;
+};
 
 static facelightlist_t *g_dependentfacelights[MAX_MAP_FACES];
 

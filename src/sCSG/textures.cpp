@@ -16,14 +16,14 @@ constexpr int MAX_TEXFILES = 128;
 //  LoadLump
 //  AddAnimatingTextures
 
-typedef struct
+struct wadinfo_t
 {
     char identification[4]; // should be WAD2/WAD3
     int numlumps;
     int infotableofs;
-} wadinfo_t;
+};
 
-typedef struct
+struct lumpinfo_t
 {
     int filepos;
     int disksize;
@@ -34,8 +34,7 @@ typedef struct
     char name[MAXWADNAME]; // must be null terminated // upper case
 
     int iTexFile; // index of the wad this texture is located in
-
-} lumpinfo_t;
+};
 
 static int nummiptex = 0;
 static lumpinfo_t miptex[MAX_MAP_TEXTURES];
@@ -649,7 +648,7 @@ void WriteMiptex()
         auto *data = (byte *)&l->dataofs[nummiptex];
         l->nummiptex = nummiptex;
         char writewad_name[_MAX_PATH]; // Write temp wad file with processed textures
-        typedef struct                 // Lump info in temp wad
+        struct dlumpinfo_t             // Lump info in temp wad
         {
             int filepos;
             int disksize;
@@ -658,7 +657,7 @@ void WriteMiptex()
             char compression;
             char pad1, pad2;
             char name[MAXWADNAME];
-        } dlumpinfo_t;
+        };
         wadinfo_t writewad_header;
 
         safe_snprintf(writewad_name, _MAX_PATH, "%s.wa_", g_Mapname); // Generate temp wad file name based on mapname

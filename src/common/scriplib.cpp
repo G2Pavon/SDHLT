@@ -8,14 +8,14 @@
 
 char g_token[MAXTOKEN];
 
-typedef struct
+struct script_t
 {
     char filename[_MAX_PATH];
     char *buffer;
     char *script_p;
     char *end_p;
     int line;
-} script_t;
+};
 
 #define MAX_INCLUDES 8
 

@@ -4,14 +4,14 @@
 
 // #define      ON_EPSILON      0.001
 
-typedef struct tnode_s
+struct tnode_t
 {
 	planetypes type;
 	vec3_t normal;
 	float dist;
 	int children[2];
 	int pad;
-} tnode_t;
+};
 
 static tnode_t *tnodes;
 static tnode_t *tnode_p;
@@ -402,7 +402,7 @@ auto TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhit) -> int
 	return TestLine_r(0, start, stop, linecontent, skyhit);
 }
 
-typedef struct
+struct opaqueface_t
 {
 	Winding *winding;
 	dplane_t plane;
@@ -414,10 +414,10 @@ typedef struct
 	int tex_width;
 	int tex_height;
 	const byte *tex_canvas;
-} opaqueface_t;
+};
 opaqueface_t *opaquefaces;
 
-typedef struct opaquenode_s
+struct opaquenode_t
 {
 	planetypes type;
 	vec3_t normal;
@@ -425,15 +425,15 @@ typedef struct opaquenode_s
 	int children[2];
 	int firstface;
 	int numfaces;
-} opaquenode_t;
+};
 opaquenode_t *opaquenodes;
 
 #ifndef OPAQUE_NODE_INLINECALL
-typedef struct
+struct opaquemodel_t
 {
 	vec3_t mins, maxs;
 	int headnode;
-} opaquemodel_t;
+};
 #endif
 opaquemodel_t *opaquemodels;
 

@@ -2,13 +2,13 @@
 
 constexpr int MAX_WADPATHS = 128; // arbitrary
 
-typedef struct
+struct wadpath_t
 {
     char path[_MAX_PATH];
     bool usedbymap;    // does this map requrie this wad to be included in the bsp?
     int usedtextures;  // number of textures in this wad the map actually uses
     int totaltextures; // total textures in this wad
-} wadpath_t;           // !!! the above two are VERY DIFFERENT. ie (usedtextures == 0) != (usedbymap == false)
+}; // !!! the above two are VERY DIFFERENT. ie (usedtextures == 0) != (usedbymap == false)
 
 extern wadpath_t *g_pWadPaths[MAX_WADPATHS];
 extern int g_iNumWadPaths;

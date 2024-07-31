@@ -120,12 +120,12 @@ static void MakeParents(const int nodenum, const int parent)
 // =====================================================================================
 
 // misc
-typedef struct
+struct texlight_t
 {
 	std::string name;
 	vec3_t value;
 	const char *filename; // either info_texlights or lights.rad filename
-} texlight_t;
+};
 
 static std::vector<texlight_t> s_texlights;
 typedef std::vector<texlight_t>::iterator texlight_i;

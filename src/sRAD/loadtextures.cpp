@@ -9,14 +9,14 @@
 int g_numtextures;
 radtexture_t *g_textures;
 
-typedef struct waddir_s
+struct waddir_t
 {
-	struct waddir_s *next;
+	struct waddir_t *next;
 	char path[_MAX_PATH];
-} waddir_t;
+};
 waddir_t *g_waddirs = nullptr;
 
-typedef struct
+struct lumpinfo_t
 {
 	int filepos;
 	int disksize;
@@ -25,17 +25,17 @@ typedef struct
 	char compression;
 	char pad1, pad2;
 	char name[16];
-} lumpinfo_t;
+};
 
-typedef struct wadfile_s
+struct wadfile_t
 {
-	struct wadfile_s *next;
+	struct wadfile_t *next;
 	char path[_MAX_PATH];
 	FILE *file;
 	int filesize;
 	int numlumps;
 	lumpinfo_t *lumpinfos;
-} wadfile_t;
+};
 
 wadfile_t *g_wadfiles = nullptr;
 bool g_wadfiles_opened;
@@ -436,18 +436,18 @@ inline auto CQ_DotProduct(const T a[CQ_DIM], const T b[CQ_DIM]) -> T
 	return dot;
 }
 
-typedef struct
+struct cq_splitter_t
 {
 	int axis;
 	int dist;
 	double numpoints[2];
-} cq_splitter_t; // partition the space into { point: point[axis] < dist } and { point: point[axis] >= dist }
+}; // partition the space into { point: point[axis] < dist } and { point: point[axis] >= dist }
 
-typedef struct cq_node_s
+struct cq_node_t
 {
 	bool isleafnode;
-	cq_node_s *parentnode;
-	cq_node_s *childrennode[2];
+	cq_node_t *parentnode;
+	cq_node_t *childrennode[2];
 
 	int numpoints; // numpoints > 0
 	unsigned char (*refpoints)[CQ_DIM];
@@ -456,18 +456,18 @@ typedef struct cq_node_s
 	bool needsplit;
 	cq_splitter_t bestsplitter;
 	double splitpriority;
-} cq_node_t; // a cuboid region; the root node is the entire cube whose size is 255
+}; // a cuboid region; the root node is the entire cube whose size is 255
 
-typedef struct cq_searchnode_s
+struct cq_searchnode_t
 {
 	bool isleafnode;
-	cq_searchnode_s *childrennode[2];
+	cq_searchnode_t *childrennode[2];
 
 	int planeaxis;
 	int planedist;
 
 	int result;
-} cq_searchnode_t;
+};
 
 static void CQ_SelectPartition(cq_node_t *node)
 {

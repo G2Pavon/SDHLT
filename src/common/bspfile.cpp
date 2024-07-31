@@ -680,12 +680,12 @@ void WriteExtentFile(const char *const filename)
 //
 const int BLOCK_WIDTH = 128;
 const int BLOCK_HEIGHT = 128;
-typedef struct lightmapblock_s
+struct lightmapblock_t
 {
-	lightmapblock_s *next;
+	lightmapblock_t *next;
 	bool used;
 	int allocated[BLOCK_WIDTH];
-} lightmapblock_t;
+};
 void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 {
 	lightmapblock_t *block;
