@@ -10,12 +10,6 @@
 constexpr int MAXWADNAME = 16;
 constexpr int MAX_TEXFILES = 128;
 
-//  FindMiptex
-//  TEX_InitFromWad
-//  FindTexture
-//  LoadLump
-//  AddAnimatingTextures
-
 struct wadinfo_t
 {
     char identification[4]; // should be WAD3
@@ -43,11 +37,7 @@ static lumpinfo_t *lumpinfo = nullptr;
 static int nTexFiles = 0;
 static FILE *texfiles[MAX_TEXFILES];
 static wadpath_t *texwadpathes[MAX_TEXFILES]; // maps index of the wad to its path
-
-// The old buggy code in effect limit the number of brush sides to MAX_MAP_BRUSHES
-
 static char *texmap[MAX_INTERNAL_MAP_TEXINFO];
-
 static int numtexmap = 0;
 
 static auto texmap_store(char *texname, bool shouldlock = true) -> int
@@ -280,63 +270,15 @@ auto TEX_InitFromWad() -> bool
         // memalloc for this lump
         lumpinfo = (lumpinfo_t *)realloc(lumpinfo, (nTexLumps + wadinfo.numlumps) * sizeof(lumpinfo_t));
 
-        // for each texlump
-        std::vector<std::tuple<std::string, char *, int>> texturesUnterminatedString; // 2 for now in case the same texture has 2 issues
-        std::vector<std::tuple<std::string, char *, int>> texturesOversized;
-
         for (int j = 0; j < wadinfo.numlumps; j++, nTexLumps++)
         {
             SafeRead(texfile, &lumpinfo[nTexLumps], (sizeof(lumpinfo_t) - sizeof(int))); // iTexFile is NOT read from file
             char szWadFileName[_MAX_PATH];
             ExtractFile(pszWadFile, szWadFileName);
-
-            if (!TerminatedString(lumpinfo[nTexLumps].name, MAXWADNAME)) // If texture name too long
-            {
-                lumpinfo[nTexLumps].name[MAXWADNAME - 1] = 0;
-                texturesUnterminatedString.push_back(std::make_tuple(lumpinfo[nTexLumps].name, szWadFileName, nTexLumps));
-            }
             CleanupName(lumpinfo[nTexLumps].name, lumpinfo[nTexLumps].name);
             lumpinfo[nTexLumps].filepos = LittleLong(lumpinfo[nTexLumps].filepos);
             lumpinfo[nTexLumps].disksize = LittleLong(lumpinfo[nTexLumps].disksize);
             lumpinfo[nTexLumps].iTexFile = nTexFiles;
-
-            if (lumpinfo[nTexLumps].disksize > MAX_TEXTURE_SIZE)
-            {
-                texturesOversized.push_back(std::make_tuple(lumpinfo[nTexLumps].name, szWadFileName, lumpinfo[nTexLumps].disksize));
-            }
-        }
-        if (!texturesUnterminatedString.empty())
-        {
-            Log("Fixing unterminated texture names\n");
-            Log("---------------------------------\n");
-
-            for (const auto &texture : texturesUnterminatedString)
-            {
-                const auto &texName = std::get<0>(texture);
-                auto *szWadFileName = std::get<1>(texture);
-                auto texLumps = std::get<2>(texture);
-                Log("[%s] %s (%d)\n", szWadFileName, texName, texLumps);
-            }
-            Log("---------------------------------\n\n");
-        }
-        if (!texturesOversized.empty())
-        {
-            Warning("potentially oversized textures detected");
-            Log("If map doesn't run, -wadinclude the following\n");
-            Log("Wadinclude may support resolutions up to 544*544\n");
-            Log("------------------------------------------------\n");
-
-            for (const auto &texture : texturesOversized)
-            {
-                for (const auto &texture : texturesOversized)
-                {
-                    const auto &texName = std::get<0>(texture);
-                    auto *szWadFileName = std::get<1>(texture);
-                    auto texBytes = std::get<2>(texture);
-                    Log("[%s] %s (%d bytes)\n", szWadFileName, texName, texBytes);
-                }
-            }
-            Log("----------------------------------------------------\n");
         }
 
         // AJM: this feature is dependant on autowad. :(
@@ -346,8 +288,6 @@ auto TEX_InitFromWad() -> bool
         nTexFiles++;
         hlassume(nTexFiles < MAX_TEXFILES, assume_MAX_TEXFILES);
     }
-
-    // Log("num of used textures: %i\n", g_numUsedTextures);
 
     // sort texlumps in memory by name
     qsort((void *)lumpinfo, (size_t)nTexLumps, sizeof(lumpinfo[0]), lump_sorter_by_name);
@@ -361,8 +301,6 @@ auto TEX_InitFromWad() -> bool
 // =====================================================================================
 auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
 {
-    // Log("** PnFNFUNC: FindTexture\n");
-
     lumpinfo_t *found = nullptr;
 
     found = (lumpinfo_t *)bsearch(source, (void *)lumpinfo, (size_t)nTexLumps, sizeof(lumpinfo[0]), lump_sorter_by_name);
