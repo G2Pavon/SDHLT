@@ -29,11 +29,7 @@ extern void WriteLog(const char *const message);
 
 extern void CheckFatal();
 
-#ifdef _DEBUG
-#define IfDebug(x) (x)
-#else
 #define IfDebug(x)
-#endif
 
 extern auto Localize(const char *s) -> const char *;
 extern void LoadLangFile(const char *name, const char *programpath);

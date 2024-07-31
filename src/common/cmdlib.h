@@ -24,11 +24,7 @@
 
 #define MODIFICATIONS_STRING "Submit detailed bug reports to (github.com/seedee/SDHLT/issues)\n"
 
-#ifdef _DEBUG
-#define ZHLT_VERSIONSTRING "v3.4 dbg"
-#else
 #define ZHLT_VERSIONSTRING "v3.4"
-#endif
 
 #define SDHLT_VERSIONSTRING "v1.2.0"
 

@@ -183,11 +183,8 @@ static auto FindEdge(const vec3_t p1, const vec3_t p2, vec_t *t1, vec_t *t2) -> 
     int hashneighbors[MAX_HASH_NEIGHBORS];
 
     VectorSubtract(p2, p1, dir);
-    if (!CanonicalVector(dir))
+    if (!CanonicalVector(dir)) // can't delete this wtf
     {
-#if _DEBUG
-        Warning("CanonicalVector: degenerate @ (%4.3f %4.3f %4.3f )\n", p1[0], p1[1], p1[2]);
-#endif
     }
 
     *t1 = DotProduct(p1, dir);
@@ -325,12 +322,6 @@ static void SplitFaceForTjunc(face_t *f, face_t *original)
     vec3_t dir, test;
     vec_t v;
     int firstcorner, lastcorner;
-
-#ifdef _DEBUG
-    static int counter = 0;
-
-    Log("SplitFaceForTjunc %d\n", counter++);
-#endif
 
     chain = nullptr;
     do
