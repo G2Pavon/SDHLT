@@ -2,33 +2,13 @@
 #include <map>
 #include <string>
 
-#include "csg.h"
+#include "csg.h" // TODO: implement map.h
 #include "threads.h"
 #include "log.h"
 #include "filelib.h"
-
-constexpr int MAXWADNAME = 16;
-constexpr int MAX_TEXFILES = 128;
-
-struct wadinfo_t
-{
-    char identification[4]; // should be WAD3
-    int numlumps;
-    int infotableofs;
-};
-
-struct lumpinfo_t
-{
-    int filepos;
-    int disksize;
-    int size; // uncompressed
-    char type;
-    char compression;
-    char pad1, pad2;
-    char name[MAXWADNAME]; // must be null terminated // upper case
-
-    int iTexFile; // index of the wad this texture is located in
-};
+#include "textures.h"
+#include "bspfile.h"
+#include "mathlib.h"
 
 static int nummiptex = 0;
 static lumpinfo_t miptex[MAX_MAP_TEXTURES];
@@ -80,7 +60,7 @@ static void texmap_clear()
 // =====================================================================================
 //  CleanupName
 // =====================================================================================
-static void CleanupName(const char *const in, char *out)
+void CleanupName(const char *const in, char *out)
 {
     int i;
 
@@ -103,8 +83,7 @@ static void CleanupName(const char *const in, char *out)
 // =====================================================================================
 //  lump_sorters
 // =====================================================================================
-
-static auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
+auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;
@@ -119,7 +98,7 @@ static auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lum
     }
 }
 
-static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
+auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;
@@ -131,7 +110,7 @@ static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> i
 //  FindMiptex
 //      Find and allocate a texture into the lump data
 // =====================================================================================
-static auto FindMiptex(const char *const name) -> int
+auto FindMiptex(const char *const name) -> int
 {
     int i;
     if (strlen(name) >= MAXWADNAME)
@@ -778,4 +757,93 @@ auto GetTextureByNumber_CSG(int texturenumber) -> const char *
     if (texturenumber == -1)
         return "";
     return texmap_retrieve(g_texinfo[texturenumber].miptex);
+}
+
+//
+//
+//
+//
+
+wadpath_t *g_pWadPaths[MAX_WADPATHS];
+int g_iNumWadPaths = 0;
+
+// =====================================================================================
+//  PushWadPath
+//      adds a wadpath into the wadpaths list, without duplicates
+// =====================================================================================
+void PushWadPath(const char *const path, bool inuse)
+{
+    wadpath_t *currentWad;
+    hlassume(g_iNumWadPaths < MAX_WADPATHS, assume_MAX_TEXFILES);
+    currentWad = (wadpath_t *)malloc(sizeof(wadpath_t));
+    safe_strncpy(currentWad->path, path, _MAX_PATH); // Copy path into currentWad->path
+    currentWad->usedbymap = inuse;
+    currentWad->usedtextures = 0;  // Updated later in autowad procedures
+    currentWad->totaltextures = 0; // Updated later to reflect total
+
+    if (g_iNumWadPaths < MAX_WADPATHS) // Fix buffer overrun //seedee
+    {
+        g_pWadPaths[g_iNumWadPaths] = currentWad;
+        g_iNumWadPaths++;
+    }
+    else
+    {
+        free(currentWad);
+        Error("PushWadPath: too many wadpaths (i%/i%)", g_iNumWadPaths, MAX_WADPATHS);
+    }
+}
+
+// =====================================================================================
+//  FreeWadPaths
+// =====================================================================================
+void FreeWadPaths()
+{
+    int i;
+    wadpath_t *current;
+
+    for (i = 0; i < g_iNumWadPaths; i++)
+    {
+        current = g_pWadPaths[i];
+        free(current);
+    }
+}
+
+// =====================================================================================
+//  GetUsedWads
+//      parse the "wad" keyvalue into wadpath_t structs
+// =====================================================================================
+void GetUsedWads()
+{
+    const char *pszWadPaths;
+    char szTmp[_MAX_PATH];
+    int i, j;
+    pszWadPaths = ValueForKey(&g_entities[0], "wad");
+
+    for (i = 0;;) // Loop through wadpaths
+    {
+        for (j = i; pszWadPaths[j] != '\0'; j++) // Find end of wadpath (semicolon)
+        {
+            if (pszWadPaths[j] == ';')
+            {
+                break;
+            }
+        }
+        if (j - i > 0) // If wadpath is not empty
+        {
+            int length = qmin(j - i, _MAX_PATH - 1); // Get length of wadpath
+            memcpy(szTmp, &pszWadPaths[i], length);
+            szTmp[length] = '\0'; // Null terminate
+
+            if (g_iNumWadPaths >= MAX_WADPATHS)
+            {
+                Error("Too many wad files (%d/%d)\n", g_iNumWadPaths, MAX_WADPATHS);
+            }
+            PushWadPath(szTmp, true); // Add wadpath to list
+        }
+        if (pszWadPaths[j] == '\0') // Break if end of wadpaths
+        {
+            break;
+        }
+        i = j + 1;
+    }
 }

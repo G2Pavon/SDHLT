@@ -4,6 +4,7 @@
 #endif
 
 #include "csg.h"
+#include "textures.h"
 #include "scriplib.h"
 #include "arguments.h"
 #include "threads.h"

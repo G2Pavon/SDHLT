@@ -93,13 +93,12 @@ set(CSG_SOURCES
     ${CSG_DIR}/map.cpp
     ${CSG_DIR}/qcsg.cpp
     ${CSG_DIR}/textures.cpp
-    ${CSG_DIR}/wadpath.cpp
 )
 
 set(CSG_HEADERS
     ${COMMON_HEADERS}
     ${CSG_DIR}/csg.h
-    ${CSG_DIR}/wadpath.h
+    ${CSG_DIR}/textures.h
 )
 
 #================

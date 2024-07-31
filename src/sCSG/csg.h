@@ -3,7 +3,6 @@
 #include "mathlib.h"
 #include "winding.h"
 #include "boundingbox.h"
-#include "wadpath.h"
 
 #ifndef DOUBLEVEC_T
 #error you must add -dDOUBLEVEC_T to the project!
@@ -169,7 +168,6 @@ extern void LoadMapFile(const char *const filename);
 // textures.cpp
 
 extern void WriteMiptex();
-extern void LogWadUsage(wadpath_t *currentwad, int nummiptex);
 extern auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int;
 extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 
