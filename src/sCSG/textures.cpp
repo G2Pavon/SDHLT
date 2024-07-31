@@ -18,7 +18,7 @@ constexpr int MAX_TEXFILES = 128;
 
 struct wadinfo_t
 {
-    char identification[4]; // should be WAD2/WAD3
+    char identification[4]; // should be WAD3
     int numlumps;
     int infotableofs;
 };
@@ -264,7 +264,7 @@ auto TEX_InitFromWad() -> bool
         SafeRead(texfile, &wadinfo, sizeof(wadinfo));
 
         // make sure its a valid format
-        if (strncmp(wadinfo.identification, "WAD2", 4) && strncmp(wadinfo.identification, "WAD3", 4))
+        if (strncmp(wadinfo.identification, "WAD3", 4))
         {
             Log(" - ");
             Error("%s isn't a Wadfile!", pszWadFile);
