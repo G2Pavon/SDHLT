@@ -334,20 +334,18 @@ extern void CreateFacelightDependencyList(); // run before AddPatchLights
 extern void AddPatchLights(int facenum);
 extern void FreeFacelightDependencyList();
 extern auto TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = nullptr) -> int;
-#define OPAQUE_NODE_INLINECALL
-#ifdef OPAQUE_NODE_INLINECALL
+
 struct opaquemodel_t
 {
 	vec3_t mins, maxs;
 	int headnode;
 };
 extern opaquemodel_t *opaquemodels;
-#endif
+
 extern void CreateOpaqueNodes();
 extern auto TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop) -> int;
 extern auto CountOpaqueFaces(int modelnum) -> int;
 extern void DeleteOpaqueNodes();
-#ifdef OPAQUE_NODE_INLINECALL
 extern auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int;
 FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point) // use "forceinline" because "inline" does nothing here (TODO: move to trace.cpp)
 {
@@ -364,9 +362,7 @@ FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool sol
 	}
 	return TestPointOpaque_r(thismodel->headnode, solid, newpoint);
 }
-#else
-extern int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point);
-#endif
+
 extern void CreateDirectLights();
 extern void DeleteDirectLights();
 extern void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal); // added "const" --vluzacn

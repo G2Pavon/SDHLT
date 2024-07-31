@@ -427,14 +427,6 @@ struct opaquenode_t
 	int numfaces;
 };
 opaquenode_t *opaquenodes;
-
-#ifndef OPAQUE_NODE_INLINECALL
-struct opaquemodel_t
-{
-	vec3_t mins, maxs;
-	int headnode;
-};
-#endif
 opaquemodel_t *opaquemodels;
 
 auto TryMerge(opaqueface_t *f, const opaqueface_t *f2) -> bool
@@ -924,21 +916,3 @@ auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int
 	}
 	return TestPointOpaque_r(thisnode->children[0], solid, point) || TestPointOpaque_r(thisnode->children[1], solid, point);
 }
-
-#ifndef OPAQUE_NODE_INLINECALL
-int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point)
-{
-	opaquemodel_t *thismodel = &opaquemodels[modelnum];
-	vec3_t newpoint;
-	VectorSubtract(point, modelorigin, newpoint);
-	int axial;
-	for (axial = 0; axial < 3; axial++)
-	{
-		if (newpoint[axial] > thismodel->maxs[axial])
-			return 0;
-		if (newpoint[axial] < thismodel->mins[axial])
-			return 0;
-	}
-	return TestPointOpaque_r(thismodel->headnode, solid, newpoint);
-}
-#endif
