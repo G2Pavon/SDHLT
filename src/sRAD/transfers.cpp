@@ -1,6 +1,4 @@
-#ifdef SYSTEM_POSIX
 #include <sys/stat.h>
-#endif
 
 #include "qrad.h"
 #include "blockmem.h"

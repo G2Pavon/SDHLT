@@ -6,11 +6,9 @@
 #include "threads.h"
 #include "blockmem.h"
 
-#ifdef SYSTEM_POSIX
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <pthread.h>
-#endif
 
 #include "hlassert.h"
 
@@ -159,11 +157,6 @@ void RunThreadsOnIndividual(int workcnt, bool showpacifier, q_threadfunction fun
 }
 
 #ifndef SINGLE_THREADED
-
-/*====================
-| Begin SYSTEM_POSIX
-=*/
-#ifdef SYSTEM_POSIX
 
 #define USED
 
@@ -328,12 +321,6 @@ void RunThreadsOn(int workcnt, bool showpacifier, q_threadfunction func)
 
     Log(" (%.2f seconds)\n", end - start);
 }
-
-#endif /*SYSTEM_POSIX */
-
-/*=
-| End SYSTEM_POSIX
-=====================*/
 
 #endif /*SINGLE_THREADED */
 

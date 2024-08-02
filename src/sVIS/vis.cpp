@@ -12,9 +12,7 @@
 
 */
 
-#ifdef SYSTEM_POSIX
 #include <algorithm>
-#endif
 #include <string>
 
 #include "vis.h"

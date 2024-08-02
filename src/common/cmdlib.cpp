@@ -1,8 +1,6 @@
-#ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#endif
 
 #include <cstring>
 #include <cstdio>
@@ -26,8 +24,6 @@
 
 auto I_FloatTime() -> double
 {
-
-#ifdef SYSTEM_POSIX
     struct timeval tp;
     struct timezone tzp;
     static int secbase;
@@ -41,10 +37,8 @@ auto I_FloatTime() -> double
     }
 
     return (tp.tv_sec - secbase) + tp.tv_usec / 1000000.0;
-#endif
 }
 
-#ifdef SYSTEM_POSIX
 auto strupr(char *string) -> char *
 {
     int i;
@@ -68,7 +62,6 @@ auto strlwr(char *string) -> char *
     }
     return string;
 }
-#endif
 
 /*--------------------------------------------------------------------
 // New implementation of FlipSlashes, DefaultExtension, StripFilename,

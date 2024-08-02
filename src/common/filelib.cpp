@@ -4,13 +4,9 @@
 #include <cstring>
 #include <cerrno>
 
-#ifdef SYSTEM_POSIX
 #include <sys/stat.h>
-
 #include <fcntl.h>
-
 #include <unistd.h>
-#endif
 
 #include "cmdlib.h"
 #include "messages.h"

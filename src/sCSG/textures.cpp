@@ -178,14 +178,12 @@ auto TEX_InitFromWad() -> bool
             safe_snprintf(szTmp, _MAX_PATH, "%s" SYSTEM_SLASH_STR "%s%s", pszWadroot, szSubdir, szFile);
             texfiles[nTexFiles] = fopen(szTmp, "rb");
 
-#ifdef SYSTEM_POSIX
             if (!texfiles[nTexFiles])
             {
                 // if we cant find it, Convert to lower case and try again
                 strlwr(szTmp);
                 texfiles[nTexFiles] = fopen(szTmp, "rb");
             }
-#endif
         }
 
         if (!texfiles[nTexFiles])

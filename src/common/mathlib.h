@@ -195,10 +195,6 @@ inline auto VectorCompare(const vec3_t v1, const vec3_t v2) -> bool
 // Portable bit rotation
 //
 
-#ifdef SYSTEM_POSIX
-#undef rotl
-#undef rotr
-
 inline auto rotl(unsigned value, unsigned int amt) -> unsigned int
 {
     unsigned t1, t2;
@@ -218,7 +214,6 @@ inline auto rotr(unsigned value, unsigned int amt) -> unsigned int
     t2 = value >> amt;
     return (t1 | t2);
 }
-#endif
 
 //
 // Misc

@@ -1,6 +1,3 @@
-/// ********* POSIX **********
-
-#ifdef SYSTEM_POSIX
 #include <cstdlib>
 #include "cmdlib.h"
 #include "messages.h"
@@ -46,5 +43,3 @@ auto Free(void *pointer) -> bool
 {
     return FreeBlock(pointer);
 }
-
-#endif /// ********* POSIX **********

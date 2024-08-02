@@ -170,10 +170,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         -pthread
         -pipe
     )
-    add_compile_definitions(
-        VERSION_LINUX
-        SYSTEM_POSIX
-    )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 else()
     add_compile_definitions(VERSION_OTHER)
