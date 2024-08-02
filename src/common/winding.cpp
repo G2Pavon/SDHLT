@@ -440,15 +440,6 @@ void Winding::RemoveColinearPoints(
     }
 }
 
-void Winding::Clip(const dplane_t &plane, Winding **front, Winding **back, vec_t epsilon)
-{
-    vec3_t normal;
-    vec_t dist;
-    VectorCopy(plane.normal, normal);
-    dist = plane.dist;
-    Clip(normal, dist, front, back, epsilon);
-}
-
 void Winding::Clip(const vec3_t normal, const vec_t dist, Winding **front, Winding **back, vec_t epsilon)
 {
     vec_t dists[MAX_POINTS_ON_WINDING + 4];

@@ -53,10 +53,8 @@ public:
   void insertPoint(const vec3_t newpoint, const unsigned int offset);
 
   // Specialized Functions
-  void RemoveColinearPoints(
-      vec_t epsilon = ON_EPSILON);
+  void RemoveColinearPoints(vec_t epsilon = ON_EPSILON);
   auto Clip(const dplane_t &split, bool keepon, vec_t epsilon = ON_EPSILON) -> bool; // For hlbsp
-  void Clip(const dplane_t &split, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
   void Clip(const vec3_t normal, const vec_t dist, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
   auto Chop(const vec3_t normal, const vec_t dist, vec_t epsilon = ON_EPSILON) -> bool;
   void Divide(const dplane_t &split, Winding **front, Winding **back, vec_t epsilon = ON_EPSILON);
