@@ -2,19 +2,6 @@
 
 #include "cmdlib.h" //--vluzacn
 
-#ifdef SYSTEM_WIN32
-
-#define assume(exp, message)                                                                      \
-    {                                                                                             \
-        if (!(exp))                                                                               \
-        {                                                                                         \
-            Error("\nAssume '%s' failed\n at %s:%d\n %s\n\n", #exp, __FILE__, __LINE__, message); \
-        }                                                                                         \
-    }
-#define hlassert(exp)
-
-#endif // SYSTEM_WIN32
-
 #ifdef SYSTEM_POSIX
 
 #define assume(exp, message)                                                                      \

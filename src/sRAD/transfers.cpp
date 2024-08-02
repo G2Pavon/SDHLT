@@ -1,9 +1,3 @@
-#ifdef SYSTEM_WIN32
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "win32fix.h"
-#endif
-
 #ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 #endif

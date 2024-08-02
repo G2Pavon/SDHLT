@@ -42,12 +42,6 @@
 #define PLATFORM_VERSIONSTRING "???"
 #endif
 
-#ifdef SYSTEM_WIN32
-#define SYSTEM_SLASH_CHAR '\\'
-#define SYSTEM_SLASH_STR "\\"
-#define HLCSG_GAMETEXTMESSAGE_UTF8 //--vluzacn
-#endif
-
 #ifdef SYSTEM_POSIX
 #define SYSTEM_SLASH_CHAR '/'
 #define SYSTEM_SLASH_STR "/"

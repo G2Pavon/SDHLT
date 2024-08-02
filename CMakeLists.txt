@@ -175,14 +175,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         SYSTEM_POSIX
     )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    if (NOT DEFINED CMAKE_GENERATOR_PLATFORM)
-        set(CMAKE_GENERATOR_PLATFORM x64)
-    endif()
-    add_compile_definitions(
-        SYSTEM_WIN32
-    )
-    message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 else()
     add_compile_definitions(VERSION_OTHER)
     message("${CMAKE_PROJECT_NAME} > WARNING: Unknown system \"${CMAKE_SYSTEM_NAME}\"")

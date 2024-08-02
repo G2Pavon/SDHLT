@@ -16,10 +16,6 @@
 #include <algorithm>
 #endif
 #include <string>
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 #include "vis.h"
 #include "arguments.h"

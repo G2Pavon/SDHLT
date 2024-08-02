@@ -163,18 +163,6 @@ auto TEX_InitFromWad() -> bool
         texwadpathes[nTexFiles] = currentwad;
         texfiles[nTexFiles] = fopen(pszWadFile, "rb");
 
-#ifdef SYSTEM_WIN32
-        if (!texfiles[nTexFiles])
-        {
-            // cant find it, maybe this wad file has a hard code drive
-            if (pszWadFile[1] == ':')
-            {
-                pszWadFile += 2; // skip past the drive
-                texfiles[nTexFiles] = fopen(pszWadFile, "rb");
-            }
-        }
-#endif
-
         if (!texfiles[nTexFiles] && pszWadroot)
         {
             char szTmp[_MAX_PATH];
@@ -199,22 +187,6 @@ auto TEX_InitFromWad() -> bool
             }
 #endif
         }
-
-#ifdef SYSTEM_WIN32
-        if (!texfiles[nTexFiles] && pszWadFile[0] == '\\')
-        {
-            char tmp[_MAX_PATH];
-            for (int l = 'C'; l <= 'Z'; ++l)
-            {
-                safe_snprintf(tmp, _MAX_PATH, "%c:%s", l, pszWadFile);
-                texfiles[nTexFiles] = fopen(tmp, "rb");
-                if (texfiles[nTexFiles])
-                {
-                    break;
-                }
-            }
-        }
-#endif
 
         if (!texfiles[nTexFiles])
         {

@@ -11,11 +11,6 @@
 
 */
 
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 #include <string>
 #include <vector>
 
@@ -2241,9 +2236,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 	{
 		if (!strcasecmp(argv[i], "-console"))
 		{
-#ifndef SYSTEM_WIN32
 			Warning("The option '-console #' is only valid for Windows.");
-#endif
 			if (i + 1 < argc)
 				++i;
 			else

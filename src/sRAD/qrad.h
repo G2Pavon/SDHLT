@@ -1,12 +1,6 @@
 #pragma once
 #include <vector>
 #include <string>
-#ifdef SYSTEM_WIN32
-#include <io.h>
-#endif
-#ifdef SYSTEM_WIN32
-#include <direct.h>
-#endif
 
 #include "compress.h"
 #include "mathlib.h"

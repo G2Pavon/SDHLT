@@ -1,8 +1,3 @@
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> //--vluzacn
-#endif
-
 #include "csg.h"
 #include "textures.h"
 #include "maplib.h"

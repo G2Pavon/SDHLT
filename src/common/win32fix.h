@@ -4,35 +4,6 @@
 #include <string.h>
 
 /////////////////////////////
-#ifdef SYSTEM_WIN32
-
-#define alloca _alloca
-
-#define strncasecmp _strnicmp
-#define strcasecmp _stricmp_MSC_VER
-
-#define finite _finite
-
-#define rotl _rotl
-#define rotr _rotr
-
-#undef STDCALL
-#undef FASTCALL
-#undef CDECL
-
-#define STDCALL __stdcall
-#define FASTCALL __fastcall
-#define CDECL __cdecl
-
-#define INLINE __inline
-
-#define FORCEINLINE __forceinline                   //--vluzacn
-#define FORMAT_PRINTF(STRING_INDEX, FIRST_TO_CHECK) //--vluzacn
-
-#endif
-/////////////////////////////
-
-/////////////////////////////
 #ifdef SYSTEM_POSIX
 constexpr int _MAX_PATH = 4096;
 constexpr int _MAX_DRIVE = 4096;

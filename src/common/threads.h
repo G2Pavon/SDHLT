@@ -13,9 +13,6 @@ typedef enum
 
 typedef void (*q_threadfunction)(int);
 
-#ifdef SYSTEM_WIN32
-constexpr int DEFAULT_NUMTHREADS = -1;
-#endif
 #ifdef SYSTEM_POSIX
 constexpr int DEFAULT_NUMTHREADS = 1;
 #endif

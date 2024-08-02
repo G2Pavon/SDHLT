@@ -4,12 +4,6 @@
 #include <cstring>
 #include <cerrno>
 
-#ifdef SYSTEM_WIN32
-#include <sys/stat.h>
-#include <io.h>
-#include <fcntl.h>
-#endif
-
 #ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 

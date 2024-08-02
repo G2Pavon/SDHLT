@@ -1,8 +1,3 @@
-#ifdef SYSTEM_WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 #ifdef SYSTEM_POSIX
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -31,17 +26,6 @@
 
 auto I_FloatTime() -> double
 {
-#ifdef SYSTEM_WIN32
-    FILETIME ftime;
-    double rval;
-
-    GetSystemTimeAsFileTime(&ftime);
-
-    rval = ftime.dwLowDateTime;
-    rval += ((__int64)ftime.dwHighDateTime) << 32;
-
-    return (rval / 10000000.0);
-#endif
 
 #ifdef SYSTEM_POSIX
     struct timeval tp;
