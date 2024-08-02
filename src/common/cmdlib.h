@@ -14,10 +14,6 @@
 #include <unistd.h>
 #include "win32fix.h"
 
-#ifdef __MINGW32__
-#include <io.h>
-#endif
-
 #include <sys/time.h>
 
 #define MODIFICATIONS_STRING "Submit detailed bug reports to (github.com/seedee/SDHLT/issues)\n"
