@@ -31,13 +31,10 @@
 #if !defined(SCSG) && !defined(SBSP) && !defined(SVIS) && !defined(SRAD) // seedee
 #error "You must define one of these in the settings of each project: SDHLCSG, SDHLBSP, SDHLVIS, SDHLRAD. The most likely cause is that you didn't load the project from the .sln file."
 #endif
-#if !defined(VERSION_64BIT) && !defined(VERSION_LINUX) && !defined(VERSION_OTHER) //--vluzacn
-#error "You must define one of these in the settings of each project: VERSION_64BIT, VERSION_LINUX, VERSION_OTHER. The most likely cause is that you didn't load the project from the .sln file."
+#if !defined(VERSION_LINUX) && !defined(VERSION_OTHER) //--vluzacn
+#error "You must define one of these in the settings of each project: VERSION_LINUX, VERSION_OTHER. The most likely cause is that you didn't load the project from the .sln file."
 #endif
 
-#ifdef VERSION_64BIT
-#define PLATFORM_VERSIONSTRING "64-bit"
-#endif
 #ifdef VERSION_LINUX
 #define PLATFORM_VERSIONSTRING "linux"
 #endif

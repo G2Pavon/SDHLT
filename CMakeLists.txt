@@ -180,7 +180,6 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         set(CMAKE_GENERATOR_PLATFORM x64)
     endif()
     add_compile_definitions(
-        VERSION_64BIT
         SYSTEM_WIN32
     )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
