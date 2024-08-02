@@ -16,8 +16,9 @@ struct plane_t
     planetypes type;
 };
 
-struct valve_vects
+struct face_texture_t
 {
+    char name[32];
     vec3_t UAxis;
     vec3_t VAxis;
     vec_t shift[2];
@@ -25,15 +26,9 @@ struct valve_vects
     vec_t scale[2];
 };
 
-struct brush_texture_t
-{
-    valve_vects vects;
-    char name[32];
-};
-
 struct side_t
 {
-    brush_texture_t td;
+    face_texture_t texture;
     bool bevel;
     vec_t planepts[3][3];
 };

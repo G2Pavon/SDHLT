@@ -24,7 +24,7 @@ constexpr int MAXWADNAME = 16;
 constexpr int MAX_TEXFILES = 128;
 
 struct plane_t;
-struct brush_texture_t;
+struct face_texture_t;
 
 // Struct definitions
 struct wadinfo_t
@@ -56,5 +56,5 @@ int LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest_
 void AddAnimatingTextures();
 void WriteMiptex();
 void LogWadUsage(wadpath_t *currentwad);
-int TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin);
+int TexinfoForBrushTexture(const plane_t *const plane, face_texture_t *bt, const vec3_t origin);
 const char *GetTextureByNumber_CSG(int texturenumber);

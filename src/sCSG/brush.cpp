@@ -839,7 +839,7 @@ auto MakeBrushPlanes(brush_t *b) -> bool
 			{
 				Fatal(assume_BRUSH_WITH_COPLANAR_FACES, "Entity %i, Brush %i, Side %i: has a coplanar plane at (%.0f, %.0f, %.0f), texture %s",
 					  b->originalentitynum, b->originalbrushnum, i, s->planepts[0][0] + origin[0], s->planepts[0][1] + origin[1],
-					  s->planepts[0][2] + origin[2], s->td.name);
+					  s->planepts[0][2] + origin[2], s->texture.name);
 			}
 		}
 
@@ -849,7 +849,7 @@ auto MakeBrushPlanes(brush_t *b) -> bool
 		f->plane = &g_mapplanes[planenum];
 		f->next = b->hulls[0].faces;
 		b->hulls[0].faces = f;
-		f->texinfo = TexinfoForBrushTexture(f->plane, &s->td, origin);
+		f->texinfo = TexinfoForBrushTexture(f->plane, &s->texture, origin);
 		f->bevel = b->bevel || s->bevel;
 	}
 
@@ -1006,18 +1006,18 @@ auto CheckBrushContents(const brush_t *const b) -> contents_t
 			  b->originalentitynum, b->originalbrushnum);
 	}
 	auto best_i = 0;
-	auto best_contents = TextureContents(s->td.name);
+	auto best_contents = TextureContents(s->texture.name);
 	// Difference between SKIP, ContentEmpty:
 	// SKIP doesn't split space in bsp process, ContentEmpty splits space normally.
-	if (!(strncasecmp(s->td.name, "content", 7) && strncasecmp(s->td.name, "skip", 4)))
+	if (!(strncasecmp(s->texture.name, "content", 7) && strncasecmp(s->texture.name, "skip", 4)))
 		assigned = true;
 	s++;
 	for (i = 1; i < b->numsides; i++, s++)
 	{
-		auto contents_consider = TextureContents(s->td.name);
+		auto contents_consider = TextureContents(s->texture.name);
 		if (assigned)
 			continue;
-		if (!(strncasecmp(s->td.name, "content", 7) && strncasecmp(s->td.name, "skip", 4)))
+		if (!(strncasecmp(s->texture.name, "content", 7) && strncasecmp(s->texture.name, "skip", 4)))
 		{
 			best_i = i;
 			best_contents = contents_consider;
@@ -1036,8 +1036,8 @@ auto CheckBrushContents(const brush_t *const b) -> contents_t
 	s = &g_brushsides[b->firstside];
 	for (i = 0; i < b->numsides; i++, s++)
 	{
-		auto contents2 = TextureContents(s->td.name);
-		if (assigned && strncasecmp(s->td.name, "content", 7) && strncasecmp(s->td.name, "skip", 4) && contents2 != CONTENTS_ORIGIN && contents2 != CONTENTS_HINT && contents2 != CONTENTS_BOUNDINGBOX)
+		auto contents2 = TextureContents(s->texture.name);
+		if (assigned && strncasecmp(s->texture.name, "content", 7) && strncasecmp(s->texture.name, "skip", 4) && contents2 != CONTENTS_ORIGIN && contents2 != CONTENTS_HINT && contents2 != CONTENTS_BOUNDINGBOX)
 		{
 			continue; // overwrite content for this texture
 		}
@@ -1053,8 +1053,8 @@ auto CheckBrushContents(const brush_t *const b) -> contents_t
 		{
 			Fatal(assume_MIXED_FACE_CONTENTS, "Entity %i, Brush %i: mixed face contents\n    Texture %s and %s",
 				  b->originalentitynum, b->originalbrushnum,
-				  g_brushsides[b->firstside + best_i].td.name,
-				  s->td.name);
+				  g_brushsides[b->firstside + best_i].texture.name,
+				  s->texture.name);
 		}
 	}
 	if (contents == CONTENTS_NULL)

@@ -31,7 +31,7 @@ constexpr bool DEFAULT_ESTIMATE = true;
 // textures.cpp
 
 extern void WriteMiptex();
-extern auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int;
+extern auto TexinfoForBrushTexture(const plane_t *const plane, face_texture_t *bt, const vec3_t origin) -> int;
 extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 
 //=============================================================================

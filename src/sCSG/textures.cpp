@@ -663,7 +663,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 //  TexinfoForBrushTexture
 // =====================================================================================
-auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, const vec3_t origin) -> int
+auto TexinfoForBrushTexture(const plane_t *const plane, face_texture_t *bt, const vec3_t origin) -> int
 {
     texinfo_t tx;
     int i;
@@ -691,24 +691,24 @@ auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, con
     }
     else
     {
-        if (!bt->vects.scale[0])
+        if (!bt->scale[0])
         {
-            bt->vects.scale[0] = 1;
+            bt->scale[0] = 1;
         }
-        if (!bt->vects.scale[1])
+        if (!bt->scale[1])
         {
-            bt->vects.scale[1] = 1;
+            bt->scale[1] = 1;
         }
         else
         {
-            auto scale = 1 / bt->vects.scale[0];
-            VectorScale(bt->vects.UAxis, scale, tx.vecs[0]);
-            scale = 1 / bt->vects.scale[1];
-            VectorScale(bt->vects.VAxis, scale, tx.vecs[1]);
+            auto scale = 1 / bt->scale[0];
+            VectorScale(bt->UAxis, scale, tx.vecs[0]);
+            scale = 1 / bt->scale[1];
+            VectorScale(bt->VAxis, scale, tx.vecs[1]);
         }
 
-        tx.vecs[0][3] = bt->vects.shift[0] + DotProduct(origin, tx.vecs[0]);
-        tx.vecs[1][3] = bt->vects.shift[1] + DotProduct(origin, tx.vecs[1]);
+        tx.vecs[0][3] = bt->shift[0] + DotProduct(origin, tx.vecs[0]);
+        tx.vecs[1][3] = bt->shift[1] + DotProduct(origin, tx.vecs[1]);
     }
 
     //

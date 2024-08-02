@@ -306,7 +306,7 @@ static void ParseBrush(entity_t *mapent)
 				strcpy(g_token, "SKIP");
 			}
 		}
-		safe_strncpy(side->td.name, g_token, sizeof(side->td.name));
+		safe_strncpy(side->texture.name, g_token, sizeof(side->texture.name));
 
 		// texture U axis
 		GetToken(false);
@@ -316,13 +316,13 @@ static void ParseBrush(entity_t *mapent)
 		}
 
 		GetToken(false);
-		side->td.vects.UAxis[0] = atof(g_token);
+		side->texture.UAxis[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.UAxis[1] = atof(g_token);
+		side->texture.UAxis[1] = atof(g_token);
 		GetToken(false);
-		side->td.vects.UAxis[2] = atof(g_token);
+		side->texture.UAxis[2] = atof(g_token);
 		GetToken(false);
-		side->td.vects.shift[0] = atof(g_token);
+		side->texture.shift[0] = atof(g_token);
 
 		GetToken(false);
 		if (strcmp(g_token, "]"))
@@ -338,13 +338,13 @@ static void ParseBrush(entity_t *mapent)
 		}
 
 		GetToken(false);
-		side->td.vects.VAxis[0] = atof(g_token);
+		side->texture.VAxis[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.VAxis[1] = atof(g_token);
+		side->texture.VAxis[1] = atof(g_token);
 		GetToken(false);
-		side->td.vects.VAxis[2] = atof(g_token);
+		side->texture.VAxis[2] = atof(g_token);
 		GetToken(false);
-		side->td.vects.shift[1] = atof(g_token);
+		side->texture.shift[1] = atof(g_token);
 
 		GetToken(false);
 		if (strcmp(g_token, "]"))
@@ -354,13 +354,13 @@ static void ParseBrush(entity_t *mapent)
 
 		// Texture rotation is implicit in U/V axes.
 		GetToken(false);
-		side->td.vects.rotate = 0;
+		side->texture.rotate = 0;
 
 		// texure scale
 		GetToken(false);
-		side->td.vects.scale[0] = atof(g_token);
+		side->texture.scale[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.scale[1] = atof(g_token);
+		side->texture.scale[1] = atof(g_token);
 
 		ok = GetToken(true); // Done with line, this reads the first item from the next line
 	};
@@ -381,35 +381,35 @@ static void ParseBrush(entity_t *mapent)
 	for (j = 0; j < b->numsides; j++)
 	{
 		side = &g_brushsides[b->firstside + j];
-		if (nullify && strncasecmp(side->td.name, "BEVEL", 5) && strncasecmp(side->td.name, "ORIGIN", 6) && strncasecmp(side->td.name, "HINT", 4) && strncasecmp(side->td.name, "SKIP", 4) && strncasecmp(side->td.name, "SOLIDHINT", 9) && strncasecmp(side->td.name, "BEVELHINT", 9) && strncasecmp(side->td.name, "SPLITFACE", 9) && strncasecmp(side->td.name, "BOUNDINGBOX", 11) && strncasecmp(side->td.name, "CONTENT", 7) && strncasecmp(side->td.name, "SKY", 3))
+		if (nullify && strncasecmp(side->texture.name, "BEVEL", 5) && strncasecmp(side->texture.name, "ORIGIN", 6) && strncasecmp(side->texture.name, "HINT", 4) && strncasecmp(side->texture.name, "SKIP", 4) && strncasecmp(side->texture.name, "SOLIDHINT", 9) && strncasecmp(side->texture.name, "BEVELHINT", 9) && strncasecmp(side->texture.name, "SPLITFACE", 9) && strncasecmp(side->texture.name, "BOUNDINGBOX", 11) && strncasecmp(side->texture.name, "CONTENT", 7) && strncasecmp(side->texture.name, "SKY", 3))
 		{
-			safe_strncpy(side->td.name, "NULL", sizeof(side->td.name));
+			safe_strncpy(side->texture.name, "NULL", sizeof(side->texture.name));
 		}
 	}
 	for (j = 0; j < b->numsides; j++)
 	{
 		// change to SKIP now that we have set brush content.
 		side = &g_brushsides[b->firstside + j];
-		if (!strncasecmp(side->td.name, "SPLITFACE", 9))
+		if (!strncasecmp(side->texture.name, "SPLITFACE", 9))
 		{
-			strcpy(side->td.name, "SKIP");
+			strcpy(side->texture.name, "SKIP");
 		}
 	}
 	for (j = 0; j < b->numsides; j++)
 	{
 		side = &g_brushsides[b->firstside + j];
-		if (!strncasecmp(side->td.name, "CONTENT", 7))
+		if (!strncasecmp(side->texture.name, "CONTENT", 7))
 		{
-			strcpy(side->td.name, "NULL");
+			strcpy(side->texture.name, "NULL");
 		}
 	}
 	{
 		for (j = 0; j < b->numsides; j++) // NULLIFY trigger
 		{
 			side = &g_brushsides[b->firstside + j];
-			if (!strncasecmp(side->td.name, "AAATRIGGER", 10))
+			if (!strncasecmp(side->texture.name, "AAATRIGGER", 10))
 			{
-				strcpy(side->td.name, "NULL");
+				strcpy(side->texture.name, "NULL");
 			}
 		}
 	}
@@ -517,7 +517,7 @@ static void ParseBrush(entity_t *mapent)
 		for (j = 0; j < newb->numsides; j++)
 		{
 			side = &g_brushsides[newb->firstside + j];
-			strcpy(side->td.name, "NULL");
+			strcpy(side->texture.name, "NULL");
 		}
 	}
 	if (b->cliphull != 0 && b->contents == CONTENTS_TOEMPTY)
@@ -527,11 +527,11 @@ static void ParseBrush(entity_t *mapent)
 		for (j = 0; j < b->numsides; j++)
 		{
 			side = &g_brushsides[b->firstside + j];
-			if (!strncasecmp(side->td.name, "NULL", 4))
+			if (!strncasecmp(side->texture.name, "NULL", 4))
 			{ // this is not supposed to be a HINT brush, so remove all invisible faces from hull 0.
-				strcpy(side->td.name, "SKIP");
+				strcpy(side->texture.name, "SKIP");
 			}
-			if (strncasecmp(side->td.name, "SKIP", 4))
+			if (strncasecmp(side->texture.name, "SKIP", 4))
 				mixed = true;
 		}
 		if (mixed)
@@ -543,7 +543,7 @@ static void ParseBrush(entity_t *mapent)
 		for (j = 0; j < b->numsides; j++)
 		{
 			side = &g_brushsides[b->firstside + j];
-			strcpy(side->td.name, "NULL");
+			strcpy(side->texture.name, "NULL");
 		}
 	}
 }
@@ -680,28 +680,25 @@ auto ParseMapEntity() -> bool
 							VectorAdd(point, ent_move, point);
 						}
 					}
-					// note that  tex->vecs = td.vects.Axis / td.vects.scale
-					//            tex->vecs[3] = vects.shift + Dot(origin, tex->vecs)
-					//      and   texcoordinate = Dot(worldposition, tex->vecs) + tex->vecs[3]
 					bool zeroscale = false;
-					if (!side->td.vects.scale[0])
+					if (!side->texture.scale[0])
 					{
-						side->td.vects.scale[0] = 1;
+						side->texture.scale[0] = 1;
 					}
-					if (!side->td.vects.scale[1])
+					if (!side->texture.scale[1])
 					{
-						side->td.vects.scale[1] = 1;
+						side->texture.scale[1] = 1;
 					}
 					if (ent_scale_b)
 					{
 						vec_t coord[2];
-						if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
+						if (fabs(side->texture.scale[0]) > NORMAL_EPSILON)
 						{
-							coord[0] = DotProduct(ent_scale_origin, side->td.vects.UAxis) / side->td.vects.scale[0] + side->td.vects.shift[0];
-							side->td.vects.scale[0] *= ent_scale;
-							if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
+							coord[0] = DotProduct(ent_scale_origin, side->texture.UAxis) / side->texture.scale[0] + side->texture.shift[0];
+							side->texture.scale[0] *= ent_scale;
+							if (fabs(side->texture.scale[0]) > NORMAL_EPSILON)
 							{
-								side->td.vects.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->td.vects.UAxis) / side->td.vects.scale[0];
+								side->texture.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->texture.UAxis) / side->texture.scale[0];
 							}
 							else
 							{
@@ -712,13 +709,13 @@ auto ParseMapEntity() -> bool
 						{
 							zeroscale = true;
 						}
-						if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
+						if (fabs(side->texture.scale[1]) > NORMAL_EPSILON)
 						{
-							coord[1] = DotProduct(ent_scale_origin, side->td.vects.VAxis) / side->td.vects.scale[1] + side->td.vects.shift[1];
-							side->td.vects.scale[1] *= ent_scale;
-							if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
+							coord[1] = DotProduct(ent_scale_origin, side->texture.VAxis) / side->texture.scale[1] + side->texture.shift[1];
+							side->texture.scale[1] *= ent_scale;
+							if (fabs(side->texture.scale[1]) > NORMAL_EPSILON)
 							{
-								side->td.vects.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->td.vects.VAxis) / side->td.vects.scale[1];
+								side->texture.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->texture.VAxis) / side->texture.scale[1];
 							}
 							else
 							{
@@ -732,17 +729,17 @@ auto ParseMapEntity() -> bool
 					}
 					if (ent_move_b)
 					{
-						if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
+						if (fabs(side->texture.scale[0]) > NORMAL_EPSILON)
 						{
-							side->td.vects.shift[0] -= DotProduct(ent_move, side->td.vects.UAxis) / side->td.vects.scale[0];
+							side->texture.shift[0] -= DotProduct(ent_move, side->texture.UAxis) / side->texture.scale[0];
 						}
 						else
 						{
 							zeroscale = true;
 						}
-						if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
+						if (fabs(side->texture.scale[1]) > NORMAL_EPSILON)
 						{
-							side->td.vects.shift[1] -= DotProduct(ent_move, side->td.vects.VAxis) / side->td.vects.scale[1];
+							side->texture.shift[1] -= DotProduct(ent_move, side->texture.VAxis) / side->texture.scale[1];
 						}
 						else
 						{
