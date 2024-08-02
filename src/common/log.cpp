@@ -16,7 +16,7 @@
 #include <windows.h>
 #endif
 
-#include "scriplib.h"
+#include "maplib.h"
 
 char *g_Program = "Uninitialized variable ::g_Program";
 char g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";

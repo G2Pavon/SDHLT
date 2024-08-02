@@ -7,7 +7,7 @@
 #include "log.h"
 #include "mathlib.h"
 #include "bspfile.h"
-#include "scriplib.h"
+#include "maplib.h"
 #include "blockmem.h"
 
 //=============================================================================

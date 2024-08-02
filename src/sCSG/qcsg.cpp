@@ -5,7 +5,7 @@
 
 #include "csg.h"
 #include "textures.h"
-#include "scriplib.h"
+#include "maplib.h"
 #include "arguments.h"
 #include "threads.h"
 #include "blockmem.h"

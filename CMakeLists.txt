@@ -31,7 +31,7 @@ set(COMMON_SOURCES
     ${COMMON_DIR}/log.cpp
     ${COMMON_DIR}/mathlib.cpp
     ${COMMON_DIR}/messages.cpp
-    ${COMMON_DIR}/scriplib.cpp
+    ${COMMON_DIR}/maplib.cpp
     ${COMMON_DIR}/threads.cpp
     ${COMMON_DIR}/winding.cpp
 )
@@ -48,7 +48,7 @@ set(COMMON_HEADERS
     ${COMMON_DIR}/mathlib.h
     ${COMMON_DIR}/mathtypes.h
     ${COMMON_DIR}/messages.h
-    ${COMMON_DIR}/scriplib.h
+    ${COMMON_DIR}/maplib.h
     ${COMMON_DIR}/threads.h
     ${COMMON_DIR}/win32fix.h
     ${COMMON_DIR}/winding.h

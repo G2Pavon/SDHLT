@@ -1,6 +1,6 @@
 #include <string>
 
-#include "scriplib.h"
+#include "maplib.h"
 #include "csg.h"
 #include "blockmem.h"
 #include "log.h"
@@ -878,7 +878,7 @@ auto CountEngineEntities() -> unsigned int
 
 // =====================================================================================
 //  LoadMapFile
-//      wrapper for LoadScriptFile
+//      wrapper for LoadMapFileData
 //      parse in script entities
 // =====================================================================================
 auto ContentsToString(const contents_t type) -> const char *;
@@ -887,7 +887,7 @@ void LoadMapFile(const char *const filename)
 {
 	unsigned num_engine_entities;
 
-	LoadScriptFile(filename);
+	LoadMapFileData(filename);
 
 	g_numentities = 0;
 	g_numparsedentities = 0;
