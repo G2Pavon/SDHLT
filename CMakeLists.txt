@@ -99,6 +99,7 @@ set(CSG_HEADERS
     ${COMMON_HEADERS}
     ${CSG_DIR}/csg.h
     ${CSG_DIR}/textures.h
+    ${CSG_DIR}/map.h
 )
 
 #================
