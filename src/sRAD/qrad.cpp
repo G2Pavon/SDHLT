@@ -2234,15 +2234,7 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 {
 	for (int i = 1; i < argc; i++)
 	{
-		if (!strcasecmp(argv[i], "-console"))
-		{
-			Warning("The option '-console #' is only valid for Windows.");
-			if (i + 1 < argc)
-				++i;
-			else
-				Usage(ProgramType::PROGRAM_RAD);
-		}
-		else if (!strcasecmp(argv[i], "-extra"))
+		if (!strcasecmp(argv[i], "-extra"))
 		{
 			g_extra = true;
 

@@ -20,7 +20,6 @@ void Usage(ProgramType programType)
     case ProgramType::PROGRAM_BSP:
         Log(" %s.exe map_name.map -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
-        Log("    -console #     : Set to 0 to turn off the pop-up console (default is 1)\n");
         Log("    -subdivide #   : Sets the face subdivide size\n");
         Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
         Log("    -texdata #     : Alter maximum texture memory limit (in kb)\n");
@@ -31,7 +30,6 @@ void Usage(ProgramType programType)
     case ProgramType::PROGRAM_VIS:
         Log(" %s.exe <mapname.map> -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
-        Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
         Log("    -full           : Full vis\n");
         Log("    -fast           : Fast vis\n\n");
         Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
@@ -44,7 +42,6 @@ void Usage(ProgramType programType)
     case ProgramType::PROGRAM_RAD:
         Log(" %s.exe <mapname.map> -argument", g_Program);
         Log("\n %s Arguments :\n\n", g_Program);
-        Log("    -console #      : Set to 0 to turn off the pop-up console (default is 1)\n");
         Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
         Log("    -bounce #       : Set number of radiosity bounces\n");
         Log("    -limiter #      : Set light clipping threshold (-1=None)\n");
