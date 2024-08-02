@@ -732,52 +732,6 @@ static void ConvertHintToEmpty()
     }
 }
 
-void LoadWadValue()
-{
-    char *wadvalue;
-    ParseFromMemory(g_dentdata, g_entdatasize);
-    epair_t *e;
-    entity_t ent0;
-    auto *mapent = &ent0;
-    memset(mapent, 0, sizeof(entity_t));
-    if (!GetToken(true))
-    {
-        wadvalue = strdup("");
-    }
-    else
-    {
-        if (strcmp(g_token, "{"))
-        {
-            Error("ParseEntity: { not found");
-        }
-        while (true)
-        {
-            if (!GetToken(true))
-            {
-                Error("ParseEntity: EOF without closing brace");
-            }
-            if (!strcmp(g_token, "}"))
-            {
-                break;
-            }
-            e = ParseEpair();
-            e->next = mapent->epairs;
-            mapent->epairs = e;
-        }
-        wadvalue = strdup(ValueForKey(mapent, "wad"));
-        epair_t *next;
-        for (e = mapent->epairs; e; e = next)
-        {
-            next = e->next;
-            free(e->key);
-            free(e->value);
-            free(e);
-        }
-    }
-    SetKeyValue(&g_entities[0], "wad", wadvalue);
-    free(wadvalue);
-}
-
 unsigned int BrushClipHullsDiscarded = 0;
 unsigned int ClipNodesDiscarded = 0;
 static void MarkEntForNoclip(entity_t *ent)
