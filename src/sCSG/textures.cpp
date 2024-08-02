@@ -691,24 +691,24 @@ auto TexinfoForBrushTexture(const plane_t *const plane, brush_texture_t *bt, con
     }
     else
     {
-        if (!bt->vects.valve.scale[0])
+        if (!bt->vects.scale[0])
         {
-            bt->vects.valve.scale[0] = 1;
+            bt->vects.scale[0] = 1;
         }
-        if (!bt->vects.valve.scale[1])
+        if (!bt->vects.scale[1])
         {
-            bt->vects.valve.scale[1] = 1;
+            bt->vects.scale[1] = 1;
         }
         else
         {
-            auto scale = 1 / bt->vects.valve.scale[0];
-            VectorScale(bt->vects.valve.UAxis, scale, tx.vecs[0]);
-            scale = 1 / bt->vects.valve.scale[1];
-            VectorScale(bt->vects.valve.VAxis, scale, tx.vecs[1]);
+            auto scale = 1 / bt->vects.scale[0];
+            VectorScale(bt->vects.UAxis, scale, tx.vecs[0]);
+            scale = 1 / bt->vects.scale[1];
+            VectorScale(bt->vects.VAxis, scale, tx.vecs[1]);
         }
 
-        tx.vecs[0][3] = bt->vects.valve.shift[0] + DotProduct(origin, tx.vecs[0]);
-        tx.vecs[1][3] = bt->vects.valve.shift[1] + DotProduct(origin, tx.vecs[1]);
+        tx.vecs[0][3] = bt->vects.shift[0] + DotProduct(origin, tx.vecs[0]);
+        tx.vecs[1][3] = bt->vects.shift[1] + DotProduct(origin, tx.vecs[1]);
     }
 
     //

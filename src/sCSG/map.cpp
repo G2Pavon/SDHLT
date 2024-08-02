@@ -316,13 +316,13 @@ static void ParseBrush(entity_t *mapent)
 		}
 
 		GetToken(false);
-		side->td.vects.valve.UAxis[0] = atof(g_token);
+		side->td.vects.UAxis[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.UAxis[1] = atof(g_token);
+		side->td.vects.UAxis[1] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.UAxis[2] = atof(g_token);
+		side->td.vects.UAxis[2] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.shift[0] = atof(g_token);
+		side->td.vects.shift[0] = atof(g_token);
 
 		GetToken(false);
 		if (strcmp(g_token, "]"))
@@ -338,13 +338,13 @@ static void ParseBrush(entity_t *mapent)
 		}
 
 		GetToken(false);
-		side->td.vects.valve.VAxis[0] = atof(g_token);
+		side->td.vects.VAxis[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.VAxis[1] = atof(g_token);
+		side->td.vects.VAxis[1] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.VAxis[2] = atof(g_token);
+		side->td.vects.VAxis[2] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.shift[1] = atof(g_token);
+		side->td.vects.shift[1] = atof(g_token);
 
 		GetToken(false);
 		if (strcmp(g_token, "]"))
@@ -354,13 +354,13 @@ static void ParseBrush(entity_t *mapent)
 
 		// Texture rotation is implicit in U/V axes.
 		GetToken(false);
-		side->td.vects.valve.rotate = 0;
+		side->td.vects.rotate = 0;
 
 		// texure scale
 		GetToken(false);
-		side->td.vects.valve.scale[0] = atof(g_token);
+		side->td.vects.scale[0] = atof(g_token);
 		GetToken(false);
-		side->td.vects.valve.scale[1] = atof(g_token);
+		side->td.vects.scale[1] = atof(g_token);
 
 		ok = GetToken(true); // Done with line, this reads the first item from the next line
 	};
@@ -680,28 +680,28 @@ auto ParseMapEntity() -> bool
 							VectorAdd(point, ent_move, point);
 						}
 					}
-					// note that  tex->vecs = td.vects.valve.Axis / td.vects.valve.scale
-					//            tex->vecs[3] = vects.valve.shift + Dot(origin, tex->vecs)
+					// note that  tex->vecs = td.vects.Axis / td.vects.scale
+					//            tex->vecs[3] = vects.shift + Dot(origin, tex->vecs)
 					//      and   texcoordinate = Dot(worldposition, tex->vecs) + tex->vecs[3]
 					bool zeroscale = false;
-					if (!side->td.vects.valve.scale[0])
+					if (!side->td.vects.scale[0])
 					{
-						side->td.vects.valve.scale[0] = 1;
+						side->td.vects.scale[0] = 1;
 					}
-					if (!side->td.vects.valve.scale[1])
+					if (!side->td.vects.scale[1])
 					{
-						side->td.vects.valve.scale[1] = 1;
+						side->td.vects.scale[1] = 1;
 					}
 					if (ent_scale_b)
 					{
 						vec_t coord[2];
-						if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
+						if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
 						{
-							coord[0] = DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0] + side->td.vects.valve.shift[0];
-							side->td.vects.valve.scale[0] *= ent_scale;
-							if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
+							coord[0] = DotProduct(ent_scale_origin, side->td.vects.UAxis) / side->td.vects.scale[0] + side->td.vects.shift[0];
+							side->td.vects.scale[0] *= ent_scale;
+							if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
 							{
-								side->td.vects.valve.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
+								side->td.vects.shift[0] = coord[0] - DotProduct(ent_scale_origin, side->td.vects.UAxis) / side->td.vects.scale[0];
 							}
 							else
 							{
@@ -712,13 +712,13 @@ auto ParseMapEntity() -> bool
 						{
 							zeroscale = true;
 						}
-						if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
+						if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
 						{
-							coord[1] = DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1] + side->td.vects.valve.shift[1];
-							side->td.vects.valve.scale[1] *= ent_scale;
-							if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
+							coord[1] = DotProduct(ent_scale_origin, side->td.vects.VAxis) / side->td.vects.scale[1] + side->td.vects.shift[1];
+							side->td.vects.scale[1] *= ent_scale;
+							if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
 							{
-								side->td.vects.valve.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
+								side->td.vects.shift[1] = coord[1] - DotProduct(ent_scale_origin, side->td.vects.VAxis) / side->td.vects.scale[1];
 							}
 							else
 							{
@@ -732,17 +732,17 @@ auto ParseMapEntity() -> bool
 					}
 					if (ent_move_b)
 					{
-						if (fabs(side->td.vects.valve.scale[0]) > NORMAL_EPSILON)
+						if (fabs(side->td.vects.scale[0]) > NORMAL_EPSILON)
 						{
-							side->td.vects.valve.shift[0] -= DotProduct(ent_move, side->td.vects.valve.UAxis) / side->td.vects.valve.scale[0];
+							side->td.vects.shift[0] -= DotProduct(ent_move, side->td.vects.UAxis) / side->td.vects.scale[0];
 						}
 						else
 						{
 							zeroscale = true;
 						}
-						if (fabs(side->td.vects.valve.scale[1]) > NORMAL_EPSILON)
+						if (fabs(side->td.vects.scale[1]) > NORMAL_EPSILON)
 						{
-							side->td.vects.valve.shift[1] -= DotProduct(ent_move, side->td.vects.valve.VAxis) / side->td.vects.valve.scale[1];
+							side->td.vects.shift[1] -= DotProduct(ent_move, side->td.vects.VAxis) / side->td.vects.scale[1];
 						}
 						else
 						{

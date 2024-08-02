@@ -25,14 +25,9 @@ struct valve_vects
     vec_t scale[2];
 };
 
-struct vects_union
-{
-    valve_vects valve;
-};
-
 struct brush_texture_t
 {
-    vects_union vects;
+    valve_vects vects;
     char name[32];
 };
 
