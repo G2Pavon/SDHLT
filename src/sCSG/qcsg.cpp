@@ -167,8 +167,8 @@ void WriteDetailBrush(int hull, const BrushFace *faces)
     ThreadUnlock();
 }
 
-static void SaveOutside(const brush_t *const brush, const int hull, BrushFace *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
-{                                                                                                                 // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
+static void SaveOutside(const Brush *const brush, const int hull, BrushFace *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
+{                                                                                                               // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
     BrushFace *face;
     BrushFace *face2;
     BrushFace *next;
@@ -917,7 +917,7 @@ static void ProcessModels() // a.k.a brush entity
             continue;
 
         auto first = g_entities[i].firstbrush; // sort the contents down so stone bites water, etc
-        auto *temps = (brush_t *)malloc(g_entities[i].numbrushes * sizeof(brush_t));
+        auto *temps = (Brush *)malloc(g_entities[i].numbrushes * sizeof(Brush));
         hlassume(temps, assume_NoMemory);
         for (j = 0; j < g_entities[i].numbrushes; j++)
         {
@@ -930,7 +930,7 @@ static void ProcessModels() // a.k.a brush entity
             auto b_contents = false;
             for (j = 0; j < g_entities[i].numbrushes; j++)
             {
-                brush_t *brush = &temps[j];
+                Brush *brush = &temps[j];
                 if (b_placedcontents && brush->contents <= placedcontents)
                     continue;
                 if (b_contents && brush->contents >= contents)
@@ -940,7 +940,7 @@ static void ProcessModels() // a.k.a brush entity
             }
             for (j = 0; j < g_entities[i].numbrushes; j++)
             {
-                brush_t *brush = &temps[j];
+                Brush *brush = &temps[j];
                 if (brush->contents == contents)
                 {
                     g_mapbrushes[first + placed] = *brush;

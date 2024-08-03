@@ -37,8 +37,8 @@ extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 //=============================================================================
 // brush.c
 
-extern auto Brush_LoadEntity(entity_t *ent, int hullnum) -> brush_t *;
-extern auto CheckBrushContents(const brush_t *const b) -> contents_t;
+extern auto Brush_LoadEntity(entity_t *ent, int hullnum) -> Brush *;
+extern auto CheckBrushContents(const Brush *const b) -> contents_t;
 
 extern void CreateBrush(int brushnum);
 extern void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthulls);

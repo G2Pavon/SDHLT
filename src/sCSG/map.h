@@ -53,7 +53,7 @@ struct BrushHull
     BrushFace *faces;
 };
 
-struct brush_t
+struct Brush
 {
     int originalentitynum;
     int originalbrushnum;
@@ -77,7 +77,7 @@ struct brush_t
     BrushHull hulls[NUM_HULLS];
 };
 
-struct hullbrushface_t
+struct HullBrushFace
 {
     vec3_t normal;
     vec3_t point;
@@ -86,7 +86,7 @@ struct hullbrushface_t
     vec3_t *vertexes;
 };
 
-struct hullbrushedge_t
+struct HullBrushEdge
 {
     vec3_t normals[2];
     vec3_t point;
@@ -94,36 +94,36 @@ struct hullbrushedge_t
     vec3_t delta; // delta has the same direction as CrossProduct(normals[0],normals[1])
 };
 
-struct hullbrushvertex_t
+struct HullBrushVertex
 {
     vec3_t point;
 };
 
-struct hullbrush_t
+struct HullBrush
 {
     int numfaces;
-    hullbrushface_t *faces;
+    HullBrushFace *faces;
     int numedges;
-    hullbrushedge_t *edges;
+    HullBrushEdge *edges;
     int numvertexes;
-    hullbrushvertex_t *vertexes;
+    HullBrushVertex *vertexes;
 };
 
-struct hullshape_t
+struct HullShape
 {
     char *id;
     bool disabled;
     int numbrushes; // must be 0 or 1
-    hullbrush_t **brushes;
+    HullBrush **brushes;
 };
 
 extern int g_nummapbrushes;
-extern brush_t g_mapbrushes[MAX_MAP_BRUSHES];
+extern Brush g_mapbrushes[MAX_MAP_BRUSHES];
 extern int g_numbrushsides;
 extern Side g_brushsides[MAX_MAP_SIDES];
-extern hullshape_t g_defaulthulls[NUM_HULLS];
+extern HullShape g_defaulthulls[NUM_HULLS];
 extern int g_numhullshapes;
-extern hullshape_t g_hullshapes[MAX_HULLSHAPES];
+extern HullShape g_hullshapes[MAX_HULLSHAPES];
 
 extern void TextureAxisFromPlane(const Plane *const pln, vec3_t xv, vec3_t yv);
 extern void LoadMapFile(const char *const filename);
