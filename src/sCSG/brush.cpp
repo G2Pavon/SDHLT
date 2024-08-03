@@ -118,7 +118,7 @@ auto GetClipTypeString(cliptype ct) -> const char *
 //  Called to add any and all clip hull planes by the new ExpandBrush.
 // =====================================================================================
 
-void AddHullPlane(brushhull_t *hull, const vec_t *const normal, const vec_t *const origin, const bool check_planenum)
+void AddHullPlane(BrushHull *hull, const vec_t *const normal, const vec_t *const origin, const bool check_planenum)
 {
 	auto planenum = FindIntPlane(normal, origin);
 	// check to see if this plane is already in the brush (optional to speed
@@ -126,7 +126,7 @@ void AddHullPlane(brushhull_t *hull, const vec_t *const normal, const vec_t *con
 	if (check_planenum)
 	{
 
-		bface_t *current_face;
+		BrushFace *current_face;
 		for (current_face = hull->faces; current_face; current_face = current_face->next)
 		{
 			if (current_face->planenum == planenum)
@@ -135,7 +135,7 @@ void AddHullPlane(brushhull_t *hull, const vec_t *const normal, const vec_t *con
 			} // don't add a plane twice
 		}
 	}
-	auto *new_face = (bface_t *)Alloc(sizeof(bface_t)); // TODO: This leaks
+	auto *new_face = (BrushFace *)Alloc(sizeof(BrushFace)); // TODO: This leaks
 	new_face->planenum = planenum;
 	new_face->plane = &g_mapplanes[new_face->planenum];
 	new_face->next = hull->faces;
@@ -178,12 +178,12 @@ void AddHullPlane(brushhull_t *hull, const vec_t *const normal, const vec_t *con
 //     cliptype          simple    precise     legacy normalized   smallest
 //     clipnodecount        971       1089       1202       1232       1000
 
-void ExpandBrushWithHullBrush(const brush_t *brush, const brushhull_t *hull0, const hullbrush_t *hb, brushhull_t *hull)
+void ExpandBrushWithHullBrush(const brush_t *brush, const BrushHull *hull0, const hullbrush_t *hb, BrushHull *hull)
 {
 	const hullbrushface_t *hbf;
 	const hullbrushedge_t *hbe;
 	const hullbrushvertex_t *hbv;
-	bface_t *f;
+	BrushFace *f;
 	vec3_t normal;
 	vec3_t origin;
 
@@ -269,7 +269,7 @@ void ExpandBrushWithHullBrush(const brush_t *brush, const brushhull_t *hull0, co
 
 			// fill brushedge.normals[1]
 			auto found = 0;
-			for (bface_t *f2 = hull0->faces; f2; f2 = f2->next)
+			for (BrushFace *f2 = hull0->faces; f2; f2 = f2->next)
 			{
 				for (int j = 0; j < f2->w->m_NumPoints; j++)
 				{
@@ -415,12 +415,12 @@ void ExpandBrush(brush_t *brush, const int hullnum)
 		return;
 	}
 	// for looping through the faces and constructing the hull
-	bface_t *current_face;
+	BrushFace *current_face;
 	Plane *current_plane;
 	vec3_t origin, normal;
 
 	// for non-axial bevel testing
-	bface_t *other_face;
+	BrushFace *other_face;
 	vec3_t edge_start, edge_end, edge, bevel_edge;
 	unsigned int counter, counter2, dir;
 	bool start_found, end_found;
@@ -681,16 +681,16 @@ void ExpandBrush(brush_t *brush, const int hullnum)
 // =====================================================================================
 //  MakeHullFaces
 // =====================================================================================
-void SortSides(brushhull_t *h)
+void SortSides(BrushHull *h)
 {
 	int numsides;
 	int i;
-	bface_t *f;
+	BrushFace *f;
 	for (numsides = 0, f = h->faces; f; f = f->next)
 	{
 		numsides++;
 	}
-	auto **sides = (bface_t **)malloc(numsides * sizeof(bface_t *));
+	auto **sides = (BrushFace **)malloc(numsides * sizeof(BrushFace *));
 	hlassume(sides != nullptr, assume_NoMemory);
 	auto *normals = (vec3_t *)malloc(numsides * sizeof(vec3_t));
 	hlassume(normals != nullptr, assume_NoMemory);
@@ -734,10 +734,10 @@ void SortSides(brushhull_t *h)
 	free(isused);
 	free(sorted);
 }
-void MakeHullFaces(const brush_t *const b, brushhull_t *h)
+void MakeHullFaces(const brush_t *const b, BrushHull *h)
 {
-	bface_t *f;
-	bface_t *f2;
+	BrushFace *f;
+	BrushFace *f2;
 	// this will decrease AllocBlock amount
 	SortSides(h);
 
@@ -808,7 +808,7 @@ restart:
 // =====================================================================================
 auto MakeBrushPlanes(brush_t *b) -> bool
 {
-	bface_t *f;
+	BrushFace *f;
 	vec3_t origin;
 
 	// if the origin key is set (by an origin brush), offset all of the values
@@ -843,7 +843,7 @@ auto MakeBrushPlanes(brush_t *b) -> bool
 			}
 		}
 
-		f = (bface_t *)Alloc(sizeof(*f)); // TODO: This leaks
+		f = (BrushFace *)Alloc(sizeof(*f)); // TODO: This leaks
 
 		f->planenum = planenum;
 		f->plane = &g_mapplanes[planenum];

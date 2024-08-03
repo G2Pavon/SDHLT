@@ -633,7 +633,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 //  TexinfoForBrushTexture
 // =====================================================================================
-auto TexinfoForBrushTexture(const Plane *const plane, face_texture_t *bt, const vec3_t origin) -> int
+auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec3_t origin) -> int
 {
     texinfo_t tx;
     int i;

@@ -2,12 +2,12 @@
 #include "blockmem.h"
 #include "hlassert.h"
 
-static auto NewWindingFromPlane(const brushhull_t *const hull, const int planenum) -> Winding *
+static auto NewWindingFromPlane(const BrushHull *const hull, const int planenum) -> Winding *
 {
     Winding *winding;
     Winding *front;
     Winding *back;
-    bface_t *face;
+    BrushFace *face;
     Plane *plane;
 
     plane = &g_mapplanes[planenum];
@@ -36,7 +36,7 @@ static auto NewWindingFromPlane(const brushhull_t *const hull, const int planenu
     return winding;
 }
 
-static void AddFaceToList(bface_t **head, bface_t *newface)
+static void AddFaceToList(BrushFace **head, BrushFace *newface)
 {
     hlassert(newface);
     hlassert(newface->w);
@@ -47,7 +47,7 @@ static void AddFaceToList(bface_t **head, bface_t *newface)
     }
     else
     {
-        bface_t *node = *head;
+        BrushFace *node = *head;
 
         while (node->next)
         {
@@ -58,10 +58,10 @@ static void AddFaceToList(bface_t **head, bface_t *newface)
     }
 }
 
-static auto NumberOfHullFaces(const brushhull_t *const hull) -> int
+static auto NumberOfHullFaces(const BrushHull *const hull) -> int
 {
     int x;
-    bface_t *face;
+    BrushFace *face;
 
     if (!hull->faces)
     {
@@ -76,14 +76,14 @@ static auto NumberOfHullFaces(const brushhull_t *const hull) -> int
 }
 
 // Returns false if union of brushes is obviously zero
-static void AddPlaneToUnion(brushhull_t *hull, const int planenum)
+static void AddPlaneToUnion(BrushHull *hull, const int planenum)
 {
     bool need_new_face = false;
 
-    bface_t *new_face_list;
+    BrushFace *new_face_list;
 
-    bface_t *face;
-    bface_t *next;
+    BrushFace *face;
+    BrushFace *next;
 
     Plane *split;
     Winding *front;
@@ -149,7 +149,7 @@ static void AddPlaneToUnion(brushhull_t *hull, const int planenum)
 
         if (new_winding)
         {
-            auto *new_face = (bface_t *)Alloc(sizeof(bface_t));
+            auto *new_face = (BrushFace *)Alloc(sizeof(BrushFace));
 
             new_face->planenum = planenum;
             new_face->w = new_winding;
@@ -160,7 +160,7 @@ static void AddPlaneToUnion(brushhull_t *hull, const int planenum)
     }
 }
 
-static auto CalculateSolidVolume(const brushhull_t *const hull) -> vec_t
+static auto CalculateSolidVolume(const BrushHull *const hull) -> vec_t
 {
     // calculate polyhedron origin
     // subdivide face winding into triangles
@@ -174,7 +174,7 @@ static auto CalculateSolidVolume(const brushhull_t *const hull) -> vec_t
     vec_t inverse;
     vec3_t midpoint = {0.0, 0.0, 0.0};
 
-    bface_t *face;
+    BrushFace *face;
 
     for (face = hull->faces; face; face = face->next, x++)
     {
@@ -203,10 +203,10 @@ static auto CalculateSolidVolume(const brushhull_t *const hull) -> vec_t
     return volume;
 }
 
-static void DumpHullWindings(const brushhull_t *const hull)
+static void DumpHullWindings(const BrushHull *const hull)
 {
     int x = 0;
-    bface_t *face;
+    BrushFace *face;
 
     for (face = hull->faces; face; face = face->next)
     {
@@ -214,10 +214,10 @@ static void DumpHullWindings(const brushhull_t *const hull)
     }
 }
 
-static auto isInvalidHull(const brushhull_t *const hull) -> bool
+static auto isInvalidHull(const BrushHull *const hull) -> bool
 {
     int x = 0;
-    bface_t *face;
+    BrushFace *face;
 
     vec3_t mins = {99999.0, 99999.0, 99999.0};
     vec3_t maxs = {-99999.0, -99999.0, -99999.0};

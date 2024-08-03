@@ -114,9 +114,9 @@ void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
     }
 }
 
-auto NewFaceFromFace(const bface_t *const in) -> bface_t * // Duplicates the non point information of a face, used by SplitFace
+auto NewFaceFromFace(const BrushFace *const in) -> BrushFace * // Duplicates the non point information of a face, used by SplitFace
 {
-    auto *newFace = (bface_t *)Alloc(sizeof(bface_t));
+    auto *newFace = (BrushFace *)Alloc(sizeof(BrushFace));
     newFace->contents = in->contents;
     newFace->texinfo = in->texinfo;
     newFace->planenum = in->planenum;
@@ -126,13 +126,13 @@ auto NewFaceFromFace(const bface_t *const in) -> bface_t * // Duplicates the non
     return newFace;
 }
 
-void FreeFace(bface_t *face)
+void FreeFace(BrushFace *face)
 {
     delete face->w;
     Free(face);
 }
 
-void WriteFace(const int hull, const bface_t *const face, int detaillevel)
+void WriteFace(const int hull, const BrushFace *const face, int detaillevel)
 {
     ThreadLock();
     if (!hull)
@@ -150,11 +150,11 @@ void WriteFace(const int hull, const bface_t *const face, int detaillevel)
     ThreadUnlock();
 }
 
-void WriteDetailBrush(int hull, const bface_t *faces)
+void WriteDetailBrush(int hull, const BrushFace *faces)
 {
     ThreadLock();
     fprintf(out_detailbrush[hull], "0\n");
-    for (const bface_t *face = faces; face; face = face->next)
+    for (const BrushFace *face = faces; face; face = face->next)
     {
         auto *w = face->w;
         fprintf(out_detailbrush[hull], "%i %u\n", face->planenum, w->m_NumPoints);
@@ -167,11 +167,11 @@ void WriteDetailBrush(int hull, const bface_t *faces)
     ThreadUnlock();
 }
 
-static void SaveOutside(const brush_t *const brush, const int hull, bface_t *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
-{                                                                                                               // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
-    bface_t *face;
-    bface_t *face2;
-    bface_t *next;
+static void SaveOutside(const brush_t *const brush, const int hull, BrushFace *outside, const int mirrorcontents) // The faces remaining on the outside list are final polygons.  Write them to the output file.
+{                                                                                                                 // Passable contents (water, lava, etc) will generate a mirrored copy of the face to be seen from the inside.
+    BrushFace *face;
+    BrushFace *face2;
+    BrushFace *next;
     vec3_t temp;
 
     for (face = outside; face; face = next)
@@ -305,7 +305,7 @@ static void SaveOutside(const brush_t *const brush, const int hull, bface_t *out
     }
 }
 
-auto CopyFace(const bface_t *const face) -> bface_t *
+auto CopyFace(const BrushFace *const face) -> BrushFace *
 {
     auto *newFace = NewFaceFromFace(face);
     newFace->w = face->w->Copy();
@@ -313,7 +313,7 @@ auto CopyFace(const bface_t *const face) -> bface_t *
     return newFace;
 }
 
-void FreeFaceList(bface_t *f)
+void FreeFaceList(BrushFace *f)
 {
     if (f)
     {
@@ -325,9 +325,9 @@ void FreeFaceList(bface_t *f)
     }
 }
 
-static auto CopyFacesToOutside(brushhull_t *bh) -> bface_t *
+static auto CopyFacesToOutside(BrushHull *bh) -> BrushFace *
 {
-    bface_t *outside = nullptr;
+    BrushFace *outside = nullptr;
 
     for (auto *f = bh->faces; f; f = f->next)
     {
@@ -343,9 +343,9 @@ extern auto ContentsToString(const contents_t type) -> const char *;
 
 static void CSGBrush(int brushnum)
 {
-    bface_t *face;
-    bface_t *face2; // f2
-    bface_t *nextFace;
+    BrushFace *face;
+    BrushFace *face2; // f2
+    BrushFace *nextFace;
 
     auto *brush1 = &g_mapbrushes[brushnum];        // get brush info from the given brushnum that we can work with
     auto *entity = &g_entities[brush1->entitynum]; // get entity info from the given brushnum that we can work with
@@ -504,7 +504,7 @@ static void CSGBrush(int brushnum)
                             face->w->Clip(face2->plane->normal, face2->plane->dist, &fw, &bw);
                             if (fw)
                             {
-                                bface_t *front = NewFaceFromFace(face);
+                                BrushFace *front = NewFaceFromFace(face);
                                 front->w = fw;
                                 fw->getBounds(front->bounds);
                                 front->next = outsideFaceList;

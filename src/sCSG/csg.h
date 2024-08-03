@@ -31,7 +31,7 @@ constexpr bool DEFAULT_ESTIMATE = true;
 // textures.cpp
 
 extern void WriteMiptex();
-extern auto TexinfoForBrushTexture(const Plane *const plane, face_texture_t *bt, const vec3_t origin) -> int;
+extern auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec3_t origin) -> int;
 extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 
 //=============================================================================
@@ -57,11 +57,11 @@ extern bool g_bClipNazi;
 extern Plane g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_nummapplanes;
 
-extern auto NewFaceFromFace(const bface_t *const in) -> bface_t *;
-extern auto CopyFace(const bface_t *const f) -> bface_t *;
+extern auto NewFaceFromFace(const BrushFace *const in) -> BrushFace *;
+extern auto CopyFace(const BrushFace *const f) -> BrushFace *;
 
-extern void FreeFace(bface_t *f);
-extern void FreeFaceList(bface_t *f);
+extern void FreeFace(BrushFace *f);
+extern void FreeFaceList(BrushFace *f);
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);
 void OpenHullFiles();
 void WriteHullSizeFile();

@@ -16,7 +16,7 @@ struct Plane
     planetypes type;
 };
 
-struct face_texture_t
+struct FaceTexture
 {
     char name[32];
     vec3_t UAxis;
@@ -28,14 +28,14 @@ struct face_texture_t
 
 struct Side
 {
-    face_texture_t texture;
+    FaceTexture texture;
     bool bevel;
     vec_t planepts[3][3];
 };
 
-struct bface_t
+struct BrushFace
 {
-    struct bface_t *next;
+    struct BrushFace *next;
     int planenum;
     Plane *plane;
     Winding *w;
@@ -47,10 +47,10 @@ struct bface_t
     BoundingBox bounds;
 };
 
-struct brushhull_t
+struct BrushHull
 {
     BoundingBox bounds;
-    bface_t *faces;
+    BrushFace *faces;
 };
 
 struct brush_t
@@ -74,7 +74,7 @@ struct brush_t
     char *hullshapes[NUM_HULLS]; // might be NULL
 
     int contents;
-    brushhull_t hulls[NUM_HULLS];
+    BrushHull hulls[NUM_HULLS];
 };
 
 struct hullbrushface_t
