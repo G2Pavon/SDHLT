@@ -35,4 +35,8 @@ is a fork of SHDLT (because is ease build on Linux), which itself is a fork of [
 
 
 There is still a lot more "cleaning" to do.
-Something I would like to do in the distant future is transition C-style data structures to C++ classes
+Something I would like to do in the distant future:
+
+Transition from C-style data structures to C++ classes
+Replace float array[3] with vec3 class
+Replace use of char to store text with string class (this would simplify map parser a lot)
