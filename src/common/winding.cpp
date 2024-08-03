@@ -367,10 +367,10 @@ Winding::Winding(const vec3_t normal, const vec_t dist)
     initFromPlane(normal, dist);
 }
 
-Winding::Winding(const dface_t &face, vec_t epsilon)
+Winding::Winding(const BSPLumpFace &face, vec_t epsilon)
 {
     int se;
-    dvertex_t *dv;
+    BSPLumpVertex *dv;
     int v;
 
     m_NumPoints = face.numedges;

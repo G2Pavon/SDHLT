@@ -192,12 +192,12 @@ auto GetTotalLight(Patch *patch, int style) -> vec3_t *;
 
 struct FaceList
 {
-	dface_t *face;
+	BSPLumpFace *face;
 	FaceList *next;
 };
 struct EdgeShare
 {
-	dface_t *faces[2];
+	BSPLumpFace *faces[2];
 	vec3_t interface_normal; // HLRAD_GetPhongNormal_VL: this field must be set when smooth==true
 	vec3_t vertex_normal[2];
 	vec_t cos_normals_angle; // HLRAD_GetPhongNormal_VL: this field must be set when smooth==true
@@ -263,11 +263,11 @@ typedef std::vector<MinLight>::iterator minlight_i;
 
 extern std::vector<MinLight> s_minlights;
 extern Patch *g_face_patches[MAX_MAP_FACES];
-extern entity_t *g_face_entity[MAX_MAP_FACES];
+extern Entity *g_face_entity[MAX_MAP_FACES];
 extern vec3_t g_face_offset[MAX_MAP_FACES]; // for models with origins
 extern eModelLightmodes g_face_lightmode[MAX_MAP_FACES];
 extern vec3_t g_face_centroids[MAX_MAP_EDGES];
-extern entity_t *g_face_texlights[MAX_MAP_FACES];
+extern Entity *g_face_texlights[MAX_MAP_FACES];
 extern Patch *g_patches; // shrinked to its real size, because 1048576 patches * 256 bytes = 256MB will be too big
 extern unsigned g_num_patches;
 
@@ -308,7 +308,7 @@ extern vec_t g_blur;
 extern vec_t g_maxdiscardedlight;
 extern vec3_t g_maxdiscardedpos;
 
-extern void MakeTnodes(dmodel_t *bm);
+extern void MakeTnodes(BSPLumpModel *bm);
 extern void PairEdges();
 constexpr int SKYLEVELMAX = 8;
 constexpr int SKYLEVEL_SOFTSKYON = 7;
@@ -368,12 +368,12 @@ extern void MdlLightHack();
 
 // qradutil.c
 extern auto PatchPlaneDist(const Patch *const patch) -> vec_t;
-extern auto PointInLeaf(const vec3_t point) -> dleaf_t *;
+extern auto PointInLeaf(const vec3_t point) -> BSPLumpLeaf *;
 extern void MakeBackplanes();
-extern auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *;
+extern auto getPlaneFromFace(const BSPLumpFace *const face) -> const dplane_t *;
 extern auto getPlaneFromFaceNumber(unsigned int facenum) -> const dplane_t *;
 extern void getAdjustedPlaneFromFaceNumber(unsigned int facenum, dplane_t *plane);
-extern auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *;
+extern auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> BSPLumpLeaf *;
 extern void ApplyMatrix(const Matrix &m, const vec3_t in, vec3_t &out);
 extern void ApplyMatrixOnPlane(const Matrix &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist);
 extern void MultiplyMatrix(const Matrix &m_left, const Matrix &m_right, Matrix &m);

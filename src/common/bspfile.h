@@ -90,7 +90,7 @@ constexpr int TOOLVERSION = 2;
 // BSP File Structures
 //
 
-struct lump_t
+struct Lump
 {
     int fileofs, filelen;
 };
@@ -115,7 +115,7 @@ constexpr int HEADER_LUMPS = 15;
 // #define LUMP_MISCPAD      -1
 // #define LUMP_ZEROPAD      -2
 
-struct dmodel_t
+struct BSPLumpModel
 {
     float mins[3], maxs[3];
     float origin[3];
@@ -124,27 +124,28 @@ struct dmodel_t
     int firstface, numfaces;
 };
 
-struct dheader_t
+struct BSPLumpHeader
 {
     int version;
-    lump_t lumps[HEADER_LUMPS];
+    Lump lumps[HEADER_LUMPS];
 };
 
-struct dmiptexlump_t
+struct BSPLumpMiptexHeader
 {
     int nummiptex;
     int dataofs[4]; // [nummiptex]
 };
 
+constexpr int MAXTEXTURENAME = 16;
 constexpr int MIPLEVELS = 4;
-struct miptex_t
+struct BSPLumpMiptex
 {
-    char name[16];
+    char name[MAXTEXTURENAME];
     unsigned width, height;
     unsigned offsets[MIPLEVELS]; // four mip maps stored
 };
 
-struct dvertex_t
+struct BSPLumpVertex
 {
     float point[3];
 };
@@ -184,7 +185,7 @@ typedef enum
 } contents_t;
 
 // !!! if this is changed, it must be changed in asm_i386.h too !!!
-struct dnode_t
+struct BSPLumpNode
 {
     int planenum;
     short children[2]; // negative numbers are -(leafs+1), not nodes
@@ -194,13 +195,13 @@ struct dnode_t
     unsigned short numfaces; // counting both sides
 };
 
-struct dclipnode_t
+struct BSPLumpClipnode
 {
     int planenum;
     short children[2]; // negative numbers are contents
 };
 
-struct texinfo_t
+struct BSPLumpTexInfo
 {
     float vecs[2][4]; // [s/t][xyz offset]
     int miptex;
@@ -211,13 +212,13 @@ constexpr int TEX_SPECIAL = 1; // sky or slime or null, no lightmap or 256 subdi
 
 // note that edge 0 is never used, because negative edge nums are used for
 // counterclockwise use of the edge in a face
-struct dedge_t
+struct BSPLumpEdge
 {
     unsigned short v[2]; // vertex numbers
 };
 
 constexpr int MAXLIGHTMAPS = 4;
-struct dface_t
+struct BSPLumpFace
 {
     unsigned short planenum;
     short side;
@@ -240,7 +241,7 @@ constexpr int NUM_AMBIENTS = 4; // automatic ambient sounds
 
 // leaf 0 is the generic CONTENTS_SOLID leaf, used for all solid areas
 // all other leafs need visibility info
-struct dleaf_t
+struct BSPLumpLeaf
 {
     int contents;
     int visofs; // -1 = no visibility info
@@ -264,7 +265,7 @@ constexpr int ANGLE_DOWN = -2.0; // #define ANGLE_DOWN  -2 //--vluzacn
 //
 
 extern int g_nummodels;
-extern dmodel_t g_dmodels[MAX_MAP_MODELS];
+extern BSPLumpModel g_dmodels[MAX_MAP_MODELS];
 extern int g_dmodels_checksum;
 
 extern int g_visdatasize;
@@ -276,7 +277,7 @@ extern byte *g_dlightdata;
 extern int g_dlightdata_checksum;
 
 extern int g_texdatasize;
-extern byte *g_dtexdata; // (dmiptexlump_t)
+extern byte *g_dtexdata; // (BSPLumpMiptexHeader)
 extern int g_dtexdata_checksum;
 
 extern int g_entdatasize;
@@ -284,7 +285,7 @@ extern char g_dentdata[MAX_MAP_ENTSTRING];
 extern int g_dentdata_checksum;
 
 extern int g_numleafs;
-extern dleaf_t g_dleafs[MAX_MAP_LEAFS];
+extern BSPLumpLeaf g_dleafs[MAX_MAP_LEAFS];
 extern int g_dleafs_checksum;
 
 extern int g_numplanes;
@@ -292,29 +293,29 @@ extern dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_dplanes_checksum;
 
 extern int g_numvertexes;
-extern dvertex_t g_dvertexes[MAX_MAP_VERTS];
+extern BSPLumpVertex g_dvertexes[MAX_MAP_VERTS];
 extern int g_dvertexes_checksum;
 
 extern int g_numnodes;
-extern dnode_t g_dnodes[MAX_MAP_NODES];
+extern BSPLumpNode g_dnodes[MAX_MAP_NODES];
 extern int g_dnodes_checksum;
 
 extern int g_numtexinfo;
-extern texinfo_t g_texinfo[MAX_INTERNAL_MAP_TEXINFO];
+extern BSPLumpTexInfo g_texinfo[MAX_INTERNAL_MAP_TEXINFO];
 extern int g_texinfo_checksum;
 
 extern int g_numfaces;
-extern dface_t g_dfaces[MAX_MAP_FACES];
+extern BSPLumpFace g_dfaces[MAX_MAP_FACES];
 extern int g_dfaces_checksum;
 
 extern int g_iWorldExtent;
 
 extern int g_numclipnodes;
-extern dclipnode_t g_dclipnodes[MAX_MAP_CLIPNODES];
+extern BSPLumpClipnode g_dclipnodes[MAX_MAP_CLIPNODES];
 extern int g_dclipnodes_checksum;
 
 extern int g_numedges;
-extern dedge_t g_dedges[MAX_MAP_EDGES];
+extern BSPLumpEdge g_dedges[MAX_MAP_EDGES];
 extern int g_dedges_checksum;
 
 extern int g_nummarksurfaces;
@@ -328,7 +329,7 @@ extern int g_dsurfedges_checksum;
 extern void DecompressVis(const byte *src, byte *const dest, const unsigned int dest_length);
 extern auto CompressVis(const byte *const src, const unsigned int src_length, byte *dest, unsigned int dest_length) -> int;
 
-extern void LoadBSPImage(dheader_t *header);
+extern void LoadBSPImage(BSPLumpHeader *header);
 extern void LoadBSPFile(const char *const filename);
 extern void WriteBSPFile(const char *const filename);
 extern void PrintBSPFileSizes();
@@ -336,43 +337,43 @@ extern void WriteExtentFile(const char *const filename);
 extern auto CalcFaceExtents_test() -> bool;
 extern void GetFaceExtents(int facenum, int mins_out[2], int maxs_out[2]);
 extern auto ParseImplicitTexinfoFromTexture(int miptex) -> int;
-extern auto ParseTexinfoForFace(const dface_t *f) -> int;
+extern auto ParseTexinfoForFace(const BSPLumpFace *f) -> int;
 extern void DeleteEmbeddedLightmaps();
 
 //
 // Entity Related Stuff
 //
-struct epair_t
+struct EntityProperty
 {
-    struct epair_t *next;
+    struct EntityProperty *next;
     char *key;
     char *value;
 };
 
-struct entity_t
+struct Entity
 {
     vec3_t origin;
     int firstbrush;
     int numbrushes;
-    epair_t *epairs;
+    EntityProperty *epairs;
 };
 
 extern int g_numentities;
-extern entity_t g_entities[MAX_MAP_ENTITIES];
+extern Entity g_entities[MAX_MAP_ENTITIES];
 
 extern void ParseEntities();
 extern void UnparseEntities();
 
-extern void DeleteKey(entity_t *ent, const char *const key);
-extern void SetKeyValue(entity_t *ent, const char *const key, const char *const value);
-extern auto ValueForKey(const entity_t *const ent, const char *const key) -> const char *;
-extern auto IntForKey(const entity_t *const ent, const char *const key) -> int;
-extern auto FloatForKey(const entity_t *const ent, const char *const key) -> vec_t;
-extern void GetVectorForKey(const entity_t *const ent, const char *const key, vec3_t vec);
+extern void DeleteKey(Entity *ent, const char *const key);
+extern void SetKeyValue(Entity *ent, const char *const key, const char *const value);
+extern auto ValueForKey(const Entity *const ent, const char *const key) -> const char *;
+extern auto IntForKey(const Entity *const ent, const char *const key) -> int;
+extern auto FloatForKey(const Entity *const ent, const char *const key) -> vec_t;
+extern void GetVectorForKey(const Entity *const ent, const char *const key, vec3_t vec);
 
-extern auto FindTargetEntity(const char *const target) -> entity_t *;
-extern auto ParseEpair() -> epair_t *;
-extern auto EntityForModel(int modnum) -> entity_t *;
+extern auto FindTargetEntity(const char *const target) -> Entity *;
+extern auto ParseEpair() -> EntityProperty *;
+extern auto EntityForModel(int modnum) -> Entity *;
 
 //
 // Texture Related Stuff

@@ -970,7 +970,7 @@ static auto ProcessModel() -> bool
 	SurfchainBSP *surfs;
 	BrushBSP *detailbrushes;
 	NodeBSP *nodes;
-	dmodel_t *model;
+	BSPLumpModel *model;
 	int startleafs;
 
 	surfs = ReadSurfs(polyfiles[0]);
@@ -1128,7 +1128,7 @@ static auto ProcessModel() -> bool
 		}
 	}
 
-	entity_t *ent;
+	Entity *ent;
 	ent = EntityForModel(modnum);
 	if (ent != &g_entities[0] && *ValueForKey(ent, "zhlt_minsmaxs"))
 	{
@@ -1143,7 +1143,7 @@ static auto ProcessModel() -> bool
 	}
 	if (model->mins[0] > model->maxs[0])
 	{
-		entity_t *ent = EntityForModel(g_nummodels - 1);
+		Entity *ent = EntityForModel(g_nummodels - 1);
 		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;
@@ -1158,7 +1158,7 @@ static auto ProcessModel() -> bool
 	}
 	else if (novisiblebrushes)
 	{
-		entity_t *ent = EntityForModel(g_nummodels - 1);
+		Entity *ent = EntityForModel(g_nummodels - 1);
 		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;

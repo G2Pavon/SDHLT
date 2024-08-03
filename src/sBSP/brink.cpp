@@ -1113,7 +1113,7 @@ struct bbrinkinfo_t
 
 #define MAXCLIPNODES (MAX_MAP_CLIPNODES * 8)
 
-auto ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const dclipnode_t *clipnodes, int headnode) -> bclipnode_t *
+auto ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const BSPLumpClipnode *clipnodes, int headnode) -> bclipnode_t *
 {
 	if (numbclipnodes >= MAXCLIPNODES)
 	{
@@ -1140,7 +1140,7 @@ auto ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const dclipn
 	return c;
 }
 
-void ExpandClipnodes(bbrinkinfo_t *info, const dclipnode_t *clipnodes, int headnode)
+void ExpandClipnodes(bbrinkinfo_t *info, const BSPLumpClipnode *clipnodes, int headnode)
 {
 	auto *bclipnodes = (bclipnode_t *)malloc(MAXCLIPNODES * sizeof(bclipnode_t)); // 262144 * 30byte = 7.5MB
 	hlassume(bclipnodes != nullptr, assume_NoMemory);
@@ -1749,7 +1749,7 @@ void SortPartitions(bbrinkinfo_t *info) // to merge same partition planes and co
 	}
 }
 
-auto CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode) -> void *
+auto CreateBrinkinfo(const BSPLumpClipnode *clipnodes, int headnode) -> void *
 {
 	bbrinkinfo_t *info;
 	try
@@ -1772,12 +1772,12 @@ auto CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode) -> void *
 
 extern int count_mergedclipnodes;
 typedef std::map<std::pair<int, std::pair<int, int>>, int> clipnodemap_t;
-inline clipnodemap_t::key_type MakeKey(const dclipnode_t &c)
+inline clipnodemap_t::key_type MakeKey(const BSPLumpClipnode &c)
 {
 	return std::make_pair(c.planenum, std::make_pair(c.children[0], c.children[1]));
 }
 
-auto FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap) -> bool
+auto FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklevel_e level, int &headnode_out, BSPLumpClipnode *begin, BSPLumpClipnode *end, BSPLumpClipnode *&current, clipnodemap_t *outputmap) -> bool
 {
 	while (p && p->type > level)
 	{
@@ -1788,10 +1788,10 @@ auto FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklev
 		headnode_out = clipnode->content;
 		return true;
 	}
-	dclipnode_t *cn;
-	dclipnode_t tmpclipnode;
+	BSPLumpClipnode *cn;
+	BSPLumpClipnode tmpclipnode;
 	cn = &tmpclipnode;
-	dclipnode_t *c = current;
+	BSPLumpClipnode *c = current;
 	current++;
 	cn->planenum = p->planenum;
 	cn->children[p->planeside] = p->content;
@@ -1826,7 +1826,7 @@ auto FixBrinks_r_r(const bclipnode_t *clipnode, const bpartition_t *p, bbrinklev
 	return true;
 }
 
-auto FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode_out, dclipnode_t *begin, dclipnode_t *end, dclipnode_t *&current, clipnodemap_t *outputmap) -> bool
+auto FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode_out, BSPLumpClipnode *begin, BSPLumpClipnode *end, BSPLumpClipnode *&current, clipnodemap_t *outputmap) -> bool
 {
 	if (clipnode->isleaf)
 	{
@@ -1834,10 +1834,10 @@ auto FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode
 	}
 	else
 	{
-		dclipnode_t *cn;
-		dclipnode_t tmpclipnode;
+		BSPLumpClipnode *cn;
+		BSPLumpClipnode tmpclipnode;
 		cn = &tmpclipnode;
-		dclipnode_t *c = current;
+		BSPLumpClipnode *c = current;
 		current++;
 		cn->planenum = clipnode->planenum;
 		for (int k = 0; k < 2; k++)
@@ -1875,12 +1875,12 @@ auto FixBrinks_r(const bclipnode_t *clipnode, bbrinklevel_e level, int &headnode
 	}
 }
 
-auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out) -> bool
+auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, BSPLumpClipnode *clipnodes_out, int maxsize, int size, int &size_out) -> bool
 {
 	const auto *info = (const bbrinkinfo_t *)brinkinfo;
-	dclipnode_t *begin = clipnodes_out;
-	dclipnode_t *end = &clipnodes_out[maxsize];
-	dclipnode_t *current = &clipnodes_out[size];
+	BSPLumpClipnode *begin = clipnodes_out;
+	BSPLumpClipnode *end = &clipnodes_out[maxsize];
+	BSPLumpClipnode *current = &clipnodes_out[size];
 	clipnodemap_t outputmap;
 	int r;
 	if (!FixBrinks_r(&info->clipnodes[0], level, r, begin, end, current, &outputmap))

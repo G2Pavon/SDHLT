@@ -3,10 +3,10 @@
 
 static dplane_t backplanes[MAX_MAP_PLANES];
 
-auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> dleaf_t *
+auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> BSPLumpLeaf *
 {
 	vec_t dist;
-	dnode_t *node;
+	BSPLumpNode *node;
 	dplane_t *plane;
 
 	while (nodenum >= 0)
@@ -24,7 +24,7 @@ auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> dleaf_t *
 		}
 		else
 		{
-			dleaf_t *result[2];
+			BSPLumpLeaf *result[2];
 			result[0] = PointInLeaf_Worst_r(node->children[0], point);
 			result[1] = PointInLeaf_Worst_r(node->children[1], point);
 			if (result[0] == g_dleafs || result[0]->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
@@ -43,15 +43,15 @@ auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> dleaf_t *
 
 	return &g_dleafs[-nodenum - 1];
 }
-auto PointInLeaf_Worst(const vec3_t point) -> dleaf_t *
+auto PointInLeaf_Worst(const vec3_t point) -> BSPLumpLeaf *
 {
 	return PointInLeaf_Worst_r(0, point);
 }
-auto PointInLeaf(const vec3_t point) -> dleaf_t *
+auto PointInLeaf(const vec3_t point) -> BSPLumpLeaf *
 {
 	int nodenum;
 	vec_t dist;
-	dnode_t *node;
+	BSPLumpNode *node;
 	dplane_t *plane;
 
 	nodenum = 0;
@@ -97,7 +97,7 @@ void MakeBackplanes()
 	}
 }
 
-auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *
+auto getPlaneFromFace(const BSPLumpFace *const face) -> const dplane_t *
 {
 	if (!face)
 	{
@@ -116,7 +116,7 @@ auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *
 
 auto getPlaneFromFaceNumber(const unsigned int faceNumber) -> const dplane_t *
 {
-	dface_t *face = &g_dfaces[faceNumber];
+	BSPLumpFace *face = &g_dfaces[faceNumber];
 
 	if (face->side)
 	{
@@ -131,7 +131,7 @@ auto getPlaneFromFaceNumber(const unsigned int faceNumber) -> const dplane_t *
 // Returns plane adjusted for face offset (for origin brushes, primarily used in the opaque code)
 void getAdjustedPlaneFromFaceNumber(unsigned int faceNumber, dplane_t *plane)
 {
-	dface_t *face = &g_dfaces[faceNumber];
+	BSPLumpFace *face = &g_dfaces[faceNumber];
 	const vec_t *face_offset = g_face_offset[faceNumber];
 
 	plane->type = (planetypes)0;
@@ -161,9 +161,9 @@ void TranslatePlane(dplane_t *plane, const vec_t *delta)
 }
 
 // HuntForWorld will never return CONTENTS_SKY or contents_t::CONTENTS_SOLID leafs
-auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *
+auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> BSPLumpLeaf *
 {
-	dleaf_t *leaf;
+	BSPLumpLeaf *leaf;
 	int x, y, z;
 	int a;
 
@@ -171,7 +171,7 @@ auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane
 	vec3_t original_point;
 
 	vec3_t best_point;
-	dleaf_t *best_leaf = nullptr;
+	BSPLumpLeaf *best_leaf = nullptr;
 	vec_t best_dist = 99999999.0;
 
 	vec3_t scales;
@@ -340,8 +340,8 @@ auto CalcMatrixSign(const Matrix &m) -> vec_t
 void TranslateWorldToTex(int facenum, Matrix &m)
 // without g_face_offset
 {
-	dface_t *f;
-	texinfo_t *ti;
+	BSPLumpFace *f;
+	BSPLumpTexInfo *ti;
 	const dplane_t *fp;
 	int i;
 
@@ -601,9 +601,9 @@ static void CalcSinglePosition(positionmap_t *map, int is, int it)
 void FindFacePositions(int facenum)
 // this function must be called after g_face_offset and g_face_centroids and g_edgeshare have been calculated
 {
-	dface_t *f;
+	BSPLumpFace *f;
 	positionmap_t *map;
-	texinfo_t *ti;
+	BSPLumpTexInfo *ti;
 	vec3_t v;
 	const vec3_t v_up = {0, 0, 1};
 	vec_t density;

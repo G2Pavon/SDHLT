@@ -589,7 +589,7 @@ auto VisLeafnumForPoint(const vec3_t point) -> int
 {
     int nodenum;
     vec_t dist;
-    dnode_t *node;
+    BSPLumpNode *node;
     dplane_t *plane;
 
     nodenum = 0;

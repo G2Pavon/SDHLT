@@ -28,7 +28,7 @@ static void MakeTnode(const int nodenum)
 	tnode_t *t;
 	dplane_t *plane;
 	int i;
-	dnode_t *node;
+	BSPLumpNode *node;
 
 	t = tnode_p++;
 
@@ -289,7 +289,7 @@ void ViewTNode ()
 	}
 }
 #endif
-void MakeTnodes(dmodel_t * /*bm*/)
+void MakeTnodes(BSPLumpModel * /*bm*/)
 {
 	// 32 byte align the structs
 	tnodes = (tnode_t *)calloc((g_numnodes + 1), sizeof(tnode_t));
@@ -613,7 +613,7 @@ void CreateOpaqueNodes()
 	for (i = 0; i < g_numfaces; i++)
 	{
 		opaqueface_t *of = &opaquefaces[i];
-		dface_t *df = &g_dfaces[i];
+		BSPLumpFace *df = &g_dfaces[i];
 		of->winding = new Winding(*df);
 		if (of->winding->m_NumPoints < 3)
 		{
@@ -627,7 +627,7 @@ void CreateOpaqueNodes()
 			of->plane.dist = -of->plane.dist;
 		}
 		of->texinfo = df->texinfo;
-		texinfo_t *info = &g_texinfo[of->texinfo];
+		BSPLumpTexInfo *info = &g_texinfo[of->texinfo];
 		for (j = 0; j < 2; j++)
 		{
 			for (int k = 0; k < 4; k++)
@@ -644,7 +644,7 @@ void CreateOpaqueNodes()
 	for (i = 0; i < g_numnodes; i++)
 	{
 		opaquenode_t *on = &opaquenodes[i];
-		dnode_t *dn = &g_dnodes[i];
+		BSPLumpNode *dn = &g_dnodes[i];
 		on->type = g_dplanes[dn->planenum].type;
 		VectorCopy(g_dplanes[dn->planenum].normal, on->normal);
 		on->dist = g_dplanes[dn->planenum].dist;
@@ -661,7 +661,7 @@ void CreateOpaqueNodes()
 	for (i = 0; i < g_nummodels; i++)
 	{
 		OpaqueModel *om = &opaquemodels[i];
-		dmodel_t *dm = &g_dmodels[i];
+		BSPLumpModel *dm = &g_dmodels[i];
 		om->headnode = dm->headnode[0];
 		for (j = 0; j < 3; j++)
 		{

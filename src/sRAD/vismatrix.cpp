@@ -120,7 +120,7 @@ static void BuildVisLeafs(int threadnum)
 	int i;
 	int facenum, facenum2;
 	byte pvs[(MAX_MAP_LEAFS + 7) / 8];
-	dleaf_t *srcleaf;
+	BSPLumpLeaf *srcleaf;
 	Patch *patch;
 	int head;
 	unsigned bitpos;

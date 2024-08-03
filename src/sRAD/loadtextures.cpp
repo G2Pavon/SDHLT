@@ -217,7 +217,7 @@ void DefaultTexture(RADTexture *tex, const char *name)
 	}
 }
 
-void LoadTexture(RADTexture *tex, const miptex_t *mt, int size)
+void LoadTexture(RADTexture *tex, const BSPLumpMiptex *mt, int size)
 {
 	int i, j;
 	const auto *header = mt;
@@ -234,17 +234,17 @@ void LoadTexture(RADTexture *tex, const miptex_t *mt, int size)
 	int mipsize;
 	for (mipsize = 0, i = 0; i < MIPLEVELS; i++)
 	{
-		if ((int)mt->offsets[i] != (int)sizeof(miptex_t) + mipsize)
+		if ((int)mt->offsets[i] != (int)sizeof(BSPLumpMiptex) + mipsize)
 		{
 			Error("Texture '%s': unexpected miptex offset.", tex->name);
 		}
 		mipsize += (tex->width >> i) * (tex->height >> i);
 	}
-	if (size < (int)sizeof(miptex_t) + mipsize + 2 + 256 * 3)
+	if (size < (int)sizeof(BSPLumpMiptex) + mipsize + 2 + 256 * 3)
 	{
 		Error("Texture '%s': no enough data.", tex->name);
 	}
-	if (*(unsigned short *)&data[sizeof(miptex_t) + mipsize] != 256)
+	if (*(unsigned short *)&data[sizeof(BSPLumpMiptex) + mipsize] != 256)
 	{
 		Error("Texture '%s': palette size is not 256.", tex->name);
 	}
@@ -254,19 +254,19 @@ void LoadTexture(RADTexture *tex, const miptex_t *mt, int size)
 	{
 		for (j = 0; j < tex->width; j++)
 		{
-			tex->canvas[i * tex->width + j] = data[sizeof(miptex_t) + i * tex->width + j];
+			tex->canvas[i * tex->width + j] = data[sizeof(BSPLumpMiptex) + i * tex->width + j];
 		}
 	}
 	for (i = 0; i < 256; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
-			tex->palette[i][j] = data[sizeof(miptex_t) + mipsize + 2 + i * 3 + j];
+			tex->palette[i][j] = data[sizeof(BSPLumpMiptex) + mipsize + 2 + i * 3 + j];
 		}
 	}
 }
 
-void LoadTextureFromWad(RADTexture *tex, const miptex_t *header)
+void LoadTextureFromWad(RADTexture *tex, const BSPLumpMiptex *header)
 {
 	tex->width = header->width;
 	tex->height = header->height;
@@ -282,12 +282,12 @@ void LoadTextureFromWad(RADTexture *tex, const miptex_t *header)
 		{
 			if (found->type != 67 || found->compression != 0)
 				continue;
-			if (found->disksize < (int)sizeof(miptex_t) || found->filepos < 0 || found->filepos + found->disksize > wad->filesize)
+			if (found->disksize < (int)sizeof(BSPLumpMiptex) || found->filepos < 0 || found->filepos + found->disksize > wad->filesize)
 			{
 				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
 				continue;
 			}
-			auto *mt = (miptex_t *)malloc(found->disksize);
+			auto *mt = (BSPLumpMiptex *)malloc(found->disksize);
 			hlassume(mt != nullptr, assume_NoMemory);
 			if (fseek(wad->file, found->filepos, SEEK_SET))
 				Error("File read failure");
@@ -318,22 +318,22 @@ void LoadTextureFromWad(RADTexture *tex, const miptex_t *header)
 void LoadTextures()
 {
 	Log("Load Textures:\n");
-	g_numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	g_numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 	g_textures = (RADTexture *)malloc(g_numtextures * sizeof(RADTexture));
 	hlassume(g_textures != nullptr, assume_NoMemory);
 	for (int i = 0; i < g_numtextures; i++)
 	{
-		auto offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
+		auto offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i];
 		auto size = g_texdatasize - offset;
 		auto *tex = &g_textures[i];
-		if (offset < 0 || size < (int)sizeof(miptex_t))
+		if (offset < 0 || size < (int)sizeof(BSPLumpMiptex))
 		{
 			Warning("Invalid texture data in '%s'.", g_source);
 			DefaultTexture(tex, "");
 		}
 		else
 		{
-			auto *mt = (miptex_t *)&g_dtexdata[offset];
+			auto *mt = (BSPLumpMiptex *)&g_dtexdata[offset];
 			if (mt->offsets[0])
 			{
 				LoadTexture(tex, mt, size);
@@ -816,7 +816,7 @@ static int g_newtextures_size[RADTEXTURES_MAX];
 
 auto NewTextures_GetCurrentMiptexIndex() -> int
 {
-	auto *texdata = (dmiptexlump_t *)g_dtexdata;
+	auto *texdata = (BSPLumpMiptexHeader *)g_dtexdata;
 	return texdata->nummiptex + g_newtextures_num;
 }
 
@@ -841,7 +841,7 @@ void NewTextures_Write()
 	}
 
 	int i;
-	auto *texdata = (dmiptexlump_t *)g_dtexdata;
+	auto *texdata = (BSPLumpMiptexHeader *)g_dtexdata;
 
 	auto *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
 	auto datasize = (g_dtexdata + g_texdatasize) - dataaddr;
@@ -885,7 +885,7 @@ static auto Hash(int size, void *data) -> unsigned int
 	return hash;
 }
 
-static void GetLightInt(dface_t *face, const int texsize[2], int ix, int iy, vec3_t &light)
+static void GetLightInt(BSPLumpFace *face, const int texsize[2], int ix, int iy, vec3_t &light)
 {
 	ix = qmax(0, qmin(ix, texsize[0]));
 	iy = qmax(0, qmin(iy, texsize[1]));
@@ -904,7 +904,7 @@ static void GetLightInt(dface_t *face, const int texsize[2], int ix, int iy, vec
 	}
 }
 
-static void GetLight(dface_t *face, const int texsize[2], double x, double y, vec3_t &light)
+static void GetLight(BSPLumpFace *face, const int texsize[2], double x, double y, vec3_t &light)
 {
 	auto ix = (int)floor(x);
 	auto iy = (int)floor(y);
@@ -930,21 +930,21 @@ static void GetLight(dface_t *face, const int texsize[2], double x, double y, ve
 
 static auto GetValidTextureName(int miptex, char name[16]) -> bool
 {
-	auto numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	auto numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 
 	if (miptex < 0 || miptex >= numtextures)
 	{
 		return false;
 	}
-	auto offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[miptex];
+	auto offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[miptex];
 	auto size = g_texdatasize - offset;
-	if (offset < 0 || g_dtexdata + offset < (byte *)&((dmiptexlump_t *)g_dtexdata)->dataofs[numtextures] ||
-		size < (int)sizeof(miptex_t))
+	if (offset < 0 || g_dtexdata + offset < (byte *)&((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[numtextures] ||
+		size < (int)sizeof(BSPLumpMiptex))
 	{
 		return false;
 	}
 
-	auto *mt = (miptex_t *)&g_dtexdata[offset];
+	auto *mt = (BSPLumpMiptex *)&g_dtexdata[offset];
 	safe_strncpy(name, mt->name, 16);
 
 	if (strcmp(name, mt->name))
@@ -1306,19 +1306,19 @@ void EmbedLightmapInTextures()
 
 		// emit a texture
 
-		auto miptexsize = (int)sizeof(miptex_t);
+		auto miptexsize = (int)sizeof(BSPLumpMiptex);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptexsize += (texturesize[0] >> miplevel) * (texturesize[1] >> miplevel);
 		}
 		miptexsize += 2 + 256 * 3 + 2;
-		auto *miptex = (miptex_t *)malloc(miptexsize);
+		auto *miptex = (BSPLumpMiptex *)malloc(miptexsize);
 		hlassume(miptex != nullptr, assume_NoMemory);
 
-		memset(miptex, 0, sizeof(miptex_t));
+		memset(miptex, 0, sizeof(BSPLumpMiptex));
 		miptex->width = texturesize[0];
 		miptex->height = texturesize[1];
-		auto *p = (byte *)miptex + sizeof(miptex_t);
+		auto *p = (byte *)miptex + sizeof(BSPLumpMiptex);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
 			miptex->offsets[miplevel] = p - (byte *)miptex;

@@ -640,9 +640,9 @@ void ReuseModel()
         SetKeyValue(&g_entities[i], "model", ValueForKey(&g_entities[j], "model"));
         if (j > i) // move this entity backward to prevent precache error in case of .mdl/.spr and wrong result of EntityForModel in case of map model
         {
-            entity_t tmp;
+            Entity tmp;
             tmp = g_entities[i];
-            memmove(&g_entities[i], &g_entities[i + 1], ((j + 1) - (i + 1)) * sizeof(entity_t));
+            memmove(&g_entities[i], &g_entities[i + 1], ((j + 1) - (i + 1)) * sizeof(Entity));
             g_entities[j] = tmp;
         }
     }
@@ -729,7 +729,7 @@ static void ConvertHintToEmpty()
 
 unsigned int BrushClipHullsDiscarded = 0;
 unsigned int ClipNodesDiscarded = 0;
-static void MarkEntForNoclip(entity_t *ent)
+static void MarkEntForNoclip(Entity *ent)
 {
     for (int i = ent->firstbrush; i < ent->firstbrush + ent->numbrushes; i++)
     {

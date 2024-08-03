@@ -31,7 +31,7 @@ void SubdivideFace(FaceBSP *f, FaceBSP **prevptr)
     FaceBSP *front;
     FaceBSP *back;
     FaceBSP *next;
-    texinfo_t *tex;
+    BSPLumpTexInfo *tex;
     vec3_t temp;
 
     // special (non-surface cached) faces don't need subdivision
@@ -323,7 +323,7 @@ auto GetEdge(const vec3_t p1, const vec3_t p2, FaceBSP *f) -> int
 {
     int v1;
     int v2;
-    dedge_t *edge;
+    BSPLumpEdge *edge;
     int i;
 
     hlassert(f->contents);

@@ -1160,7 +1160,7 @@ static void LinkLeafFaces(SurfaceBSP *planelist, NodeBSP *leafnode)
 	}
 	if (surf)
 	{
-		entity_t *ent = EntityForModel(g_nummodels - 1);
+		Entity *ent = EntityForModel(g_nummodels - 1);
 		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;

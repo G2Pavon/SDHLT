@@ -33,7 +33,7 @@ static const vec3_t s_baseaxis[18] = {
 int g_numparsedentities;
 int g_numparsedbrushes;
 
-auto CopyCurrentBrush(entity_t *entity, const Brush *brush) -> Brush *
+auto CopyCurrentBrush(Entity *entity, const Brush *brush) -> Brush *
 {
 	if (entity->firstbrush + entity->numbrushes != g_nummapbrushes)
 	{
@@ -64,7 +64,7 @@ auto CopyCurrentBrush(entity_t *entity, const Brush *brush) -> Brush *
 	return newb;
 }
 
-void DeleteCurrentEntity(entity_t *entity)
+void DeleteCurrentEntity(Entity *entity)
 {
 	if (entity != &g_entities[g_numentities - 1])
 	{
@@ -98,7 +98,7 @@ void DeleteCurrentEntity(entity_t *entity)
 	{
 		DeleteKey(entity, entity->epairs->key);
 	}
-	memset(entity, 0, sizeof(entity_t));
+	memset(entity, 0, sizeof(Entity));
 	g_numentities--;
 }
 // =====================================================================================
@@ -129,7 +129,7 @@ void TextureAxisFromPlane(const Plane *const pln, vec3_t xv, vec3_t yv)
 //  CheckForInvisible
 //      see if a brush is part of an invisible entity (KGP)
 // =====================================================================================
-static auto CheckForInvisible(entity_t *mapent) -> bool
+static auto CheckForInvisible(Entity *mapent) -> bool
 {
 	using namespace std;
 
@@ -147,7 +147,7 @@ static auto CheckForInvisible(entity_t *mapent) -> bool
 //  ParseBrush
 //      parse a brush from script
 // =====================================================================================
-static void ParseBrush(entity_t *mapent)
+static void ParseBrush(Entity *mapent)
 {
 	auto b = &g_mapbrushes[g_nummapbrushes]; // Current brush
 	int i, j;								 // Loop counters
@@ -556,8 +556,8 @@ auto ParseMapEntity() -> bool
 {
 	bool all_clip = true;
 	int entity_index;
-	entity_t *current_entity;
-	epair_t *e;
+	Entity *current_entity;
+	EntityProperty *e;
 
 	g_numparsedbrushes = 0;
 	if (!GetToken(true))

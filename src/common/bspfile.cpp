@@ -16,7 +16,7 @@ int g_max_map_miptex = DEFAULT_MAX_MAP_MIPTEX;
 int g_max_map_lightdata = DEFAULT_MAX_MAP_LIGHTDATA;
 
 int g_nummodels;
-dmodel_t g_dmodels[MAX_MAP_MODELS];
+BSPLumpModel g_dmodels[MAX_MAP_MODELS];
 int g_dmodels_checksum;
 
 int g_visdatasize;
@@ -28,7 +28,7 @@ byte *g_dlightdata;
 int g_dlightdata_checksum;
 
 int g_texdatasize;
-byte *g_dtexdata; // (dmiptexlump_t)
+byte *g_dtexdata; // (BSPLumpMiptexHeader)
 int g_dtexdata_checksum;
 
 int g_entdatasize;
@@ -36,7 +36,7 @@ char g_dentdata[MAX_MAP_ENTSTRING];
 int g_dentdata_checksum;
 
 int g_numleafs;
-dleaf_t g_dleafs[MAX_MAP_LEAFS];
+BSPLumpLeaf g_dleafs[MAX_MAP_LEAFS];
 int g_dleafs_checksum;
 
 int g_numplanes;
@@ -44,30 +44,30 @@ dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
 int g_dplanes_checksum;
 
 int g_numvertexes;
-dvertex_t g_dvertexes[MAX_MAP_VERTS];
+BSPLumpVertex g_dvertexes[MAX_MAP_VERTS];
 int g_dvertexes_checksum;
 
 int g_numnodes;
-dnode_t g_dnodes[MAX_MAP_NODES];
+BSPLumpNode g_dnodes[MAX_MAP_NODES];
 int g_dnodes_checksum;
 
 int g_numtexinfo;
 
-texinfo_t g_texinfo[MAX_INTERNAL_MAP_TEXINFO];
+BSPLumpTexInfo g_texinfo[MAX_INTERNAL_MAP_TEXINFO];
 int g_texinfo_checksum;
 
 int g_numfaces;
-dface_t g_dfaces[MAX_MAP_FACES];
+BSPLumpFace g_dfaces[MAX_MAP_FACES];
 int g_dfaces_checksum;
 
 int g_iWorldExtent = 65536; // ENGINE_ENTITY_RANGE; // -worldextent // seedee
 
 int g_numclipnodes;
-dclipnode_t g_dclipnodes[MAX_MAP_CLIPNODES];
+BSPLumpClipnode g_dclipnodes[MAX_MAP_CLIPNODES];
 int g_dclipnodes_checksum;
 
 int g_numedges;
-dedge_t g_dedges[MAX_MAP_EDGES];
+BSPLumpEdge g_dedges[MAX_MAP_EDGES];
 int g_dedges_checksum;
 
 int g_nummarksurfaces;
@@ -79,7 +79,7 @@ int g_dsurfedges[MAX_MAP_SURFEDGES];
 int g_dsurfedges_checksum;
 
 int g_numentities;
-entity_t g_entities[MAX_MAP_ENTITIES];
+Entity g_entities[MAX_MAP_ENTITIES];
 
 /*
  * ===============
@@ -212,8 +212,8 @@ void DecompressVis(const byte *src, byte *const dest, const unsigned int dest_le
 static void SwapBSPFile(const bool todisk)
 {
 	int i, j, c;
-	dmodel_t *d;
-	dmiptexlump_t *mtl;
+	BSPLumpModel *d;
+	BSPLumpMiptexHeader *mtl;
 
 	// models
 	for (i = 0; i < g_nummodels; i++)
@@ -339,7 +339,7 @@ static void SwapBSPFile(const bool todisk)
 	//
 	if (g_texdatasize)
 	{
-		mtl = (dmiptexlump_t *)g_dtexdata;
+		mtl = (BSPLumpMiptexHeader *)g_dtexdata;
 		if (todisk)
 		{
 			c = mtl->nummiptex;
@@ -385,7 +385,7 @@ static void SwapBSPFile(const bool todisk)
 //  CopyLump
 //      balh
 // =====================================================================================
-static auto CopyLump(int lump, void *dest, int size, const dheader_t *const header) -> int
+static auto CopyLump(int lump, void *dest, int size, const BSPLumpHeader *const header) -> int
 {
 	int length, ofs;
 
@@ -418,7 +418,7 @@ static auto CopyLump(int lump, void *dest, int size, const dheader_t *const head
 // =====================================================================================
 void LoadBSPFile(const char *const filename)
 {
-	dheader_t *header;
+	BSPLumpHeader *header;
 	LoadFile(filename, (char **)&header);
 	LoadBSPImage(header);
 }
@@ -427,12 +427,12 @@ void LoadBSPFile(const char *const filename)
 //  LoadBSPImage
 //      balh
 // =====================================================================================
-void LoadBSPImage(dheader_t *const header)
+void LoadBSPImage(BSPLumpHeader *const header)
 {
 	unsigned int i;
 
 	// swap the header
-	for (i = 0; i < sizeof(dheader_t) / 4; i++)
+	for (i = 0; i < sizeof(BSPLumpHeader) / 4; i++)
 	{
 		((int *)header)[i] = LittleLong(((int *)header)[i]);
 	}
@@ -442,17 +442,17 @@ void LoadBSPImage(dheader_t *const header)
 		Error("BSP is version %i, not %i", header->version, BSPVERSION);
 	}
 
-	g_nummodels = CopyLump(LUMP_MODELS, g_dmodels, sizeof(dmodel_t), header);
-	g_numvertexes = CopyLump(LUMP_VERTEXES, g_dvertexes, sizeof(dvertex_t), header);
+	g_nummodels = CopyLump(LUMP_MODELS, g_dmodels, sizeof(BSPLumpModel), header);
+	g_numvertexes = CopyLump(LUMP_VERTEXES, g_dvertexes, sizeof(BSPLumpVertex), header);
 	g_numplanes = CopyLump(LUMP_PLANES, g_dplanes, sizeof(dplane_t), header);
-	g_numleafs = CopyLump(LUMP_LEAFS, g_dleafs, sizeof(dleaf_t), header);
-	g_numnodes = CopyLump(LUMP_NODES, g_dnodes, sizeof(dnode_t), header);
-	g_numtexinfo = CopyLump(LUMP_TEXINFO, g_texinfo, sizeof(texinfo_t), header);
-	g_numclipnodes = CopyLump(LUMP_CLIPNODES, g_dclipnodes, sizeof(dclipnode_t), header);
-	g_numfaces = CopyLump(LUMP_FACES, g_dfaces, sizeof(dface_t), header);
+	g_numleafs = CopyLump(LUMP_LEAFS, g_dleafs, sizeof(BSPLumpLeaf), header);
+	g_numnodes = CopyLump(LUMP_NODES, g_dnodes, sizeof(BSPLumpNode), header);
+	g_numtexinfo = CopyLump(LUMP_TEXINFO, g_texinfo, sizeof(BSPLumpTexInfo), header);
+	g_numclipnodes = CopyLump(LUMP_CLIPNODES, g_dclipnodes, sizeof(BSPLumpClipnode), header);
+	g_numfaces = CopyLump(LUMP_FACES, g_dfaces, sizeof(BSPLumpFace), header);
 	g_nummarksurfaces = CopyLump(LUMP_MARKSURFACES, g_dmarksurfaces, sizeof(g_dmarksurfaces[0]), header);
 	g_numsurfedges = CopyLump(LUMP_SURFEDGES, g_dsurfedges, sizeof(g_dsurfedges[0]), header);
-	g_numedges = CopyLump(LUMP_EDGES, g_dedges, sizeof(dedge_t), header);
+	g_numedges = CopyLump(LUMP_EDGES, g_dedges, sizeof(BSPLumpEdge), header);
 	g_texdatasize = CopyLump(LUMP_TEXTURES, g_dtexdata, 1, header);
 	g_visdatasize = CopyLump(LUMP_VISIBILITY, g_dvisdata, 1, header);
 	g_lightdatasize = CopyLump(LUMP_LIGHTING, g_dlightdata, 1, header);
@@ -490,9 +490,9 @@ void LoadBSPImage(dheader_t *const header)
 //  AddLump
 //      balh
 // =====================================================================================
-static void AddLump(int lumpnum, void *data, int len, dheader_t *header, FILE *bspfile)
+static void AddLump(int lumpnum, void *data, int len, BSPLumpHeader *header, FILE *bspfile)
 {
-	lump_t *lump = &header->lumps[lumpnum];
+	Lump *lump = &header->lumps[lumpnum];
 	lump->fileofs = LittleLong(ftell(bspfile));
 	lump->filelen = LittleLong(len);
 	SafeWrite(bspfile, data, (len + 3) & ~3);
@@ -504,33 +504,33 @@ static void AddLump(int lumpnum, void *data, int len, dheader_t *header, FILE *b
 // =====================================================================================
 void WriteBSPFile(const char *const filename)
 {
-	dheader_t outheader;
-	dheader_t *header;
+	BSPLumpHeader outheader;
+	BSPLumpHeader *header;
 	FILE *bspfile;
 
 	header = &outheader;
-	memset(header, 0, sizeof(dheader_t));
+	memset(header, 0, sizeof(BSPLumpHeader));
 
 	SwapBSPFile(true);
 
 	header->version = LittleLong(BSPVERSION);
 
 	bspfile = SafeOpenWrite(filename);
-	SafeWrite(bspfile, header, sizeof(dheader_t)); // overwritten later
+	SafeWrite(bspfile, header, sizeof(BSPLumpHeader)); // overwritten later
 
 	//      LUMP TYPE       DATA            LENGTH                              HEADER  BSPFILE
 	AddLump(LUMP_PLANES, g_dplanes, g_numplanes * sizeof(dplane_t), header, bspfile);
-	AddLump(LUMP_LEAFS, g_dleafs, g_numleafs * sizeof(dleaf_t), header, bspfile);
-	AddLump(LUMP_VERTEXES, g_dvertexes, g_numvertexes * sizeof(dvertex_t), header, bspfile);
-	AddLump(LUMP_NODES, g_dnodes, g_numnodes * sizeof(dnode_t), header, bspfile);
-	AddLump(LUMP_TEXINFO, g_texinfo, g_numtexinfo * sizeof(texinfo_t), header, bspfile);
-	AddLump(LUMP_FACES, g_dfaces, g_numfaces * sizeof(dface_t), header, bspfile);
-	AddLump(LUMP_CLIPNODES, g_dclipnodes, g_numclipnodes * sizeof(dclipnode_t), header, bspfile);
+	AddLump(LUMP_LEAFS, g_dleafs, g_numleafs * sizeof(BSPLumpLeaf), header, bspfile);
+	AddLump(LUMP_VERTEXES, g_dvertexes, g_numvertexes * sizeof(BSPLumpVertex), header, bspfile);
+	AddLump(LUMP_NODES, g_dnodes, g_numnodes * sizeof(BSPLumpNode), header, bspfile);
+	AddLump(LUMP_TEXINFO, g_texinfo, g_numtexinfo * sizeof(BSPLumpTexInfo), header, bspfile);
+	AddLump(LUMP_FACES, g_dfaces, g_numfaces * sizeof(BSPLumpFace), header, bspfile);
+	AddLump(LUMP_CLIPNODES, g_dclipnodes, g_numclipnodes * sizeof(BSPLumpClipnode), header, bspfile);
 
 	AddLump(LUMP_MARKSURFACES, g_dmarksurfaces, g_nummarksurfaces * sizeof(g_dmarksurfaces[0]), header, bspfile);
 	AddLump(LUMP_SURFEDGES, g_dsurfedges, g_numsurfedges * sizeof(g_dsurfedges[0]), header, bspfile);
-	AddLump(LUMP_EDGES, g_dedges, g_numedges * sizeof(dedge_t), header, bspfile);
-	AddLump(LUMP_MODELS, g_dmodels, g_nummodels * sizeof(dmodel_t), header, bspfile);
+	AddLump(LUMP_EDGES, g_dedges, g_numedges * sizeof(BSPLumpEdge), header, bspfile);
+	AddLump(LUMP_MODELS, g_dmodels, g_nummodels * sizeof(BSPLumpModel), header, bspfile);
 
 	AddLump(LUMP_LIGHTING, g_dlightdata, g_lightdatasize, header, bspfile);
 	AddLump(LUMP_VISIBILITY, g_dvisdata, g_visdatasize, header, bspfile);
@@ -538,7 +538,7 @@ void WriteBSPFile(const char *const filename)
 	AddLump(LUMP_TEXTURES, g_dtexdata, g_texdatasize, header, bspfile);
 
 	fseek(bspfile, 0, SEEK_SET);
-	SafeWrite(bspfile, header, sizeof(dheader_t));
+	SafeWrite(bspfile, header, sizeof(BSPLumpHeader));
 
 	fclose(bspfile);
 }
@@ -593,11 +593,11 @@ auto CalcFaceExtents_test() -> bool
 
 void GetFaceExtents(int facenum, int mins_out[2], int maxs_out[2])
 {
-	dface_t *f;
+	BSPLumpFace *f;
 	float mins[2], maxs[2], val;
 	int i, j, e;
-	dvertex_t *v;
-	texinfo_t *tex;
+	BSPLumpVertex *v;
+	BSPLumpTexInfo *tex;
 	int bmins[2], bmaxs[2];
 
 	f = &g_dfaces[facenum];
@@ -747,7 +747,7 @@ auto CountBlocks() -> int
 	int k;
 	for (k = 0; k < g_numfaces; k++)
 	{
-		dface_t *f = &g_dfaces[k];
+		BSPLumpFace *f = &g_dfaces[k];
 		const char *texname = GetTextureByNumber(ParseTexinfoForFace(f));
 		if (!strncmp(texname, "sky", 3)																			   // sky, no lightmap allocation.
 			|| !strncmp(texname, "!", 1) || !strncasecmp(texname, "water", 5) || !strncasecmp(texname, "laser", 5) // water, no lightmap allocation.
@@ -772,7 +772,7 @@ auto CountBlocks() -> int
 			if (f->numedges > 0)
 			{
 				int e = g_dsurfedges[f->firstedge];
-				dvertex_t *v = &g_dvertexes[g_dedges[abs(e)].v[e >= 0 ? 0 : 1]];
+				BSPLumpVertex *v = &g_dvertexes[g_dedges[abs(e)].v[e >= 0 ? 0 : 1]];
 				VectorCopy(v->point, point);
 			}
 		}
@@ -800,17 +800,17 @@ auto CountBlocks() -> int
 auto NoWadTextures() -> bool
 {
 	// copied from loadtextures.cpp
-	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	int numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 	for (int i = 0; i < numtextures; i++)
 	{
-		int offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[i];
+		int offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i];
 		int size = g_texdatasize - offset;
-		if (offset < 0 || size < (int)sizeof(miptex_t))
+		if (offset < 0 || size < (int)sizeof(BSPLumpMiptex))
 		{
 			// missing textures have ofs -1
 			continue;
 		}
-		auto *mt = (miptex_t *)&g_dtexdata[offset];
+		auto *mt = (BSPLumpMiptex *)&g_dtexdata[offset];
 		if (!mt->offsets[0]) // Check for valid mip texture
 		{
 			return false;
@@ -918,7 +918,7 @@ static auto GlobUsage(const char *const szItem, const int itemstorage, const int
 // =====================================================================================
 void PrintBSPFileSizes()
 {
-	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	int numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 	int totalmemory = 0;
 	int numallocblocks = CountBlocks();
 	int maxallocblocks = 64;
@@ -999,10 +999,10 @@ void PrintBSPFileSizes()
 auto ParseImplicitTexinfoFromTexture(int miptex) -> int
 {
 	int texinfo;
-	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	int numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 	int offset;
 	int size;
-	miptex_t *mt;
+	BSPLumpMiptex *mt;
 	char name[16];
 
 	if (miptex < 0 || miptex >= numtextures)
@@ -1010,15 +1010,15 @@ auto ParseImplicitTexinfoFromTexture(int miptex) -> int
 		Warning("ParseImplicitTexinfoFromTexture: internal error: invalid texture number %d.", miptex);
 		return -1;
 	}
-	offset = ((dmiptexlump_t *)g_dtexdata)->dataofs[miptex];
+	offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[miptex];
 	size = g_texdatasize - offset;
-	if (offset < 0 || g_dtexdata + offset < (byte *)&((dmiptexlump_t *)g_dtexdata)->dataofs[numtextures] ||
-		size < (int)sizeof(miptex_t))
+	if (offset < 0 || g_dtexdata + offset < (byte *)&((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[numtextures] ||
+		size < (int)sizeof(BSPLumpMiptex))
 	{
 		return -1;
 	}
 
-	mt = (miptex_t *)&g_dtexdata[offset];
+	mt = (BSPLumpMiptex *)&g_dtexdata[offset];
 	safe_strncpy(name, mt->name, 16);
 
 	if (!(strlen(name) >= 6 && !strncasecmp(&name[1], "_rad", 4) && '0' <= name[5] && name[5] <= '9'))
@@ -1036,7 +1036,7 @@ auto ParseImplicitTexinfoFromTexture(int miptex) -> int
 	return texinfo;
 }
 
-auto ParseTexinfoForFace(const dface_t *f) -> int
+auto ParseTexinfoForFace(const BSPLumpFace *f) -> int
 {
 	int texinfo;
 	int miptex;
@@ -1067,14 +1067,14 @@ void DeleteEmbeddedLightmaps()
 	int countremovedtexinfos = 0;
 	int countremovedtextures = 0;
 	int i;
-	int numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
+	int numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
 
 	// Step 1: parse the original texinfo index stored in each "?_rad*" texture
 	//         and restore the texinfo for the faces that have had their lightmap embedded
 
 	for (i = 0; i < g_numfaces; i++)
 	{
-		dface_t *f = &g_dfaces[i];
+		BSPLumpFace *f = &g_dfaces[i];
 		int texinfo;
 
 		texinfo = ParseTexinfoForFace(f);
@@ -1096,7 +1096,7 @@ void DeleteEmbeddedLightmaps()
 		}
 		for (i = 0; i < g_numfaces; i++)
 		{
-			dface_t *f = &g_dfaces[i];
+			BSPLumpFace *f = &g_dfaces[i];
 
 			if (f->texinfo < 0 || f->texinfo >= g_numtexinfo)
 			{
@@ -1106,7 +1106,7 @@ void DeleteEmbeddedLightmaps()
 		}
 		for (i = g_numtexinfo - 1; i > -1; i--)
 		{
-			texinfo_t *info = &g_texinfo[i];
+			BSPLumpTexInfo *info = &g_texinfo[i];
 
 			if (texinfoused[i])
 			{
@@ -1138,7 +1138,7 @@ void DeleteEmbeddedLightmaps()
 		}
 		for (i = 0; i < g_numtexinfo; i++)
 		{
-			texinfo_t *info = &g_texinfo[i];
+			BSPLumpTexInfo *info = &g_texinfo[i];
 
 			if (info->miptex < 0 || info->miptex >= numtextures)
 			{
@@ -1159,7 +1159,7 @@ void DeleteEmbeddedLightmaps()
 
 		if (numremaining < numtextures)
 		{
-			auto *texdata = (dmiptexlump_t *)g_dtexdata;
+			auto *texdata = (BSPLumpMiptexHeader *)g_dtexdata;
 			byte *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
 			int datasize = (g_dtexdata + texdata->dataofs[numremaining]) - dataaddr;
 			byte *newdataaddr = (byte *)&texdata->dataofs[numremaining];
@@ -1190,11 +1190,11 @@ void DeleteEmbeddedLightmaps()
 //  ParseEpair
 //      entity key/value pairs
 // =====================================================================================
-auto ParseEpair() -> epair_t *
+auto ParseEpair() -> EntityProperty *
 {
-	epair_t *e;
+	EntityProperty *e;
 
-	e = (epair_t *)Alloc(sizeof(epair_t));
+	e = (EntityProperty *)Alloc(sizeof(EntityProperty));
 
 	if (strlen(g_token) >= MAX_KEY - 1)
 		Error("ParseEpair: Key token too long (%i > MAX_KEY)", (int)strlen(g_token));
@@ -1218,8 +1218,8 @@ auto ParseEpair() -> epair_t *
 
 auto ParseEntity() -> bool
 {
-	epair_t *e;
-	entity_t *mapent;
+	EntityProperty *e;
+	Entity *mapent;
 
 	if (!GetToken(true))
 	{
@@ -1273,7 +1273,7 @@ auto ParseEntity() -> bool
 		{
 			DeleteKey(mapent, mapent->epairs->key);
 		}
-		memset(mapent, 0, sizeof(entity_t));
+		memset(mapent, 0, sizeof(Entity));
 		g_numentities--;
 		return true;
 	}
@@ -1357,7 +1357,7 @@ void UnparseEntities()
 {
 	char *buf;
 	char *end;
-	epair_t *ep;
+	EntityProperty *ep;
 	char line[MAXTOKEN];
 	int i;
 
@@ -1367,7 +1367,7 @@ void UnparseEntities()
 
 	for (i = 0; i < g_numentities; i++)
 	{
-		entity_t *mapent = &g_entities[i];
+		Entity *mapent = &g_entities[i];
 		if (!strcmp(ValueForKey(mapent, "classname"), "info_sunlight") ||
 			!strcmp(ValueForKey(mapent, "classname"), "light_environment"))
 		{
@@ -1381,7 +1381,7 @@ void UnparseEntities()
 				const char *target = ValueForKey(mapent, "target");
 				if (target[0])
 				{
-					entity_t *targetent = FindTargetEntity(target);
+					Entity *targetent = FindTargetEntity(target);
 					if (targetent)
 					{
 						float origin1[3] = {0, 0, 0}, origin2[3] = {0, 0, 0}, normal[3];
@@ -1403,7 +1403,7 @@ void UnparseEntities()
 				{
 					Error("g_numentities == MAX_MAP_ENTITIES");
 				}
-				entity_t *newent = &g_entities[g_numentities++];
+				Entity *newent = &g_entities[g_numentities++];
 				newent->epairs = mapent->epairs;
 				SetKeyValue(newent, "classname", "light_environment");
 				SetKeyValue(newent, "_fake", "1");
@@ -1413,7 +1413,7 @@ void UnparseEntities()
 	}
 	for (i = 0; i < g_numentities; i++)
 	{
-		entity_t *mapent = &g_entities[i];
+		Entity *mapent = &g_entities[i];
 		if (!strcmp(ValueForKey(mapent, "classname"), "light_shadow") || !strcmp(ValueForKey(mapent, "classname"), "light_bounce"))
 		{
 			SetKeyValue(mapent, "convertfrom", ValueForKey(mapent, "classname"));
@@ -1424,7 +1424,7 @@ void UnparseEntities()
 	// ugly code
 	for (i = 0; i < g_numentities; i++)
 	{
-		entity_t *mapent = &g_entities[i];
+		Entity *mapent = &g_entities[i];
 		if (!strcmp(ValueForKey(mapent, "classname"), "light_surface"))
 		{
 			if (!*ValueForKey(mapent, "_tex"))
@@ -1456,7 +1456,7 @@ void UnparseEntities()
 		memset(lightneedcompare, 0, g_numentities * sizeof(bool));
 		for (i = g_numentities - 1; i > -1; i--)
 		{
-			entity_t *ent = &g_entities[i];
+			Entity *ent = &g_entities[i];
 			const char *classname = ValueForKey(ent, "classname");
 			const char *targetname = ValueForKey(ent, "targetname");
 			int style = IntForKey(ent, "style");
@@ -1466,7 +1466,7 @@ void UnparseEntities()
 			{
 				if (!lightneedcompare[j])
 					continue;
-				entity_t *ent2 = &g_entities[j];
+				Entity *ent2 = &g_entities[j];
 				const char *targetname2 = ValueForKey(ent2, "targetname");
 				int style2 = IntForKey(ent2, "style");
 				if (style == style2 && !strcmp(targetname, targetname2))
@@ -1521,14 +1521,14 @@ void UnparseEntities()
 //  SetKeyValue
 //      makes a keyvalue
 // =====================================================================================
-void DeleteKey(entity_t *ent, const char *const key)
+void DeleteKey(Entity *ent, const char *const key)
 {
-	epair_t **pep;
+	EntityProperty **pep;
 	for (pep = &ent->epairs; *pep; pep = &(*pep)->next)
 	{
 		if (!strcmp((*pep)->key, key))
 		{
-			epair_t *ep = *pep;
+			EntityProperty *ep = *pep;
 			*pep = ep->next;
 			Free(ep->key);
 			Free(ep->value);
@@ -1537,9 +1537,9 @@ void DeleteKey(entity_t *ent, const char *const key)
 		}
 	}
 }
-void SetKeyValue(entity_t *ent, const char *const key, const char *const value)
+void SetKeyValue(Entity *ent, const char *const key, const char *const value)
 {
-	epair_t *ep;
+	EntityProperty *ep;
 
 	if (!value[0])
 	{
@@ -1556,7 +1556,7 @@ void SetKeyValue(entity_t *ent, const char *const key, const char *const value)
 			return;
 		}
 	}
-	ep = (epair_t *)Alloc(sizeof(*ep));
+	ep = (EntityProperty *)Alloc(sizeof(*ep));
 	ep->next = ent->epairs;
 	ent->epairs = ep;
 	ep->key = strdup(key);
@@ -1567,9 +1567,9 @@ void SetKeyValue(entity_t *ent, const char *const key, const char *const value)
 //  ValueForKey
 //      returns the value for a passed entity and key
 // =====================================================================================
-auto ValueForKey(const entity_t *const ent, const char *const key) -> const char *
+auto ValueForKey(const Entity *const ent, const char *const key) -> const char *
 {
-	epair_t *ep;
+	EntityProperty *ep;
 
 	for (ep = ent->epairs; ep; ep = ep->next)
 	{
@@ -1584,7 +1584,7 @@ auto ValueForKey(const entity_t *const ent, const char *const key) -> const char
 // =====================================================================================
 //  IntForKey
 // =====================================================================================
-auto IntForKey(const entity_t *const ent, const char *const key) -> int
+auto IntForKey(const Entity *const ent, const char *const key) -> int
 {
 	return atoi(ValueForKey(ent, key));
 }
@@ -1592,7 +1592,7 @@ auto IntForKey(const entity_t *const ent, const char *const key) -> int
 // =====================================================================================
 //  FloatForKey
 // =====================================================================================
-auto FloatForKey(const entity_t *const ent, const char *const key) -> vec_t
+auto FloatForKey(const Entity *const ent, const char *const key) -> vec_t
 {
 	return atof(ValueForKey(ent, key));
 }
@@ -1601,7 +1601,7 @@ auto FloatForKey(const entity_t *const ent, const char *const key) -> vec_t
 //  GetVectorForKey
 //      returns value for key in vec[0-2]
 // =====================================================================================
-void GetVectorForKey(const entity_t *const ent, const char *const key, vec3_t vec)
+void GetVectorForKey(const Entity *const ent, const char *const key, vec3_t vec)
 {
 	const char *k;
 	double v1, v2, v3;
@@ -1619,7 +1619,7 @@ void GetVectorForKey(const entity_t *const ent, const char *const key, vec3_t ve
 //  FindTargetEntity
 //
 // =====================================================================================
-auto FindTargetEntity(const char *const target) -> entity_t *
+auto FindTargetEntity(const char *const target) -> Entity *
 {
 	int i;
 	const char *n;
@@ -1662,13 +1662,13 @@ auto GetTextureByNumber(int texturenumber) -> char *
 {
 	if (texturenumber == -1)
 		return emptystring;
-	texinfo_t *info;
-	miptex_t *miptex;
+	BSPLumpTexInfo *info;
+	BSPLumpMiptex *miptex;
 	int ofs;
 
 	info = &g_texinfo[texturenumber];
-	ofs = ((dmiptexlump_t *)g_dtexdata)->dataofs[info->miptex];
-	miptex = (miptex_t *)(&g_dtexdata[ofs]);
+	ofs = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[info->miptex];
+	miptex = (BSPLumpMiptex *)(&g_dtexdata[ofs]);
 
 	return miptex->name;
 }
@@ -1677,7 +1677,7 @@ auto GetTextureByNumber(int texturenumber) -> char *
 //  EntityForModel
 //      returns entity addy for given modelnum
 // =====================================================================================
-auto EntityForModel(const int modnum) -> entity_t *
+auto EntityForModel(const int modnum) -> Entity *
 {
 	int i;
 	const char *s;

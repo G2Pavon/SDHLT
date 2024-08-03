@@ -71,7 +71,7 @@ public:
   // Construction
   Winding();                                   // Do nothing :)
   Winding(vec3_t *points, uint32_t numpoints); // Create from raw points
-  Winding(const dface_t &face, vec_t epsilon = ON_EPSILON);
+  Winding(const BSPLumpFace &face, vec_t epsilon = ON_EPSILON);
   Winding(const dplane_t &face);
   Winding(const vec3_t normal, const vec_t dist);
   Winding(uint32_t points);

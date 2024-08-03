@@ -81,7 +81,7 @@ void FreeIntersectTest(intersecttest_t *t)
 	free(t);
 }
 
-auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, dface_t *const f, dface_t *&fnext, vec_t &angle, vec3_t &normal) -> int
+auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, BSPLumpFace *const f, BSPLumpFace *&fnext, vec_t &angle, vec3_t &normal) -> int
 // Must guarantee these faces will form a loop or a chain, otherwise will result in endless loop.
 //
 //   e[end]/enext[endnext]
@@ -169,7 +169,7 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, Matrix &m,
 {
 	Matrix worldtotex;
 	Matrix worldtotex2;
-	dvertex_t *vert[2];
+	BSPLumpVertex *vert[2];
 	vec3_t face_vert[2];
 	vec3_t face2_vert[2];
 	vec3_t face_axis[2];
@@ -339,7 +339,7 @@ void PairEdges()
 	{
 		int edgeabs, edgeabsnext;
 		int edgeend, edgeendnext;
-		dface_t *f, *fnext;
+		BSPLumpFace *f, *fnext;
 		vec_t angle, angles;
 		vec3_t normal, normals;
 		vec3_t edgenormal;
@@ -497,7 +497,7 @@ struct lightinfo_t
 	int texmins[2], texsize[2];
 	int lightstyles[256];
 	int surfnum;
-	dface_t *face;
+	BSPLumpFace *face;
 	int lmcache_density; // shared by both s and t direction
 	int lmcache_offset;	 // shared by both s and t direction
 	int lmcache_side;
@@ -511,14 +511,14 @@ struct lightinfo_t
 // =====================================================================================
 //  TextureNameFromFace
 // =====================================================================================
-static auto TextureNameFromFace(const dface_t *const f) -> const char *
+static auto TextureNameFromFace(const BSPLumpFace *const f) -> const char *
 {
 	//
 	// check for light emited by texture
 	//
 	auto *tx = &g_texinfo[f->texinfo];
-	auto ofs = ((dmiptexlump_t *)g_dtexdata)->dataofs[tx->miptex];
-	auto *mt = (miptex_t *)((byte *)g_dtexdata + ofs);
+	auto ofs = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[tx->miptex];
+	auto *mt = (BSPLumpMiptex *)((byte *)g_dtexdata + ofs);
 
 	return mt->name;
 }
@@ -533,7 +533,7 @@ static void CalcFaceExtents(lightinfo_t *l)
 	const auto facenum = l->surfnum;
 	float mins[2], maxs[2]; // vec_t           mins[2], maxs[2], val; //vluzacn
 	int i, e;
-	dvertex_t *v;
+	BSPLumpVertex *v;
 
 	auto *s = l->face;
 
@@ -1514,9 +1514,9 @@ void CreateDirectLights()
 	unsigned i;
 	Patch *p;
 	DirectLight *dl;
-	dleaf_t *leaf;
+	BSPLumpLeaf *leaf;
 	int leafnum;
-	entity_t *e;
+	Entity *e;
 	const char *target;
 	vec3_t dest;
 
@@ -4085,7 +4085,7 @@ void MLH_AddSample(mdllight_t *ml, int facenum, int w, int h, int s, int t, cons
 		}
 	}
 }
-void MLH_CalcExtents(const dface_t *f, int *texturemins, int *extents)
+void MLH_CalcExtents(const BSPLumpFace *f, int *texturemins, int *extents)
 {
 	int bmins[2];
 	int bmaxs[2];

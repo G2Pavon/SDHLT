@@ -334,9 +334,9 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
         {
             // Just read the miptex header and zero out the data offsets.
             // We will load the entire texture from the WAD at engine runtime¿
-            auto *miptex = (miptex_t *)dest;
-            hlassume((int)sizeof(miptex_t) <= dest_maxsize, assume_MAX_MAP_MIPTEX);
-            SafeRead(texfiles[source->iTexFile], dest, sizeof(miptex_t));
+            auto *miptex = (BSPLumpMiptex *)dest;
+            hlassume((int)sizeof(BSPLumpMiptex) <= dest_maxsize, assume_MAX_MAP_MIPTEX);
+            SafeRead(texfiles[source->iTexFile], dest, sizeof(BSPLumpMiptex));
 
             for (int i = 0; i < MIPLEVELS; i++)
                 miptex->offsets[i] = 0;
@@ -346,7 +346,7 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
                 Error("File read failure");
             SafeRead(texfiles[source->iTexFile], writewad_data, source->disksize);
             writewad_datasize = source->disksize;
-            return sizeof(miptex_t);
+            return sizeof(BSPLumpMiptex);
         }
         else
         {
@@ -531,7 +531,7 @@ void WriteMiptex()
     start = I_FloatTime();
     {
         // Now setup to get the miptex data (or just the headers if using -wadtextures) from the wadfile
-        auto *l = (dmiptexlump_t *)g_dtexdata;
+        auto *l = (BSPLumpMiptexHeader *)g_dtexdata;
         auto *data = (byte *)&l->dataofs[nummiptex];
         l->nummiptex = nummiptex;
         char writewad_name[_MAX_PATH]; // Write temp wad file with processed textures
@@ -635,7 +635,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec3_t origin) -> int
 {
-    texinfo_t tx;
+    BSPLumpTexInfo tx;
     int i;
 
     if (!strncasecmp(bt->name, "NULL", 4))

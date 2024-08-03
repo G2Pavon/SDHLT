@@ -1503,8 +1503,8 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 	const FaceList *fl;
 	int facenum;
 	int facenum2;
-	const dface_t *f;
-	const dface_t *f2;
+	const BSPLumpFace *f;
+	const BSPLumpFace *f2;
 	const dplane_t *dp;
 	const dplane_t *dp2;
 
@@ -1585,8 +1585,8 @@ static void BuildWalls(facetriangulation_t *facetrian)
 	int j;
 	int facenum;
 	int facenum2;
-	const dface_t *f;
-	const dface_t *f2;
+	const BSPLumpFace *f;
+	const BSPLumpFace *f2;
 	const dplane_t *dp;
 	const dplane_t *dp2;
 	int e;

@@ -28,10 +28,10 @@
 vec_t g_fade = DEFAULT_FADE;
 
 Patch *g_face_patches[MAX_MAP_FACES];
-entity_t *g_face_entity[MAX_MAP_FACES];
+Entity *g_face_entity[MAX_MAP_FACES];
 eModelLightmodes g_face_lightmode[MAX_MAP_FACES];
 Patch *g_patches;
-entity_t *g_face_texlights[MAX_MAP_FACES];
+Entity *g_face_texlights[MAX_MAP_FACES];
 unsigned g_num_patches;
 
 static vec3_t (*emitlight)[MAXLIGHTMAPS]; // LRC
@@ -89,7 +89,7 @@ static void MakeParents(const int nodenum, const int parent)
 {
 	int i;
 	int j;
-	dnode_t *node;
+	BSPLumpNode *node;
 
 	nodeparents[nodenum] = parent;
 	node = g_dnodes + nodenum;
@@ -153,7 +153,7 @@ static void LightForTexture(const char *const name, vec3_t result)
 // =====================================================================================
 //  BaseLightForFace
 // =====================================================================================
-static void BaseLightForFace(const dface_t *const f, vec3_t light)
+static void BaseLightForFace(const BSPLumpFace *const f, vec3_t light)
 {
 	int fn = f - g_dfaces;
 	if (g_face_texlights[fn])
@@ -186,8 +186,8 @@ static void BaseLightForFace(const dface_t *const f, vec3_t light)
 		light[2] = b > 0 ? b : 0;
 		return;
 	}
-	texinfo_t *tx;
-	miptex_t *mt;
+	BSPLumpTexInfo *tx;
+	BSPLumpMiptex *mt;
 	int ofs;
 
 	//
@@ -195,8 +195,8 @@ static void BaseLightForFace(const dface_t *const f, vec3_t light)
 	//
 	tx = &g_texinfo[f->texinfo];
 
-	ofs = ((dmiptexlump_t *)g_dtexdata)->dataofs[tx->miptex];
-	mt = (miptex_t *)((byte *)g_dtexdata + ofs);
+	ofs = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[tx->miptex];
+	mt = (BSPLumpMiptex *)((byte *)g_dtexdata + ofs);
 
 	LightForTexture(mt->name, light);
 }
@@ -204,7 +204,7 @@ static void BaseLightForFace(const dface_t *const f, vec3_t light)
 // =====================================================================================
 //  IsSpecial
 // =====================================================================================
-static auto IsSpecial(const dface_t *const f) -> bool
+static auto IsSpecial(const BSPLumpFace *const f) -> bool
 {
 	return g_texinfo[f->texinfo].flags & TEX_SPECIAL;
 }
@@ -543,8 +543,8 @@ static void getGridPlanes(const Patch *const p, dplane_t *const pl)
 {
 	const Patch *patch = p;
 	dplane_t *planes = pl;
-	const dface_t *f = g_dfaces + patch->faceNumber;
-	texinfo_t *tx = &g_texinfo[f->texinfo];
+	const BSPLumpFace *f = g_dfaces + patch->faceNumber;
+	BSPLumpTexInfo *tx = &g_texinfo[f->texinfo];
 	dplane_t *plane = planes;
 	const dplane_t *faceplane = getPlaneFromFaceNumber(patch->faceNumber);
 	int x;
@@ -626,10 +626,10 @@ void ReadCustomChopValue()
 {
 	int num;
 	int i, k;
-	entity_t *mapent;
-	epair_t *ep;
+	Entity *mapent;
+	EntityProperty *ep;
 
-	num = ((dmiptexlump_t *)g_dtexdata)->nummiptex;
+	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
 	chopscales = (vec_t *)malloc(num * sizeof(vec_t));
 	for (i = 0; i < num; i++)
 	{
@@ -642,7 +642,7 @@ void ReadCustomChopValue()
 			continue;
 		for (i = 0; i < num; i++)
 		{
-			const char *texname = ((miptex_t *)(g_dtexdata + ((dmiptexlump_t *)g_dtexdata)->dataofs[i]))->name;
+			const char *texname = ((BSPLumpMiptex *)(g_dtexdata + ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i]))->name;
 			for (ep = mapent->epairs; ep; ep = ep->next)
 			{
 				if (strcasecmp(ep->key, texname))
@@ -665,10 +665,10 @@ void ReadCustomSmoothValue()
 {
 	int num;
 	int i, k;
-	entity_t *mapent;
-	epair_t *ep;
+	Entity *mapent;
+	EntityProperty *ep;
 
-	num = ((dmiptexlump_t *)g_dtexdata)->nummiptex;
+	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
 	g_smoothvalues = (vec_t *)malloc(num * sizeof(vec_t));
 	for (i = 0; i < num; i++)
 	{
@@ -681,7 +681,7 @@ void ReadCustomSmoothValue()
 			continue;
 		for (i = 0; i < num; i++)
 		{
-			const char *texname = ((miptex_t *)(g_dtexdata + ((dmiptexlump_t *)g_dtexdata)->dataofs[i]))->name;
+			const char *texname = ((BSPLumpMiptex *)(g_dtexdata + ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i]))->name;
 			for (ep = mapent->epairs; ep; ep = ep->next)
 			{
 				if (strcasecmp(ep->key, texname))
@@ -697,10 +697,10 @@ void ReadTranslucentTextures()
 {
 	int num;
 	int i, k;
-	entity_t *mapent;
-	epair_t *ep;
+	Entity *mapent;
+	EntityProperty *ep;
 
-	num = ((dmiptexlump_t *)g_dtexdata)->nummiptex;
+	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
 	g_translucenttextures = (vec3_t *)malloc(num * sizeof(vec3_t));
 	for (i = 0; i < num; i++)
 	{
@@ -713,7 +713,7 @@ void ReadTranslucentTextures()
 			continue;
 		for (i = 0; i < num; i++)
 		{
-			const char *texname = ((miptex_t *)(g_dtexdata + ((dmiptexlump_t *)g_dtexdata)->dataofs[i]))->name;
+			const char *texname = ((BSPLumpMiptex *)(g_dtexdata + ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i]))->name;
 			for (ep = mapent->epairs; ep; ep = ep->next)
 			{
 				if (strcasecmp(ep->key, texname))
@@ -756,10 +756,10 @@ void ReadLightingCone()
 {
 	int num;
 	int i, k;
-	entity_t *mapent;
-	epair_t *ep;
+	Entity *mapent;
+	EntityProperty *ep;
 
-	num = ((dmiptexlump_t *)g_dtexdata)->nummiptex;
+	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
 	g_lightingconeinfo = (vec3_t *)malloc(num * sizeof(vec3_t));
 	for (i = 0; i < num; i++)
 	{
@@ -773,7 +773,7 @@ void ReadLightingCone()
 			continue;
 		for (i = 0; i < num; i++)
 		{
-			const char *texname = ((miptex_t *)(g_dtexdata + ((dmiptexlump_t *)g_dtexdata)->dataofs[i]))->name;
+			const char *texname = ((BSPLumpMiptex *)(g_dtexdata + ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i]))->name;
 			for (ep = mapent->epairs; ep; ep = ep->next)
 			{
 				if (strcasecmp(ep->key, texname))
@@ -807,8 +807,8 @@ void ReadLightingCone()
 
 static auto getScale(const Patch *const patch) -> vec_t
 {
-	dface_t *f = g_dfaces + patch->faceNumber;
-	texinfo_t *tx = &g_texinfo[f->texinfo];
+	BSPLumpFace *f = g_dfaces + patch->faceNumber;
+	BSPLumpTexInfo *tx = &g_texinfo[f->texinfo];
 	const dplane_t *faceplane = getPlaneFromFace(f);
 	vec3_t vecs_perpendicular[2];
 	vec_t scale[2];
@@ -901,7 +901,7 @@ static auto getChop(const Patch *const patch) -> vec_t
 // =====================================================================================
 static void MakePatchForFace(const int fn, Winding *w, int style, int bouncestyle) // LRC
 {
-	const dface_t *f = g_dfaces + fn;
+	const BSPLumpFace *f = g_dfaces + fn;
 
 	// No g_patches at all for the sky!
 	if (!IsSpecial(f))
@@ -1147,7 +1147,7 @@ static void LoadOpaqueEntities()
 
 		for (entnum = 0; entnum < g_numentities; entnum++) // Loop through map ents
 		{
-			entity_t *ent = &g_entities[entnum]; // Get the current ent
+			Entity *ent = &g_entities[entnum]; // Get the current ent
 
 			if (strcmp(ValueForKey(ent, "model"), stringmodel)) // Skip ents that don't match the current model
 				continue;
@@ -1157,7 +1157,7 @@ static void LoadOpaqueEntities()
 
 				if (*ValueForKey(ent, "light_origin") && *ValueForKey(ent, "model_center")) // If the entity has a light_origin and model_center, calculate a new origin
 				{
-					entity_t *ent2 = FindTargetEntity(ValueForKey(ent, "light_origin"));
+					Entity *ent2 = FindTargetEntity(ValueForKey(ent, "light_origin"));
 
 					if (ent2)
 					{
@@ -1211,7 +1211,7 @@ static void LoadOpaqueEntities()
 
 				for (j = 0; j < g_numentities; j++) // Loop to find a matching light_shadow entity
 				{
-					entity_t *lightent = &g_entities[j];
+					Entity *lightent = &g_entities[j];
 
 					if (!strcmp(ValueForKey(lightent, "classname"), "light_shadow") // If light_shadow targeting the current entity
 						&& *ValueForKey(lightent, "target") && !strcmp(ValueForKey(lightent, "target"), ValueForKey(ent, "targetname")))
@@ -1261,23 +1261,23 @@ static void LoadOpaqueEntities()
 // =====================================================================================
 //  MakePatches
 // =====================================================================================
-static auto FindTexlightEntity(int facenum) -> entity_t *
+static auto FindTexlightEntity(int facenum) -> Entity *
 {
-	dface_t *face = &g_dfaces[facenum];
+	BSPLumpFace *face = &g_dfaces[facenum];
 	const dplane_t *dplane = getPlaneFromFace(face);
 	const char *texname = GetTextureByNumber(face->texinfo);
-	entity_t *faceent = g_face_entity[facenum];
+	Entity *faceent = g_face_entity[facenum];
 	vec3_t centroid;
 	auto *w = new Winding(*face);
 	w->getCenter(centroid);
 	delete w;
 	VectorAdd(centroid, g_face_offset[facenum], centroid);
 
-	entity_t *found = nullptr;
+	Entity *found = nullptr;
 	vec_t bestdist = -1;
 	for (int i = 0; i < g_numentities; i++)
 	{
-		entity_t *ent = &g_entities[i];
+		Entity *ent = &g_entities[i];
 		if (strcmp(ValueForKey(ent, "classname"), "light_surface"))
 			continue;
 		if (strcasecmp(ValueForKey(ent, "_tex"), texname))
@@ -1318,12 +1318,12 @@ static void MakePatches()
 	int i;
 	int j;
 	unsigned int k;
-	dface_t *f;
+	BSPLumpFace *f;
 	int fn;
 	Winding *w;
-	dmodel_t *mod;
+	BSPLumpModel *mod;
 	vec3_t origin;
-	entity_t *ent;
+	Entity *ent;
 	const char *s;
 	vec3_t light_origin;
 	vec3_t model_center;
@@ -1369,7 +1369,7 @@ static void MakePatches()
 		// Allow models to be lit in an alternate location (pt1)
 		if (*(s = ValueForKey(ent, "light_origin")))
 		{
-			entity_t *e = FindTargetEntity(s);
+			Entity *e = FindTargetEntity(s);
 
 			if (e)
 			{
@@ -1432,7 +1432,7 @@ static void MakePatches()
 			int j;
 			for (j = 0; j < g_numentities; j++)
 			{
-				entity_t *lightent = &g_entities[j];
+				Entity *lightent = &g_entities[j];
 				if (!strcmp(ValueForKey(lightent, "classname"), "light_bounce") && *ValueForKey(lightent, "target") && !strcmp(ValueForKey(lightent, "target"), ValueForKey(ent, "targetname")))
 				{
 					bouncestyle = IntForKey(lightent, "style");
@@ -2034,7 +2034,7 @@ static void ExtendLightmapBuffer()
 	int i;
 	int j;
 	int ofs;
-	dface_t *f;
+	BSPLumpFace *f;
 
 	maxsize = 0;
 	for (i = 0; i < g_numfaces; i++)
@@ -2158,8 +2158,8 @@ void ReadInfoTexAndMinlights()
 	int k;
 	int values;
 	float r, g, b, i, min;
-	entity_t *mapent;
-	epair_t *ep;
+	Entity *mapent;
+	EntityProperty *ep;
 	texlight_t texlight;
 	MinLight minlight;
 

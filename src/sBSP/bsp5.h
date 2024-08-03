@@ -216,8 +216,8 @@ typedef enum
     BrinkWall,
     BrinkAny,
 } bbrinklevel_e;
-extern auto CreateBrinkinfo(const dclipnode_t *clipnodes, int headnode) -> void *;
-extern auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, dclipnode_t *clipnodes_out, int maxsize, int size, int &size_out) -> bool;
+extern auto CreateBrinkinfo(const BSPLumpClipnode *clipnodes, int headnode) -> void *;
+extern auto FixBrinks(const void *brinkinfo, bbrinklevel_e level, int &headnode_out, BSPLumpClipnode *clipnodes_out, int maxsize, int size, int &size_out) -> bool;
 extern void DeleteBrinkinfo(void *brinkinfo);
 
 // =====================================================================================
