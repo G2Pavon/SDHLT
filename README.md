@@ -5,7 +5,7 @@ How? well,
  -  Replaced macros  `#define` constants with `constexpr`
  -  Using `auto`
  -   Removed old map file version (<220 and QuArK) support
- -   Main() functions was simplified adding a function to handle arguments, for example [smct qcsg.cpp](https://github.com/G2Pavon/SDHLT/blob/master/src/sCSG/qcsg.cpp#L1090-L1162) vs [sdhlt qcsg.cpp](https://github.com/seedee/SDHLT/blob/9b94e4fd1c4392802e1a01256596ea69894afc49/src/sdhlt/sdHLCSG/qcsg.cpp#L1719-L2421)
+ -   Main() functions was simplified adding a function to handle arguments, removed the function that reads the paras from settings.txt file, also info_compile_parameters support removed
  -  Updated C-style `struct` definition to C++ style
  -  Rearranged `#includes`
  -   Removed `SYSTEM_WIN32` macro and related code (now only linux is supported)
