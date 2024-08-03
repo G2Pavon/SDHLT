@@ -41,4 +41,4 @@ Replace C-style data struct by C++ classes
 
 Replace float array[3] with vec3 class
 
-Replace use of char to store text with string class (this would simplify map parser a lot)
+Replace use char arrays to store text by std string (this would simplify map parser a lot)
