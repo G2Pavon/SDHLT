@@ -1,4 +1,4 @@
-#include <string.h>
+#include <cstring>
 
 #include "mathlib.h"
 #include "log.h"

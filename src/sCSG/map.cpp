@@ -1,5 +1,5 @@
 #include <string>
-#include <string.h>
+#include <cstring>
 
 #include "maplib.h"
 #include "csg.h"

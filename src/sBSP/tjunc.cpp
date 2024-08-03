@@ -1,4 +1,4 @@
-#include <string.h>
+#include <cstring>
 
 #include "bsp5.h"
 #include "log.h"

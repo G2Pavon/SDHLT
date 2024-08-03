@@ -13,7 +13,7 @@
 
 #include <string>
 #include <vector>
-#include <string.h>
+#include <cstring>
 
 #include "qrad.h"
 #include "arguments.h"

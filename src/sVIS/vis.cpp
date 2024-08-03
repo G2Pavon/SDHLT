@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <string>
-#include <string.h>
+#include <cstring>
 
 #include "vis.h"
 #include "arguments.h"

@@ -10,7 +10,7 @@
 	Modified by seedee (cdaniel9000@gmail.com)
 */
 
-#include <string.h>
+#include <cstring>
 
 #include "bsp5.h"
 #include "arguments.h"

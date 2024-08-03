@@ -1,7 +1,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <string.h>
+#include <cstring>
 
 #include "csg.h" // TODO: implement map.h
 #include "threads.h"

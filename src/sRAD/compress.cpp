@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <string.h>
+#include <cstring>
 
 #include "compress.h"
 #include "log.h"

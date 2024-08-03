@@ -2,7 +2,7 @@
 //	Transparency Arrays for sparse and vismatrix methods
 //
 
-#include <string.h>
+#include <cstring>
 
 #include "qrad.h"
 #include "threads.h"

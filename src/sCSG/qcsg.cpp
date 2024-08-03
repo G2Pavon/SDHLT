@@ -1,4 +1,4 @@
-#include <string.h>
+#include <cstring>
 
 #include "csg.h"
 #include "textures.h"
