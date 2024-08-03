@@ -4,14 +4,15 @@ How? well,
  - Most of arguments were removed (which ones are still left? look [here](https://github.com/G2Pavon/SDHLT/blob/master/src/common/arguments.cpp))
  -  Replaced macros  `#define` constants with `constexpr`
  -  Using `auto`
- -   Removed old map file version (<220 and QuArK) support
- -   Main() functions was simplified adding a function to handle arguments, removed the function that reads the paras from settings.txt file, also info_compile_parameters support removed
  -  Updated C-style `struct` definition to C++ style
  -  Rearranged `#includes`
  -   Removed `SYSTEM_WIN32` macro and related code (now only linux is supported)
  -  Replaced `malloc` with `new` (TODO: use smart pointers)
+ -   Removed old map file version (<220 and QuArK) support
+ -   Main() functions was simplified adding a function to handle arguments, removed the function that reads the params from settings.txt file, also info_compile_parameters support removed
+
    
-    It's still difficult to read, but at least there are fewer lines of code. I probably got fucked up some function along the way (for example: read transfer lists file (.inc file) fails when try opening), but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
+   It's still difficult to read, but at least there are fewer lines of code. I probably got fucked up some function along the way (for example: read transfer lists file (.inc file) fails when try opening), but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
 
 is a fork of SHDLT (because is ease build on Linux), which itself is a fork of [VHLT cleaned up](https://twhl.info/thread/view/19644), which in turn is a fork of VHLT, which is a fork of ZHLT, and so on.
 
