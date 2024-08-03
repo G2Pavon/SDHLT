@@ -24,7 +24,7 @@ auto FreeBlock(void *pointer) -> bool
     {
         Warning("Freeing a null pointer");
     }
-    free(pointer);
+    delete pointer;
     return true;
 }
 

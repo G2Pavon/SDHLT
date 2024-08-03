@@ -89,7 +89,7 @@ void DeleteCurrentEntity(Entity *entity)
 		{
 			if (b->hullshapes[h])
 			{
-				free(b->hullshapes[h]);
+				delete b->hullshapes[h];
 			}
 		}
 	}
@@ -457,7 +457,7 @@ static void ParseBrush(Entity *mapent)
 		{
 			if (b->hullshapes[h])
 			{
-				free(b->hullshapes[h]);
+				delete b->hullshapes[h];
 			}
 		}
 		memset(b, 0, sizeof(Brush));
@@ -507,7 +507,7 @@ static void ParseBrush(Entity *mapent)
 		if (origin)
 		{
 			SetKeyValue(mapent, "origin", origin);
-			free(origin);
+			delete origin;
 		}
 	}
 	if (g_skyclip && b->contents == CONTENTS_SKY && !b->noclip)
@@ -601,9 +601,9 @@ auto ParseMapEntity() -> bool
 			if (current_entity->numbrushes > 0)
 				Warning("Error: ParseEntity: Keyvalue comes after brushes."); //--vluzacn
 			SetKeyValue(current_entity, e->key, e->value);
-			Free(e->key);
-			Free(e->value);
-			Free(e);
+			delete e->key;
+			delete e->value;
+			delete e;
 		}
 	}
 
@@ -811,7 +811,7 @@ auto ParseMapEntity() -> bool
 			g_entities[i].firstbrush += current_entity->numbrushes;
 		}
 		memset(current_entity, 0, sizeof(*current_entity));
-		Free(temp);
+		delete temp;
 		return true;
 	}
 

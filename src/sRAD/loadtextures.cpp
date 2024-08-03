@@ -192,9 +192,9 @@ void TryCloseWadFiles()
 		for (wadfile = g_wadfiles; wadfile; wadfile = next)
 		{
 			next = wadfile->next;
-			free(wadfile->lumpinfos);
+			delete[] wadfile->lumpinfos;
 			fclose(wadfile->file);
-			free(wadfile);
+			delete wadfile;
 		}
 		g_wadfiles = nullptr;
 	}
@@ -297,7 +297,7 @@ void LoadTextureFromWad(RADTexture *tex, const BSPLumpMiptex *header)
 			if (!TerminatedString(mt->name, 16))
 			{
 				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
-				free(mt);
+				delete mt;
 				continue;
 			}
 			if (strcasecmp(mt->name, tex->name))
@@ -305,7 +305,7 @@ void LoadTextureFromWad(RADTexture *tex, const BSPLumpMiptex *header)
 				Warning("Texture '%s': texture name '%s' differs from its reference name '%s' in '%s'.", tex->name, mt->name, tex->name, wad->path);
 			}
 			LoadTexture(tex, mt, found->disksize);
-			free(mt);
+			delete mt;
 			break;
 		}
 	}
@@ -741,8 +741,8 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 		Error("CQ_CreatePalette: internal error");
 	}
 
-	free(pointarray);
-	free(nodes);
+	delete[] pointarray;
+	delete[] nodes;
 }
 
 static void CQ_MapPoint_r(int *bestdist, int *best,
@@ -872,7 +872,7 @@ void NewTextures_Write()
 
 	for (int i = 0; i < g_newtextures_num; i++)
 	{
-		free(g_newtextures_data[i]);
+		delete g_newtextures_data[i];
 	}
 	g_newtextures_num = 0;
 }
@@ -1284,7 +1284,7 @@ void EmbedLightmapInTextures()
 				VectorClear(palette[paletteoffset + j]);
 			}
 
-			free(samplepoints);
+			delete[] samplepoints;
 		}
 
 		// emit a texinfo
@@ -1405,14 +1405,14 @@ void EmbedLightmapInTextures()
 		count++;
 		count_bytes += miptexsize;
 
-		free(miptex);
+		delete miptex;
 
-		CQ_FreeSearchTree(palettetree);
+		delete palettetree;
 
-		free(texture);
+		delete[] texture;
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
-			free(texturemips[miplevel]);
+			delete[] texturemips[miplevel];
 		}
 	}
 	NewTextures_Write(); // update texdata now

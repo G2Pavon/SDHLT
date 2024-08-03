@@ -458,7 +458,7 @@ void LoadBSPImage(BSPLumpHeader *const header)
 	g_lightdatasize = CopyLump(LUMP_LIGHTING, g_dlightdata, 1, header);
 	g_entdatasize = CopyLump(LUMP_ENTITIES, g_dentdata, 1, header);
 
-	Free(header); // everything has been copied out
+	delete header; // everything has been copied out
 
 	//
 	// swap everything
@@ -989,7 +989,7 @@ void PrintBSPFileSizes()
 	}
 	if (wadvalue)
 	{
-		free(wadvalue);
+		delete[] wadvalue;
 	}
 }
 
@@ -1531,9 +1531,9 @@ void DeleteKey(Entity *ent, const char *const key)
 		{
 			EntityProperty *ep = *pep;
 			*pep = ep->next;
-			Free(ep->key);
-			Free(ep->value);
-			Free(ep);
+			delete ep->key;
+			delete ep->value;
+			delete ep;
 			return;
 		}
 	}
@@ -1552,7 +1552,7 @@ void SetKeyValue(Entity *ent, const char *const key, const char *const value)
 		if (!strcmp(ep->key, key))
 		{
 			char *value2 = strdup(value);
-			Free(ep->value);
+			delete ep->value;
 			ep->value = value2;
 			return;
 		}
@@ -1647,9 +1647,9 @@ void dtexdata_init()
 
 void dtexdata_free()
 {
-	FreeBlock(g_dtexdata);
+	delete[] g_dtexdata;
 	g_dtexdata = nullptr;
-	FreeBlock(g_dlightdata);
+	delete[] g_dlightdata;
 	g_dlightdata = nullptr;
 }
 

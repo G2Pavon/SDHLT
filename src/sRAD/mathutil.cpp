@@ -221,7 +221,7 @@ auto snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_t *cons
 		}
 	}
 
-	free(planes);
+	delete[] planes;
 
 	VectorCopy(bestpoint, point);
 	return bestwidth;
@@ -388,7 +388,7 @@ auto CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, c
 		}
 		area = area * 4 * Q_PI; // convert to absolute sphere area
 	}
-	free(edges);
+	delete[] edges;
 	area *= lighting_scale;
 	return area;
 }
@@ -460,7 +460,7 @@ auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver
 		}
 		area = area * 4 * Q_PI; // convert to absolute sphere area
 	}
-	free(edges);
+	delete[] edges;
 	area *= lighting_scale;
 	return area;
 }

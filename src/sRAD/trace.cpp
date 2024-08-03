@@ -682,11 +682,11 @@ void DeleteOpaqueNodes()
 		if (of->winding)
 			delete of->winding;
 		if (of->edges)
-			free(of->edges);
+			delete[] of->edges;
 	}
-	free(opaquefaces);
-	free(opaquenodes);
-	free(opaquemodels);
+	delete[] opaquefaces;
+	delete[] opaquenodes;
+	delete[] opaquemodels;
 }
 
 auto TestLineOpaque_face(int facenum, const vec3_t hit) -> int

@@ -52,7 +52,7 @@ static void texmap_clear()
     ThreadLock();
     for (int i = 0; i < numtexmap; i++)
     {
-        free(texmap[i]);
+        delete texmap[i];
     }
     numtexmap = 0;
     ThreadUnlock();
@@ -586,7 +586,7 @@ void WriteMiptex()
                 memcpy(writewad_lumpinfo->name, miptex[i].name, MAXWADNAME);
                 writewad_header.numlumps++;
                 SafeWrite(writewad_file, writewad_data, writewad_datasize); // Write the processed lump info temp wad file
-                free(writewad_data);
+                delete writewad_data;
             }
 
             if (!len)
@@ -775,7 +775,7 @@ void FreeWadPaths()
     for (i = 0; i < g_iNumWadPaths; i++)
     {
         current = g_pWadPaths[i];
-        free(current);
+        delete current;
     }
 }
 

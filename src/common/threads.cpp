@@ -243,7 +243,7 @@ void threads_InitCrit()
 
 void threads_UninitCrit()
 {
-    Free(my_mutex);
+    delete my_mutex;
     my_mutex = nullptr;
 }
 

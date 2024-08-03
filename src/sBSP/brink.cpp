@@ -546,7 +546,7 @@ void DeletePoint(int &numobjects, btreepoint_t *tp)
 		hlassume(false, assume_first);
 	}
 	delete tp->edges;
-	free(tp);
+	delete tp;
 	numobjects--;
 }
 
@@ -593,7 +593,7 @@ void DeleteEdge(int &numobjects, btreeedge_t *te) // warning: points in this edg
 		}
 	}
 	delete te->faces;
-	free(te);
+	delete te;
 	numobjects--;
 }
 
@@ -641,7 +641,7 @@ void DeleteFace(int &numobjects, btreeface_t *tf) // warning: edges in this face
 		}
 	}
 	delete tf->edges;
-	free(tf);
+	delete tf;
 	numobjects--;
 }
 
@@ -658,7 +658,7 @@ void DeleteLeaf(int &numobjects, btreeleaf_t *tl)
 		}
 	}
 	delete tl->faces;
-	free(tl);
+	delete tl;
 	numobjects--;
 }
 
@@ -1685,10 +1685,10 @@ void DeleteClipnodes(bbrinkinfo_t *info)
 		while ((p = info->clipnodes[i].partitions) != nullptr)
 		{
 			info->clipnodes[i].partitions = p->next;
-			free(p);
+			delete p;
 		}
 	}
-	free(info->clipnodes);
+	delete[] info->clipnodes;
 }
 
 void SortPartitions(bbrinkinfo_t *info) // to merge same partition planes and compress clipnodes better if using HLBSP_MERGECLIPNODE
@@ -1727,7 +1727,7 @@ void SortPartitions(bbrinkinfo_t *info) // to merge same partition planes and co
 			if (*pp && (*pp)->planenum == current->planenum && (*pp)->planeside == current->planeside)
 			{
 				(*pp)->type = qmin((*pp)->type, current->type); // pick the lowest (most important) level from the existing partition and the current partition
-				free(current);
+				delete current;
 				continue;
 			}
 			switch (current->type)
@@ -1906,5 +1906,5 @@ void DeleteBrinkinfo(void *brinkinfo)
 {
 	auto *info = (bbrinkinfo_t *)brinkinfo;
 	DeleteClipnodes(info);
-	free(info);
+	delete info;
 }

@@ -739,7 +739,7 @@ void FreePositionMaps()
 			map->facewindingwithoffset = nullptr;
 			delete map->texwinding;
 			map->texwinding = nullptr;
-			free(map->grid);
+			delete[] map->grid;
 			map->grid = nullptr;
 			map->valid = false;
 		}

@@ -354,9 +354,9 @@ void DeleteSurfaceTree_r(surfacetreenode_t *node)
 void DeleteSurfaceTree(surfacetree_t *tree)
 {
 	DeleteSurfaceTree_r(tree->headnode);
-	free(tree->headnode);
+	delete[] tree->headnode;
 	delete tree->result.middle;
-	free(tree);
+	delete tree;
 }
 
 // =====================================================================================

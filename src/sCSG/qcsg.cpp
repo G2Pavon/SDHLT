@@ -131,7 +131,7 @@ auto NewFaceFromFace(const BrushFace *const in) -> BrushFace * // Duplicates the
 void FreeFace(BrushFace *face)
 {
     delete face->w;
-    Free(face);
+    delete face;
 }
 
 void WriteFace(const int hull, const BrushFace *const face, int detaillevel)

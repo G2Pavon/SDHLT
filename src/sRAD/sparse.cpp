@@ -331,7 +331,7 @@ static void BuildVisLeafs(int threadnum)
             }
         }
     }
-    free(uncompressedcolumn);
+    delete[] uncompressedcolumn;
 }
 
 /*
@@ -363,7 +363,7 @@ static void FreeVisMatrix()
         {
             if (item->row)
             {
-                free(item->row);
+                delete item->row;
             }
         }
         if (FreeBlock(s_vismatrix))

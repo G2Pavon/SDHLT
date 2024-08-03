@@ -91,7 +91,7 @@ static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodem
 	{
 		if (node->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
 		{
-			free(node);
+			delete node;
 			return contents_t::CONTENTS_SOLID;
 		}
 		else
@@ -109,8 +109,8 @@ static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodem
 		{
 			num = portalleaf->contents;
 		}
-		free(node->markfaces);
-		free(node);
+		delete[] node->markfaces;
+		delete node;
 		return num;
 	}
 
@@ -146,7 +146,7 @@ static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodem
 		c = output->second; // use existing clipnode
 	}
 
-	free(node);
+	delete node;
 	return c;
 }
 
@@ -245,7 +245,7 @@ static auto WriteDrawLeaf(NodeBSP *node, const NodeBSP *portalleaf) -> int
 			f = f->original; // grab tjunction split faces
 		} while (f);
 	}
-	free(node->markfaces);
+	delete[] node->markfaces;
 
 	leaf_p->nummarksurfaces = g_nummarksurfaces - leaf_p->firstmarksurface;
 	return leafnum;
@@ -295,7 +295,7 @@ static void WriteFace(FaceBSP *f)
 		g_dsurfedges[g_numsurfedges] = e;
 		g_numsurfedges++;
 	}
-	free(f->outputedges);
+	delete[] f->outputedges;
 	f->outputedges = nullptr;
 }
 
@@ -320,7 +320,7 @@ static auto WriteDrawNodes_r(NodeBSP *node, const NodeBSP *portalleaf) -> int
 	{
 		if (node->iscontentsdetail)
 		{
-			free(node->markfaces);
+			delete[] node->markfaces;
 			return -1;
 		}
 		else
@@ -400,7 +400,7 @@ static void FreeDrawNodes_r(NodeBSP *node)
 	{
 		if (node->children[i]->planenum != -1)
 		{
-			FreeDrawNodes_r(node->children[i]);
+			delete node->children[i];
 		}
 	}
 
@@ -410,10 +410,10 @@ static void FreeDrawNodes_r(NodeBSP *node)
 	for (f = node->faces; f; f = next)
 	{
 		next = f->next;
-		FreeFace(f);
+		delete f;
 	}
 
-	free(node);
+	delete node;
 }
 
 // =====================================================================================
@@ -694,10 +694,10 @@ void FinishBSPFile()
 		g_nummiptex = Num;
 		g_texdatasize = Size;
 	skipReduceTexdata:;
-		free(lumpsizes);
-		free(newdata);
-		free(Used);
-		free(Map);
+		delete[] lumpsizes;
+		delete[] newdata;
+		delete[] Used;
+		delete[] Map;
 	}
 	Log("Reduced %d planes to %d\n", g_numplanes, gNumMappedPlanes);
 
@@ -778,9 +778,9 @@ void FinishBSPFile()
 			}
 		}
 	}
-	free(brinkinfo);
-	free(headnode);
-	free(clipnodes);
+	delete[] brinkinfo;
+	delete[] headnode;
+	delete[] clipnodes;
 	WriteExtentFile(g_extentfilename);
 
 	PrintBSPFileSizes();

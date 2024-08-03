@@ -153,7 +153,7 @@ void CreateFinalTransparencyArrays(const char *print_name)
 	memcpy(&s_sorted_list[s_raw_count], s_raw_list, sizeof(transList_t) * s_raw_count);
 
 	// free old array
-	free(s_raw_list);
+	delete[] s_raw_list;
 	s_raw_list = nullptr;
 	s_raw_count = s_max_raw_count = 0;
 
@@ -216,9 +216,9 @@ void CreateFinalTransparencyArrays(const char *print_name)
 void FreeTransparencyArrays()
 {
 	if (s_sorted_list)
-		free(s_sorted_list);
+		delete[] s_sorted_list;
 	if (s_trans_list)
-		free(s_trans_list);
+		delete[] s_trans_list;
 
 	s_trans_list = nullptr;
 	s_sorted_list = nullptr;
@@ -346,7 +346,7 @@ void CreateFinalStyleArrays(const char *print_name)
 void FreeStyleArrays()
 {
 	if (s_style_count)
-		free(s_style_list);
+		delete[] s_style_list;
 
 	s_style_list = nullptr;
 

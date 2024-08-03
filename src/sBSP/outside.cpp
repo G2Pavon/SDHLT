@@ -106,7 +106,7 @@ static void FreeDetailNode_r(NodeBSP *n)
     {
         if (!(n->isportalleaf && n->contents == static_cast<int>(contents_t::CONTENTS_SOLID)))
         {
-            free(n->markfaces);
+            delete[] n->markfaces;
             n->markfaces = nullptr;
         }
         return;
@@ -114,7 +114,7 @@ static void FreeDetailNode_r(NodeBSP *n)
     for (i = 0; i < 2; i++)
     {
         FreeDetailNode_r(n->children[i]);
-        free(n->children[i]);
+        delete n->children[i];
         n->children[i] = nullptr;
     }
     FaceBSP *f, *next;
@@ -358,7 +358,7 @@ void FreeAllowableOutsideList()
 {
     if (g_strAllowableOutsideList)
     {
-        free(g_strAllowableOutsideList);
+        delete[] g_strAllowableOutsideList;
         g_strAllowableOutsideList = nullptr;
     }
 }

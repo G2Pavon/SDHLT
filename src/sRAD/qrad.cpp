@@ -1131,7 +1131,7 @@ static void FreeOpaqueFaceList()
 	for (x = 0; x < g_opaque_face_count; x++, opaque++)
 	{
 	}
-	free(g_opaque_face_list);
+	delete[] g_opaque_face_list;
 
 	g_opaque_face_list = nullptr;
 	g_opaque_face_count = 0;
@@ -1502,7 +1502,7 @@ static void SortPatches()
 	Patch *old_patches = g_patches;
 	g_patches = (Patch *)AllocBlock((g_num_patches + 1) * sizeof(Patch)); // allocate one extra slot considering how terribly the code were written
 	memcpy(g_patches, old_patches, g_num_patches * sizeof(Patch));
-	FreeBlock(old_patches);
+	delete[] old_patches;
 	qsort((void *)g_patches, (size_t)g_num_patches, sizeof(Patch), patch_sorter);
 
 	// Fixup g_face_patches & Fixup patch->next
@@ -1551,7 +1551,7 @@ static void FreePatches()
 		delete patch->winding;
 	}
 	memset(g_patches, 0, sizeof(Patch) * g_num_patches);
-	FreeBlock(g_patches);
+	delete[] g_patches;
 	g_patches = nullptr;
 }
 
@@ -2013,17 +2013,17 @@ static void FreeTransfers()
 	{
 		if (patch->tData)
 		{
-			FreeBlock(patch->tData);
+			delete[] patch->tData;
 			patch->tData = nullptr;
 		}
 		if (patch->tRGBData)
 		{
-			FreeBlock(patch->tRGBData);
+			delete[] patch->tRGBData;
 			patch->tRGBData = nullptr;
 		}
 		if (patch->tIndex)
 		{
-			FreeBlock(patch->tIndex);
+			delete[] patch->tIndex;
 			patch->tIndex = nullptr;
 		}
 	}
@@ -2108,11 +2108,11 @@ static void RadWorld()
 		// spread light around
 		BounceLight();
 
-		FreeBlock(emitlight);
+		delete[] emitlight;
 		emitlight = nullptr;
-		FreeBlock(addlight);
+		delete[] addlight;
 		addlight = nullptr;
-		FreeBlock(newstyles);
+		delete[] newstyles;
 		newstyles = nullptr;
 	}
 

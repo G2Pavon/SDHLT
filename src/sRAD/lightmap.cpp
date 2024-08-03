@@ -1013,7 +1013,7 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 		auto len = VectorLength(frag->myrect.planes[x].normal);
 		if (!len)
 		{
-			free(frag);
+			delete frag;
 			return nullptr;
 		}
 		VectorScale(frag->myrect.planes[x].normal, 1 / len, frag->myrect.planes[x].normal);
@@ -1028,8 +1028,8 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 		// empty
 		delete frag->mywinding;
 		delete frag->winding;
-		free(frag->edges);
-		free(frag);
+		delete[] frag->edges;
+		delete frag;
 		return nullptr;
 	}
 
@@ -1064,14 +1064,14 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 		}
 		delete w;
 	}
-	free(clipplanes);
+	delete[] clipplanes;
 	if (overlap)
 	{
 		// in the original texture plane, this fragment overlaps with some existing fragments
 		delete frag->mywinding;
 		delete frag->winding;
-		free(frag->edges);
-		free(frag);
+		delete[] frag->edges;
+		delete frag;
 		return nullptr;
 	}
 
@@ -1176,8 +1176,8 @@ static auto CreateSampleFrag(int facenum, vec_t s, vec_t t,
 		// empty
 		delete info->head->mywinding;
 		delete info->head->winding;
-		free(info->head->edges);
-		free(info->head);
+		delete[] info->head->edges;
+		delete info->head;
 		info->head = nullptr;
 		info->size = 0;
 	}
@@ -1251,10 +1251,10 @@ static void DeleteSampleFrag(samplefraginfo_t *fraginfo)
 		fraginfo->head = f->next;
 		delete f->mywinding;
 		delete f->winding;
-		free(f->edges);
-		free(f);
+		delete[] f->edges;
+		delete f;
 	}
-	free(fraginfo);
+	delete fraginfo;
 }
 
 static auto SetSampleFromST(vec_t *const point,
@@ -2085,7 +2085,7 @@ void CreateDirectLights()
 	{
 		// since they are in leaf 0, they won't emit a light anyway
 		directlights[0] = dl->next;
-		free(dl);
+		delete dl;
 	}
 	directlights[0] = skylights;
 	int countlightenvironment = 0;
@@ -2121,7 +2121,7 @@ void DeleteDirectLights()
 		while (dl)
 		{
 			directlights[l] = dl->next;
-			free(dl);
+			delete dl;
 			dl = directlights[l];
 		}
 	}
@@ -2292,9 +2292,9 @@ void BuildDiffuseNormals()
 		}
 		CopyToSkynormals(i + 1, numpoints, points, numedges, edges, numtriangles, triangles);
 	}
-	free(points);
-	free(edges);
-	free(triangles);
+	delete[] points;
+	delete[] edges;
+	delete[] triangles;
 }
 static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec3_t normal, vec3_t *sample, byte *styles, int step, int miptex, int texlightgap_surfacenum)
 {
@@ -2843,7 +2843,7 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 	{
 		delete texwindings[j];
 	}
-	free(texwindings);
+	delete[] texwindings;
 }
 
 // =====================================================================================
@@ -3441,7 +3441,7 @@ void BuildFacelights(const int facenum)
 			}
 		}
 	} // end of i loop
-	free(sample_wallflags);
+	delete[] sample_wallflags;
 
 	// average up the direct light on each patch for radiosity
 	AddSamplesToPatches((const sample_t **)fl_samples, f_styles, facenum, &l);
@@ -3658,7 +3658,7 @@ void BuildFacelights(const int facenum)
 		}
 		for (j = 0; j < ALLSTYLES; j++)
 		{
-			free(fl_samples[j]);
+			delete fl_samples[j];
 		}
 	}
 	// patches
@@ -3759,20 +3759,20 @@ void BuildFacelights(const int facenum)
 				ThreadUnlock();
 			}
 		}
-		free(patch->totalstyle_all);
+		delete[] patch->totalstyle_all;
 		patch->totalstyle_all = nullptr;
-		free(patch->samplelight_all);
+		delete[] patch->samplelight_all;
 		patch->samplelight_all = nullptr;
-		free(patch->totallight_all);
+		delete[] patch->totallight_all;
 		patch->totallight_all = nullptr;
-		free(patch->directlight_all);
+		delete[] patch->directlight_all;
 		patch->directlight_all = nullptr;
 	}
-	free(l.lmcache);
-	free(l.lmcache_normal);
-	free(l.lmcache_wallflags);
-	free(l.surfpt_position);
-	free(l.surfpt_surface);
+	delete[] l.lmcache;
+	delete[] l.lmcache_normal;
+	delete[] l.lmcache_wallflags;
+	delete[] l.surfpt_position;
+	delete[] l.surfpt_surface;
 }
 
 // =====================================================================================
@@ -3908,7 +3908,7 @@ void PrecompLightmapOffsets()
 			}
 			for (k = 0; k < MAXLIGHTMAPS && oldstyles[k] != 255; k++)
 			{
-				free(oldsamples[k]);
+				delete oldsamples[k];
 			}
 		}
 
@@ -3989,7 +3989,7 @@ void ReduceLightmap()
 		}
 		g_lightdatasize += fl->numsamples * 3 * numstyles;
 	}
-	free(oldlightdata);
+	delete oldlightdata;
 }
 
 // Change the sample light right under a mdl file entity's origin.
@@ -4300,7 +4300,7 @@ void FreeFacelightDependencyList()
 		{
 			auto *item = g_dependentfacelights[i];
 			g_dependentfacelights[i] = item->next;
-			free(item);
+			delete item;
 		}
 	}
 }
@@ -4561,8 +4561,8 @@ void FinalLightFace(const int facenum)
 			}
 		}
 	}
-	free(original_basiclight);
-	free(final_basiclight);
+	delete[] original_basiclight;
+	delete[] final_basiclight;
 }
 
 // LRC

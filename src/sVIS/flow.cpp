@@ -579,7 +579,7 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
 #if 0
     if (stack.clipPlane != NULL)
     {
-        free(stack.clipPlane);
+        delete stack.clipPlane;
     }
 #endif
 #endif
@@ -960,8 +960,8 @@ auto WindingDist(const WindingVIS *w[2]) -> vec_t
                 minsqrdist = 0;
             }
         }
-        free(boundnormals);
-        free(bounddists);
+        delete[] boundnormals;
+        delete[] bounddists;
     }
     return (sqrt(minsqrdist));
 }

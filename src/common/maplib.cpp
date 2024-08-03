@@ -70,7 +70,7 @@ auto EndOfFile(const bool crossline) -> bool
         return false;
     }
 
-    free(currentFile.fileBuffer);
+    delete currentFile.fileBuffer;
 
     isEndOfFile = true;
     return false;
