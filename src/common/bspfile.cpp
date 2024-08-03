@@ -1647,9 +1647,9 @@ void dtexdata_init()
 
 void dtexdata_free()
 {
-	delete[] g_dtexdata;
+	FreeBlock(g_dtexdata);
 	g_dtexdata = nullptr;
-	delete[] g_dlightdata;
+	FreeBlock(g_dlightdata);
 	g_dlightdata = nullptr;
 }
 
