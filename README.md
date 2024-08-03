@@ -9,7 +9,7 @@ How? well,
  -  Updated C-style `struct` definition to C++ style
  -  Rearranged `#includes`
  -   Removed `SYSTEM_WIN32` macro and related code (now only linux is supported)
- -  Replaced `malloc` with `new`
+ -  Replaced `malloc` with `new` (TODO: use smart pointers)
    
     It's still difficult to read, but at least there are fewer lines of code. I probably got fucked up some function along the way (for example: read transfer lists file (.inc file) fails when try opening), but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
 
