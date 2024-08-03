@@ -182,7 +182,6 @@ extern void FillInside(NodeBSP *node);
 // misc functions
 
 extern auto AllocFace() -> FaceBSP *;
-extern void FreeFace(FaceBSP *f);
 
 extern auto AllocPortal() -> struct PortalBSP *;
 extern void FreePortal(struct PortalBSP *p);

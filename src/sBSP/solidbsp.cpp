@@ -726,7 +726,7 @@ void FixDetaillevelForDiscardable(NodeBSP *node, int detaillevel)
 			if (detaillevel == -1 || f->detaillevel < detaillevel)
 			{
 				*pfnext = f->next;
-				FreeFace(f);
+				delete f;
 			}
 			else
 			{

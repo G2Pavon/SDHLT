@@ -128,12 +128,6 @@ auto NewFaceFromFace(const BrushFace *const in) -> BrushFace * // Duplicates the
     return newFace;
 }
 
-void FreeFace(BrushFace *face)
-{
-    delete face->w;
-    delete face;
-}
-
 void WriteFace(const int hull, const BrushFace *const face, int detaillevel)
 {
     ThreadLock();
@@ -303,7 +297,8 @@ static void SaveOutside(const Brush *const brush, const int hull, BrushFace *out
             }
             WriteFace(hull, face, (hull ? brush->clipnodedetaillevel : brush->detaillevel));
         }
-        FreeFace(face);
+        delete face->w;
+        delete face;
     }
 }
 
@@ -508,7 +503,8 @@ static void CSGBrush(int brushnum)
                             }
                             else
                             {
-                                FreeFace(face);
+                                delete face->w;
+                                delete face;
                                 face = nullptr;
                                 break;
                             }
@@ -535,7 +531,8 @@ static void CSGBrush(int brushnum)
                     }
                     if ((hull ? brush2->clipnodedetaillevel < brush1->clipnodedetaillevel : brush2->detaillevel < brush1->detaillevel) && brush2->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
                     { // real solid
-                        FreeFace(face);
+                        delete face->w;
+                        delete face;
                         continue;
                     }
                     if (brush1->contents == CONTENTS_TOEMPTY)
@@ -554,7 +551,8 @@ static void CSGBrush(int brushnum)
                             face->backcontents = brush2->contents;
                         if (face->contents == static_cast<int>(contents_t::CONTENTS_SOLID) && face->backcontents == static_cast<int>(contents_t::CONTENTS_SOLID) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "SOLIDHINT", 9) && strncasecmp(GetTextureByNumber_CSG(face->texinfo), "BEVELHINT", 9))
                         {
-                            FreeFace(face);
+                            delete face->w;
+                            delete face;
                         }
                         else
                         {
@@ -571,9 +569,10 @@ static void CSGBrush(int brushnum)
                         face->next = outsideFaceList;
                         outsideFaceList = face;
                     }
-                    else // inside a solid brush
+                    else // inside a solid brush, throw it away
                     {
-                        FreeFace(face); // throw it away
+                        delete face->w;
+                        delete face;
                     }
                 }
             }

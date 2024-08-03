@@ -304,7 +304,7 @@ void SplitFace(FaceBSP *in, const dplane_t *const split, FaceBSP **front, FaceBS
 	// free the original face now that is is represented by the fragments
 	if (*front && *back)
 	{
-		FreeFace(in);
+		delete in;
 	}
 }
 
@@ -321,14 +321,6 @@ auto AllocFace() -> FaceBSP *
 	f->planenum = -1;
 
 	return f;
-}
-
-// =====================================================================================
-//  FreeFace
-// =====================================================================================
-void FreeFace(FaceBSP *f)
-{
-	delete f;
 }
 
 // =====================================================================================

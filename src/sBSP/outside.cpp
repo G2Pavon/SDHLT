@@ -121,7 +121,7 @@ static void FreeDetailNode_r(NodeBSP *n)
     for (f = n->faces; f; f = next)
     {
         next = f->next;
-        FreeFace(f);
+        delete f;
     }
     n->faces = nullptr;
 }
@@ -249,7 +249,7 @@ static auto ClearOutFaces_r(NodeBSP *node) -> NodeBSP *
             if (f->outputnumber == -1)
             { // never referenced, so free it
                 c_free_faces++;
-                FreeFace(f);
+                delete f;
             }
             else
             {

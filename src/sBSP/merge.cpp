@@ -189,7 +189,7 @@ static auto MergeFaceToList(FaceBSP *face, FaceBSP *list) -> FaceBSP *
         {
             continue;
         }
-        FreeFace(face);
+        delete face;
         f->numpoints = -1; // merged out
         return MergeFaceToList(newf, list);
     }
@@ -213,7 +213,7 @@ static auto FreeMergeListScraps(FaceBSP *merged) -> FaceBSP *
         next = merged->next;
         if (merged->numpoints == -1)
         {
-            FreeFace(merged);
+            delete merged;
         }
         else
         {
