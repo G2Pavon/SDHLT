@@ -80,7 +80,7 @@ static auto WriteTexinfo(int texinfo) -> int
 // =====================================================================================
 //  WriteClipNodes_r
 // =====================================================================================
-static auto WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap_t *outputmap) -> int
+static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodemap_t *outputmap) -> int
 {
 	int i, c;
 	dclipnode_t *cn;
@@ -154,7 +154,7 @@ static auto WriteClipNodes_r(node_t *node, const node_t *portalleaf, clipnodemap
 //      Called after the clipping hull is completed.  Generates a disk format
 //      representation and frees the original memory.
 // =====================================================================================
-void WriteClipNodes(node_t *nodes)
+void WriteClipNodes(NodeBSP *nodes)
 {
 	// we only merge among the clipnodes of the same hull of the same model
 	clipnodemap_t outputmap;
@@ -164,10 +164,10 @@ void WriteClipNodes(node_t *nodes)
 // =====================================================================================
 //  WriteDrawLeaf
 // =====================================================================================
-static auto WriteDrawLeaf(node_t *node, const node_t *portalleaf) -> int
+static auto WriteDrawLeaf(NodeBSP *node, const NodeBSP *portalleaf) -> int
 {
-	face_t **fp;
-	face_t *f;
+	FaceBSP **fp;
+	FaceBSP *f;
 	dleaf_t *leaf_p;
 	int leafnum = g_numleafs;
 
@@ -253,7 +253,7 @@ static auto WriteDrawLeaf(node_t *node, const node_t *portalleaf) -> int
 // =====================================================================================
 //  WriteFace
 // =====================================================================================
-static void WriteFace(face_t *f)
+static void WriteFace(FaceBSP *f)
 {
 	dface_t *df;
 	int i;
@@ -301,7 +301,7 @@ static void WriteFace(face_t *f)
 // =====================================================================================
 //  WriteDrawNodes_r
 // =====================================================================================
-static auto WriteDrawNodes_r(node_t *node, const node_t *portalleaf) -> int
+static auto WriteDrawNodes_r(NodeBSP *node, const NodeBSP *portalleaf) -> int
 {
 	if (node->isportalleaf)
 	{
@@ -330,7 +330,7 @@ static auto WriteDrawNodes_r(node_t *node, const node_t *portalleaf) -> int
 	}
 	dnode_t *n;
 	int i;
-	face_t *f;
+	FaceBSP *f;
 	int nodenum = g_numnodes;
 
 	// emit a node
@@ -389,11 +389,11 @@ static auto WriteDrawNodes_r(node_t *node, const node_t *portalleaf) -> int
 // =====================================================================================
 //  FreeDrawNodes_r
 // =====================================================================================
-static void FreeDrawNodes_r(node_t *node)
+static void FreeDrawNodes_r(NodeBSP *node)
 {
 	int i;
-	face_t *f;
-	face_t *next;
+	FaceBSP *f;
+	FaceBSP *next;
 
 	for (i = 0; i < 2; i++)
 	{
@@ -420,7 +420,7 @@ static void FreeDrawNodes_r(node_t *node)
 //      Called after a drawing hull is completed
 //      Frees all nodes and faces
 // =====================================================================================
-void OutputEdges_face(face_t *f)
+void OutputEdges_face(FaceBSP *f)
 {
 	if (CheckFaceForHint(f) || CheckFaceForSkip(f) || CheckFaceForNull(f)									 // AJM
 		|| CheckFaceForDiscardable(f) || f->texturenum == -1 || f->referenced == 0 || CheckFaceForEnv_Sky(f) // Cpt_Andrew - Env_Sky Check
@@ -437,14 +437,14 @@ void OutputEdges_face(face_t *f)
 		f->outputedges[i] = e;
 	}
 }
-auto OutputEdges_r(node_t *node, int detaillevel) -> int
+auto OutputEdges_r(NodeBSP *node, int detaillevel) -> int
 {
 	int next = -1;
 	if (node->planenum == -1)
 	{
 		return next;
 	}
-	face_t *f;
+	FaceBSP *f;
 	for (f = node->faces; f; f = f->next)
 	{
 		if (f->detaillevel > detaillevel)
@@ -471,7 +471,7 @@ auto OutputEdges_r(node_t *node, int detaillevel) -> int
 	}
 	return next;
 }
-static void RemoveCoveredFaces_r(node_t *node)
+static void RemoveCoveredFaces_r(NodeBSP *node)
 {
 	if (node->isportalleaf)
 	{
@@ -489,10 +489,10 @@ static void RemoveCoveredFaces_r(node_t *node)
 		}
 		else
 		{
-			face_t **fp;
+			FaceBSP **fp;
 			for (fp = node->markfaces; *fp; fp++)
 			{
-				for (face_t *f = *fp; f; f = f->original) // for each tjunc subface
+				for (FaceBSP *f = *fp; f; f = f->original) // for each tjunc subface
 				{
 					f->referenced++; // mark the face as referenced
 				}
@@ -502,7 +502,7 @@ static void RemoveCoveredFaces_r(node_t *node)
 	}
 
 	// this is a node
-	for (face_t *f = node->faces; f; f = f->next)
+	for (FaceBSP *f = node->faces; f; f = f->next)
 	{
 		f->referenced = 0; // clear the mark
 	}
@@ -510,7 +510,7 @@ static void RemoveCoveredFaces_r(node_t *node)
 	RemoveCoveredFaces_r(node->children[0]);
 	RemoveCoveredFaces_r(node->children[1]);
 }
-void WriteDrawNodes(node_t *headnode)
+void WriteDrawNodes(NodeBSP *headnode)
 {
 	RemoveCoveredFaces_r(headnode); // fill "referenced" value
 	// higher detail level should not compete for edge pairing with lower detail level.

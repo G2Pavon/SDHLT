@@ -15,14 +15,14 @@
 //      Returns NULL if the faces couldn't be merged, or the new face.
 //      The originals will NOT be freed.
 // =====================================================================================
-static auto TryMerge(face_t *f1, face_t *f2) -> face_t *
+static auto TryMerge(FaceBSP *f1, FaceBSP *f2) -> FaceBSP *
 {
     vec_t *p1;
     vec_t *p2;
     vec_t *p3;
     vec_t *p4;
     vec_t *back;
-    face_t *newf;
+    FaceBSP *newf;
     int i;
     int j;
     int k;
@@ -176,10 +176,10 @@ static auto TryMerge(face_t *f1, face_t *f2) -> face_t *
 // =====================================================================================
 //  MergeFaceToList
 // =====================================================================================
-static auto MergeFaceToList(face_t *face, face_t *list) -> face_t *
+static auto MergeFaceToList(FaceBSP *face, FaceBSP *list) -> FaceBSP *
 {
-    face_t *newf;
-    face_t *f;
+    FaceBSP *newf;
+    FaceBSP *f;
 
     for (f = list; f; f = f->next)
     {
@@ -202,10 +202,10 @@ static auto MergeFaceToList(face_t *face, face_t *list) -> face_t *
 // =====================================================================================
 //  FreeMergeListScraps
 // =====================================================================================
-static auto FreeMergeListScraps(face_t *merged) -> face_t *
+static auto FreeMergeListScraps(FaceBSP *merged) -> FaceBSP *
 {
-    face_t *head;
-    face_t *next;
+    FaceBSP *head;
+    FaceBSP *next;
 
     head = nullptr;
     for (; merged; merged = next)
@@ -228,11 +228,11 @@ static auto FreeMergeListScraps(face_t *merged) -> face_t *
 // =====================================================================================
 //  MergePlaneFaces
 // =====================================================================================
-void MergePlaneFaces(surface_t *plane)
+void MergePlaneFaces(SurfaceBSP *plane)
 {
-    face_t *f1;
-    face_t *next;
-    face_t *merged;
+    FaceBSP *f1;
+    FaceBSP *next;
+    FaceBSP *merged;
 
     merged = nullptr;
 
@@ -249,11 +249,11 @@ void MergePlaneFaces(surface_t *plane)
 // =====================================================================================
 //  MergeAll
 // =====================================================================================
-void MergeAll(surface_t *surfhead)
+void MergeAll(SurfaceBSP *surfhead)
 {
-    surface_t *surf;
+    SurfaceBSP *surf;
     int mergefaces;
-    face_t *f;
+    FaceBSP *f;
 
     mergefaces = 0;
     for (surf = surfhead; surf; surf = surf->next)

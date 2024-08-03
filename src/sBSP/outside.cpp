@@ -14,7 +14,7 @@ static int c_keep_faces;
 // =====================================================================================
 //  PointInLeaf
 // =====================================================================================
-static auto PointInLeaf(node_t *node, const vec3_t point) -> node_t *
+static auto PointInLeaf(NodeBSP *node, const vec3_t point) -> NodeBSP *
 {
     vec_t d;
 
@@ -35,9 +35,9 @@ static auto PointInLeaf(node_t *node, const vec3_t point) -> node_t *
 // =====================================================================================
 //  PlaceOccupant
 // =====================================================================================
-static auto PlaceOccupant(const int num, const vec3_t point, node_t *headnode) -> bool
+static auto PlaceOccupant(const int num, const vec3_t point, NodeBSP *headnode) -> bool
 {
-    node_t *n;
+    NodeBSP *n;
 
     n = PointInLeaf(headnode, point);
     if (n->contents == static_cast<int>(contents_t::CONTENTS_SOLID))
@@ -53,16 +53,16 @@ static auto PlaceOccupant(const int num, const vec3_t point, node_t *headnode) -
 // =====================================================================================
 //  MarkLeakTrail
 // =====================================================================================
-static portal_t *prevleaknode;
+static PortalBSP *prevleaknode;
 static FILE *pointfile;
 static FILE *linefile;
 
-static void MarkLeakTrail(portal_t *n2)
+static void MarkLeakTrail(PortalBSP *n2)
 {
     int i;
     vec3_t p1, p2, dir;
     float len;
-    portal_t *n1;
+    PortalBSP *n1;
 
     n1 = prevleaknode;
     prevleaknode = n2;
@@ -99,7 +99,7 @@ static void MarkLeakTrail(portal_t *n2)
 //      Returns true if an occupied leaf is reached
 //      If fill is false, just check, don't fill
 // =====================================================================================
-static void FreeDetailNode_r(node_t *n)
+static void FreeDetailNode_r(NodeBSP *n)
 {
     int i;
     if (n->planenum == -1)
@@ -117,7 +117,7 @@ static void FreeDetailNode_r(node_t *n)
         free(n->children[i]);
         n->children[i] = nullptr;
     }
-    face_t *f, *next;
+    FaceBSP *f, *next;
     for (f = n->faces; f; f = next)
     {
         next = f->next;
@@ -125,7 +125,7 @@ static void FreeDetailNode_r(node_t *n)
     }
     n->faces = nullptr;
 }
-static void FillLeaf(node_t *l)
+static void FillLeaf(NodeBSP *l)
 {
     if (!l->isportalleaf)
     {
@@ -143,9 +143,9 @@ static void FillLeaf(node_t *l)
 }
 static int hit_occupied;
 static int backdraw;
-static auto RecursiveFillOutside(node_t *l, const bool fill) -> bool
+static auto RecursiveFillOutside(NodeBSP *l, const bool fill) -> bool
 {
-    portal_t *p;
+    PortalBSP *p;
     int s;
 
     if ((l->contents == static_cast<int>(contents_t::CONTENTS_SOLID)) || (l->contents == CONTENTS_SKY))
@@ -199,11 +199,11 @@ static auto RecursiveFillOutside(node_t *l, const bool fill) -> bool
 //  ClearOutFaces_r
 //      Removes unused nodes
 // =====================================================================================
-static void MarkFacesInside_r(node_t *node)
+static void MarkFacesInside_r(NodeBSP *node)
 {
     if (node->planenum == -1)
     {
-        face_t **fp;
+        FaceBSP **fp;
         for (fp = node->markfaces; *fp; fp++)
         {
             (*fp)->outputnumber = 0;
@@ -215,11 +215,11 @@ static void MarkFacesInside_r(node_t *node)
         MarkFacesInside_r(node->children[1]);
     }
 }
-static auto ClearOutFaces_r(node_t *node) -> node_t *
+static auto ClearOutFaces_r(NodeBSP *node) -> NodeBSP *
 {
-    face_t *f;
-    face_t *fnext;
-    portal_t *p;
+    FaceBSP *f;
+    FaceBSP *fnext;
+    PortalBSP *p;
 
     // mark the node and all it's faces, so they
     // can be removed if no children use them
@@ -419,7 +419,7 @@ void LoadAllowableOutsideList(const char *const filename)
 // =====================================================================================
 //  FillOutside
 // =====================================================================================
-auto FillOutside(node_t *node, const bool leakfile, const unsigned hullnum) -> node_t *
+auto FillOutside(NodeBSP *node, const bool leakfile, const unsigned hullnum) -> NodeBSP *
 {
     int s;
     int i;
@@ -581,7 +581,7 @@ auto FillOutside(node_t *node, const bool leakfile, const unsigned hullnum) -> n
     return node;
 }
 
-void ResetMark_r(node_t *node)
+void ResetMark_r(NodeBSP *node)
 {
     if (node->isportalleaf)
     {
@@ -600,12 +600,12 @@ void ResetMark_r(node_t *node)
         ResetMark_r(node->children[1]);
     }
 }
-void MarkOccupied_r(node_t *node)
+void MarkOccupied_r(NodeBSP *node)
 {
     if (node->empty == 1)
     {
         node->empty = 0;
-        portal_t *p;
+        PortalBSP *p;
         int s;
         for (p = node->portals; p; p = p->next[!s])
         {
@@ -614,7 +614,7 @@ void MarkOccupied_r(node_t *node)
         }
     }
 }
-void RemoveUnused_r(node_t *node)
+void RemoveUnused_r(NodeBSP *node)
 {
     if (node->isportalleaf)
     {
@@ -629,7 +629,7 @@ void RemoveUnused_r(node_t *node)
         RemoveUnused_r(node->children[1]);
     }
 }
-void FillInside(node_t *node)
+void FillInside(NodeBSP *node)
 {
     int i;
     g_outside_node.empty = 0;
@@ -639,7 +639,7 @@ void FillInside(node_t *node)
         if (*ValueForKey(&g_entities[i], "origin"))
         {
             vec3_t origin;
-            node_t *innode;
+            NodeBSP *innode;
             GetVectorForKey(&g_entities[i], "origin", origin);
             origin[2] += 1;
             innode = PointInLeaf(node, origin);

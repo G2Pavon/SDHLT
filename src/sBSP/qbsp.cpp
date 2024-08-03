@@ -33,7 +33,7 @@ static FILE *polyfiles[NUM_HULLS];
 static FILE *brushfiles[NUM_HULLS];
 int g_hullnum = 0;
 
-static face_t *validfaces[MAX_INTERNAL_MAP_PLANES];
+static FaceBSP *validfaces[MAX_INTERNAL_MAP_PLANES];
 
 char g_bspfilename[_MAX_PATH];
 char g_pointfilename[_MAX_PATH];
@@ -66,9 +66,9 @@ dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
 //  NewFaceFromFace
 //      Duplicates the non point information of a face, used by SplitFace and MergeFace.
 // =====================================================================================
-auto NewFaceFromFace(const face_t *const in) -> face_t *
+auto NewFaceFromFace(const FaceBSP *const in) -> FaceBSP *
 {
-	face_t *newf;
+	FaceBSP *newf;
 
 	newf = AllocFace();
 
@@ -86,7 +86,7 @@ auto NewFaceFromFace(const face_t *const in) -> face_t *
 //  SplitFaceTmp
 //      blah
 // =====================================================================================
-static void SplitFaceTmp(face_t *in, const dplane_t *const split, face_t **front, face_t **back)
+static void SplitFaceTmp(FaceBSP *in, const dplane_t *const split, FaceBSP **front, FaceBSP **back)
 {
 	vec_t dists[MAXEDGES + 1];
 	int sides[MAXEDGES + 1];
@@ -94,8 +94,8 @@ static void SplitFaceTmp(face_t *in, const dplane_t *const split, face_t **front
 	vec_t dot;
 	int i;
 	int j;
-	face_t *newf;
-	face_t *new2;
+	FaceBSP *newf;
+	FaceBSP *new2;
 	vec_t *p1;
 	vec_t *p2;
 	vec3_t mid;
@@ -295,7 +295,7 @@ static void SplitFaceTmp(face_t *in, const dplane_t *const split, face_t **front
 //  SplitFace
 //      blah
 // =====================================================================================
-void SplitFace(face_t *in, const dplane_t *const split, face_t **front, face_t **back)
+void SplitFace(FaceBSP *in, const dplane_t *const split, FaceBSP **front, FaceBSP **back)
 {
 	SplitFaceTmp(in, split, front, back);
 
@@ -309,12 +309,12 @@ void SplitFace(face_t *in, const dplane_t *const split, face_t **front, face_t *
 // =====================================================================================
 //  AllocFace
 // =====================================================================================
-auto AllocFace() -> face_t *
+auto AllocFace() -> FaceBSP *
 {
-	face_t *f;
+	FaceBSP *f;
 
-	f = (face_t *)malloc(sizeof(face_t));
-	memset(f, 0, sizeof(face_t));
+	f = (FaceBSP *)malloc(sizeof(FaceBSP));
+	memset(f, 0, sizeof(FaceBSP));
 
 	f->planenum = -1;
 
@@ -324,7 +324,7 @@ auto AllocFace() -> face_t *
 // =====================================================================================
 //  FreeFace
 // =====================================================================================
-void FreeFace(face_t *f)
+void FreeFace(FaceBSP *f)
 {
 	free(f);
 }
@@ -332,12 +332,12 @@ void FreeFace(face_t *f)
 // =====================================================================================
 //  AllocSurface
 // =====================================================================================
-auto AllocSurface() -> surface_t *
+auto AllocSurface() -> SurfaceBSP *
 {
-	surface_t *s;
+	SurfaceBSP *s;
 
-	s = (surface_t *)malloc(sizeof(surface_t));
-	memset(s, 0, sizeof(surface_t));
+	s = (SurfaceBSP *)malloc(sizeof(SurfaceBSP));
+	memset(s, 0, sizeof(SurfaceBSP));
 
 	return s;
 }
@@ -345,7 +345,7 @@ auto AllocSurface() -> surface_t *
 // =====================================================================================
 //  FreeSurface
 // =====================================================================================
-void FreeSurface(surface_t *s)
+void FreeSurface(SurfaceBSP *s)
 {
 	free(s);
 }
@@ -353,12 +353,12 @@ void FreeSurface(surface_t *s)
 // =====================================================================================
 //  AllocPortal
 // =====================================================================================
-auto AllocPortal() -> portal_t *
+auto AllocPortal() -> PortalBSP *
 {
-	portal_t *p;
+	PortalBSP *p;
 
-	p = (portal_t *)malloc(sizeof(portal_t));
-	memset(p, 0, sizeof(portal_t));
+	p = (PortalBSP *)malloc(sizeof(PortalBSP));
+	memset(p, 0, sizeof(PortalBSP));
 
 	return p;
 }
@@ -366,20 +366,20 @@ auto AllocPortal() -> portal_t *
 // =====================================================================================
 //  FreePortal
 // =====================================================================================
-void FreePortal(portal_t *p) // consider: inline
+void FreePortal(PortalBSP *p) // consider: inline
 {
 	free(p);
 }
 
-auto AllocSide() -> side_t *
+auto AllocSide() -> SideBSP *
 {
-	side_t *s;
-	s = (side_t *)malloc(sizeof(side_t));
-	memset(s, 0, sizeof(side_t));
+	SideBSP *s;
+	s = (SideBSP *)malloc(sizeof(SideBSP));
+	memset(s, 0, sizeof(SideBSP));
 	return s;
 }
 
-void FreeSide(side_t *s)
+void FreeSide(SideBSP *s)
 {
 	if (s->w)
 	{
@@ -389,28 +389,28 @@ void FreeSide(side_t *s)
 	return;
 }
 
-auto NewSideFromSide(const side_t *s) -> side_t *
+auto NewSideFromSide(const SideBSP *s) -> SideBSP *
 {
-	side_t *news;
+	SideBSP *news;
 	news = AllocSide();
 	news->plane = s->plane;
 	news->w = new Winding(*s->w);
 	return news;
 }
 
-auto AllocBrush() -> brush_t *
+auto AllocBrush() -> BrushBSP *
 {
-	brush_t *b;
-	b = (brush_t *)malloc(sizeof(brush_t));
-	memset(b, 0, sizeof(brush_t));
+	BrushBSP *b;
+	b = (BrushBSP *)malloc(sizeof(BrushBSP));
+	memset(b, 0, sizeof(BrushBSP));
 	return b;
 }
 
-void FreeBrush(brush_t *b)
+void FreeBrush(BrushBSP *b)
 {
 	if (b->sides)
 	{
-		side_t *s, *next;
+		SideBSP *s, *next;
 		for (s = b->sides; s; s = next)
 		{
 			next = s->next;
@@ -421,11 +421,11 @@ void FreeBrush(brush_t *b)
 	return;
 }
 
-auto NewBrushFromBrush(const brush_t *b) -> brush_t *
+auto NewBrushFromBrush(const BrushBSP *b) -> BrushBSP *
 {
-	brush_t *newb;
+	BrushBSP *newb;
 	newb = AllocBrush();
-	side_t *s, **pnews;
+	SideBSP *s, **pnews;
 	for (s = b->sides, pnews = &newb->sides; s; s = s->next, pnews = &(*pnews)->next)
 	{
 		*pnews = NewSideFromSide(s);
@@ -433,9 +433,9 @@ auto NewBrushFromBrush(const brush_t *b) -> brush_t *
 	return newb;
 }
 
-void ClipBrush(brush_t **b, const dplane_t *split, vec_t epsilon)
+void ClipBrush(BrushBSP **b, const dplane_t *split, vec_t epsilon)
 {
-	side_t *s, **pnext;
+	SideBSP *s, **pnext;
 	Winding *w;
 	for (pnext = &(*b)->sides, s = *pnext; s; s = *pnext)
 	{
@@ -478,7 +478,7 @@ void ClipBrush(brush_t **b, const dplane_t *split, vec_t epsilon)
 	return;
 }
 
-void SplitBrush(brush_t *in, const dplane_t *split, brush_t **front, brush_t **back)
+void SplitBrush(BrushBSP *in, const dplane_t *split, BrushBSP **front, BrushBSP **back)
 // 'in' will be freed
 {
 	in->next = nullptr;
@@ -486,7 +486,7 @@ void SplitBrush(brush_t *in, const dplane_t *split, brush_t **front, brush_t **b
 	bool onback;
 	onfront = false;
 	onback = false;
-	side_t *s;
+	SideBSP *s;
 	for (s = in->sides; s; s = s->next)
 	{
 		switch (s->w->WindingOnPlaneSide(split->normal, split->dist, 2 * ON_EPSILON))
@@ -537,9 +537,9 @@ void SplitBrush(brush_t *in, const dplane_t *split, brush_t **front, brush_t **b
 	return;
 }
 
-auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> brush_t *
+auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> BrushBSP *
 {
-	brush_t *b = AllocBrush();
+	BrushBSP *b = AllocBrush();
 	dplane_t planes[6];
 	for (int k = 0; k < 3; k++)
 	{
@@ -564,11 +564,11 @@ auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> brush_t *
 	return b;
 }
 
-void CalcBrushBounds(const brush_t *b, vec3_t &mins, vec3_t &maxs)
+void CalcBrushBounds(const BrushBSP *b, vec3_t &mins, vec3_t &maxs)
 {
 	VectorFill(mins, BOGUS_RANGE);
 	VectorFill(maxs, -BOGUS_RANGE);
-	for (side_t *s = b->sides; s; s = s->next)
+	for (SideBSP *s = b->sides; s; s = s->next)
 	{
 		vec3_t windingmins, windingmaxs;
 		s->w->getBounds(windingmins, windingmaxs);
@@ -581,12 +581,12 @@ void CalcBrushBounds(const brush_t *b, vec3_t &mins, vec3_t &maxs)
 //  AllocNode
 //      blah
 // =====================================================================================
-auto AllocNode() -> node_t *
+auto AllocNode() -> NodeBSP *
 {
-	node_t *n;
+	NodeBSP *n;
 
-	n = (node_t *)malloc(sizeof(node_t));
-	memset(n, 0, sizeof(node_t));
+	n = (NodeBSP *)malloc(sizeof(NodeBSP));
+	memset(n, 0, sizeof(NodeBSP));
 
 	return n;
 }
@@ -616,7 +616,7 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 // =====================================================================================
 //  AddFaceToBounds
 // =====================================================================================
-static void AddFaceToBounds(const face_t *const f, vec3_t mins, vec3_t maxs)
+static void AddFaceToBounds(const FaceBSP *const f, vec3_t mins, vec3_t maxs)
 {
 	int i;
 
@@ -639,15 +639,15 @@ static void ClearBounds(vec3_t mins, vec3_t maxs)
 //  SurflistFromValidFaces
 //      blah
 // =====================================================================================
-static auto SurflistFromValidFaces() -> surfchain_t *
+static auto SurflistFromValidFaces() -> SurfchainBSP *
 {
-	surface_t *n;
+	SurfaceBSP *n;
 	int i;
-	face_t *f;
-	face_t *next;
-	surfchain_t *sc;
+	FaceBSP *f;
+	FaceBSP *next;
+	SurfchainBSP *sc;
 
-	sc = (surfchain_t *)malloc(sizeof(*sc));
+	sc = (SurfchainBSP *)malloc(sizeof(*sc));
 	ClearBounds(sc->mins, sc->maxs);
 	sc->surfaces = nullptr;
 
@@ -707,7 +707,7 @@ static auto SurflistFromValidFaces() -> surfchain_t *
 //  CheckFaceForNull
 //      Returns true if the passed face is facetype null
 // =====================================================================================
-auto CheckFaceForNull(const face_t *const f) -> bool
+auto CheckFaceForNull(const FaceBSP *const f) -> bool
 {
 	if (f->contents == CONTENTS_SKY)
 	{
@@ -724,7 +724,7 @@ auto CheckFaceForNull(const face_t *const f) -> bool
 // =====================================================================================
 // Cpt_Andrew - UTSky Check
 // =====================================================================================
-auto CheckFaceForEnv_Sky(const face_t *const f) -> bool
+auto CheckFaceForEnv_Sky(const FaceBSP *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "env_sky", 7))
@@ -737,7 +737,7 @@ auto CheckFaceForEnv_Sky(const face_t *const f) -> bool
 //  CheckFaceForHint
 //      Returns true if the passed face is facetype hint
 // =====================================================================================
-auto CheckFaceForHint(const face_t *const f) -> bool
+auto CheckFaceForHint(const FaceBSP *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "hint", 4))
@@ -749,7 +749,7 @@ auto CheckFaceForHint(const face_t *const f) -> bool
 //  CheckFaceForSkipt
 //      Returns true if the passed face is facetype skip
 // =====================================================================================
-auto CheckFaceForSkip(const face_t *const f) -> bool
+auto CheckFaceForSkip(const FaceBSP *const f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "skip", 4))
@@ -757,7 +757,7 @@ auto CheckFaceForSkip(const face_t *const f) -> bool
 	return false;
 }
 
-auto CheckFaceForDiscardable(const face_t *f) -> bool
+auto CheckFaceForDiscardable(const FaceBSP *f) -> bool
 {
 	const char *name = GetTextureByNumber(f->texturenum);
 	if (!strncasecmp(name, "SOLIDHINT", 9) || !strncasecmp(name, "BEVELHINT", 9))
@@ -768,7 +768,7 @@ auto CheckFaceForDiscardable(const face_t *f) -> bool
 // =====================================================================================
 //  SetFaceType
 // =====================================================================================
-static auto SetFaceType(face_t *f) -> facestyle_e
+static auto SetFaceType(FaceBSP *f) -> facestyle_e
 {
 	if (CheckFaceForHint(f))
 	{
@@ -807,12 +807,12 @@ static auto SetFaceType(face_t *f) -> facestyle_e
 // =====================================================================================
 //  ReadSurfs
 // =====================================================================================
-static auto ReadSurfs(FILE *file) -> surfchain_t *
+static auto ReadSurfs(FILE *file) -> SurfchainBSP *
 {
 	int r;
 	int detaillevel;
 	int planenum, g_texinfo, contents, numpoints;
-	face_t *f;
+	FaceBSP *f;
 	int i;
 	double v[3];
 	int line = 0;
@@ -895,9 +895,9 @@ static auto ReadSurfs(FILE *file) -> surfchain_t *
 
 	return SurflistFromValidFaces();
 }
-static auto ReadBrushes(FILE *file) -> brush_t *
+static auto ReadBrushes(FILE *file) -> BrushBSP *
 {
-	brush_t *brushes = nullptr;
+	BrushBSP *brushes = nullptr;
 	while (true)
 	{
 		if (file == brushfiles[2] && g_nohull2)
@@ -920,11 +920,11 @@ static auto ReadBrushes(FILE *file) -> brush_t *
 		{
 			break;
 		}
-		brush_t *b;
+		BrushBSP *b;
 		b = AllocBrush();
 		b->next = brushes;
 		brushes = b;
-		side_t **psn;
+		SideBSP **psn;
 		psn = &b->sides;
 		while (true)
 		{
@@ -939,7 +939,7 @@ static auto ReadBrushes(FILE *file) -> brush_t *
 			{
 				break;
 			}
-			side_t *s;
+			SideBSP *s;
 			s = AllocSide();
 			s->plane = g_dplanes[planenum ^ 1];
 			s->w = new Winding(numpoints);
@@ -967,9 +967,9 @@ static auto ReadBrushes(FILE *file) -> brush_t *
 // =====================================================================================
 static auto ProcessModel() -> bool
 {
-	surfchain_t *surfs;
-	brush_t *detailbrushes;
-	node_t *nodes;
+	SurfchainBSP *surfs;
+	BrushBSP *detailbrushes;
+	NodeBSP *nodes;
 	dmodel_t *model;
 	int startleafs;
 
@@ -1051,7 +1051,7 @@ static auto ProcessModel() -> bool
 		nodes->children[0]->isportalleaf = true;
 		nodes->children[0]->iscontentsdetail = false;
 		nodes->children[0]->faces = nullptr;
-		nodes->children[0]->markfaces = (face_t **)calloc(1, sizeof(face_t *));
+		nodes->children[0]->markfaces = (FaceBSP **)calloc(1, sizeof(FaceBSP *));
 		VectorFill(nodes->children[0]->mins, 0);
 		VectorFill(nodes->children[0]->maxs, 0);
 		nodes->children[1] = AllocNode();
@@ -1061,7 +1061,7 @@ static auto ProcessModel() -> bool
 		nodes->children[1]->isportalleaf = true;
 		nodes->children[1]->iscontentsdetail = false;
 		nodes->children[1]->faces = nullptr;
-		nodes->children[1]->markfaces = (face_t **)calloc(1, sizeof(face_t *));
+		nodes->children[1]->markfaces = (FaceBSP **)calloc(1, sizeof(FaceBSP *));
 		VectorFill(nodes->children[1]->mins, 0);
 		VectorFill(nodes->children[1]->maxs, 0);
 		nodes->contents = 0;

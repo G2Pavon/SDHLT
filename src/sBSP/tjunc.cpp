@@ -296,7 +296,7 @@ static void AddEdge(const vec3_t p1, const vec3_t p2)
  *
  * ===============
  */
-static void AddFaceEdges(const face_t *const f)
+static void AddFaceEdges(const FaceBSP *const f)
 {
     int i, j;
 
@@ -310,15 +310,15 @@ static void AddFaceEdges(const face_t *const f)
 //============================================================================
 
 static byte superfacebuf[1024 * 16];
-static face_t *superface = (face_t *)superfacebuf;
-static int MAX_SUPERFACEEDGES = (sizeof(superfacebuf) - sizeof(face_t) + sizeof(superface->pts)) / sizeof(vec3_t);
-static face_t *newlist;
+static FaceBSP *superface = (FaceBSP *)superfacebuf;
+static int MAX_SUPERFACEEDGES = (sizeof(superfacebuf) - sizeof(FaceBSP) + sizeof(superface->pts)) / sizeof(vec3_t);
+static FaceBSP *newlist;
 
-static void SplitFaceForTjunc(face_t *f, face_t *original)
+static void SplitFaceForTjunc(FaceBSP *f, FaceBSP *original)
 {
     int i;
-    face_t *newface;
-    face_t *chain;
+    FaceBSP *newface;
+    FaceBSP *chain;
     vec3_t dir, test;
     vec_t v;
     int firstcorner, lastcorner;
@@ -424,7 +424,7 @@ static void SplitFaceForTjunc(face_t *f, face_t *original)
  *
  * ===============
  */
-static void FixFaceEdges(face_t *f)
+static void FixFaceEdges(FaceBSP *f)
 {
     int i;
     int j;
@@ -477,9 +477,9 @@ restart:
 
 //============================================================================
 
-static void tjunc_find_r(node_t *node)
+static void tjunc_find_r(NodeBSP *node)
 {
-    face_t *f;
+    FaceBSP *f;
 
     if (node->planenum == PLANENUM_LEAF)
     {
@@ -495,10 +495,10 @@ static void tjunc_find_r(node_t *node)
     tjunc_find_r(node->children[1]);
 }
 
-static void tjunc_fix_r(node_t *node)
+static void tjunc_fix_r(NodeBSP *node)
 {
-    face_t *f;
-    face_t *next;
+    FaceBSP *f;
+    FaceBSP *next;
 
     if (node->planenum == PLANENUM_LEAF)
     {
@@ -525,7 +525,7 @@ static void tjunc_fix_r(node_t *node)
  *
  * ===========
  */
-void tjunc(node_t *headnode)
+void tjunc(NodeBSP *headnode)
 {
     vec3_t maxs, mins;
     int i;

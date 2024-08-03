@@ -4,7 +4,7 @@
 #include "bsp5.h"
 #include "log.h"
 
-node_t g_outside_node; // portals outside the world face this
+NodeBSP g_outside_node; // portals outside the world face this
 
 //=============================================================================
 
@@ -13,7 +13,7 @@ node_t g_outside_node; // portals outside the world face this
  * AddPortalToNodes
  * =============
  */
-void AddPortalToNodes(portal_t *p, node_t *front, node_t *back)
+void AddPortalToNodes(PortalBSP *p, NodeBSP *front, NodeBSP *back)
 {
     if (p->nodes[0] || p->nodes[1])
     {
@@ -34,10 +34,10 @@ void AddPortalToNodes(portal_t *p, node_t *front, node_t *back)
  * RemovePortalFromNode
  * =============
  */
-void RemovePortalFromNode(portal_t *portal, node_t *l)
+void RemovePortalFromNode(PortalBSP *portal, NodeBSP *l)
 {
-    portal_t **pp;
-    portal_t *t;
+    PortalBSP **pp;
+    PortalBSP *t;
 
     // remove reference to the current portal
     pp = &l->portals;
@@ -89,12 +89,12 @@ void RemovePortalFromNode(portal_t *portal, node_t *l)
  * The created portals will face the global g_outside_node
  * ================
  */
-void MakeHeadnodePortals(node_t *node, const vec3_t mins, const vec3_t maxs)
+void MakeHeadnodePortals(NodeBSP *node, const vec3_t mins, const vec3_t maxs)
 {
     vec3_t bounds[2];
     int i, j, n;
-    portal_t *p;
-    portal_t *portals[6];
+    PortalBSP *p;
+    PortalBSP *portals[6];
     dplane_t bplanes[6];
     dplane_t *pl;
 
@@ -162,10 +162,10 @@ static FILE *pf_view;
 static int num_visleafs; // leafs the player can be in
 static int num_visportals;
 
-static void WritePortalFile_r(const node_t *const node)
+static void WritePortalFile_r(const NodeBSP *const node)
 {
     int i;
-    portal_t *p;
+    PortalBSP *p;
     Winding *w;
     dplane_t plane2;
 
@@ -237,9 +237,9 @@ static void WritePortalFile_r(const node_t *const node)
  * NumberLeafs_r
  * ================
  */
-static void NumberLeafs_r(node_t *node)
+static void NumberLeafs_r(NodeBSP *node)
 {
-    portal_t *p;
+    PortalBSP *p;
 
     if (!node->isportalleaf)
     { // decision node
@@ -274,7 +274,7 @@ static void NumberLeafs_r(node_t *node)
     }
 }
 
-static auto CountChildLeafs_r(node_t *node) -> int
+static auto CountChildLeafs_r(NodeBSP *node) -> int
 {
     if (node->planenum == -1)
     { // dleaf
@@ -295,7 +295,7 @@ static auto CountChildLeafs_r(node_t *node) -> int
         return count;
     }
 }
-static void WriteLeafCount_r(node_t *node)
+static void WriteLeafCount_r(NodeBSP *node)
 {
     if (!node->isportalleaf)
     {
@@ -318,7 +318,7 @@ static void WriteLeafCount_r(node_t *node)
  * WritePortalfile
  * ================
  */
-void WritePortalfile(node_t *headnode)
+void WritePortalfile(NodeBSP *headnode)
 {
     // set the visleafnum field in every leaf and count the total number of portals
     num_visleafs = 0;
@@ -343,10 +343,10 @@ void WritePortalfile(node_t *headnode)
 
 //===================================================
 
-void FreePortals(node_t *node)
+void FreePortals(NodeBSP *node)
 {
-    portal_t *p;
-    portal_t *nextp;
+    PortalBSP *p;
+    PortalBSP *nextp;
 
     if (!node->isportalleaf)
     {

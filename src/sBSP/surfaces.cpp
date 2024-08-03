@@ -21,16 +21,16 @@ static int subdivides;
 //      If the face is >256 in either texture direction, carve a valid sized
 //      piece off and insert the remainder in the next link
 // =====================================================================================
-void SubdivideFace(face_t *f, face_t **prevptr)
+void SubdivideFace(FaceBSP *f, FaceBSP **prevptr)
 {
     vec_t mins, maxs;
     vec_t v;
     int axis;
     int i;
     dplane_t plane;
-    face_t *front;
-    face_t *back;
-    face_t *next;
+    FaceBSP *front;
+    FaceBSP *back;
+    FaceBSP *next;
     texinfo_t *tex;
     vec3_t temp;
 
@@ -130,7 +130,7 @@ struct hashvert_t
 static hashvert_t hvertex[MAX_MAP_VERTS];
 static hashvert_t *hvert_p;
 
-static face_t *edgefaces[MAX_MAP_EDGES][2];
+static FaceBSP *edgefaces[MAX_MAP_EDGES][2];
 static int firstmodeledge = 1;
 static int firstmodelface;
 
@@ -319,7 +319,7 @@ static auto GetVertex(const vec3_t in, const int planenum) -> int
 //  GetEdge
 //      Don't allow four way edges
 // =====================================================================================
-auto GetEdge(const vec3_t p1, const vec3_t p2, face_t *f) -> int
+auto GetEdge(const vec3_t p1, const vec3_t p2, FaceBSP *f) -> int
 {
     int v1;
     int v2;
