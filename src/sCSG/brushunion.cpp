@@ -8,7 +8,7 @@ static auto NewWindingFromPlane(const brushhull_t *const hull, const int planenu
     Winding *front;
     Winding *back;
     bface_t *face;
-    plane_t *plane;
+    Plane *plane;
 
     plane = &g_mapplanes[planenum];
     winding = new Winding(plane->normal, plane->dist);
@@ -85,7 +85,7 @@ static void AddPlaneToUnion(brushhull_t *hull, const int planenum)
     bface_t *face;
     bface_t *next;
 
-    plane_t *split;
+    Plane *split;
     Winding *front;
     Winding *back;
 
@@ -190,7 +190,7 @@ static auto CalculateSolidVolume(const brushhull_t *const hull) -> vec_t
 
     for (face = hull->faces; face; face = face->next, x++)
     {
-        plane_t *plane = &g_mapplanes[face->planenum];
+        Plane *plane = &g_mapplanes[face->planenum];
         vec_t area = face->w->getArea();
         vec_t dist = DotProduct(plane->normal, midpoint);
 

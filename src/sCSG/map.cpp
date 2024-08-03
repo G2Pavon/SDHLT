@@ -9,7 +9,7 @@ int g_nummapbrushes;
 brush_t g_mapbrushes[MAX_MAP_BRUSHES];
 
 int g_numbrushsides;
-side_t g_brushsides[MAX_MAP_SIDES];
+Side g_brushsides[MAX_MAP_SIDES];
 
 static const vec3_t s_baseaxis[18] = {
 	{0, 0, 1}, {1, 0, 0}, {0, -1, 0}, // floor
@@ -46,7 +46,7 @@ auto CopyCurrentBrush(entity_t *entity, const brush_t *brush) -> brush_t *
 	newb->firstside = g_numbrushsides;
 	g_numbrushsides += brush->numsides;
 	hlassume(g_numbrushsides <= MAX_MAP_SIDES, assume_MAX_MAP_SIDES);
-	memcpy(&g_brushsides[newb->firstside], &g_brushsides[brush->firstside], brush->numsides * sizeof(side_t));
+	memcpy(&g_brushsides[newb->firstside], &g_brushsides[brush->firstside], brush->numsides * sizeof(Side));
 	newb->entitynum = entity - g_entities;
 	newb->brushnum = entity->numbrushes;
 	entity->numbrushes++;
@@ -82,7 +82,7 @@ void DeleteCurrentEntity(entity_t *entity)
 			Error("DeleteCurrentEntity: internal error. (Entity %i, Brush %i)",
 				  b->originalentitynum, b->originalbrushnum);
 		}
-		memset(&g_brushsides[b->firstside], 0, b->numsides * sizeof(side_t));
+		memset(&g_brushsides[b->firstside], 0, b->numsides * sizeof(Side));
 		g_numbrushsides -= b->numsides;
 		for (int h = 0; h < NUM_HULLS; h++)
 		{
@@ -104,7 +104,7 @@ void DeleteCurrentEntity(entity_t *entity)
 // =====================================================================================
 //  TextureAxisFromPlane
 // =====================================================================================
-void TextureAxisFromPlane(const plane_t *const pln, vec3_t xv, vec3_t yv)
+void TextureAxisFromPlane(const Plane *const pln, vec3_t xv, vec3_t yv)
 {
 	auto bestaxis = 0;
 	auto best = 0.0;
@@ -151,7 +151,7 @@ static void ParseBrush(entity_t *mapent)
 {
 	auto b = &g_mapbrushes[g_nummapbrushes]; // Current brush
 	int i, j;								 // Loop counters
-	side_t *side;							 // Current side of the brush
+	Side *side;								 // Current side of the brush
 	contents_t contents;					 // Contents type of the brush
 	bool ok;
 	auto nullify = CheckForInvisible(mapent); // If the current entity is part of an invis entity
@@ -450,7 +450,7 @@ static void ParseBrush(entity_t *mapent)
 	}
 	if (*ValueForKey(&g_entities[b->entitynum], "zhlt_usemodel"))
 	{
-		memset(&g_brushsides[b->firstside], 0, b->numsides * sizeof(side_t));
+		memset(&g_brushsides[b->firstside], 0, b->numsides * sizeof(Side));
 		g_numbrushsides -= b->numsides;
 		for (int h = 0; h < NUM_HULLS; h++)
 		{

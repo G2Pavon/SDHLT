@@ -3,7 +3,7 @@
 #include "blockmem.h"
 #include "log.h"
 
-plane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
+Plane g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 int g_nummapplanes;
 hullshape_t g_defaulthulls[NUM_HULLS];
 int g_numhullshapes;
@@ -416,7 +416,7 @@ void ExpandBrush(brush_t *brush, const int hullnum)
 	}
 	// for looping through the faces and constructing the hull
 	bface_t *current_face;
-	plane_t *current_plane;
+	Plane *current_plane;
 	vec3_t origin, normal;
 
 	// for non-axial bevel testing
@@ -702,7 +702,7 @@ void SortSides(brushhull_t *h)
 	{
 		sides[i] = f;
 		isused[i] = false;
-		const plane_t *p = &g_mapplanes[f->planenum];
+		const Plane *p = &g_mapplanes[f->planenum];
 		VectorCopy(p->normal, normals[i]);
 	}
 	for (i = 0; i < numsides; i++)
@@ -754,7 +754,7 @@ restart:
 			{
 				continue;
 			}
-			const plane_t *p = &g_mapplanes[f2->planenum ^ 1];
+			const Plane *p = &g_mapplanes[f2->planenum ^ 1];
 			if (!w->Chop(p->normal, p->dist, NORMAL_EPSILON // fix "invalid brush" in ExpandBrush
 						 ))									// Nothing left to chop (getArea will return 0 for us in this case for below)
 			{
@@ -1148,7 +1148,7 @@ auto CreateHullBrush(const brush_t *b) -> hullbrush_t *
 	const int MAXSIZE = 256;
 
 	hullbrush_t *hb;
-	plane_t planes[MAXSIZE];
+	Plane planes[MAXSIZE];
 	Winding *w[MAXSIZE];
 	hullbrushedge_t edges[MAXSIZE];
 	hullbrushvertex_t vertexes[MAXSIZE];

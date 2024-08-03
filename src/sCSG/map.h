@@ -8,7 +8,7 @@ constexpr int NUM_HULLS = 4;        // NUM_HULLS should be no larger than MAX_MA
 
 constexpr int MAX_MAP_SIDES = MAX_MAP_BRUSHES * 6;
 
-struct plane_t
+struct Plane
 {
     vec3_t normal;
     vec3_t origin;
@@ -26,7 +26,7 @@ struct face_texture_t
     vec_t scale[2];
 };
 
-struct side_t
+struct Side
 {
     face_texture_t texture;
     bool bevel;
@@ -37,7 +37,7 @@ struct bface_t
 {
     struct bface_t *next;
     int planenum;
-    plane_t *plane;
+    Plane *plane;
     Winding *w;
     int texinfo;
     bool used; // just for face counting
@@ -120,10 +120,10 @@ struct hullshape_t
 extern int g_nummapbrushes;
 extern brush_t g_mapbrushes[MAX_MAP_BRUSHES];
 extern int g_numbrushsides;
-extern side_t g_brushsides[MAX_MAP_SIDES];
+extern Side g_brushsides[MAX_MAP_SIDES];
 extern hullshape_t g_defaulthulls[NUM_HULLS];
 extern int g_numhullshapes;
 extern hullshape_t g_hullshapes[MAX_HULLSHAPES];
 
-extern void TextureAxisFromPlane(const plane_t *const pln, vec3_t xv, vec3_t yv);
+extern void TextureAxisFromPlane(const Plane *const pln, vec3_t xv, vec3_t yv);
 extern void LoadMapFile(const char *const filename);

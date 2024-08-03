@@ -982,7 +982,7 @@ static void EmitPlanes()
         auto *planeout = fopen(name, "wb");
         if (!planeout)
             Error("Couldn't open %s", name);
-        SafeWrite(planeout, g_mapplanes, g_nummapplanes * sizeof(plane_t));
+        SafeWrite(planeout, g_mapplanes, g_nummapplanes * sizeof(Plane));
         fclose(planeout);
     }
 }
