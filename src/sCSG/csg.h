@@ -69,11 +69,3 @@ void WriteHullSizeFile();
 //============================================================================
 // hullfile.cpp
 extern vec3_t g_hull_size[NUM_HULLS][2];
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-extern char *ANSItoUTF8(const char *);
-#endif
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-void ConvertGameTextMessages()
-#endif

@@ -1003,44 +1003,6 @@ void WriteBSP(const char *const name)
     WriteBSPFile(path);
 }
 
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-void ConvertGameTextMessages()
-{
-    int count = 0;
-    for (int i = 0; i < g_numentities; i++)
-    {
-        entity_t *ent = &g_entities[i];
-        const char *value;
-        char *newvalue;
-
-        // Check if the entity is a "game_text"
-        if (strcmp(ValueForKey(ent, "classname"), "game_text"))
-        {
-            continue;
-        }
-
-        // Get the current value of the "message" key
-        value = ValueForKey(ent, "message");
-        if (*value)
-        {
-            // Convert the ANSI value to UTF-8
-            newvalue = ANSItoUTF8(value);
-            if (strcmp(newvalue, value))
-            {
-                // Set the new UTF-8 value
-                SetKeyValue(ent, "message", newvalue);
-                count++;
-            }
-            free(newvalue);
-        }
-    }
-    if (count)
-    {
-        Log("%d game_text messages converted from Windows ANSI(CP_ACP) to UTF-8 encoding\n", count);
-    }
-}
-#endif
-
 auto main(const int argc, char **argv) -> int
 {
     char name[_MAX_PATH];                   // mapanme
@@ -1078,10 +1040,6 @@ auto main(const int argc, char **argv) -> int
     LoadMapFile(name);
     ThreadSetDefault();
     ThreadSetPriority(g_threadpriority);
-
-#ifdef HLCSG_GAMETEXTMESSAGE_UTF8
-    ConvertGameTextMessages(); // Windows ANSI(CP_ACP) to UTF-8
-#endif
 
     GetUsedWads(); // Get wads from worldspawn "wad" key
 
