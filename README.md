@@ -44,4 +44,4 @@ Replace C-style data struct by C++ classes
 
 Replace float array[3] with std::array<float, 3> or glm maybe
 
-Replace use char arrays to store text by std string (this would simplify map parser a lot)
+Replace char with std::string
