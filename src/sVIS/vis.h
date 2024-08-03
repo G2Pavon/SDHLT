@@ -20,14 +20,14 @@ constexpr int MAX_PORTALS = 32768;
 
 constexpr int MAX_POINTS_ON_FIXED_WINDING = 32;
 
-struct winding_t
+struct WindingVIS
 {
     bool original; // don't free, it's part of the portal
     int numpoints;
     vec3_t points[MAX_POINTS_ON_FIXED_WINDING];
 };
 
-struct plane_t
+struct PlaneVIS
 {
     vec3_t normal;
     float dist;
@@ -40,11 +40,11 @@ typedef enum
     stat_done
 } vstatus_t;
 
-struct portal_t
+struct PortalVIS
 {
-    plane_t plane; // normal pointing into neighbor
-    int leaf;      // neighbor
-    winding_t *winding;
+    PlaneVIS plane; // normal pointing into neighbor
+    int leaf;       // neighbor
+    WindingVIS *winding;
     vstatus_t status;
     byte *visbits;
     byte *mightsee;
@@ -52,57 +52,57 @@ struct portal_t
     int numcansee;
 };
 
-struct sep_t
+struct SepVIS
 {
-    struct sep_t *next;
-    plane_t plane; // from portal is on positive side
+    struct SepVIS *next;
+    PlaneVIS plane; // from portal is on positive side
 };
 
-struct passage_t
+struct PassageVIS
 {
-    struct passage_t *next;
+    struct PassageVIS *next;
     int from, to; // leaf numbers
-    sep_t *planes;
+    SepVIS *planes;
 };
 
 constexpr int MAX_PORTALS_ON_LEAF = 256;
-struct leaf_t
+struct LeafVIS
 {
     unsigned numportals;
-    passage_t *passages;
-    portal_t *portals[MAX_PORTALS_ON_LEAF];
+    PassageVIS *passages;
+    PortalVIS *portals[MAX_PORTALS_ON_LEAF];
 };
 
-struct pstack_t
+struct pstackVIS
 {
     byte mightsee[MAX_MAP_LEAFS / 8]; // bit string
 #ifdef USE_CHECK_STACK
-    struct pstack_t *next;
+    struct pstackVIS *next;
 #endif
-    struct pstack_t *head;
+    struct pstackVIS *head;
 
-    leaf_t *leaf;
-    portal_t *portal; // portal exiting
-    winding_t *source;
-    winding_t *pass;
+    LeafVIS *leaf;
+    PortalVIS *portal; // portal exiting
+    WindingVIS *source;
+    WindingVIS *pass;
 
-    winding_t windings[3]; // source, pass, temp in any order
+    WindingVIS windings[3]; // source, pass, temp in any order
     char freewindings[3];
 
-    const plane_t *portalplane;
+    const PlaneVIS *portalplane;
 
 #ifdef RVIS_LEVEL_2
     int clipPlaneCount;
-    plane_t *clipPlane;
+    PlaneVIS *clipPlane;
 #endif
 };
 
-struct threaddata_t
+struct ThreadDataVIS
 {
     byte *leafvis; // bit string
     //      byte            fullportal[MAX_PORTALS/8];              // bit string
-    portal_t *base;
-    pstack_t pstack_head;
+    PortalVIS *base;
+    pstackVIS pstack_head;
 };
 
 extern bool g_fastvis;
@@ -114,25 +114,25 @@ extern unsigned g_portalleafs;
 extern unsigned int g_maxdistance;
 // extern bool		g_postcompile;
 
-struct overview_t
+struct OverviewVIS
 {
     vec3_t origin;
     int visleafnum;
     int reverse;
 };
 extern const int g_overview_max;
-extern overview_t g_overview[];
+extern OverviewVIS g_overview[];
 extern int g_overview_count;
 
-struct leafinfo_t
+struct LeafInfoVIS
 {
     bool isoverviewpoint;
     bool isskyboxpoint;
 };
-extern leafinfo_t *g_leafinfos;
+extern LeafInfoVIS *g_leafinfos;
 
-extern portal_t *g_portals;
-extern leaf_t *g_leafs;
+extern PortalVIS *g_portals;
+extern LeafVIS *g_leafs;
 
 extern byte *g_uncompressed;
 extern unsigned g_bitbytes;
@@ -145,6 +145,6 @@ extern void BasePortalVis(int threadnum);
 extern void MaxDistVis(int threadnum);
 // extern void		PostMaxDistVis(int threadnum);
 
-extern void PortalFlow(portal_t *p);
+extern void PortalFlow(PortalVIS *p);
 extern void CalcAmbientSounds();
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);

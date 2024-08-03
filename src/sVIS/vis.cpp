@@ -29,9 +29,9 @@
 int g_numportals = 0;
 unsigned g_portalleafs = 0;
 
-portal_t *g_portals;
+PortalVIS *g_portals;
 
-leaf_t *g_leafs;
+LeafVIS *g_leafs;
 int *g_leafstarts;
 int *g_leafcounts;
 int g_leafcount_all;
@@ -58,16 +58,16 @@ unsigned int g_maxdistance = DEFAULT_MAXDISTANCE_RANGE;
 // bool			g_postcompile = DEFAULT_POST_COMPILE;
 //
 const int g_overview_max = MAX_MAP_ENTITIES;
-overview_t g_overview[g_overview_max];
+OverviewVIS g_overview[g_overview_max];
 int g_overview_count = 0;
-leafinfo_t *g_leafinfos = nullptr;
+LeafInfoVIS *g_leafinfos = nullptr;
 
 static int totalvis = 0;
 
 // =====================================================================================
 //  PlaneFromWinding
 // =====================================================================================
-static void PlaneFromWinding(winding_t *w, plane_t *plane)
+static void PlaneFromWinding(WindingVIS *w, PlaneVIS *plane)
 {
     vec3_t v1;
     vec3_t v2;
@@ -83,9 +83,9 @@ static void PlaneFromWinding(winding_t *w, plane_t *plane)
 // =====================================================================================
 //  NewWinding
 // =====================================================================================
-static auto NewWinding(const int points) -> winding_t *
+static auto NewWinding(const int points) -> WindingVIS *
 {
-    winding_t *w;
+    WindingVIS *w;
     int size;
 
     if (points > MAX_POINTS_ON_WINDING)
@@ -93,8 +93,8 @@ static auto NewWinding(const int points) -> winding_t *
         Error("NewWinding: %i points > MAX_POINTS_ON_WINDING", points);
     }
 
-    size = (int)(intptr_t)((winding_t *)nullptr)->points[points];
-    w = (winding_t *)calloc(1, size);
+    size = (int)(intptr_t)((WindingVIS *)nullptr)->points[points];
+    w = (WindingVIS *)calloc(1, size);
 
     return w;
 }
@@ -104,11 +104,11 @@ static auto NewWinding(const int points) -> winding_t *
 //      Returns the next portal for a thread to work on
 //      Returns the portals from the least complex, so the later ones can reuse the earlier information.
 // =====================================================================================
-static auto GetNextPortal() -> portal_t *
+static auto GetNextPortal() -> PortalVIS *
 {
     int j;
-    portal_t *p;
-    portal_t *tp;
+    PortalVIS *p;
+    PortalVIS *tp;
     int min;
 
     if (GetThreadWork() == -1)
@@ -142,7 +142,7 @@ static auto GetNextPortal() -> portal_t *
 // =====================================================================================
 static void LeafThread(int unused)
 {
-    portal_t *p;
+    PortalVIS *p;
 
     while (true)
     {
@@ -160,7 +160,7 @@ static void LeafThread(int unused)
 // =====================================================================================
 static void LeafFlow(const int leafnum)
 {
-    leaf_t *leaf;
+    LeafVIS *leaf;
     byte *outbuffer;
     byte compressed[MAX_MAP_LEAFS / 8];
     unsigned i;
@@ -169,7 +169,7 @@ static void LeafFlow(const int leafnum)
     int tmp;
     int numvis;
     byte *dest;
-    portal_t *p;
+    PortalVIS *p;
 
     //
     // flow through all portals, collecting visible bits
@@ -396,12 +396,12 @@ static INLINE void FASTCALL CheckNullToken(const char *const token)
 static void LoadPortals(char *portal_image)
 {
     int i, j;
-    portal_t *p;
-    leaf_t *l;
+    PortalVIS *p;
+    LeafVIS *l;
     int numpoints;
-    winding_t *w;
+    WindingVIS *w;
     int leafnums[2];
-    plane_t plane;
+    PlaneVIS plane;
     const char *const seperators = " ()\r\n\t";
     char *token;
 
@@ -426,9 +426,9 @@ static void LoadPortals(char *portal_image)
     g_bitlongs = g_bitbytes / sizeof(long);
 
     // each file portal is split into two memory portals
-    g_portals = (portal_t *)calloc(2 * g_numportals, sizeof(portal_t));
-    g_leafs = (leaf_t *)calloc(g_portalleafs, sizeof(leaf_t));
-    g_leafinfos = (leafinfo_t *)calloc(g_portalleafs, sizeof(leafinfo_t));
+    g_portals = (PortalVIS *)calloc(2 * g_numportals, sizeof(PortalVIS));
+    g_leafs = (LeafVIS *)calloc(g_portalleafs, sizeof(LeafVIS));
+    g_leafinfos = (LeafInfoVIS *)calloc(g_portalleafs, sizeof(LeafInfoVIS));
     g_leafcounts = (int *)calloc(g_portalleafs, sizeof(int));
     g_leafstarts = (int *)calloc(g_portalleafs, sizeof(int));
 

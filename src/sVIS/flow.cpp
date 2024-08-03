@@ -6,9 +6,9 @@
 //  CheckStack
 // =====================================================================================
 #ifdef USE_CHECK_STACK
-static void CheckStack(const leaf_t *const leaf, const threaddata_t *const thread)
+static void CheckStack(const LeafVIS *const leaf, const ThreadDataVIS *const thread)
 {
-    pstack_t *p;
+    pstackVIS *p;
 
     for (p = thread->pstack_head.next; p; p = p->next)
     {
@@ -21,7 +21,7 @@ static void CheckStack(const leaf_t *const leaf, const threaddata_t *const threa
 // =====================================================================================
 //  AllocStackWinding
 // =====================================================================================
-inline static auto AllocStackWinding(pstack_t *const stack) -> winding_t *
+inline static auto AllocStackWinding(pstackVIS *const stack) -> WindingVIS *
 {
     int i;
 
@@ -42,7 +42,7 @@ inline static auto AllocStackWinding(pstack_t *const stack) -> winding_t *
 // =====================================================================================
 //  FreeStackWinding
 // =====================================================================================
-inline static void FreeStackWinding(const winding_t *const w, pstack_t *const stack)
+inline static void FreeStackWinding(const WindingVIS *const w, pstackVIS *const stack)
 {
     int i;
 
@@ -59,7 +59,7 @@ inline static void FreeStackWinding(const winding_t *const w, pstack_t *const st
 // =====================================================================================
 //  ChopWinding
 // =====================================================================================
-inline auto ChopWinding(winding_t *const in, pstack_t *const stack, const plane_t *const split) -> winding_t *
+inline auto ChopWinding(WindingVIS *const in, pstackVIS *const stack, const PlaneVIS *const split) -> WindingVIS *
 {
     vec_t dists[128];
     int sides[128];
@@ -67,7 +67,7 @@ inline auto ChopWinding(winding_t *const in, pstack_t *const stack, const plane_
     vec_t dot;
     int i;
     vec3_t mid;
-    winding_t *neww;
+    WindingVIS *neww;
 
     counts[0] = counts[1] = counts[2] = 0;
 
@@ -198,7 +198,7 @@ inline auto ChopWinding(winding_t *const in, pstack_t *const stack, const plane_
 //  AddPlane
 // =====================================================================================
 #ifdef RVIS_LEVEL_2
-inline static void AddPlane(pstack_t *const stack, const plane_t *const split)
+inline static void AddPlane(pstackVIS *const stack, const PlaneVIS *const split)
 {
     int j;
 
@@ -231,19 +231,19 @@ inline static void AddPlane(pstack_t *const stack, const plane_t *const split)
 //      flipclip should be set.
 // =====================================================================================
 inline static auto ClipToSeperators(
-    const winding_t *const source,
-    const winding_t *const pass,
-    winding_t *const a_target,
+    const WindingVIS *const source,
+    const WindingVIS *const pass,
+    WindingVIS *const a_target,
     const bool flipclip,
-    pstack_t *const stack) -> winding_t *
+    pstackVIS *const stack) -> WindingVIS *
 {
     int i, j, k, l;
-    plane_t plane;
+    PlaneVIS plane;
     vec3_t v1, v2;
     float d;
     int counts[3];
     bool fliptest;
-    winding_t *target = a_target;
+    WindingVIS *target = a_target;
 
     const unsigned int numpoints = source->numpoints;
 
@@ -373,10 +373,10 @@ inline static auto ClipToSeperators(
 //      Flood fill through the leafs
 //      If src_portal is NULL, this is the originating leaf
 // =====================================================================================
-inline static void RecursiveLeafFlow(const int leafnum, const threaddata_t *const thread, const pstack_t *const prevstack)
+inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *const thread, const pstackVIS *const prevstack)
 {
-    pstack_t stack;
-    leaf_t *leaf;
+    pstackVIS stack;
+    LeafVIS *leaf;
 
     leaf = &g_leafs[leafnum];
 #ifdef USE_CHECK_STACK
@@ -409,11 +409,11 @@ inline static void RecursiveLeafFlow(const int leafnum, const threaddata_t *cons
 
     // check all portals for flowing into other leafs
     unsigned i;
-    portal_t **plist = leaf->portals;
+    PortalVIS **plist = leaf->portals;
 
     for (i = 0; i < leaf->numportals; i++, plist++)
     {
-        portal_t *p = *plist;
+        PortalVIS *p = *plist;
         {
             const unsigned offset = p->leaf >> 3;
             const unsigned bit = 1 << (p->leaf & 7);
@@ -477,7 +477,7 @@ inline static void RecursiveLeafFlow(const int leafnum, const threaddata_t *cons
 
         // get plane of portal, point normal into the neighbor leaf
         stack.portalplane = &p->plane;
-        plane_t backplane;
+        PlaneVIS backplane;
         VectorSubtract(vec3_origin, p->plane.normal, backplane.normal);
         backplane.dist = -p->plane.dist;
 
@@ -522,7 +522,7 @@ inline static void RecursiveLeafFlow(const int leafnum, const threaddata_t *cons
         if (stack.clipPlaneCount == -1)
         {
             stack.clipPlaneCount = 0;
-            stack.clipPlane = (plane_t *)alloca(sizeof(plane_t) * prevstack->source->numpoints * prevstack->pass->numpoints);
+            stack.clipPlane = (PlaneVIS *)alloca(sizeof(PlaneVIS) * prevstack->source->numpoints * prevstack->pass->numpoints);
 
             ClipToSeperators(prevstack->source, prevstack->pass, nullptr, false, &stack);
             ClipToSeperators(prevstack->pass, prevstack->source, nullptr, true, &stack);
@@ -586,9 +586,9 @@ inline static void RecursiveLeafFlow(const int leafnum, const threaddata_t *cons
 // =====================================================================================
 //  PortalFlow
 // =====================================================================================
-void PortalFlow(portal_t *p)
+void PortalFlow(PortalVIS *p)
 {
-    threaddata_t data;
+    ThreadDataVIS data;
     unsigned i;
 
     if (p->status != stat_working)
@@ -620,8 +620,8 @@ void PortalFlow(portal_t *p)
 static void SimpleFlood(byte *const srcmightsee, const int leafnum, byte *const portalsee, unsigned int *const c_leafsee)
 {
     unsigned i;
-    leaf_t *leaf;
-    portal_t *p;
+    LeafVIS *leaf;
+    PortalVIS *p;
 
     {
         const unsigned offset = leafnum >> 3;
@@ -659,10 +659,10 @@ constexpr int PORTALSEE_SIZE = MAX_PORTALS * 2;
 void BasePortalVis(int unused)
 {
     int i, j, k;
-    portal_t *tp;
-    portal_t *p;
+    PortalVIS *tp;
+    PortalVIS *p;
     float d;
-    winding_t *w;
+    WindingVIS *w;
     byte portalsee[PORTALSEE_SIZE];
     const int portalsize = (g_numportals * 2);
 
@@ -782,7 +782,7 @@ auto BestNormalFromWinding(const vec3_t *points, int numpoints, vec3_t &normal_o
     return true;
 }
 
-auto WindingDist(const winding_t *w[2]) -> vec_t
+auto WindingDist(const WindingVIS *w[2]) -> vec_t
 {
     vec_t minsqrdist = 99999999.0 * 99999999.0;
     vec_t sqrdist;
@@ -971,9 +971,9 @@ void MaxDistVis(int unused)
 {
     int i, j, k, m;
     int a, b;
-    leaf_t *l;
-    leaf_t *tl;
-    plane_t *boundary = nullptr;
+    LeafVIS *l;
+    LeafVIS *tl;
+    PlaneVIS *boundary = nullptr;
 
     unsigned offset_l;
     unsigned bit_l;
@@ -1024,8 +1024,8 @@ void MaxDistVis(int unused)
             {
                 vec3_t v;
                 vec_t dist;
-                const winding_t *w;
-                const leaf_t *leaf[2] = {l, tl};
+                const WindingVIS *w;
+                const LeafVIS *leaf[2] = {l, tl};
                 vec3_t center[2];
                 vec_t radius[2];
                 int count[2];
@@ -1083,7 +1083,7 @@ void MaxDistVis(int unused)
                 {
                     for (m = 0; m < tl->numportals; m++)
                     {
-                        const winding_t *w[2];
+                        const WindingVIS *w[2];
                         w[0] = l->portals[k]->winding;
                         w[1] = tl->portals[m]->winding;
                         dist = WindingDist(w);
