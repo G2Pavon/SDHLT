@@ -341,7 +341,7 @@ auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest
 
             for (int i = 0; i < MIPLEVELS; i++)
                 miptex->offsets[i] = 0;
-            writewad_data = (byte *)malloc(source->disksize);
+            writewad_data = new byte[source->disksize];
             hlassume(writewad_data != nullptr, assume_NoMemory);
             if (fseek(texfiles[source->iTexFile], source->filepos, SEEK_SET))
                 Error("File read failure");
@@ -553,7 +553,7 @@ void WriteMiptex()
 
         // Malloc for storing lump info
         auto writewad_maxlumpinfos = nummiptex;
-        auto *writewad_lumpinfos = (dlumpinfo_t *)malloc(writewad_maxlumpinfos * sizeof(dlumpinfo_t));
+        auto *writewad_lumpinfos = new dlumpinfo_t[writewad_maxlumpinfos];
         hlassume(writewad_lumpinfos != nullptr, assume_NoMemory);
 
         // Header for the temp wad file
@@ -746,7 +746,7 @@ void PushWadPath(const char *const path, bool inuse)
 {
     wadpath_t *currentWad;
     hlassume(g_iNumWadPaths < MAX_WADPATHS, assume_MAX_TEXFILES);
-    currentWad = (wadpath_t *)malloc(sizeof(wadpath_t));
+    currentWad = new wadpath_t;
     safe_strncpy(currentWad->path, path, _MAX_PATH); // Copy path into currentWad->path
     currentWad->usedbymap = inuse;
     currentWad->usedtextures = 0;  // Updated later in autowad procedures
@@ -759,7 +759,7 @@ void PushWadPath(const char *const path, bool inuse)
     }
     else
     {
-        free(currentWad);
+        delete currentWad;
         Error("PushWadPath: too many wadpaths (i%/i%)", g_iNumWadPaths, MAX_WADPATHS);
     }
 }

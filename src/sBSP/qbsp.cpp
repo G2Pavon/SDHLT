@@ -315,7 +315,7 @@ auto AllocFace() -> FaceBSP *
 {
 	FaceBSP *f;
 
-	f = (FaceBSP *)malloc(sizeof(FaceBSP));
+	f = new FaceBSP;
 	memset(f, 0, sizeof(FaceBSP));
 
 	f->planenum = -1;
@@ -328,7 +328,7 @@ auto AllocFace() -> FaceBSP *
 // =====================================================================================
 void FreeFace(FaceBSP *f)
 {
-	free(f);
+	delete f;
 }
 
 // =====================================================================================
@@ -338,7 +338,7 @@ auto AllocSurface() -> SurfaceBSP *
 {
 	SurfaceBSP *s;
 
-	s = (SurfaceBSP *)malloc(sizeof(SurfaceBSP));
+	s = new SurfaceBSP;
 	memset(s, 0, sizeof(SurfaceBSP));
 
 	return s;
@@ -349,7 +349,7 @@ auto AllocSurface() -> SurfaceBSP *
 // =====================================================================================
 void FreeSurface(SurfaceBSP *s)
 {
-	free(s);
+	delete s;
 }
 
 // =====================================================================================
@@ -359,7 +359,7 @@ auto AllocPortal() -> PortalBSP *
 {
 	PortalBSP *p;
 
-	p = (PortalBSP *)malloc(sizeof(PortalBSP));
+	p = new PortalBSP;
 	memset(p, 0, sizeof(PortalBSP));
 
 	return p;
@@ -370,13 +370,13 @@ auto AllocPortal() -> PortalBSP *
 // =====================================================================================
 void FreePortal(PortalBSP *p) // consider: inline
 {
-	free(p);
+	delete p;
 }
 
 auto AllocSide() -> SideBSP *
 {
 	SideBSP *s;
-	s = (SideBSP *)malloc(sizeof(SideBSP));
+	s = new SideBSP;
 	memset(s, 0, sizeof(SideBSP));
 	return s;
 }
@@ -387,7 +387,7 @@ void FreeSide(SideBSP *s)
 	{
 		delete s->w;
 	}
-	free(s);
+	delete s;
 	return;
 }
 
@@ -403,7 +403,7 @@ auto NewSideFromSide(const SideBSP *s) -> SideBSP *
 auto AllocBrush() -> BrushBSP *
 {
 	BrushBSP *b;
-	b = (BrushBSP *)malloc(sizeof(BrushBSP));
+	b = new BrushBSP;
 	memset(b, 0, sizeof(BrushBSP));
 	return b;
 }
@@ -419,7 +419,7 @@ void FreeBrush(BrushBSP *b)
 			FreeSide(s);
 		}
 	}
-	free(b);
+	delete b;
 	return;
 }
 
@@ -587,7 +587,7 @@ auto AllocNode() -> NodeBSP *
 {
 	NodeBSP *n;
 
-	n = (NodeBSP *)malloc(sizeof(NodeBSP));
+	n = new NodeBSP;
 	memset(n, 0, sizeof(NodeBSP));
 
 	return n;
@@ -649,7 +649,7 @@ static auto SurflistFromValidFaces() -> SurfchainBSP *
 	FaceBSP *next;
 	SurfchainBSP *sc;
 
-	sc = (SurfchainBSP *)malloc(sizeof(*sc));
+	sc = new SurfchainBSP;
 	ClearBounds(sc->mins, sc->maxs);
 	sc->surfaces = nullptr;
 

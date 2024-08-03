@@ -429,7 +429,7 @@ void OutputEdges_face(FaceBSP *f)
 	{
 		return;
 	}
-	f->outputedges = (int *)malloc(f->numpoints * sizeof(int));
+	f->outputedges = new int[f->numpoints];
 	hlassume(f->outputedges != nullptr, assume_NoMemory);
 	int i;
 	for (i = 0; i < f->numpoints; i++)
@@ -578,14 +578,14 @@ void FinishBSPFile()
 	{ // Optimize BSP Write
 		auto *l = (BSPLumpMiptexHeader *)g_dtexdata;
 		int &g_nummiptex = l->nummiptex;
-		bool *Used = (bool *)calloc(g_nummiptex, sizeof(bool));
+		bool *Used = new bool[g_nummiptex];
 		int Num = 0, Size = 0;
-		int *Map = (int *)malloc(g_nummiptex * sizeof(int));
+		int *Map = new int[g_nummiptex];
 		int i;
 		hlassume(Used != nullptr && Map != nullptr, assume_NoMemory);
-		int *lumpsizes = (int *)malloc(g_nummiptex * sizeof(int));
+		int *lumpsizes = new int[g_nummiptex];
 		const int newdatasizemax = g_texdatasize - ((byte *)&l->dataofs[g_nummiptex] - (byte *)l);
-		byte *newdata = (byte *)malloc(newdatasizemax);
+		byte *newdata = new byte[newdatasizemax];
 		int newdatasize = 0;
 		hlassume(lumpsizes != nullptr && newdata != nullptr, assume_NoMemory);
 		int total = 0;
@@ -710,13 +710,11 @@ void FinishBSPFile()
 	Log("FixBrinks:\n");
 	BSPLumpClipnode *clipnodes; //[MAX_MAP_CLIPNODES]
 	int numclipnodes;
-	clipnodes = (BSPLumpClipnode *)malloc(MAX_MAP_CLIPNODES * sizeof(BSPLumpClipnode));
+	clipnodes = new BSPLumpClipnode[MAX_MAP_CLIPNODES];
 	hlassume(clipnodes != nullptr, assume_NoMemory);
-	void *(*brinkinfo)[NUM_HULLS]; //[MAX_MAP_MODELS]
-	int(*headnode)[NUM_HULLS];	   //[MAX_MAP_MODELS]
-	brinkinfo = (void *(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(void *[NUM_HULLS]));
+	auto brinkinfo = new void *[MAX_MAP_MODELS][NUM_HULLS];
 	hlassume(brinkinfo != nullptr, assume_NoMemory);
-	headnode = (int(*)[NUM_HULLS])malloc(MAX_MAP_MODELS * sizeof(int[NUM_HULLS]));
+	auto headnode = new int[MAX_MAP_MODELS][NUM_HULLS];
 	hlassume(headnode != nullptr, assume_NoMemory);
 
 	int i, j, level;

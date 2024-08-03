@@ -138,7 +138,7 @@ void CreateFinalTransparencyArrays(const char *print_name)
 
 	// double sized (faster find function for sorted list)
 	s_sorted_count = s_raw_count * 2;
-	s_sorted_list = (transList_t *)malloc(sizeof(transList_t) * s_sorted_count);
+	s_sorted_list = new transList_t[s_sorted_count];
 
 	hlassume(s_sorted_list != nullptr, assume_NoMemory);
 

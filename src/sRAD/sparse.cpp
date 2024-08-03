@@ -102,7 +102,7 @@ static void SetVisColumn(int patchnum, bool uncompressedcolumn[MAX_SPARSE_VISMAT
     {
         return;
     }
-    column->row = (sparse_row_t *)malloc(column->count * sizeof(sparse_row_t));
+    column->row = new sparse_row_t[column->count];
     hlassume(column->row != nullptr, assume_NoMemory);
 
     i = 0;
@@ -279,7 +279,7 @@ static void BuildVisLeafs(int threadnum)
     Patch *patch;
     int head;
     unsigned patchnum;
-    bool *uncompressedcolumn = (bool *)malloc(MAX_SPARSE_VISMATRIX_PATCHES * sizeof(bool));
+    bool *uncompressedcolumn = new bool[MAX_SPARSE_VISMATRIX_PATCHES];
     hlassume(uncompressedcolumn != nullptr, assume_NoMemory);
 
     while (true)

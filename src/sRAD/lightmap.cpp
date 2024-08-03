@@ -40,9 +40,9 @@ auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 {
 	auto *f = &g_dfaces[facenum];
-	auto *t = (intersecttest_t *)malloc(sizeof(intersecttest_t));
+	auto *t = new intersecttest_t;
 	hlassume(t != nullptr, assume_NoMemory);
-	t->clipplanes = (dplane_t *)malloc(f->numedges * sizeof(dplane_t));
+	t->clipplanes = new dplane_t[f->numedges];
 	hlassume(t->clipplanes != nullptr, assume_NoMemory);
 	t->numclipplanes = 0;
 	for (int j = 0; j < f->numedges; j++)
@@ -79,8 +79,8 @@ auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 }
 void FreeIntersectTest(intersecttest_t *t)
 {
-	free(t->clipplanes);
-	free(t);
+	delete[] t->clipplanes;
+	delete t;
 }
 
 auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgeend, int &edgeendnext, BSPLumpFace *const f, BSPLumpFace *&fnext, vec_t &angle, vec3_t &normal) -> int
@@ -428,7 +428,7 @@ void PairEdges()
 								}
 								if (!in)
 								{
-									auto *l = (FaceList *)malloc(sizeof(FaceList));
+									auto *l = new FaceList;
 									hlassume(l != nullptr, assume_NoMemory);
 									l->face = fcurrent;
 									l->next = e->vertex_facelist[edgeend];
@@ -629,14 +629,14 @@ static void CalcFaceExtents(lightinfo_t *l)
 		l->lmcache_offset = l->lmcache_side;
 		l->lmcachewidth = l->texsize[0] * l->lmcache_density + 1 + 2 * l->lmcache_side;
 		l->lmcacheheight = l->texsize[1] * l->lmcache_density + 1 + 2 * l->lmcache_side;
-		l->lmcache = (vec3_t(*)[ALLSTYLES])malloc(l->lmcachewidth * l->lmcacheheight * sizeof(vec3_t[ALLSTYLES]));
+		l->lmcache = new vec3_t[l->lmcachewidth * l->lmcacheheight][ALLSTYLES];
 		hlassume(l->lmcache != nullptr, assume_NoMemory);
-		l->lmcache_normal = (vec3_t *)malloc(l->lmcachewidth * l->lmcacheheight * sizeof(vec3_t));
+		l->lmcache_normal = new vec3_t[l->lmcachewidth * l->lmcacheheight];
 		hlassume(l->lmcache_normal != nullptr, assume_NoMemory);
-		l->lmcache_wallflags = (int *)malloc(l->lmcachewidth * l->lmcacheheight * sizeof(int));
+		l->lmcache_wallflags = new int[l->lmcachewidth * l->lmcacheheight];
 		hlassume(l->lmcache_wallflags != nullptr, assume_NoMemory);
-		l->surfpt_position = (vec3_t *)malloc(MAX_SINGLEMAP * sizeof(vec3_t));
-		l->surfpt_surface = (int *)malloc(MAX_SINGLEMAP * sizeof(int));
+		l->surfpt_position = new vec3_t[MAX_SINGLEMAP];
+		l->surfpt_surface = new int[MAX_SINGLEMAP];
 		hlassume(l->surfpt_position != nullptr && l->surfpt_surface != nullptr, assume_NoMemory);
 	}
 }
@@ -868,7 +868,7 @@ void ChopFrag(samplefrag_t *frag)
 
 	// find the edges where the fragment can grow in the future
 	frag->numedges = 0;
-	frag->edges = (samplefragedge_t *)malloc(f->numedges * sizeof(samplefragedge_t));
+	frag->edges = new samplefragedge_t[f->numedges];
 	hlassume(frag->edges != nullptr, assume_NoMemory);
 	for (int i = 0; i < f->numedges; i++)
 	{
@@ -984,7 +984,7 @@ void ChopFrag(samplefrag_t *frag)
 
 static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, samplefragedge_t *edge) -> samplefrag_t *
 {
-	auto *frag = (samplefrag_t *)malloc(sizeof(samplefrag_t));
+	auto *frag = new samplefrag_t;
 	hlassume(frag != nullptr, assume_NoMemory);
 
 	// some basic info
@@ -1036,7 +1036,7 @@ static auto GrowSingleFrag(const samplefraginfo_t *info, samplefrag_t *parent, s
 	// do overlap test
 
 	auto overlap = false;
-	auto *clipplanes = (dplane_t *)malloc(frag->winding->m_NumPoints * sizeof(dplane_t));
+	auto *clipplanes = new dplane_t[frag->winding->m_NumPoints];
 	hlassume(clipplanes != nullptr, assume_NoMemory);
 	auto numclipplanes = 0;
 	for (int x = 0; x < frag->winding->m_NumPoints; x++)
@@ -1136,11 +1136,11 @@ static auto CreateSampleFrag(int facenum, vec_t s, vec_t t,
 	const vec3_t v_s = {1, 0, 0};
 	const vec3_t v_t = {0, 1, 0};
 
-	auto *info = (samplefraginfo_t *)malloc(sizeof(samplefraginfo_t));
+	auto *info = new samplefraginfo_t;
 	hlassume(info != nullptr, assume_NoMemory);
 	info->maxsize = maxsize;
 	info->size = 1;
-	info->head = (samplefrag_t *)malloc(sizeof(samplefrag_t));
+	info->head = new samplefrag_t;
 	hlassume(info->head != nullptr, assume_NoMemory);
 
 	info->head->next = nullptr;
@@ -1935,8 +1935,8 @@ void CreateDirectLights()
 							Error("collect spread normals: internal error: can not collect enough normals.");
 						}
 						dl->numsunnormals = count;
-						dl->sunnormals = (vec3_t *)malloc(count * sizeof(vec3_t));
-						dl->sunnormalweights = (vec_t *)malloc(count * sizeof(vec_t));
+						dl->sunnormals = new vec3_t[count];
+						dl->sunnormalweights = new vec_t[count];
 						hlassume(dl->sunnormals != nullptr, assume_NoMemory);
 						hlassume(dl->sunnormalweights != nullptr, assume_NoMemory);
 						for (count = 0, i = 0; i < g_numskynormals[SUNSPREAD_SKYLEVEL]; i++)
@@ -1974,8 +1974,8 @@ void CreateDirectLights()
 				else
 				{
 					dl->numsunnormals = 1;
-					dl->sunnormals = (vec3_t *)malloc(sizeof(vec3_t));
-					dl->sunnormalweights = (vec_t *)malloc(sizeof(vec_t));
+					dl->sunnormals = new vec3_t[3];
+					dl->sunnormalweights = new vec_t;
 					hlassume(dl->sunnormals != nullptr, assume_NoMemory);
 					hlassume(dl->sunnormalweights != nullptr, assume_NoMemory);
 					VectorCopy(dl->normal, dl->sunnormals[0]);
@@ -2157,8 +2157,8 @@ void CopyToSkynormals(int skylevel, int numpoints, point_t *points, int numedges
 	hlassume(numedges == (1 << (2 * skylevel)) * 4 - 4, assume_first);
 	hlassume(numtriangles == (1 << (2 * skylevel)) * 2, assume_first);
 	g_numskynormals[skylevel] = numpoints;
-	g_skynormals[skylevel] = (vec3_t *)malloc(numpoints * sizeof(vec3_t));
-	g_skynormalsizes[skylevel] = (vec_t *)malloc(numpoints * sizeof(vec_t));
+	g_skynormals[skylevel] = new vec3_t[numpoints];
+	g_skynormalsizes[skylevel] = new vec_t[numpoints];
 	hlassume(g_skynormals[skylevel] != nullptr, assume_NoMemory);
 	hlassume(g_skynormalsizes[skylevel] != nullptr, assume_NoMemory);
 	int j;
@@ -2197,7 +2197,7 @@ void BuildDiffuseNormals()
 	g_skynormals[0] = nullptr; // don't use this
 	g_skynormalsizes[0] = nullptr;
 	auto numpoints = 6;
-	auto *points = (point_t *)malloc(((1 << (2 * SKYLEVELMAX)) + 2) * sizeof(point_t));
+	auto *points = new point_t[((1 << (2 * SKYLEVELMAX)) + 2)];
 	hlassume(points != nullptr, assume_NoMemory);
 	points[0][0] = 1, points[0][1] = 0, points[0][2] = 0;
 	points[1][0] = -1, points[1][1] = 0, points[1][2] = 0;
@@ -2206,7 +2206,7 @@ void BuildDiffuseNormals()
 	points[4][0] = 0, points[4][1] = 0, points[4][2] = 1;
 	points[5][0] = 0, points[5][1] = 0, points[5][2] = -1;
 	auto numedges = 12;
-	auto *edges = (edge_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 4 - 4) * sizeof(edge_t));
+	auto *edges = new edge_t[((1 << (2 * SKYLEVELMAX)) * 4 - 4)];
 	hlassume(edges != nullptr, assume_NoMemory);
 	edges[0].point[0] = 0, edges[0].point[1] = 2, edges[0].divided = false;
 	edges[1].point[0] = 2, edges[1].point[1] = 1, edges[1].divided = false;
@@ -2221,7 +2221,7 @@ void BuildDiffuseNormals()
 	edges[10].point[0] = 5, edges[10].point[1] = 1, edges[10].divided = false;
 	edges[11].point[0] = 1, edges[11].point[1] = 4, edges[11].divided = false;
 	int numtriangles = 8;
-	auto *triangles = (triangle_t *)malloc(((1 << (2 * SKYLEVELMAX)) * 2) * sizeof(triangle_t));
+	auto *triangles = new triangle_t[((1 << (2 * SKYLEVELMAX)) * 2)];
 	hlassume(triangles != nullptr, assume_NoMemory);
 	triangles[0].edge[0] = 0, triangles[0].dir[0] = 0, triangles[0].edge[1] = 4, triangles[0].dir[1] = 0, triangles[0].edge[2] = 8, triangles[0].dir[2] = 0;
 	triangles[1].edge[0] = 1, triangles[1].dir[0] = 0, triangles[1].edge[1] = 11, triangles[1].dir[1] = 0, triangles[1].edge[2] = 4, triangles[1].dir[2] = 1;
@@ -2750,7 +2750,7 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 	{
 		numtexwindings++;
 	}
-	auto **texwindings = (Winding **)malloc(numtexwindings * sizeof(Winding *));
+	auto **texwindings = new Winding *[numtexwindings];
 	hlassume(texwindings != nullptr, assume_NoMemory);
 
 	// translate world winding into winding in s,t plane
@@ -3299,10 +3299,10 @@ void BuildFacelights(const int facenum)
 	}
 	for (patch = g_face_patches[facenum]; patch; patch = patch->next)
 	{
-		hlassume(patch->totalstyle_all = (unsigned char *)malloc(ALLSTYLES * sizeof(unsigned char)), assume_NoMemory);
-		hlassume(patch->samplelight_all = (vec3_t *)malloc(ALLSTYLES * sizeof(vec3_t)), assume_NoMemory);
-		hlassume(patch->totallight_all = (vec3_t *)malloc(ALLSTYLES * sizeof(vec3_t)), assume_NoMemory);
-		hlassume(patch->directlight_all = (vec3_t *)malloc(ALLSTYLES * sizeof(vec3_t)), assume_NoMemory);
+		hlassume(patch->totalstyle_all = new unsigned char[ALLSTYLES], assume_NoMemory);
+		hlassume(patch->samplelight_all = new vec3_t[ALLSTYLES], assume_NoMemory);
+		hlassume(patch->totallight_all = new vec3_t[ALLSTYLES], assume_NoMemory);
+		hlassume(patch->directlight_all = new vec3_t[ALLSTYLES], assume_NoMemory);
 		for (j = 0; j < ALLSTYLES; j++)
 		{
 			patch->totalstyle_all[j] = 255;
@@ -3313,7 +3313,7 @@ void BuildFacelights(const int facenum)
 		patch->totalstyle_all[0] = 0;
 	}
 
-	auto *sample_wallflags = (int *)malloc((2 * l.lmcache_side + 1) * (2 * l.lmcache_side + 1) * sizeof(int));
+	auto *sample_wallflags = new int[(2 * l.lmcache_side + 1) * (2 * l.lmcache_side + 1)];
 	auto *spot = l.surfpt[0];
 	for (i = 0; i < l.numsurfpt; i++, spot += 3)
 	{
@@ -3633,7 +3633,7 @@ void BuildFacelights(const int facenum)
 			{
 				maxlights[bestindex] = 0;
 				f->styles[k] = f_styles[bestindex];
-				fl->samples[k] = (sample_t *)malloc(fl->numsamples * sizeof(sample_t));
+				fl->samples[k] = new sample_t[fl->numsamples];
 				hlassume(fl->samples[k] != nullptr, assume_NoMemory);
 				memcpy(fl->samples[k], fl_samples[bestindex], fl->numsamples * sizeof(sample_t));
 			}
@@ -3870,7 +3870,7 @@ void PrecompLightmapOffsets()
 				{
 					maxlights[beststyle] = 0;
 					f->styles[k] = beststyle;
-					fl->samples[k] = (sample_t *)malloc(fl->numsamples * sizeof(sample_t));
+					fl->samples[k] = new sample_t[fl->numsamples];
 					hlassume(fl->samples[k] != nullptr, assume_NoMemory);
 					for (i = 0; i < MAXLIGHTMAPS && oldstyles[i] != 255; i++)
 					{
@@ -3932,7 +3932,7 @@ void PrecompLightmapOffsets()
 }
 void ReduceLightmap()
 {
-	auto *oldlightdata = (byte *)malloc(g_lightdatasize);
+	auto *oldlightdata = new byte[g_lightdatasize];
 	hlassume(oldlightdata != nullptr, assume_NoMemory);
 	memcpy(oldlightdata, g_dlightdata, g_lightdatasize);
 	g_lightdatasize = 0;
@@ -4278,7 +4278,7 @@ void CreateFacelightDependencyList()
 						continue;
 					}
 
-					item = (facelightlist_t *)malloc(sizeof(facelightlist_t));
+					item = new facelightlist_t;
 					hlassume(item != nullptr, assume_NoMemory);
 					item->facenum = facenum;
 					item->next = g_dependentfacelights[surface];

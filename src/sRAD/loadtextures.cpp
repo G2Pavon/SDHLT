@@ -51,7 +51,7 @@ static auto lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 
 void OpenWadFile(const char *name, bool fullpath = false)
 {
-	auto *wad = (wadfile_t *)malloc(sizeof(wadfile_t));
+	auto *wad = new wadfile_t;
 	hlassume(wad != nullptr, assume_NoMemory);
 	{
 		wadfile_t **pos;
@@ -109,7 +109,7 @@ void OpenWadFile(const char *name, bool fullpath = false)
 	{
 		Error("Invalid wad file '%s'.", wad->path);
 	}
-	wad->lumpinfos = (lumpinfo_t *)malloc(wad->numlumps * sizeof(lumpinfo_t));
+	wad->lumpinfos = new lumpinfo_t[wad->numlumps];
 	hlassume(wad->lumpinfos != nullptr, assume_NoMemory);
 	if (fseek(wad->file, wadinfo.infotableofs, SEEK_SET))
 		Error("File read failure: %s", wad->path);
@@ -207,7 +207,7 @@ void DefaultTexture(RADTexture *tex, const char *name)
 	tex->height = 16;
 	strcpy(tex->name, name);
 	tex->name[16 - 1] = '\0';
-	tex->canvas = (byte *)malloc(tex->width * tex->height);
+	tex->canvas = new byte[tex->width * tex->height];
 	hlassume(tex->canvas != nullptr, assume_NoMemory);
 	for (i = 0; i < 256; i++)
 	{
@@ -250,7 +250,7 @@ void LoadTexture(RADTexture *tex, const BSPLumpMiptex *mt, int size)
 	{
 		Error("Texture '%s': palette size is not 256.", tex->name);
 	}
-	tex->canvas = (byte *)malloc(tex->width * tex->height);
+	tex->canvas = new byte[tex->width * tex->height];
 	hlassume(tex->canvas != nullptr, assume_NoMemory);
 	for (i = 0; i < tex->height; i++)
 	{
@@ -289,7 +289,7 @@ void LoadTextureFromWad(RADTexture *tex, const BSPLumpMiptex *header)
 				Warning("Texture '%s': invalid texture data in '%s'.", tex->name, wad->path);
 				continue;
 			}
-			auto *mt = (BSPLumpMiptex *)malloc(found->disksize);
+			auto *mt = new BSPLumpMiptex[found->disksize];
 			hlassume(mt != nullptr, assume_NoMemory);
 			if (fseek(wad->file, found->filepos, SEEK_SET))
 				Error("File read failure");
@@ -321,7 +321,7 @@ void LoadTextures()
 {
 	Log("Load Textures:\n");
 	g_numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
-	g_textures = (RADTexture *)malloc(g_numtextures * sizeof(RADTexture));
+	g_textures = new RADTexture[g_numtextures];
 	hlassume(g_textures != nullptr, assume_NoMemory);
 	for (int i = 0; i < g_numtextures; i++)
 	{
@@ -555,7 +555,7 @@ static void CQ_SelectPartition(cq_node_t *node)
 
 static auto CQ_AllocSearchTree(int maxcolors) -> cq_searchnode_t *
 {
-	auto *searchtree = (cq_searchnode_t *)malloc((2 * maxcolors - 1) * sizeof(cq_searchnode_t));
+	auto *searchtree = new cq_searchnode_t[(2 * maxcolors - 1)];
 	hlassume(searchtree != nullptr, assume_NoMemory);
 	return searchtree;
 }
@@ -576,14 +576,14 @@ static void CQ_CreatePalette(int numpoints, const unsigned char (*points)[CQ_DIM
 	}
 
 	unsigned char(*pointarray)[CQ_DIM];
-	pointarray = (unsigned char(*)[CQ_DIM])malloc(numpoints * sizeof(unsigned char[CQ_DIM]));
+	pointarray = new unsigned char[numpoints][CQ_DIM];
 	hlassume(pointarray != nullptr, assume_NoMemory);
 	memcpy(pointarray, points, numpoints * sizeof(unsigned char[CQ_DIM]));
 
 	cq_searchnode_t *s;
 	int numnodes = 0;
 	int maxnodes = 2 * maxcolors - 1;
-	auto *nodes = (cq_node_t *)malloc(maxnodes * sizeof(cq_node_t));
+	auto *nodes = new cq_node_t[maxnodes];
 	hlassume(nodes != nullptr, assume_NoMemory);
 
 	auto *n = &nodes[0];
@@ -828,7 +828,7 @@ void NewTextures_PushTexture(int size, void *data)
 	{
 		Error("the number of textures created by hlrad has exceeded its internal limit(%d).", (int)RADTEXTURES_MAX);
 	}
-	g_newtextures_data[g_newtextures_num] = (byte *)malloc(size);
+	g_newtextures_data[g_newtextures_num] = new byte[size];
 	hlassume(g_newtextures_data[g_newtextures_num] != nullptr, assume_NoMemory);
 	memcpy(g_newtextures_data[g_newtextures_num], data, size);
 	g_newtextures_size[g_newtextures_num] = size;
@@ -1078,11 +1078,11 @@ void EmbedLightmapInTextures()
 			}
 			side[k] = (texturesize[k] * resolution - texsize[k] * TEXTURE_STEP) / 2;
 		}
-		auto texture = (float(*)[5])malloc(texturesize[0] * texturesize[1] * sizeof(float[5]));
+		float(*texture)[5] = new float[texturesize[0] * texturesize[1]][5];
 		hlassume(texture != nullptr, assume_NoMemory);
 		for (miplevel = 0; miplevel < MIPLEVELS; miplevel++)
 		{
-			texturemips[miplevel] = (byte(*)[4])malloc((texturesize[0] >> miplevel) * (texturesize[1] >> miplevel) * sizeof(byte[4]));
+			texturemips[miplevel] = new byte[(texturesize[0] >> miplevel) * (texturesize[1] >> miplevel)][4];
 			hlassume(texturemips[miplevel] != nullptr, assume_NoMemory);
 		}
 
@@ -1262,7 +1262,7 @@ void EmbedLightmapInTextures()
 				palettemaxcolors = 256;
 			}
 
-			auto samplepoints = (unsigned char(*)[3])malloc(texturesize[0] * texturesize[1] * sizeof(unsigned char[3]));
+			auto samplepoints = new unsigned char[texturesize[0] * texturesize[1]][3];
 			hlassume(samplepoints != nullptr, assume_NoMemory);
 			auto numsamplepoints = 0;
 			for (t = 0; t < texturesize[1]; t++)
@@ -1314,7 +1314,7 @@ void EmbedLightmapInTextures()
 			miptexsize += (texturesize[0] >> miplevel) * (texturesize[1] >> miplevel);
 		}
 		miptexsize += 2 + 256 * 3 + 2;
-		auto *miptex = (BSPLumpMiptex *)malloc(miptexsize);
+		auto *miptex = new BSPLumpMiptex[miptexsize];
 		hlassume(miptex != nullptr, assume_NoMemory);
 
 		memset(miptex, 0, sizeof(BSPLumpMiptex));

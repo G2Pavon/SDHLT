@@ -631,7 +631,7 @@ void ReadCustomChopValue()
 	EntityProperty *ep;
 
 	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
-	chopscales = (vec_t *)malloc(num * sizeof(vec_t));
+	chopscales = new vec_t[num];
 	for (i = 0; i < num; i++)
 	{
 		chopscales[i] = 1.0;
@@ -670,7 +670,7 @@ void ReadCustomSmoothValue()
 	EntityProperty *ep;
 
 	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
-	g_smoothvalues = (vec_t *)malloc(num * sizeof(vec_t));
+	g_smoothvalues = new vec_t[num];
 	for (i = 0; i < num; i++)
 	{
 		g_smoothvalues[i] = g_smoothing_threshold;
@@ -702,7 +702,7 @@ void ReadTranslucentTextures()
 	EntityProperty *ep;
 
 	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
-	g_translucenttextures = (vec3_t *)malloc(num * sizeof(vec3_t));
+	g_translucenttextures = new vec3_t[num];
 	for (i = 0; i < num; i++)
 	{
 		VectorClear(g_translucenttextures[i]);
@@ -761,7 +761,7 @@ void ReadLightingCone()
 	EntityProperty *ep;
 
 	num = ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex;
-	g_lightingconeinfo = (vec3_t *)malloc(num * sizeof(vec3_t));
+	g_lightingconeinfo = new vec3_t[num];
 	for (i = 0; i < num; i++)
 	{
 		g_lightingconeinfo[i][0] = 1.0; // default power

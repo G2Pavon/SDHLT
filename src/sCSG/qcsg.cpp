@@ -919,7 +919,7 @@ static void ProcessModels() // a.k.a brush entity
             continue;
 
         auto first = g_entities[i].firstbrush; // sort the contents down so stone bites water, etc
-        auto *temps = (Brush *)malloc(g_entities[i].numbrushes * sizeof(Brush));
+        auto *temps = new Brush[g_entities[i].numbrushes];
         hlassume(temps, assume_NoMemory);
         for (j = 0; j < g_entities[i].numbrushes; j++)
         {
@@ -952,7 +952,7 @@ static void ProcessModels() // a.k.a brush entity
             b_placedcontents = true;
             placedcontents = contents;
         }
-        free(temps);
+        delete[] temps;
 
         if (i == 0) // csg them in order, first its worldspawn....
         {

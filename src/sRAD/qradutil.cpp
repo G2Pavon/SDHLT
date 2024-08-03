@@ -712,7 +712,7 @@ void FindFacePositions(int facenum)
 		return;
 	}
 
-	map->grid = (position_t *)malloc(map->w * map->h * sizeof(position_t));
+	map->grid = new position_t[map->w * map->h];
 	hlassume(map->grid != nullptr, assume_NoMemory);
 
 	for (it = 0; it < map->h; it++)

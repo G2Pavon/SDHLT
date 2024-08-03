@@ -182,9 +182,9 @@ void BuildSurfaceTree_r(surfacetree_t *tree, surfacetreenode_t *node)
 	// Most faces should be passed to a child node, faces left in the parent node are the ones whose dimensions are large enough to be comparable to the dimension of the parent node.
 	node->nodefaces = new std::vector<FaceBSP *>;
 	node->nodefaces_discardablesize = 0;
-	node->children[0] = (surfacetreenode_t *)malloc(sizeof(surfacetreenode_t));
+	node->children[0] = new surfacetreenode_t;
 	node->children[0]->leaffaces = new std::vector<FaceBSP *>;
-	node->children[1] = (surfacetreenode_t *)malloc(sizeof(surfacetreenode_t));
+	node->children[1] = new surfacetreenode_t;
 	node->children[1]->leaffaces = new std::vector<FaceBSP *>;
 	for (std::vector<FaceBSP *>::iterator i = node->leaffaces->begin(); i != node->leaffaces->end(); ++i)
 	{
@@ -229,8 +229,8 @@ void BuildSurfaceTree_r(surfacetree_t *tree, surfacetreenode_t *node)
 		Warning("BuildSurfaceTree_r: didn't split node with bound (%f,%f,%f)-(%f,%f,%f)", node->mins[0], node->mins[1], node->mins[2], node->maxs[0], node->maxs[1], node->maxs[2]);
 		delete node->children[0]->leaffaces;
 		delete node->children[1]->leaffaces;
-		free(node->children[0]);
-		free(node->children[1]);
+		delete node->children[0];
+		delete node->children[1];
 		delete node->nodefaces;
 		node->isleaf = true;
 		return;
@@ -243,10 +243,10 @@ void BuildSurfaceTree_r(surfacetree_t *tree, surfacetreenode_t *node)
 auto BuildSurfaceTree(SurfaceBSP *surfaces, vec_t epsilon) -> surfacetree_t *
 {
 	surfacetree_t *tree;
-	tree = (surfacetree_t *)malloc(sizeof(surfacetree_t));
+	tree = new surfacetree_t;
 	tree->epsilon = epsilon;
 	tree->result.middle = new std::vector<FaceBSP *>;
-	tree->headnode = (surfacetreenode_t *)malloc(sizeof(surfacetreenode_t));
+	tree->headnode = new surfacetreenode_t;
 	tree->headnode->leaffaces = new std::vector<FaceBSP *>;
 	{
 		SurfaceBSP *p2;
@@ -345,10 +345,8 @@ void DeleteSurfaceTree_r(surfacetreenode_t *node)
 	}
 	else
 	{
-		DeleteSurfaceTree_r(node->children[0]);
-		free(node->children[0]);
-		DeleteSurfaceTree_r(node->children[1]);
-		free(node->children[1]);
+		delete node->children[0];
+		delete node->children[1];
 		delete node->nodefaces;
 	}
 }
@@ -504,7 +502,7 @@ static auto ChoosePlaneFromList(SurfaceBSP *surfaces, const vec3_t mins, const v
 
 	planecount = 0;
 	totalsplit = 0;
-	tmpvalue = (double(*)[2])malloc(g_numplanes * sizeof(double[2]));
+	tmpvalue = new double[g_numplanes][2];
 	surfacetree = BuildSurfaceTree(surfaces, ON_EPSILON);
 
 	//
@@ -609,7 +607,7 @@ static auto ChoosePlaneFromList(SurfaceBSP *surfaces, const vec3_t mins, const v
 
 	if (!bestsurface)
 		Error("ChoosePlaneFromList: no valid planes");
-	free(tmpvalue);
+	delete tmpvalue;
 	DeleteSurfaceTree(surfacetree);
 	return bestsurface;
 }
@@ -1051,9 +1049,9 @@ static void FreeLeafSurfs(NodeBSP *leaf)
 		for (f = surf->faces; f; f = fnext)
 		{
 			fnext = f->next;
-			FreeFace(f);
+			delete f;
 		}
-		FreeSurface(surf);
+		delete surf;
 	}
 
 	leaf->surfaces = nullptr;
@@ -1226,7 +1224,7 @@ static void MakeLeaf(NodeBSP *leafnode)
 		markfaces[nummarkfaces] = nullptr; // end marker
 		nummarkfaces++;
 
-		leafnode->markfaces = (FaceBSP **)malloc(nummarkfaces * sizeof(*leafnode->markfaces));
+		leafnode->markfaces = new FaceBSP *[nummarkfaces];
 		memcpy(leafnode->markfaces, markfaces, nummarkfaces * sizeof(*leafnode->markfaces));
 	}
 

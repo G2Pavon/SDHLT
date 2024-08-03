@@ -892,8 +892,8 @@ auto WindingDist(const WindingVIS *w[2]) -> vec_t
             continue;
         }
         planedist = DotProduct(planenormal, w[!side]->points[0]);
-        hlassume(boundnormals = (vec3_t *)malloc(w[!side]->numpoints * sizeof(vec3_t)), assume_NoMemory);
-        hlassume(bounddists = (vec_t *)malloc(w[!side]->numpoints * sizeof(vec_t)), assume_NoMemory);
+        hlassume(boundnormals = new vec3_t[w[!side]->numpoints], assume_NoMemory);
+        hlassume(bounddists = new vec_t[w[!side]->numpoints], assume_NoMemory);
         // build boundaries
         for (b = 0; b < w[!side]->numpoints; b++)
         {

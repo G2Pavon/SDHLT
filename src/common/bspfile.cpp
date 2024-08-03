@@ -732,16 +732,17 @@ void DoAllocBlock(lightmapblock_t *blocks, int w, int h)
 				Warning("CountBlocks: invalid extents %dx%d", w, h);
 				return;
 			}
-			block->next = (lightmapblock_t *)malloc(sizeof(lightmapblock_t));
+			block->next = new lightmapblock_t;
 			hlassume(block->next != nullptr, assume_NoMemory);
 			memset(block->next, 0, sizeof(lightmapblock_t));
 		}
 	}
 }
+
 auto CountBlocks() -> int
 {
 	lightmapblock_t *blocks;
-	blocks = (lightmapblock_t *)malloc(sizeof(lightmapblock_t));
+	blocks = new lightmapblock_t;
 	hlassume(blocks != nullptr, assume_NoMemory);
 	memset(blocks, 0, sizeof(lightmapblock_t));
 	int k;
@@ -793,7 +794,7 @@ auto CountBlocks() -> int
 			count++;
 		}
 		next = blocks->next;
-		free(blocks);
+		delete blocks;
 	}
 	return count;
 }
@@ -869,7 +870,7 @@ auto FindWadValue() -> char *
 			if (quotes[1] - (quotes[0] + 1) == (int)strlen("wad") && !strncmp(&g_dentdata[quotes[0] + 1], "wad", strlen("wad")))
 			{
 				int len = quotes[3] - (quotes[2] + 1);
-				char *value = (char *)malloc(len + 1);
+				char *value = new char[len + 1];
 				hlassume(value != nullptr, assume_NoMemory);
 				memcpy(value, &g_dentdata[quotes[2] + 1], len);
 				value[len] = '\0';
@@ -1087,7 +1088,7 @@ void DeleteEmbeddedLightmaps()
 
 	// Step 2: remove redundant texinfo
 	{
-		bool *texinfoused = (bool *)malloc(g_numtexinfo * sizeof(bool));
+		bool *texinfoused = new bool[g_numtexinfo];
 		hlassume(texinfoused != nullptr, assume_NoMemory);
 
 		for (i = 0; i < g_numtexinfo; i++)
@@ -1123,13 +1124,13 @@ void DeleteEmbeddedLightmaps()
 			countremovedtexinfos++;
 		}
 		g_numtexinfo = i + 1; // shrink g_texinfo
-		free(texinfoused);
+		delete[] texinfoused;
 	}
 
 	// Step 3: remove redundant textures
 	{
 		int numremaining; // number of remaining textures
-		bool *textureused = (bool *)malloc(numtextures * sizeof(bool));
+		bool *textureused = new bool[numtextures];
 		hlassume(textureused != nullptr, assume_NoMemory);
 
 		for (i = 0; i < numtextures; i++)
@@ -1155,7 +1156,7 @@ void DeleteEmbeddedLightmaps()
 			countremovedtextures++;
 		}
 		numremaining = i + 1;
-		free(textureused);
+		delete[] textureused;
 
 		if (numremaining < numtextures)
 		{
@@ -1451,7 +1452,7 @@ void UnparseEntities()
 	{
 		int i, j;
 		int count = 0;
-		bool *lightneedcompare = (bool *)malloc(g_numentities * sizeof(bool));
+		bool *lightneedcompare = new bool[g_numentities];
 		hlassume(lightneedcompare != nullptr, assume_NoMemory);
 		memset(lightneedcompare, 0, g_numentities * sizeof(bool));
 		for (i = g_numentities - 1; i > -1; i--)
@@ -1486,7 +1487,7 @@ void UnparseEntities()
 		{
 			Log("%d redundant named lights optimized.\n", count);
 		}
-		free(lightneedcompare);
+		delete[] lightneedcompare;
 	}
 #endif
 	for (i = 0; i < g_numentities; i++)

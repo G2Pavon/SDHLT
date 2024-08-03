@@ -39,7 +39,7 @@ void fail()
 
 void compress_compatability_test()
 {
-	auto *v = (unsigned char *)malloc(16u);
+	auto *v = new unsigned char[16u];
 	memset(v, 0, 16u);
 	if (sizeof(char) != 1 || sizeof(unsigned int) != 4 || sizeof(float) != 4)
 		fail();
@@ -64,5 +64,5 @@ void compress_compatability_test()
 	for (i = 0; i < 5; ++i)
 		if (f[i] - ans[i] > 0.00001f || f[i] - ans[i] < -0.00001f)
 			fail();
-	free(v);
+	delete v;
 }

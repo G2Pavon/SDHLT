@@ -189,7 +189,7 @@ void ExpandBrushWithHullBrush(const Brush *brush, const BrushHull *hull0, const 
 	vec3_t normal;
 	vec3_t origin;
 
-	auto *axialbevel = (bool *)malloc(hb->numfaces * sizeof(bool));
+	auto *axialbevel = new bool[hb->numfaces];
 	memset(axialbevel, 0, hb->numfaces * sizeof(bool));
 	auto warned = false;
 
@@ -371,7 +371,7 @@ void ExpandBrushWithHullBrush(const Brush *brush, const BrushHull *hull0, const 
 		AddHullPlane(hull, normal, origin, true);
 	}
 
-	free(axialbevel);
+	delete axialbevel;
 }
 
 void ExpandBrush(Brush *brush, const int hullnum)
@@ -692,13 +692,13 @@ void SortSides(BrushHull *h)
 	{
 		numsides++;
 	}
-	auto **sides = (BrushFace **)malloc(numsides * sizeof(BrushFace *));
+	auto **sides = new BrushFace *[numsides];
 	hlassume(sides != nullptr, assume_NoMemory);
-	auto *normals = (vec3_t *)malloc(numsides * sizeof(vec3_t));
+	auto *normals = new vec3_t[numsides];
 	hlassume(normals != nullptr, assume_NoMemory);
-	auto *isused = (bool *)malloc(numsides * sizeof(bool));
+	auto *isused = new bool[numsides];
 	hlassume(isused != nullptr, assume_NoMemory);
-	auto *sorted = (int *)malloc(numsides * sizeof(int));
+	auto *sorted = new int[numsides];
 	hlassume(sorted != nullptr, assume_NoMemory);
 	for (i = 0, f = h->faces; f; i++, f = f->next)
 	{
@@ -731,10 +731,10 @@ void SortSides(BrushHull *h)
 	{
 		*(i >= 0 ? &sides[sorted[i]]->next : &h->faces) = (i + 1 < numsides ? sides[sorted[i + 1]] : nullptr);
 	}
-	free(sides);
-	free(normals);
-	free(isused);
-	free(sorted);
+	delete[] sides;
+	delete[] normals;
+	delete[] isused;
+	delete[] sorted;
 }
 void MakeHullFaces(const Brush *const b, BrushHull *h)
 {
@@ -1339,11 +1339,11 @@ auto CreateHullBrush(const Brush *b) -> HullBrush *
 
 	if (!failed)
 	{
-		hb = (HullBrush *)malloc(sizeof(HullBrush));
+		hb = new HullBrush;
 		hlassume(hb != nullptr, assume_NoMemory);
 
 		hb->numfaces = numplanes;
-		hb->faces = (HullBrushFace *)malloc(hb->numfaces * sizeof(HullBrushFace));
+		hb->faces = new HullBrushFace[hb->numfaces];
 		hlassume(hb->faces != nullptr, assume_NoMemory);
 		for (i = 0; i < numplanes; i++)
 		{
@@ -1351,7 +1351,7 @@ auto CreateHullBrush(const Brush *b) -> HullBrush *
 			VectorCopy(planes[i].normal, f->normal);
 			VectorCopy(w[i]->m_Points[0], f->point);
 			f->numvertexes = w[i]->m_NumPoints;
-			f->vertexes = (vec3_t *)malloc(f->numvertexes * sizeof(vec3_t));
+			f->vertexes = new vec3_t[f->numvertexes];
 			hlassume(f->vertexes != nullptr, assume_NoMemory);
 			for (k = 0; k < w[i]->m_NumPoints; k++)
 			{
@@ -1360,12 +1360,12 @@ auto CreateHullBrush(const Brush *b) -> HullBrush *
 		}
 
 		hb->numedges = numedges;
-		hb->edges = (HullBrushEdge *)malloc(hb->numedges * sizeof(HullBrushEdge));
+		hb->edges = new HullBrushEdge[hb->numedges];
 		hlassume(hb->edges != nullptr, assume_NoMemory);
 		memcpy(hb->edges, edges, hb->numedges * sizeof(HullBrushEdge));
 
 		hb->numvertexes = numvertexes;
-		hb->vertexes = (HullBrushVertex *)malloc(hb->numvertexes * sizeof(HullBrushVertex));
+		hb->vertexes = new HullBrushVertex[hb->numvertexes];
 		hlassume(hb->vertexes != nullptr, assume_NoMemory);
 		memcpy(hb->vertexes, vertexes, hb->numvertexes * sizeof(HullBrushVertex));
 	}
@@ -1386,23 +1386,23 @@ auto CreateHullBrush(const Brush *b) -> HullBrush *
 
 auto CopyHullBrush(const HullBrush *hb) -> HullBrush *
 {
-	auto *hb2 = (HullBrush *)malloc(sizeof(HullBrush));
+	auto *hb2 = new HullBrush;
 	hlassume(hb2 != nullptr, assume_NoMemory);
 	memcpy(hb2, hb, sizeof(HullBrush));
-	hb2->faces = (HullBrushFace *)malloc(hb->numfaces * sizeof(HullBrushFace));
+	hb2->faces = new HullBrushFace[hb->numfaces];
 	hlassume(hb2->faces != nullptr, assume_NoMemory);
 	memcpy(hb2->faces, hb->faces, hb->numfaces * sizeof(HullBrushFace));
-	hb2->edges = (HullBrushEdge *)malloc(hb->numedges * sizeof(HullBrushEdge));
+	hb2->edges = new HullBrushEdge[hb->numedges];
 	hlassume(hb2->edges != nullptr, assume_NoMemory);
 	memcpy(hb2->edges, hb->edges, hb->numedges * sizeof(HullBrushEdge));
-	hb2->vertexes = (HullBrushVertex *)malloc(hb->numvertexes * sizeof(HullBrushVertex));
+	hb2->vertexes = new HullBrushVertex[hb->numvertexes];
 	hlassume(hb2->vertexes != nullptr, assume_NoMemory);
 	memcpy(hb2->vertexes, hb->vertexes, hb->numvertexes * sizeof(HullBrushVertex));
 	for (int i = 0; i < hb->numfaces; i++)
 	{
 		auto *f2 = &hb2->faces[i];
 		const auto *f = &hb->faces[i];
-		f2->vertexes = (vec3_t *)malloc(f->numvertexes * sizeof(vec3_t));
+		f2->vertexes = new vec3_t[f->numvertexes];
 		hlassume(f2->vertexes != nullptr, assume_NoMemory);
 		memcpy(f2->vertexes, f->vertexes, f->numvertexes * sizeof(vec3_t));
 	}
@@ -1415,13 +1415,13 @@ void DeleteHullBrush(HullBrush *hb)
 	{
 		if (hbf->vertexes)
 		{
-			free(hbf->vertexes);
+			delete[] hbf->vertexes;
 		}
 	}
-	free(hb->faces);
-	free(hb->edges);
-	free(hb->vertexes);
-	free(hb);
+	delete[] hb->faces;
+	delete[] hb->edges;
+	delete[] hb->vertexes;
+	delete hb;
 }
 
 void InitDefaultHulls()
@@ -1432,7 +1432,7 @@ void InitDefaultHulls()
 		hs->id = strdup("");
 		hs->disabled = true;
 		hs->numbrushes = 0;
-		hs->brushes = (HullBrush **)malloc(0 * sizeof(HullBrush *));
+		hs->brushes = new HullBrush *[0];
 		hlassume(hs->brushes != nullptr, assume_NoMemory);
 	}
 }
@@ -1455,7 +1455,7 @@ void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthu
 	hs->id = strdup(id);
 	hs->disabled = disabled;
 	hs->numbrushes = 0;
-	hs->brushes = (HullBrush **)malloc(entity->numbrushes * sizeof(HullBrush *));
+	hs->brushes = new HullBrush *[entity->numbrushes];
 	for (int i = 0; i < entity->numbrushes; i++)
 	{
 		Brush *b = &g_mapbrushes[entity->firstbrush + i];
@@ -1482,12 +1482,12 @@ void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthu
 			{
 				DeleteHullBrush(target->brushes[i]);
 			}
-			free(target->brushes);
-			free(target->id);
+			delete[] target->brushes;
+			delete target->id;
 			target->id = strdup(hs->id);
 			target->disabled = hs->disabled;
 			target->numbrushes = hs->numbrushes;
-			target->brushes = (HullBrush **)malloc(hs->numbrushes * sizeof(HullBrush *));
+			target->brushes = new HullBrush *[hs->numbrushes];
 			hlassume(target->brushes != nullptr, assume_NoMemory);
 			for (int i = 0; i < hs->numbrushes; i++)
 			{
