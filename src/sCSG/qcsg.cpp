@@ -315,18 +315,6 @@ auto CopyFace(const BrushFace *const face) -> BrushFace *
     return newFace;
 }
 
-void FreeFaceList(BrushFace *f)
-{
-    if (f)
-    {
-        if (f->next)
-        {
-            FreeFaceList(f->next);
-        }
-        FreeFace(f);
-    }
-}
-
 static auto CopyFacesToOutside(BrushHull *bh) -> BrushFace *
 {
     BrushFace *outside = nullptr;

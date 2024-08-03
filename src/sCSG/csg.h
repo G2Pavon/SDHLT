@@ -61,7 +61,6 @@ extern auto NewFaceFromFace(const BrushFace *const in) -> BrushFace *;
 extern auto CopyFace(const BrushFace *const f) -> BrushFace *;
 
 extern void FreeFace(BrushFace *f);
-extern void FreeFaceList(BrushFace *f);
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);
 void OpenHullFiles();
 void WriteHullSizeFile();
