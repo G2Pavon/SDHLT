@@ -33,7 +33,7 @@
 extern auto strupr(char *string) -> char *;
 extern auto strlwr(char *string) -> char *;
 
-extern bool CDECL FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...);
+extern bool FORMAT_PRINTF(3, 4) safe_snprintf(char *const dest, const size_t count, const char *const args, ...);
 extern auto safe_strncpy(char *const dest, const char *const src, const size_t count) -> bool;
 extern auto safe_strncat(char *const dest, const char *const src, const size_t count) -> bool;
 extern auto TerminatedString(const char *buffer, const int size) -> bool;

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "vis.h"
 #include "threads.h"
 #include "log.h"

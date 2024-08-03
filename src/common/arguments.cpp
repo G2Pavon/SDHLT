@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "arguments.h"
 #include "log.h"
 

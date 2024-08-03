@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "mathlib.h"
 #include "log.h"
 #include "qrad.h"

@@ -1,6 +1,9 @@
 //
 //	Transparency Arrays for sparse and vismatrix methods
 //
+
+#include <string.h>
+
 #include "qrad.h"
 #include "threads.h"
 
@@ -106,7 +109,7 @@ void AddTransparencyToRawArray(const unsigned p1, const unsigned p2, const vec3_
 //===============================================
 // SortList
 //===============================================
-static auto CDECL SortList(const void *a, const void *b) -> int
+static auto SortList(const void *a, const void *b) -> int
 {
 	const transList_t *item1 = (transList_t *)a;
 	const transList_t *item2 = (transList_t *)b;
@@ -309,7 +312,7 @@ void AddStyleToStyleArray(const unsigned p1, const unsigned p2, const int style)
 	// unlock list
 	ThreadUnlock();
 }
-static auto CDECL SortStyleList(const void *a, const void *b) -> int
+static auto SortStyleList(const void *a, const void *b) -> int
 {
 	const styleList_t *item1 = (styleList_t *)a;
 	const styleList_t *item2 = (styleList_t *)b;

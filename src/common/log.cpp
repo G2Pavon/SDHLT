@@ -34,55 +34,55 @@ void ResetTmpFiles()
     char filename[_MAX_PATH];
 
     safe_snprintf(filename, _MAX_PATH, "%s.bsp", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.inc", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.p0", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.p1", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.p2", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.p3", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.prt", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.pts", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.lin", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.hsz", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.pln", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.b0", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.b1", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.b2", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.b3", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.wa_", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 
     safe_snprintf(filename, _MAX_PATH, "%s.ext", g_Mapname);
-    _unlink(filename);
+    unlink(filename);
 }
 
 void ResetLog()
@@ -90,7 +90,7 @@ void ResetLog()
     char logfilename[_MAX_PATH];
 
     safe_snprintf(logfilename, _MAX_PATH, "%s.log", g_Mapname);
-    _unlink(logfilename);
+    unlink(logfilename);
 }
 
 void ResetErrorLog()
@@ -98,7 +98,7 @@ void ResetErrorLog()
     char logfilename[_MAX_PATH];
 
     safe_snprintf(logfilename, _MAX_PATH, "%s.err", g_Mapname);
-    _unlink(logfilename);
+    unlink(logfilename);
 }
 
 void CheckForErrorLog()
@@ -147,7 +147,7 @@ void LogError(const char *const message)
     }
 }
 
-void CDECL CloseLog()
+void CloseLog()
 {
     if (CompileLog)
     {
@@ -199,7 +199,7 @@ void CheckFatal()
 //  Error
 //      for formatted error messages, fatals out
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1, 2) Error(const char *const error, ...)
+void FORMAT_PRINTF(1, 2) Error(const char *const error, ...)
 {
     char message[MAX_ERROR];
     char message2[MAX_ERROR];
@@ -223,7 +223,7 @@ void CDECL FORMAT_PRINTF(1, 2) Error(const char *const error, ...)
 //      automatically appends an extra newline to the message
 //      This function sets a flag that the compile should abort before completing
 // =====================================================================================
-void CDECL FORMAT_PRINTF(2, 3) Fatal(assume_msgs msgid, const char *const warning, ...)
+void FORMAT_PRINTF(2, 3) Fatal(assume_msgs msgid, const char *const warning, ...)
 {
     char message[MAX_WARNING];
     char message2[MAX_WARNING];
@@ -253,7 +253,7 @@ void CDECL FORMAT_PRINTF(2, 3) Fatal(assume_msgs msgid, const char *const warnin
 //  PrintOnce
 //      This function is only callable one time. Further calls will be ignored
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1, 2) PrintOnce(const char *const warning, ...)
+void FORMAT_PRINTF(1, 2) PrintOnce(const char *const warning, ...)
 {
     char message[MAX_WARNING];
     char message2[MAX_WARNING];
@@ -280,7 +280,7 @@ void CDECL FORMAT_PRINTF(1, 2) PrintOnce(const char *const warning, ...)
 //      For formatted warning messages
 //      automatically appends an extra newline to the message
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1, 2) Warning(const char *const warning, ...)
+void FORMAT_PRINTF(1, 2) Warning(const char *const warning, ...)
 {
     char message[MAX_WARNING];
     char message2[MAX_WARNING];
@@ -299,7 +299,7 @@ void CDECL FORMAT_PRINTF(1, 2) Warning(const char *const warning, ...)
 //  Log
 //      For formatted log output messages
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1, 2) Log(const char *const warning, ...)
+void FORMAT_PRINTF(1, 2) Log(const char *const warning, ...)
 {
     char message[MAX_MESSAGE];
 
@@ -456,7 +456,7 @@ auto InitConsole(int argc, char **argv) -> int
     return 0;
 }
 
-void CDECL FORMAT_PRINTF(1, 2) PrintConsole(const char *const warning, ...)
+void FORMAT_PRINTF(1, 2) PrintConsole(const char *const warning, ...)
 {
     char message[MAX_MESSAGE];
 

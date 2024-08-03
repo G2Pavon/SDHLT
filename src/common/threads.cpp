@@ -217,7 +217,7 @@ void ThreadUnlock()
 
 q_threadfunction q_entry;
 
-static auto CDECL ThreadEntryStub(void *pParam) -> void *
+static auto ThreadEntryStub(void *pParam) -> void *
 {
     q_entry((int)(intptr_t)pParam);
     return nullptr;

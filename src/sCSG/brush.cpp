@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "csg.h"
 #include "threads.h"
 #include "blockmem.h"
@@ -1427,7 +1429,7 @@ void InitDefaultHulls()
 	for (int h = 0; h < NUM_HULLS; h++)
 	{
 		HullShape *hs = &g_defaulthulls[h];
-		hs->id = _strdup("");
+		hs->id = strdup("");
 		hs->disabled = true;
 		hs->numbrushes = 0;
 		hs->brushes = (HullBrush **)malloc(0 * sizeof(HullBrush *));
@@ -1450,7 +1452,7 @@ void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthu
 	auto *hs = &g_hullshapes[g_numhullshapes];
 	g_numhullshapes++;
 
-	hs->id = _strdup(id);
+	hs->id = strdup(id);
 	hs->disabled = disabled;
 	hs->numbrushes = 0;
 	hs->brushes = (HullBrush **)malloc(entity->numbrushes * sizeof(HullBrush *));
@@ -1482,7 +1484,7 @@ void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthu
 			}
 			free(target->brushes);
 			free(target->id);
-			target->id = _strdup(hs->id);
+			target->id = strdup(hs->id);
 			target->disabled = hs->disabled;
 			target->numbrushes = hs->numbrushes;
 			target->brushes = (HullBrush **)malloc(hs->numbrushes * sizeof(HullBrush *));

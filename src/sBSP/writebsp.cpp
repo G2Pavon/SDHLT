@@ -1,3 +1,4 @@
+#include <string.h>
 #include <map>
 
 #include "bsp5.h"

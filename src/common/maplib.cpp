@@ -1,4 +1,6 @@
 #include <cstring>
+#include <cstdlib>
+
 #include "cmdlib.h"
 #include "filelib.h"
 #include "messages.h"

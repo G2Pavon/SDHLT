@@ -1,6 +1,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <string.h>
 
 #include "csg.h" // TODO: implement map.h
 #include "threads.h"
@@ -83,7 +84,7 @@ void CleanupName(const char *const in, char *out)
 // =====================================================================================
 //  lump_sorters
 // =====================================================================================
-auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
+auto lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;
@@ -98,7 +99,7 @@ auto CDECL lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> 
     }
 }
 
-auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
+auto lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
     auto *plump1 = (lumpinfo_t *)lump1;
     auto *plump2 = (lumpinfo_t *)lump2;

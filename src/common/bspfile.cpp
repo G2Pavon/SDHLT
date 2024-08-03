@@ -842,7 +842,7 @@ auto FindWadValue() -> char *
 				if (!inentity)
 					return nullptr;
 				inentity = false;
-				return _strdup(""); // only parse the first entity
+				return strdup(""); // only parse the first entity
 			}
 			else
 				return nullptr;
@@ -1199,13 +1199,13 @@ auto ParseEpair() -> EntityProperty *
 	if (strlen(g_token) >= MAX_KEY - 1)
 		Error("ParseEpair: Key token too long (%i > MAX_KEY)", (int)strlen(g_token));
 
-	e->key = _strdup(g_token);
+	e->key = strdup(g_token);
 	GetToken(false);
 
 	if (strlen(g_token) >= MAX_VAL - 1) // MAX_VALUE //vluzacn
 		Error("ParseEpar: Value token too long (%i > MAX_VALUE)", (int)strlen(g_token));
 
-	e->value = _strdup(g_token);
+	e->value = strdup(g_token);
 
 	return e;
 }
@@ -1644,7 +1644,7 @@ void dtexdata_init()
 	hlassume(g_dlightdata != nullptr, assume_NoMemory);
 }
 
-void CDECL dtexdata_free()
+void dtexdata_free()
 {
 	FreeBlock(g_dtexdata);
 	g_dtexdata = nullptr;

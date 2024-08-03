@@ -10,6 +10,8 @@
 	Modified by seedee (cdaniel9000@gmail.com)
 */
 
+#include <string.h>
+
 #include "bsp5.h"
 #include "arguments.h"
 #include "filelib.h"

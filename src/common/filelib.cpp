@@ -61,17 +61,17 @@ auto getfiledata(const char *const filename, char *buffer, const int buffersize)
 
     time(&start);
 
-    if ((handle = _open(filename, O_RDONLY)) != -1)
+    if ((handle = open(filename, O_RDONLY)) != -1)
     {
         int bytesread;
 
         Log("%-20s Restoring [%-13s - ", "BuildVisMatrix:", filename);
-        while ((bytesread = _read(handle, buffer, qmin(32 * 1024, buffersize - size))) > 0)
+        while ((bytesread = read(handle, buffer, qmin(32 * 1024, buffersize - size))) > 0)
         {
             size += bytesread;
             buffer += bytesread;
         }
-        _close(handle);
+        close(handle);
         time(&end);
         Log("%10.3fMB] (%li)\n", size / (1024.0 * 1024.0), end - start);
     }
@@ -79,7 +79,7 @@ auto getfiledata(const char *const filename, char *buffer, const int buffersize)
     if (buffersize != size)
     {
         Warning("Invalid file [%s] found.  File will be rebuilt!\n", filename);
-        _unlink(filename);
+        unlink(filename);
     }
 
     return size;

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "qrad.h"
 #include "filelib.h"
 #include "log.h"
@@ -40,7 +42,7 @@ struct wadfile_t
 wadfile_t *g_wadfiles = nullptr;
 bool g_wadfiles_opened;
 
-static auto CDECL lump_sorter_by_name(const void *lump1, const void *lump2) -> int
+static auto lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
 	auto *plump1 = (lumpinfo_t *)lump1;
 	auto *plump2 = (lumpinfo_t *)lump2;

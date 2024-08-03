@@ -382,6 +382,6 @@ extern auto EntityForModel(int modnum) -> Entity *;
 extern int g_max_map_miptex;
 extern int g_max_map_lightdata;
 extern void dtexdata_init();
-extern void CDECL dtexdata_free();
+extern void dtexdata_free();
 
 extern auto GetTextureByNumber(int texturenumber) -> char *;

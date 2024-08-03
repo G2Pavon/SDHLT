@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <string>
+#include <string.h>
 
 #include "vis.h"
 #include "arguments.h"
@@ -382,7 +383,7 @@ static void CalcVis()
 // =====================================================================================
 //  CheckNullToken
 // =====================================================================================
-static INLINE void FASTCALL CheckNullToken(const char *const token)
+static inline void CheckNullToken(const char *const token)
 {
     if (token == nullptr)
     {

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "qrad.h"
 #include "threads.h"
 

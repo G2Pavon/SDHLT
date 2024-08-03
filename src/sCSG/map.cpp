@@ -1,4 +1,5 @@
 #include <string>
+#include <string.h>
 
 #include "maplib.h"
 #include "csg.h"
@@ -54,7 +55,7 @@ auto CopyCurrentBrush(Entity *entity, const Brush *brush) -> Brush *
 	{
 		if (brush->hullshapes[h] != nullptr)
 		{
-			newb->hullshapes[h] = _strdup(brush->hullshapes[h]);
+			newb->hullshapes[h] = strdup(brush->hullshapes[h]);
 		}
 		else
 		{
@@ -213,7 +214,7 @@ static void ParseBrush(Entity *mapent)
 
 		if (*value) // If we have a value associated with the key from the entity properties copy the value to brush's hull shape for this hull
 		{
-			b->hullshapes[h] = _strdup(value);
+			b->hullshapes[h] = strdup(value);
 		}
 		else // Set brush hull shape for this hull to NULL
 		{
@@ -266,7 +267,7 @@ static void ParseBrush(Entity *mapent)
 
 		// read the     texturedef
 		GetToken(false);
-		_strupr(g_token);
+		strupr(g_token);
 		{ // Check for tool textures on the brush
 			if (!strncasecmp(g_token, "NOCLIP", 6) || !strncasecmp(g_token, "NULLNOCLIP", 10))
 			{

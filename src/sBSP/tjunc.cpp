@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "bsp5.h"
 #include "log.h"
 

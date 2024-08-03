@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "qrad.h"
 #include "blockmem.h"
 #include "threads.h"
@@ -420,7 +422,7 @@ void MakeScalesSparseVismatrix()
         }
         FreeVisMatrix();
         FreeTransparencyArrays();
-        _unlink(transferfile);
+        unlink(transferfile);
         // release visibility matrix
         DumpTransfersMemoryUsage();
         CreateFinalStyleArrays("dynamic shadow array");

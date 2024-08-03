@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <string.h>
+
 #include "compress.h"
 #include "log.h"
 

@@ -13,6 +13,7 @@
 
 #include <string>
 #include <vector>
+#include <string.h>
 
 #include "qrad.h"
 #include "arguments.h"
@@ -1472,7 +1473,7 @@ static void MakePatches()
 // =====================================================================================
 //  patch_sorter
 // =====================================================================================
-static auto CDECL patch_sorter(const void *p1, const void *p2) -> int
+static auto patch_sorter(const void *p1, const void *p2) -> int
 {
 	auto *patch1 = (Patch *)p1;
 	auto *patch2 = (Patch *)p2;

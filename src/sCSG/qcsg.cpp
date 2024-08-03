@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "csg.h"
 #include "textures.h"
 #include "maplib.h"
