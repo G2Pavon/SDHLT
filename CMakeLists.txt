@@ -87,7 +87,6 @@ set(CSG_DIR ${DIR}/sCSG)
 set(CSG_SOURCES
     ${COMMON_SOURCES}
     ${CSG_DIR}/brush.cpp
-    ${CSG_DIR}/brushunion.cpp
     ${CSG_DIR}/hullfile.cpp
     ${CSG_DIR}/map.cpp
     ${CSG_DIR}/qcsg.cpp
