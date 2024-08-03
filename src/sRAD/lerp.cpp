@@ -1027,7 +1027,7 @@ static void GatherPatches(localtriangulation_t *lt, const facetriangulation_t *f
 	int i;
 	int facenum2;
 	const dplane_t *dp2;
-	const patch_t *patch2;
+	const Patch *patch2;
 	int patchnum2;
 	vec3_t v;
 	localtriangulation_t::Wedge point;
@@ -1406,7 +1406,7 @@ static auto CreateLocalTriangulation(const facetriangulation_t *facetrian, int p
 {
 	localtriangulation_t *lt;
 	int i;
-	const patch_t *patch;
+	const Patch *patch;
 	vec_t dot;
 	int facenum;
 	localtriangulation_t::Wedge *w;
@@ -1498,9 +1498,9 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 	int i;
 	int j;
 	int e;
-	const edgeshare_t *es;
+	const EdgeShare *es;
 	int side;
-	const facelist_t *fl;
+	const FaceList *fl;
 	int facenum;
 	int facenum2;
 	const dface_t *f;
@@ -1590,7 +1590,7 @@ static void BuildWalls(facetriangulation_t *facetrian)
 	const dplane_t *dp;
 	const dplane_t *dp2;
 	int e;
-	const edgeshare_t *es;
+	const EdgeShare *es;
 	vec_t dot;
 
 	facenum = facetrian->facenum;
@@ -1689,7 +1689,7 @@ void CreateTriangulations(int facenum)
 
 		facetriangulation_t *facetrian;
 		int patchnum;
-		const patch_t *patch;
+		const Patch *patch;
 		localtriangulation_t *lt;
 
 		g_facetriangulations[facenum] = new facetriangulation_t;

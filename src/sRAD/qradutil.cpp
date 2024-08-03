@@ -79,7 +79,7 @@ auto PointInLeaf(const vec3_t point) -> dleaf_t *
  * Fixes up patch planes for brush models with an origin brush
  * ==============
  */
-auto PatchPlaneDist(const patch_t *const patch) -> vec_t
+auto PatchPlaneDist(const Patch *const patch) -> vec_t
 {
 	const dplane_t *plane = getPlaneFromFaceNumber(patch->faceNumber);
 
@@ -257,7 +257,7 @@ auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane
 }
 
 // ApplyMatrix: (x y z 1)T -> matrix * (x y z 1)T
-void ApplyMatrix(const matrix_t &m, const vec3_t in, vec3_t &out)
+void ApplyMatrix(const Matrix &m, const vec3_t in, vec3_t &out)
 {
 	int i;
 
@@ -270,7 +270,7 @@ void ApplyMatrix(const matrix_t &m, const vec3_t in, vec3_t &out)
 }
 
 // ApplyMatrixOnPlane: (x y z -dist) -> (x y z -dist) * matrix
-void ApplyMatrixOnPlane(const matrix_t &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist)
+void ApplyMatrixOnPlane(const Matrix &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist)
 // out_normal is not normalized
 {
 	int i;
@@ -283,7 +283,7 @@ void ApplyMatrixOnPlane(const matrix_t &m_inverse, const vec3_t in_normal, vec_t
 	out_dist = -(DotProduct(in_normal, m_inverse.v[3]) - in_dist);
 }
 
-void MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right, matrix_t &m)
+void MultiplyMatrix(const Matrix &m_left, const Matrix &m_right, Matrix &m)
 // The following two processes are equivalent:
 //  1) ApplyMatrix (m1, v_in, v_temp), ApplyMatrix (m2, v_temp, v_out);
 //  2) MultiplyMatrix (m2, m1, m), ApplyMatrix (m, v_in, v_out);
@@ -301,15 +301,15 @@ void MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right, matrix_t &m
 	}
 }
 
-auto MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right) -> matrix_t
+auto MultiplyMatrix(const Matrix &m_left, const Matrix &m_right) -> Matrix
 {
-	matrix_t m;
+	Matrix m;
 
 	MultiplyMatrix(m_left, m_right, m);
 	return m;
 }
 
-void MatrixForScale(const vec3_t center, vec_t scale, matrix_t &m)
+void MatrixForScale(const vec3_t center, vec_t scale, Matrix &m)
 {
 	int i;
 
@@ -321,15 +321,15 @@ void MatrixForScale(const vec3_t center, vec_t scale, matrix_t &m)
 	VectorScale(center, 1 - scale, m.v[3]);
 }
 
-auto MatrixForScale(const vec3_t center, vec_t scale) -> matrix_t
+auto MatrixForScale(const vec3_t center, vec_t scale) -> Matrix
 {
-	matrix_t m;
+	Matrix m;
 
 	MatrixForScale(center, scale, m);
 	return m;
 }
 
-auto CalcMatrixSign(const matrix_t &m) -> vec_t
+auto CalcMatrixSign(const Matrix &m) -> vec_t
 {
 	vec3_t v;
 
@@ -337,7 +337,7 @@ auto CalcMatrixSign(const matrix_t &m) -> vec_t
 	return DotProduct(v, m.v[2]);
 }
 
-void TranslateWorldToTex(int facenum, matrix_t &m)
+void TranslateWorldToTex(int facenum, Matrix &m)
 // without g_face_offset
 {
 	dface_t *f;
@@ -359,7 +359,7 @@ void TranslateWorldToTex(int facenum, matrix_t &m)
 	m.v[3][2] = -fp->dist;
 }
 
-auto InvertMatrix(const matrix_t &m, matrix_t &m_inverse) -> bool
+auto InvertMatrix(const Matrix &m, Matrix &m_inverse) -> bool
 {
 	double texplanes[2][4];
 	double faceplane[4];
@@ -430,8 +430,8 @@ struct positionmap_t
 	int facenum;
 	vec3_t face_offset;
 	vec3_t face_centroid;
-	matrix_t worldtotex;
-	matrix_t textoworld;
+	Matrix worldtotex;
+	Matrix textoworld;
 	Winding *facewinding;
 	dplane_t faceplane;
 	Winding *facewindingwithoffset;

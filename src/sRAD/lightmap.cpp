@@ -2,7 +2,7 @@
 #include "threads.h"
 #include "hlassert.h"
 
-edgeshare_t g_edgeshare[MAX_MAP_EDGES];
+EdgeShare g_edgeshare[MAX_MAP_EDGES];
 vec3_t g_face_centroids[MAX_MAP_EDGES]; // BUG: should this be [MAX_MAP_FACES]?
 
 // #define TEXTURE_STEP   16.0
@@ -163,20 +163,20 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 	return 0;
 }
 
-static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &m, matrix_t &m_inverse) -> bool
+static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, Matrix &m, Matrix &m_inverse) -> bool
 // This function creates a matrix that can translate texture coords in face1 into texture coords in face2.
 // It keeps all points in the common edge invariant. For example, if there is a point in the edge, and in the texture of face1, its (s,t)=(16,0), and in face2, its (s,t)=(128,64), then we must let matrix*(16,0,0)=(128,64,0)
 {
-	matrix_t worldtotex;
-	matrix_t worldtotex2;
+	Matrix worldtotex;
+	Matrix worldtotex2;
 	dvertex_t *vert[2];
 	vec3_t face_vert[2];
 	vec3_t face2_vert[2];
 	vec3_t face_axis[2];
 	vec3_t face2_axis[2];
 	const vec3_t v_up = {0, 0, 1};
-	matrix_t edgetotex, edgetotex2;
-	matrix_t inv, inv2;
+	Matrix edgetotex, edgetotex2;
+	Matrix inv, inv2;
 
 	TranslateWorldToTex(facenum, worldtotex);
 	TranslateWorldToTex(facenum2, worldtotex2);
@@ -229,7 +229,7 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, matrix_t &
 
 void PairEdges()
 {
-	edgeshare_t *e;
+	EdgeShare *e;
 	memset(&g_edgeshare, 0, sizeof(g_edgeshare));
 
 	auto *f = g_dfaces;
@@ -417,7 +417,7 @@ void PairEdges()
 								{
 									in = true;
 								}
-								for (facelist_t *l = e->vertex_facelist[edgeend]; l; l = l->next)
+								for (FaceList *l = e->vertex_facelist[edgeend]; l; l = l->next)
 								{
 									if (fcurrent == l->face)
 									{
@@ -426,7 +426,7 @@ void PairEdges()
 								}
 								if (!in)
 								{
-									auto *l = (facelist_t *)malloc(sizeof(facelist_t));
+									auto *l = (FaceList *)malloc(sizeof(FaceList));
 									hlassume(l != nullptr, assume_NoMemory);
 									l->face = fcurrent;
 									l->next = e->vertex_facelist[edgeend];
@@ -776,8 +776,8 @@ struct samplefragedge_t
 	vec_t flippedangle;
 
 	vec_t ratio; // if ratio != 1, seam is unavoidable
-	matrix_t prevtonext;
-	matrix_t nexttoprev;
+	Matrix prevtonext;
+	Matrix nexttoprev;
 };
 
 struct samplefragrect_t
@@ -795,8 +795,8 @@ struct samplefrag_t
 	vec_t flippedangle; // copied from parent edge
 	bool noseam;		// copied from parent edge
 
-	matrix_t coordtomycoord; // v[2][2] > 0, v[2][0] = v[2][1] = v[0][2] = v[1][2] = 0.0
-	matrix_t mycoordtocoord;
+	Matrix coordtomycoord; // v[2][2] > 0, v[2][0] = v[2][1] = v[0][2] = v[1][2] = 0.0
+	Matrix mycoordtocoord;
 
 	vec3_t origin;			 // original s,t
 	vec3_t myorigin;		 // relative to the texture coordinate on that face
@@ -823,7 +823,7 @@ void ChopFrag(samplefrag_t *frag)
 // fill winding, windingplane, mywinding, mywindingplane, numedges, edges
 {
 	// get the shape of the fragment by clipping the face using the boundaries
-	matrix_t worldtotex;
+	Matrix worldtotex;
 	const vec3_t v_up = {0, 0, 1};
 
 	auto *f = &g_dfaces[frag->facenum];
@@ -1329,7 +1329,7 @@ static auto SetSampleFromST(vec_t *const point,
 
 	if (found)
 	{
-		matrix_t worldtotex, textoworld;
+		Matrix worldtotex, textoworld;
 		vec3_t tex;
 
 		TranslateWorldToTex(bestfrag->facenum, worldtotex);
@@ -1502,7 +1502,7 @@ struct facelight_t
 	sample_t *samples[MAXLIGHTMAPS];
 };
 
-static directlight_t *directlights[MAX_MAP_LEAFS];
+static DirectLight *directlights[MAX_MAP_LEAFS];
 static facelight_t facelight[MAX_MAP_FACES];
 static int numdlights;
 
@@ -1512,8 +1512,8 @@ static int numdlights;
 void CreateDirectLights()
 {
 	unsigned i;
-	patch_t *p;
-	directlight_t *dl;
+	Patch *p;
+	DirectLight *dl;
 	dleaf_t *leaf;
 	int leafnum;
 	entity_t *e;
@@ -1543,7 +1543,7 @@ void CreateDirectLights()
 			DotProduct(p->baselight, p->texturereflectivity) / 3 > 0.0 && !(g_face_texlights[p->faceNumber] && *ValueForKey(g_face_texlights[p->faceNumber], "_scale") && FloatForKey(g_face_texlights[p->faceNumber], "_scale") <= 0)) // LRC
 		{
 			numdlights++;
-			dl = (directlight_t *)calloc(1, sizeof(directlight_t));
+			dl = (DirectLight *)calloc(1, sizeof(DirectLight));
 
 			hlassume(dl != nullptr, assume_NoMemory);
 
@@ -1606,7 +1606,7 @@ void CreateDirectLights()
 			if (g_face_entity[p->faceNumber] - g_entities != 0 && !strncasecmp(GetTextureByNumber(f->texinfo), "!", 1))
 			{
 				numdlights++;
-				auto *dl2 = (directlight_t *)calloc(1, sizeof(directlight_t));
+				auto *dl2 = (DirectLight *)calloc(1, sizeof(DirectLight));
 				hlassume(dl2 != nullptr, assume_NoMemory);
 				*dl2 = *dl;
 				VectorMA(dl->origin, -2, dl->normal, dl2->origin);
@@ -1668,7 +1668,7 @@ void CreateDirectLights()
 		}
 
 		numdlights++;
-		dl = (directlight_t *)calloc(1, sizeof(directlight_t));
+		dl = (DirectLight *)calloc(1, sizeof(DirectLight));
 
 		hlassume(dl != nullptr, assume_NoMemory);
 
@@ -2061,10 +2061,10 @@ void CreateDirectLights()
 	Log("%i direct lights and %i fast direct lights\n", countnormallights, countfastlights);
 	Log("%i light styles\n", numstyles);
 	// move all emit_skylight to leaf 0 (the solid leaf)
-	directlight_t *skylights = nullptr;
+	DirectLight *skylights = nullptr;
 	for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
 	{
-		directlight_t **pdl;
+		DirectLight **pdl;
 		for (dl = directlights[l], pdl = &directlights[l]; dl; dl = *pdl)
 		{
 			if (dl->type == emit_skylight)
@@ -2740,7 +2740,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 // =====================================================================================
 static void AddSamplesToPatches(const sample_t **samples, const unsigned char *styles, int facenum, const lightinfo_t *l)
 {
-	patch_t *patch;
+	Patch *patch;
 	int i, j, m, k;
 
 	auto numtexwindings = 0;
@@ -3229,7 +3229,7 @@ void BuildFacelights(const int facenum)
 	int i;
 	int j;
 	int k;
-	patch_t *patch;
+	Patch *patch;
 	byte pvs[(MAX_MAP_LEAFS + 7) / 8];
 	int thisoffset = -1, lastoffset = -1;
 	vec3_t spot2, normal2;
@@ -4567,7 +4567,7 @@ void FinalLightFace(const int facenum)
 vec3_t totallight_default = {0, 0, 0};
 
 // LRC - utility for getting the right totallight value from a patch
-auto GetTotalLight(patch_t *patch, int style) -> vec3_t *
+auto GetTotalLight(Patch *patch, int style) -> vec3_t *
 {
 	for (int i = 0; i < MAXLIGHTMAPS && patch->totalstyle[i] != 255; i++)
 	{

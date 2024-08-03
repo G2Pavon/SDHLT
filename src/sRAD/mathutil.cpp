@@ -468,7 +468,7 @@ auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver
 // =====================================================================================
 //  GetAlternateOrigin
 // =====================================================================================
-void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const patch_t *patch, vec3_t &origin)
+void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const Patch *patch, vec3_t &origin)
 {
 	const dplane_t *faceplane;
 	const vec_t *faceplaneoffset;

@@ -27,10 +27,10 @@
 
 vec_t g_fade = DEFAULT_FADE;
 
-patch_t *g_face_patches[MAX_MAP_FACES];
+Patch *g_face_patches[MAX_MAP_FACES];
 entity_t *g_face_entity[MAX_MAP_FACES];
 eModelLightmodes g_face_lightmode[MAX_MAP_FACES];
-patch_t *g_patches;
+Patch *g_patches;
 entity_t *g_face_texlights[MAX_MAP_FACES];
 unsigned g_num_patches;
 
@@ -65,7 +65,7 @@ vec_t g_chop = DEFAULT_CHOP;
 vec_t g_texchop = DEFAULT_TEXCHOP;
 
 // Opaque faces
-opaqueList_t *g_opaque_face_list = nullptr;
+OpaqueList *g_opaque_face_list = nullptr;
 unsigned g_opaque_face_count = 0;
 unsigned g_max_opaque_face_count = 0; // Current array maximum (used for reallocs)
 vec_t g_corings[ALLSTYLES];
@@ -125,7 +125,7 @@ struct texlight_t
 static std::vector<texlight_t> s_texlights;
 typedef std::vector<texlight_t>::iterator texlight_i;
 
-std::vector<minlight_t> s_minlights;
+std::vector<MinLight> s_minlights;
 
 // =====================================================================================
 //  LightForTexture
@@ -212,7 +212,7 @@ static auto IsSpecial(const dface_t *const f) -> bool
 // =====================================================================================
 //  PlacePatchInside
 // =====================================================================================
-static auto PlacePatchInside(patch_t *patch) -> bool
+static auto PlacePatchInside(Patch *patch) -> bool
 {
 	const dplane_t *plane;
 	const vec_t *face_offset = g_face_offset[patch->faceNumber];
@@ -290,7 +290,7 @@ static auto PlacePatchInside(patch_t *patch) -> bool
 		return false;
 	}
 }
-static void UpdateEmitterInfo(patch_t *patch)
+static void UpdateEmitterInfo(Patch *patch)
 {
 	const vec_t *origin = patch->origin;
 	const Winding *winding = patch->winding;
@@ -344,7 +344,7 @@ static unsigned g_numwindings = 0;
 //  cutWindingWithGrid
 //      Caller must free this returned value at some point
 // =====================================================================================
-static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane_t *plB)
+static void cutWindingWithGrid(Patch *patch, const dplane_t *plA, const dplane_t *plB)
 // This function has been rewritten because the original one is not totally correct and may fail to do what it claims.
 {
 	// patch->winding->m_NumPoints must > 0
@@ -539,9 +539,9 @@ static void cutWindingWithGrid(patch_t *patch, const dplane_t *plA, const dplane
 //      From patch, determine perpindicular grid planes to subdivide with (returned in planeA and planeB)
 //      assume S and T is perpindicular (they SHOULD be in worldcraft 3.3 but aren't always . . .)
 // =====================================================================================
-static void getGridPlanes(const patch_t *const p, dplane_t *const pl)
+static void getGridPlanes(const Patch *const p, dplane_t *const pl)
 {
-	const patch_t *patch = p;
+	const Patch *patch = p;
 	dplane_t *planes = pl;
 	const dface_t *f = g_dfaces + patch->faceNumber;
 	texinfo_t *tx = &g_texinfo[f->texinfo];
@@ -563,14 +563,14 @@ static void getGridPlanes(const patch_t *const p, dplane_t *const pl)
 // =====================================================================================
 //  SubdividePatch
 // =====================================================================================
-static void SubdividePatch(patch_t *patch)
+static void SubdividePatch(Patch *patch)
 {
 	dplane_t planes[2];
 	dplane_t *plA = &planes[0];
 	dplane_t *plB = &planes[1];
 	Winding **winding;
 	unsigned x;
-	patch_t *new_patch;
+	Patch *new_patch;
 
 	memset(windingArray, 0, sizeof(windingArray));
 	g_numwindings = 0;
@@ -599,7 +599,7 @@ static void SubdividePatch(patch_t *patch)
 	{
 		if (*winding)
 		{
-			memcpy(new_patch, patch, sizeof(patch_t));
+			memcpy(new_patch, patch, sizeof(Patch));
 
 			new_patch->winding = *winding;
 			new_patch->area = new_patch->winding->getArea();
@@ -805,7 +805,7 @@ void ReadLightingCone()
 	}
 }
 
-static auto getScale(const patch_t *const patch) -> vec_t
+static auto getScale(const Patch *const patch) -> vec_t
 {
 	dface_t *f = g_dfaces + patch->faceNumber;
 	texinfo_t *tx = &g_texinfo[f->texinfo];
@@ -832,7 +832,7 @@ static auto getScale(const patch_t *const patch) -> vec_t
 // =====================================================================================
 //  getChop
 // =====================================================================================
-static auto getEmitMode(const patch_t *patch) -> bool
+static auto getEmitMode(const Patch *patch) -> bool
 {
 	bool emitmode = false;
 	vec_t value =
@@ -866,7 +866,7 @@ static auto getEmitMode(const patch_t *patch) -> bool
 	}
 	return emitmode;
 }
-static auto getChop(const patch_t *const patch) -> vec_t
+static auto getChop(const Patch *const patch) -> vec_t
 {
 	vec_t rval;
 
@@ -917,7 +917,7 @@ static void MakePatchForFace(const int fn, Winding *w, int style, int bouncestyl
 				Error("invalid light style: style (%d) >= ALLSTYLES (%d)", style, ALLSTYLES);
 			}
 		}
-		patch_t *patch;
+		Patch *patch;
 		vec3_t light;
 		vec3_t centroid = {0, 0, 0};
 
@@ -935,7 +935,7 @@ static void MakePatchForFace(const int fn, Winding *w, int style, int bouncestyl
 
 		patch = &g_patches[g_num_patches];
 		hlassume(g_num_patches < MAX_PATCHES, assume_MAX_PATCHES);
-		memset(patch, 0, sizeof(patch_t));
+		memset(patch, 0, sizeof(Patch));
 
 		patch->winding = w;
 
@@ -990,7 +990,7 @@ static void MakePatchForFace(const int fn, Winding *w, int style, int bouncestyl
 				int x;
 				for (x = 0; x < g_opaque_face_count; x++)
 				{
-					opaqueList_t *op = &g_opaque_face_list[x];
+					OpaqueList *op = &g_opaque_face_list[x];
 					if (op->entitynum == g_face_entity[fn] - g_entities)
 					{
 						opacity = 1.0;
@@ -1094,13 +1094,13 @@ static void AddFaceToOpaqueList(
 	if (g_opaque_face_count == g_max_opaque_face_count)
 	{
 		g_max_opaque_face_count += OPAQUE_ARRAY_GROWTH_SIZE;
-		g_opaque_face_list = (opaqueList_t *)realloc(g_opaque_face_list, sizeof(opaqueList_t) * g_max_opaque_face_count);
+		g_opaque_face_list = (OpaqueList *)realloc(g_opaque_face_list, sizeof(OpaqueList) * g_max_opaque_face_count);
 
 		hlassume(g_opaque_face_list != nullptr, assume_NoMemory);
 	}
 
 	{
-		opaqueList_t *opaque = &g_opaque_face_list[g_opaque_face_count];
+		OpaqueList *opaque = &g_opaque_face_list[g_opaque_face_count];
 
 		g_opaque_face_count++;
 
@@ -1125,7 +1125,7 @@ static void AddFaceToOpaqueList(
 static void FreeOpaqueFaceList()
 {
 	unsigned x;
-	opaqueList_t *opaque = g_opaque_face_list;
+	OpaqueList *opaque = g_opaque_face_list;
 
 	for (x = 0; x < g_opaque_face_count; x++, opaque++)
 	{
@@ -1336,7 +1336,7 @@ static void MakePatches()
 	Log("%i faces\n", g_numfaces);
 
 	Log("Create Patches : ");
-	g_patches = (patch_t *)AllocBlock(MAX_PATCHES * sizeof(patch_t));
+	g_patches = (Patch *)AllocBlock(MAX_PATCHES * sizeof(Patch));
 
 	for (i = 0; i < g_nummodels; i++)
 	{
@@ -1474,8 +1474,8 @@ static void MakePatches()
 // =====================================================================================
 static auto CDECL patch_sorter(const void *p1, const void *p2) -> int
 {
-	auto *patch1 = (patch_t *)p1;
-	auto *patch2 = (patch_t *)p2;
+	auto *patch1 = (Patch *)p1;
+	auto *patch2 = (Patch *)p2;
 
 	if (patch1->faceNumber < patch2->faceNumber)
 	{
@@ -1498,18 +1498,18 @@ static auto CDECL patch_sorter(const void *p1, const void *p2) -> int
 static void SortPatches()
 {
 	// SortPatches is the ideal place to do this, because the address of the patches are going to be invalidated.
-	patch_t *old_patches = g_patches;
-	g_patches = (patch_t *)AllocBlock((g_num_patches + 1) * sizeof(patch_t)); // allocate one extra slot considering how terribly the code were written
-	memcpy(g_patches, old_patches, g_num_patches * sizeof(patch_t));
+	Patch *old_patches = g_patches;
+	g_patches = (Patch *)AllocBlock((g_num_patches + 1) * sizeof(Patch)); // allocate one extra slot considering how terribly the code were written
+	memcpy(g_patches, old_patches, g_num_patches * sizeof(Patch));
 	FreeBlock(old_patches);
-	qsort((void *)g_patches, (size_t)g_num_patches, sizeof(patch_t), patch_sorter);
+	qsort((void *)g_patches, (size_t)g_num_patches, sizeof(Patch), patch_sorter);
 
 	// Fixup g_face_patches & Fixup patch->next
 	memset(g_face_patches, 0, sizeof(g_face_patches));
 	{
 		unsigned x;
-		patch_t *patch = g_patches + 1;
-		patch_t *prev = g_patches;
+		Patch *patch = g_patches + 1;
+		Patch *prev = g_patches;
 
 		g_face_patches[prev->faceNumber] = prev;
 
@@ -1529,7 +1529,7 @@ static void SortPatches()
 	}
 	for (unsigned x = 0; x < g_num_patches; x++)
 	{
-		patch_t *patch = &g_patches[x];
+		Patch *patch = &g_patches[x];
 		patch->leafnum = PointInLeaf(patch->origin) - g_dleafs;
 	}
 }
@@ -1540,7 +1540,7 @@ static void SortPatches()
 static void FreePatches()
 {
 	unsigned x;
-	patch_t *patch = g_patches;
+	Patch *patch = g_patches;
 
 	// AJM EX
 	// Log("patches: %i of %i (%2.2lf percent)\n", g_num_patches, MAX_PATCHES, (double)((double)g_num_patches / (double)MAX_PATCHES));
@@ -1549,7 +1549,7 @@ static void FreePatches()
 	{
 		delete patch->winding;
 	}
-	memset(g_patches, 0, sizeof(patch_t) * g_num_patches);
+	memset(g_patches, 0, sizeof(Patch) * g_num_patches);
 	FreeBlock(g_patches);
 	g_patches = nullptr;
 }
@@ -1564,7 +1564,7 @@ static void WriteWorld(const char *const name)
 	unsigned i;
 	unsigned j;
 	FILE *out;
-	patch_t *patch;
+	Patch *patch;
 	Winding *w;
 
 	out = fopen(name, "w");
@@ -1596,7 +1596,7 @@ static void CollectLight()
 {
 	unsigned j; // LRC
 	unsigned i;
-	patch_t *patch;
+	Patch *patch;
 
 	for (i = 0, patch = g_patches; i < g_num_patches; i++, patch++)
 	{
@@ -1638,14 +1638,14 @@ static void CollectLight()
 static void GatherLight(int threadnum)
 {
 	int j;
-	patch_t *patch;
+	Patch *patch;
 
 	unsigned k, m; // LRC
 	// LRC    vec3_t          sum;
 
 	unsigned iIndex;
 	transfer_data_t *tData;
-	transfer_index_t *tIndex;
+	TransferIndex *tIndex;
 	float f;
 	vec3_t adds[ALLSTYLES];
 	int style;
@@ -1681,7 +1681,7 @@ static void GatherLight(int threadnum)
 			{
 				vec3_t v;
 				// LRC:
-				patch_t *emitpatch = &g_patches[patchnum];
+				Patch *emitpatch = &g_patches[patchnum];
 				unsigned emitstyle;
 				int opaquestyle = -1;
 				GetStyle(j, patchnum, opaquestyle, fastfind_index);
@@ -1795,14 +1795,14 @@ static void GatherLight(int threadnum)
 static void GatherRGBLight(int threadnum)
 {
 	int j;
-	patch_t *patch;
+	Patch *patch;
 
 	unsigned k, m; // LRC
 	// LRC    vec3_t          sum;
 
 	unsigned iIndex;
 	rgb_transfer_data_t *tRGBData;
-	transfer_index_t *tIndex;
+	TransferIndex *tIndex;
 	float f[3];
 	vec3_t adds[ALLSTYLES];
 	int style;
@@ -1837,7 +1837,7 @@ static void GatherRGBLight(int threadnum)
 			{
 				vec3_t v;
 				// LRC:
-				patch_t *emitpatch = &g_patches[patchnum];
+				Patch *emitpatch = &g_patches[patchnum];
 				unsigned emitstyle;
 				int opaquestyle = -1;
 				GetStyle(j, patchnum, opaquestyle, fastfind_index);
@@ -1959,7 +1959,7 @@ static void BounceLight()
 
 	for (i = 0; i < g_num_patches; i++)
 	{
-		patch_t *patch = &g_patches[i];
+		Patch *patch = &g_patches[i];
 		for (j = 0; j < MAXLIGHTMAPS && patch->totalstyle[j] != 255; j++)
 		{
 			VectorCopy(patch->totallight[j], emitlight[i][j]);
@@ -1976,7 +1976,7 @@ static void BounceLight()
 	}
 	for (i = 0; i < g_num_patches; i++)
 	{
-		patch_t *patch = &g_patches[i];
+		Patch *patch = &g_patches[i];
 		for (j = 0; j < MAXLIGHTMAPS && patch->totalstyle[j] != 255; j++)
 		{
 			VectorCopy(emitlight[i][j], patch->totallight[j]);
@@ -2006,7 +2006,7 @@ static void MakeScalesStub()
 static void FreeTransfers()
 {
 	unsigned x;
-	patch_t *patch = g_patches;
+	Patch *patch = g_patches;
 
 	for (x = 0; x < g_num_patches; x++, patch++)
 	{
@@ -2161,7 +2161,7 @@ void ReadInfoTexAndMinlights()
 	entity_t *mapent;
 	epair_t *ep;
 	texlight_t texlight;
-	minlight_t minlight;
+	MinLight minlight;
 
 	for (k = 0; k < g_numentities; k++)
 	{

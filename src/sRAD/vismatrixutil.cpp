@@ -11,7 +11,7 @@ size_t g_transfer_data_bytes = 0;
 #define COMPRESSED_TRANSFERS
 // #undef  COMPRESSED_TRANSFERS
 
-auto FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const patch, const unsigned patchnum) -> int
+auto FindTransferOffsetPatchnum(TransferIndex *tIndex, const Patch *const patch, const unsigned patchnum) -> int
 {
 	//
 	// binary search for match
@@ -36,7 +36,7 @@ auto FindTransferOffsetPatchnum(transfer_index_t *tIndex, const patch_t *const p
 		{
 			unsigned x;
 			unsigned int rval = 0;
-			transfer_index_t *pIndex = tIndex;
+			TransferIndex *pIndex = tIndex;
 
 			for (x = 0; x < offset; x++, pIndex++)
 			{
@@ -78,7 +78,7 @@ static auto GetLengthOfRun(const transfer_raw_index_t *raw, const transfer_raw_i
 	return run_size;
 }
 
-static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize) -> transfer_index_t *
+static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize) -> TransferIndex *
 {
 	unsigned x;
 	unsigned size = rawSize;
@@ -100,8 +100,8 @@ static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned 
 		return nullptr;
 	}
 
-	auto *CompressedArray = (transfer_index_t *)AllocBlock(sizeof(transfer_index_t) * compressed_count_1);
-	transfer_index_t *compressed = CompressedArray;
+	auto *CompressedArray = (TransferIndex *)AllocBlock(sizeof(TransferIndex) * compressed_count_1);
+	TransferIndex *compressed = CompressedArray;
 
 	for (x = 0; x < size; x++, raw++, compressed++)
 	{
@@ -120,7 +120,7 @@ static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned 
 	}
 
 	ThreadLock();
-	g_transfer_index_bytes += sizeof(transfer_index_t) * compressed_count;
+	g_transfer_index_bytes += sizeof(TransferIndex) * compressed_count;
 	ThreadUnlock();
 
 	return CompressedArray;
@@ -128,7 +128,7 @@ static auto CompressTransferIndicies(transfer_raw_index_t *tRaw, const unsigned 
 
 #else  /*COMPRESSED_TRANSFERS*/
 
-static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize)
+static TransferIndex *CompressTransferIndicies(const transfer_raw_index_t *tRaw, const unsigned rawSize, unsigned *iSize)
 {
 	unsigned x;
 	unsigned size = rawSize;
@@ -142,8 +142,8 @@ static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tR
 		return NULL;
 	}
 
-	transfer_index_t CompressedArray = (transfer_index_t *)AllocBlock(sizeof(transfer_index_t) * size);
-	transfer_index_t *compressed = CompressedArray;
+	TransferIndex CompressedArray = (TransferIndex *)AllocBlock(sizeof(TransferIndex) * size);
+	TransferIndex *compressed = CompressedArray;
 
 	for (x = 0; x < size; x++, raw++, compressed++)
 	{
@@ -155,7 +155,7 @@ static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tR
 	*iSize = compressed_count;
 
 	ThreadLock();
-	g_transfer_index_bytes += sizeof(transfer_index_t) * size;
+	g_transfer_index_bytes += sizeof(TransferIndex) * size;
 	ThreadUnlock();
 
 	return CompressedArray;
@@ -173,7 +173,7 @@ static transfer_index_t *CompressTransferIndicies(const transfer_raw_index_t *tR
 
 auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out) -> bool
 {
-	patch_t *emitpatch = &g_patches[emitter];
+	Patch *emitpatch = &g_patches[emitter];
 
 	VectorFill(transparency_out, 1.0);
 
@@ -236,8 +236,8 @@ void MakeScales(const int threadnum)
 	vec_t dist;
 	int count;
 	float trans;
-	patch_t *patch;
-	patch_t *patch2;
+	Patch *patch;
+	Patch *patch2;
 	vec3_t origin;
 	const vec_t *normal1;
 	const vec_t *normal2;
@@ -249,7 +249,7 @@ void MakeScales(const int threadnum)
 	transfer_raw_index_t *tIndex;
 	float *tData;
 
-	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
+	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(TransferIndex) * (g_num_patches + 1));
 	auto *tData_All = (float *)AllocBlock(sizeof(float) * (g_num_patches + 1));
 
 	count = 0;
@@ -482,8 +482,8 @@ void MakeRGBScales(const int threadnum)
 	int count;
 	float trans[3];
 	float trans_one;
-	patch_t *patch;
-	patch_t *patch2;
+	Patch *patch;
+	Patch *patch2;
 	vec3_t origin;
 	const vec_t *normal1;
 	const vec_t *normal2;
@@ -494,7 +494,7 @@ void MakeRGBScales(const int threadnum)
 	transfer_raw_index_t *tIndex;
 	float *tRGBData;
 
-	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(transfer_index_t) * (g_num_patches + 1));
+	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(TransferIndex) * (g_num_patches + 1));
 	auto *tRGBData_All = (float *)AllocBlock(sizeof(float[3]) * (g_num_patches + 1));
 
 	count = 0;

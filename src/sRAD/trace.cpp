@@ -427,7 +427,7 @@ struct opaquenode_t
 	int numfaces;
 };
 opaquenode_t *opaquenodes;
-opaquemodel_t *opaquemodels;
+OpaqueModel *opaquemodels;
 
 auto TryMerge(opaqueface_t *f, const opaqueface_t *f2) -> bool
 {
@@ -607,7 +607,7 @@ void BuildFaceEdges(opaqueface_t *f)
 void CreateOpaqueNodes()
 {
 	int i, j;
-	opaquemodels = (opaquemodel_t *)calloc(g_nummodels, sizeof(opaquemodel_t));
+	opaquemodels = (OpaqueModel *)calloc(g_nummodels, sizeof(OpaqueModel));
 	opaquenodes = (opaquenode_t *)calloc(g_numnodes, sizeof(opaquenode_t));
 	opaquefaces = (opaqueface_t *)calloc(g_numfaces, sizeof(opaqueface_t));
 	for (i = 0; i < g_numfaces; i++)
@@ -635,7 +635,7 @@ void CreateOpaqueNodes()
 				of->tex_vecs[j][k] = info->vecs[j][k];
 			}
 		}
-		radtexture_t *tex = &g_textures[info->miptex];
+		RADTexture *tex = &g_textures[info->miptex];
 		of->tex_alphatest = tex->name[0] == '{';
 		of->tex_width = tex->width;
 		of->tex_height = tex->height;
@@ -660,7 +660,7 @@ void CreateOpaqueNodes()
 	}
 	for (i = 0; i < g_nummodels; i++)
 	{
-		opaquemodel_t *om = &opaquemodels[i];
+		OpaqueModel *om = &opaquemodels[i];
 		dmodel_t *dm = &g_dmodels[i];
 		om->headnode = dm->headnode[0];
 		for (j = 0; j < 3; j++)
@@ -787,7 +787,7 @@ auto TestLineOpaque_r(int nodenum, const vec3_t start, const vec3_t stop) -> int
 
 auto TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop) -> int
 {
-	opaquemodel_t *thismodel = &opaquemodels[modelnum];
+	OpaqueModel *thismodel = &opaquemodels[modelnum];
 	vec_t front, back, frac;
 	vec3_t p1, p2;
 	VectorSubtract(start, modelorigin, p1);

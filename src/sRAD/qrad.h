@@ -63,7 +63,7 @@ constexpr int ALLSTYLES = 64; // HL limit. //--vluzacn
 
 constexpr int BOGUS_RANGE = 131072;
 
-struct matrix_t
+struct Matrix
 {
 	vec_t v[4][3];
 };
@@ -87,9 +87,9 @@ typedef enum
 	emit_skylight
 } emittype_t;
 
-struct directlight_t
+struct DirectLight
 {
-	struct directlight_t *next;
+	struct DirectLight *next;
 	emittype_t type;
 	int style;
 	vec3_t origin;
@@ -115,12 +115,12 @@ struct directlight_t
 
 	vec_t patch_area;
 	vec_t patch_emitter_range;
-	struct patch_t *patch;
+	struct Patch *patch;
 	vec_t texlightgap;
 	bool topatch;
 };
 
-struct transfer_index_t
+struct TransferIndex
 {
 	unsigned size : 12;
 	unsigned index : 20;
@@ -133,7 +133,7 @@ typedef unsigned char rgb_transfer_data_t;
 
 constexpr int MAX_COMPRESSED_TRANSFER_INDEX_SIZE = (1 << 12) - 1;
 
-constexpr int MAX_PATCHES = 65535 * 16; // limited by transfer_index_t
+constexpr int MAX_PATCHES = 65535 * 16; // limited by TransferIndex
 constexpr int MAX_VISMATRIX_PATCHES = 65535;
 constexpr int MAX_SPARSE_VISMATRIX_PATCHES = MAX_PATCHES;
 
@@ -143,11 +143,11 @@ typedef enum
 	ePatchFlagOutside = 1
 } ePatchFlags;
 
-struct patch_t
+struct Patch
 {
-	struct patch_t *next; // next in face
-	vec3_t origin;		  // Center centroid of winding (cached info calculated from winding)
-	vec_t area;			  // Surface area of this patch (cached info calculated from winding)
+	struct Patch *next; // next in face
+	vec3_t origin;		// Center centroid of winding (cached info calculated from winding)
+	vec_t area;			// Surface area of this patch (cached info calculated from winding)
 	vec_t exposure;
 	vec_t emitter_range;  // Range from patch origin (cached info calculated from winding)
 	int emitter_skylevel; // The "skylevel" used for sampling of normals, when the receiver patch is within the range of ACCURATEBOUNCE_THRESHOLD * this->radius. (cached info calculated from winding)
@@ -158,7 +158,7 @@ struct patch_t
 	unsigned iIndex;
 	unsigned iData;
 
-	transfer_index_t *tIndex;
+	TransferIndex *tIndex;
 	transfer_data_t *tData;
 	rgb_transfer_data_t *tRGBData;
 
@@ -188,14 +188,14 @@ struct patch_t
 };
 
 // LRC
-auto GetTotalLight(patch_t *patch, int style) -> vec3_t *;
+auto GetTotalLight(Patch *patch, int style) -> vec3_t *;
 
-struct facelist_t
+struct FaceList
 {
 	dface_t *face;
-	facelist_t *next;
+	FaceList *next;
 };
-struct edgeshare_t
+struct EdgeShare
 {
 	dface_t *faces[2];
 	vec3_t interface_normal; // HLRAD_GetPhongNormal_VL: this field must be set when smooth==true
@@ -203,11 +203,11 @@ struct edgeshare_t
 	vec_t cos_normals_angle; // HLRAD_GetPhongNormal_VL: this field must be set when smooth==true
 	bool coplanar;
 	bool smooth;
-	facelist_t *vertex_facelist[2]; // possible smooth faces, not include faces[0] and faces[1]
-	matrix_t textotex[2];			// how we translate texture coordinates from one face to the other face
+	FaceList *vertex_facelist[2]; // possible smooth faces, not include faces[0] and faces[1]
+	Matrix textotex[2];			  // how we translate texture coordinates from one face to the other face
 };
 
-extern edgeshare_t g_edgeshare[MAX_MAP_EDGES];
+extern EdgeShare g_edgeshare[MAX_MAP_EDGES];
 
 //
 // lerp.c stuff
@@ -221,7 +221,7 @@ typedef enum
 	eModelLightmodeNonsolid = 0x08, // for opaque entities with {texture
 } eModelLightmodes;
 
-struct opaqueList_t
+struct OpaqueList
 {
 	int entitynum;
 	int modelnum;
@@ -236,7 +236,7 @@ struct opaqueList_t
 
 constexpr int OPAQUE_ARRAY_GROWTH_SIZE = 1024;
 
-struct radtexture_t
+struct RADTexture
 {
 	char name[16]; // not always same with the name in texdata
 	int width, height;
@@ -245,30 +245,30 @@ struct radtexture_t
 	vec3_t reflectivity;
 };
 extern int g_numtextures;
-extern radtexture_t *g_textures;
+extern RADTexture *g_textures;
 extern void LoadTextures();
 extern void EmbedLightmapInTextures();
 
-struct minlight_t
+struct MinLight
 {
 	std::string name;
 	float value;
 }; // info_minlights
 
-typedef std::vector<minlight_t>::iterator minlight_i;
+typedef std::vector<MinLight>::iterator minlight_i;
 
 //
 // qrad globals
 //
 
-extern std::vector<minlight_t> s_minlights;
-extern patch_t *g_face_patches[MAX_MAP_FACES];
+extern std::vector<MinLight> s_minlights;
+extern Patch *g_face_patches[MAX_MAP_FACES];
 extern entity_t *g_face_entity[MAX_MAP_FACES];
 extern vec3_t g_face_offset[MAX_MAP_FACES]; // for models with origins
 extern eModelLightmodes g_face_lightmode[MAX_MAP_FACES];
 extern vec3_t g_face_centroids[MAX_MAP_EDGES];
 extern entity_t *g_face_texlights[MAX_MAP_FACES];
-extern patch_t *g_patches; // shrinked to its real size, because 1048576 patches * 256 bytes = 256MB will be too big
+extern Patch *g_patches; // shrinked to its real size, because 1048576 patches * 256 bytes = 256MB will be too big
 extern unsigned g_num_patches;
 
 extern float g_lightscale;
@@ -290,7 +290,7 @@ extern char g_source[_MAX_PATH];
 extern vec_t g_fade;
 extern vec_t g_chop;	// Chop value for normal textures
 extern vec_t g_texchop; // Chop value for texture lights
-extern opaqueList_t *g_opaque_face_list;
+extern OpaqueList *g_opaque_face_list;
 extern unsigned g_opaque_face_count;	 // opaque entity count //HLRAD_OPAQUE_NODE
 extern unsigned g_max_opaque_face_count; // Current array maximum (used for reallocs)
 
@@ -329,12 +329,12 @@ extern void AddPatchLights(int facenum);
 extern void FreeFacelightDependencyList();
 extern auto TestLine(const vec3_t start, const vec3_t stop, vec_t *skyhitout = nullptr) -> int;
 
-struct opaquemodel_t
+struct OpaqueModel
 {
 	vec3_t mins, maxs;
 	int headnode;
 };
-extern opaquemodel_t *opaquemodels;
+extern OpaqueModel *opaquemodels;
 
 extern void CreateOpaqueNodes();
 extern auto TestLineOpaque(int modelnum, const vec3_t modelorigin, const vec3_t start, const vec3_t stop) -> int;
@@ -343,7 +343,7 @@ extern void DeleteOpaqueNodes();
 extern auto TestPointOpaque_r(int nodenum, bool solid, const vec3_t point) -> int;
 FORCEINLINE int TestPointOpaque(int modelnum, const vec3_t modelorigin, bool solid, const vec3_t point) // use "forceinline" because "inline" does nothing here (TODO: move to trace.cpp)
 {
-	opaquemodel_t *thismodel = &opaquemodels[modelnum];
+	OpaqueModel *thismodel = &opaquemodels[modelnum];
 	vec3_t newpoint;
 	VectorSubtract(point, modelorigin, newpoint);
 	int axial;
@@ -367,22 +367,22 @@ extern auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3
 extern void MdlLightHack();
 
 // qradutil.c
-extern auto PatchPlaneDist(const patch_t *const patch) -> vec_t;
+extern auto PatchPlaneDist(const Patch *const patch) -> vec_t;
 extern auto PointInLeaf(const vec3_t point) -> dleaf_t *;
 extern void MakeBackplanes();
 extern auto getPlaneFromFace(const dface_t *const face) -> const dplane_t *;
 extern auto getPlaneFromFaceNumber(unsigned int facenum) -> const dplane_t *;
 extern void getAdjustedPlaneFromFaceNumber(unsigned int facenum, dplane_t *plane);
 extern auto HuntForWorld(vec_t *point, const vec_t *plane_offset, const dplane_t *plane, int hunt_size, vec_t hunt_scale, vec_t hunt_offset) -> dleaf_t *;
-extern void ApplyMatrix(const matrix_t &m, const vec3_t in, vec3_t &out);
-extern void ApplyMatrixOnPlane(const matrix_t &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist);
-extern void MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right, matrix_t &m);
-extern auto MultiplyMatrix(const matrix_t &m_left, const matrix_t &m_right) -> matrix_t;
-extern void MatrixForScale(const vec3_t center, vec_t scale, matrix_t &m);
-extern auto MatrixForScale(const vec3_t center, vec_t scale) -> matrix_t;
-extern auto CalcMatrixSign(const matrix_t &m) -> vec_t;
-extern void TranslateWorldToTex(int facenum, matrix_t &m);
-extern auto InvertMatrix(const matrix_t &m, matrix_t &m_inverse) -> bool;
+extern void ApplyMatrix(const Matrix &m, const vec3_t in, vec3_t &out);
+extern void ApplyMatrixOnPlane(const Matrix &m_inverse, const vec3_t in_normal, vec_t in_dist, vec3_t &out_normal, vec_t &out_dist);
+extern void MultiplyMatrix(const Matrix &m_left, const Matrix &m_right, Matrix &m);
+extern auto MultiplyMatrix(const Matrix &m_left, const Matrix &m_right) -> Matrix;
+extern void MatrixForScale(const vec3_t center, vec_t scale, Matrix &m);
+extern auto MatrixForScale(const vec3_t center, vec_t scale) -> Matrix;
+extern auto CalcMatrixSign(const Matrix &m) -> vec_t;
+extern void TranslateWorldToTex(int facenum, Matrix &m);
+extern auto InvertMatrix(const Matrix &m, Matrix &m_inverse) -> bool;
 extern void FindFacePositions(int facenum);
 extern void FreePositionMaps();
 extern auto FindNearestPosition(int facenum, const Winding *texwinding, const dplane_t &texplane, vec_t s, vec_t t, vec3_t &pos, vec_t *best_s, vec_t *best_t, vec_t *best_dist, bool *nudged) -> bool;
@@ -428,4 +428,4 @@ extern auto snap_to_winding_noedge(const Winding &w, const dplane_t &plane, vec_
 extern void SnapToPlane(const dplane_t *const plane, vec_t *const point, vec_t offset);
 extern auto CalcSightArea(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
 extern auto CalcSightArea_SpotLight(const vec3_t receiver_origin, const vec3_t receiver_normal, const Winding *emitter_winding, const vec3_t emitter_normal, vec_t emitter_stopdot, vec_t emitter_stopdot2, int skylevel, vec_t lighting_power, vec_t lighting_scale) -> vec_t;
-extern void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const patch_t *patch, vec3_t &origin);
+extern void GetAlternateOrigin(const vec3_t pos, const vec3_t normal, const Patch *patch, vec3_t &origin);

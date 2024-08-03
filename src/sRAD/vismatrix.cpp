@@ -22,8 +22,8 @@ static byte *s_vismatrix;
 // =====================================================================================
 static void TestPatchToFace(const unsigned patchnum, const int facenum, const int head, const unsigned int bitpos, byte *pvs)
 {
-	patch_t *patch = &g_patches[patchnum];
-	patch_t *patch2 = g_face_patches[facenum];
+	Patch *patch = &g_patches[patchnum];
+	Patch *patch2 = g_face_patches[facenum];
 
 	// if emitter is behind that face plane, skip all patches
 
@@ -121,7 +121,7 @@ static void BuildVisLeafs(int threadnum)
 	int facenum, facenum2;
 	byte pvs[(MAX_MAP_LEAFS + 7) / 8];
 	dleaf_t *srcleaf;
-	patch_t *patch;
+	Patch *patch;
 	int head;
 	unsigned bitpos;
 	unsigned patchnum;

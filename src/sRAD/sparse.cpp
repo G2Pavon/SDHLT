@@ -178,8 +178,8 @@ static auto CheckVisBitSparse(unsigned x, unsigned y, vec3_t &transparency_out, 
  */
 static void TestPatchToFace(const unsigned patchnum, const int facenum, const int head, byte *pvs, bool uncompressedcolumn[MAX_SPARSE_VISMATRIX_PATCHES])
 {
-    patch_t *patch = &g_patches[patchnum];
-    patch_t *patch2 = g_face_patches[facenum];
+    Patch *patch = &g_patches[patchnum];
+    Patch *patch2 = g_face_patches[facenum];
 
     // if emitter is behind that face plane, skip all patches
 
@@ -274,7 +274,7 @@ static void BuildVisLeafs(int threadnum)
     int facenum, facenum2;
     byte pvs[(MAX_MAP_LEAFS + 7) / 8];
     dleaf_t *srcleaf;
-    patch_t *patch;
+    Patch *patch;
     int head;
     unsigned patchnum;
     bool *uncompressedcolumn = (bool *)malloc(MAX_SPARSE_VISMATRIX_PATCHES * sizeof(bool));

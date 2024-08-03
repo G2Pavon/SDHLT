@@ -7,7 +7,7 @@
 #endif
 
 int g_numtextures;
-radtexture_t *g_textures;
+RADTexture *g_textures;
 
 struct waddir_t
 {
@@ -198,7 +198,7 @@ void TryCloseWadFiles()
 	}
 }
 
-void DefaultTexture(radtexture_t *tex, const char *name)
+void DefaultTexture(RADTexture *tex, const char *name)
 {
 	int i;
 	tex->width = 16;
@@ -217,7 +217,7 @@ void DefaultTexture(radtexture_t *tex, const char *name)
 	}
 }
 
-void LoadTexture(radtexture_t *tex, const miptex_t *mt, int size)
+void LoadTexture(RADTexture *tex, const miptex_t *mt, int size)
 {
 	int i, j;
 	const auto *header = mt;
@@ -266,7 +266,7 @@ void LoadTexture(radtexture_t *tex, const miptex_t *mt, int size)
 	}
 }
 
-void LoadTextureFromWad(radtexture_t *tex, const miptex_t *header)
+void LoadTextureFromWad(RADTexture *tex, const miptex_t *header)
 {
 	tex->width = header->width;
 	tex->height = header->height;
@@ -319,7 +319,7 @@ void LoadTextures()
 {
 	Log("Load Textures:\n");
 	g_numtextures = g_texdatasize ? ((dmiptexlump_t *)g_dtexdata)->nummiptex : 0;
-	g_textures = (radtexture_t *)malloc(g_numtextures * sizeof(radtexture_t));
+	g_textures = (RADTexture *)malloc(g_numtextures * sizeof(RADTexture));
 	hlassume(g_textures != nullptr, assume_NoMemory);
 	for (int i = 0; i < g_numtextures; i++)
 	{

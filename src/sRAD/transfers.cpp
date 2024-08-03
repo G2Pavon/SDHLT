@@ -18,7 +18,7 @@ void writetransfers(const char *const transferfile, const long total_patches)
     if (file != nullptr)
     {
         unsigned amtwritten;
-        patch_t *patch;
+        Patch *patch;
 
         Log("Writing transfers file [%s]\n", transferfile);
 
@@ -39,7 +39,7 @@ void writetransfers(const char *const transferfile, const long total_patches)
 
             if (patch->iIndex)
             {
-                amtwritten = fwrite(patch->tIndex, sizeof(transfer_index_t), patch->iIndex, file);
+                amtwritten = fwrite(patch->tIndex, sizeof(TransferIndex), patch->iIndex, file);
                 if (amtwritten != patch->iIndex)
                 {
                     goto FailedWrite;
@@ -91,7 +91,7 @@ auto readtransfers(const char *const transferfile, const long numpatches) -> boo
     if (file != nullptr)
     {
         unsigned amtread;
-        patch_t *patch;
+        Patch *patch;
 
         Log("Reading transfers file [%s]\n", transferfile);
 
@@ -115,9 +115,9 @@ auto readtransfers(const char *const transferfile, const long numpatches) -> boo
             }
             if (patch->iIndex)
             {
-                patch->tIndex = (transfer_index_t *)AllocBlock(patch->iIndex * sizeof(transfer_index_t *));
+                patch->tIndex = (TransferIndex *)AllocBlock(patch->iIndex * sizeof(TransferIndex *));
                 hlassume(patch->tIndex != nullptr, assume_NoMemory);
-                amtread = fread(patch->tIndex, sizeof(transfer_index_t), patch->iIndex, file);
+                amtread = fread(patch->tIndex, sizeof(TransferIndex), patch->iIndex, file);
                 if (amtread != patch->iIndex)
                 {
                     goto FailedRead;
@@ -152,7 +152,7 @@ auto readtransfers(const char *const transferfile, const long numpatches) -> boo
 FailedRead:
 {
     unsigned x;
-    patch_t *patch = g_patches;
+    Patch *patch = g_patches;
 
     for (x = 0; x < g_num_patches; x++, patch++)
     {
