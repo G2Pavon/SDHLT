@@ -127,10 +127,148 @@ void TextureAxisFromPlane(const Plane *const pln, vec3_t xv, vec3_t yv)
 #define ScaleCorrection (1.0 / 128.0)
 
 // =====================================================================================
-//  CheckForInvisible
-//      see if a brush is part of an invisible entity (KGP)
+// These Face* functions are more like ProcessFace(), so i think they should called outside ParseFace
+
+void FaceCheckToolTextures(Brush *b, Side *s)
+{
+	if (!strncasecmp(g_token, "NOCLIP", 6) || !strncasecmp(g_token, "NULLNOCLIP", 10))
+	{
+		strcpy(g_token, "NULL");
+		b->noclip = true;
+	}
+	if (!strncasecmp(g_token, "BEVELBRUSH", 10))
+	{
+		strcpy(g_token, "NULL");
+		b->bevel = true;
+	}
+	if (!strncasecmp(g_token, "BEVEL", 5))
+	{
+		strcpy(g_token, "NULL");
+		s->bevel = true;
+	}
+	if (!strncasecmp(g_token, "BEVELHINT", 9))
+	{
+		s->bevel = true;
+	}
+	if (!strncasecmp(g_token, "CLIP", 4))
+	{
+		b->cliphull |= (1 << NUM_HULLS); // arbitrary nonexistent hull
+		int h;
+		if (!strncasecmp(g_token, "CLIPHULL", 8) && (h = g_token[8] - '0', 0 < h && h < NUM_HULLS))
+		{
+			b->cliphull |= (1 << h); // hull h
+		}
+		if (!strncasecmp(g_token, "CLIPBEVEL", 9))
+		{
+			s->bevel = true;
+		}
+		if (!strncasecmp(g_token, "CLIPBEVELBRUSH", 14))
+		{
+			b->bevel = true;
+		}
+		strcpy(g_token, "SKIP");
+	}
+}
+// End of Face* functions, now is time to parse face
 // =====================================================================================
-static auto CheckForInvisible(Entity *mapent) -> bool
+
+void ParseFace(Brush *b, Side *s)
+{
+	// read the three point plane definition
+	for (int i = 0; i < 3; i++) // Read 3 point plane definition for brush side
+	{
+		if (i != 0) // If not the first point get next token
+		{
+			GetToken(true);
+		}
+		if (strcmp(g_token, "(")) // Token must be '('
+		{
+			Error("Parsing Entity %i, Brush %i, Side %i : Expecting '(' got '%s'",
+				  b->originalentitynum, b->originalbrushnum,
+				  b->numsides, g_token);
+		}
+		for (int j = 0; j < 3; j++) // Get three coords for the point
+		{
+			GetToken(false);				   // Get next token on same line
+			s->planepts[i][j] = atof(g_token); // Convert token to float and store in planepts
+		}
+		GetToken(false);
+
+		if (strcmp(g_token, ")"))
+		{
+			Error("Parsing	Entity %i, Brush %i, Side %i : Expecting ')' got '%s'",
+				  b->originalentitynum, b->originalbrushnum,
+				  b->numsides, g_token);
+		}
+	}
+
+	// read the texturedef
+	GetToken(false);
+	strupr(g_token);
+
+	FaceCheckToolTextures(b, s); // Check for tool textures
+
+	safe_strncpy(s->texture.name, g_token, sizeof(s->texture.name));
+
+	// texture U axis
+	GetToken(false);
+	if (strcmp(g_token, "["))
+	{
+		hlassume(false, assume_MISSING_BRACKET_IN_TEXTUREDEF);
+	}
+
+	GetToken(false);
+	s->texture.UAxis[0] = atof(g_token);
+	GetToken(false);
+	s->texture.UAxis[1] = atof(g_token);
+	GetToken(false);
+	s->texture.UAxis[2] = atof(g_token);
+	GetToken(false);
+	s->texture.shift[0] = atof(g_token);
+
+	GetToken(false);
+	if (strcmp(g_token, "]"))
+	{
+		Error("missing ']' in texturedef (U)");
+	}
+
+	// texture V axis
+	GetToken(false);
+	if (strcmp(g_token, "["))
+	{
+		Error("missing '[' in texturedef (V)");
+	}
+
+	GetToken(false);
+	s->texture.VAxis[0] = atof(g_token);
+	GetToken(false);
+	s->texture.VAxis[1] = atof(g_token);
+	GetToken(false);
+	s->texture.VAxis[2] = atof(g_token);
+	GetToken(false);
+	s->texture.shift[1] = atof(g_token);
+
+	GetToken(false);
+	if (strcmp(g_token, "]"))
+	{
+		Error("missing ']' in texturedef (V)");
+	}
+
+	// Texture rotation is implicit in U/V axes.
+	GetToken(false);
+	s->texture.rotate = 0;
+
+	// texure scale
+	GetToken(false);
+	s->texture.scale[0] = atof(g_token);
+	GetToken(false);
+	s->texture.scale[1] = atof(g_token);
+}
+
+// =====================================================================================
+// These Brush* functions are more like ProcessBrush(), so i think they should called outside ParseBrush
+
+static auto BrushCheckZHLT_Invisible(Entity *mapent) -> bool
 {
 	using namespace std;
 
@@ -144,40 +282,55 @@ static auto CheckForInvisible(Entity *mapent) -> bool
 	return false;
 }
 
-// =====================================================================================
-//  ParseBrush
-//      parse a brush from script
-// =====================================================================================
-static void ParseBrush(Entity *mapent)
+void BrushNullify(Brush *b, Side *s, bool isInvisible)
 {
-	auto b = &g_mapbrushes[g_nummapbrushes]; // Current brush
-	int i, j;								 // Loop counters
-	Side *side;								 // Current side of the brush
-	contents_t contents;					 // Contents type of the brush
-	bool ok;
-	auto nullify = CheckForInvisible(mapent); // If the current entity is part of an invis entity
-	hlassume(g_nummapbrushes < MAX_MAP_BRUSHES, assume_MAX_MAP_BRUSHES);
+	for (int i = 0; i < b->numsides; i++)
+	{
+		s = &g_brushsides[b->firstside + i];
+		if (isInvisible && strncasecmp(s->texture.name, "BEVEL", 5) && strncasecmp(s->texture.name, "ORIGIN", 6) && strncasecmp(s->texture.name, "HINT", 4) && strncasecmp(s->texture.name, "SKIP", 4) && strncasecmp(s->texture.name, "SOLIDHINT", 9) && strncasecmp(s->texture.name, "BEVELHINT", 9) && strncasecmp(s->texture.name, "SPLITFACE", 9) && strncasecmp(s->texture.name, "BOUNDINGBOX", 11) && strncasecmp(s->texture.name, "CONTENT", 7) && strncasecmp(s->texture.name, "SKY", 3))
+		{
+			safe_strncpy(s->texture.name, "NULL", sizeof(s->texture.name));
+		}
+		if (!strncasecmp(s->texture.name, "CONTENT", 7))
+		{
+			strcpy(s->texture.name, "NULL");
+		}
+		if (!strncasecmp(s->texture.name, "AAATRIGGER", 10))
+		{
+			strcpy(s->texture.name, "NULL");
+		}
+	}
+}
 
-	g_nummapbrushes++;										// Increment the global brush counter, we are adding a new brush
-	b->firstside = g_numbrushsides;							// Set the first side of the brush to current global side count20
-	b->originalentitynum = g_numparsedentities;				// Record original entity number brush belongs to
-	b->originalbrushnum = g_numparsedbrushes;				// Record original brush number
-	b->entitynum = g_numentities - 1;						// Set brush entity number to last created entity
-	b->brushnum = g_nummapbrushes - mapent->firstbrush - 1; // Calculate the brush number within the current entity.
-	b->noclip = 0;											// Initialize false for now
+void BrushConvertSPLITFACE(Brush *b, Side *s)
+{
+	for (int i = 0; i < b->numsides; i++)
+	{
+		s = &g_brushsides[b->firstside + i];
+		if (!strncasecmp(s->texture.name, "SPLITFACE", 9))
+		{
+			strcpy(s->texture.name, "SKIP");
+		}
+	}
+}
 
-	if (IntForKey(mapent, "zhlt_noclip")) // If zhlt_noclip
+void BrushCheckZHLT_noclip(Entity *e, Brush *b)
+{
+	if (IntForKey(e, "zhlt_noclip")) // If zhlt_noclip
 	{
 		b->noclip = 1;
 	}
-	b->cliphull = 0;
-	b->bevel = false;
-	{ // Validate func_detail values
-		b->detaillevel = IntForKey(mapent, "zhlt_detaillevel");
-		b->chopdown = IntForKey(mapent, "zhlt_chopdown");
-		b->chopup = IntForKey(mapent, "zhlt_chopup");
-		b->clipnodedetaillevel = IntForKey(mapent, "zhlt_clipnodedetaillevel");
-		b->coplanarpriority = IntForKey(mapent, "zhlt_coplanarpriority");
+}
+
+void BrushCheckFunc_detail(Entity *e, Brush *b)
+{
+	if (!strcmp(ValueForKey(e, "classname"), "func_detail"))
+	{
+		b->detaillevel = IntForKey(e, "zhlt_detaillevel");
+		b->chopdown = IntForKey(e, "zhlt_chopdown");
+		b->chopup = IntForKey(e, "zhlt_chopup");
+		b->clipnodedetaillevel = IntForKey(e, "zhlt_clipnodedetaillevel");
+		b->coplanarpriority = IntForKey(e, "zhlt_coplanarpriority");
 		bool wrong = false;
 
 		if (b->detaillevel < 0)
@@ -206,11 +359,15 @@ static void ParseBrush(Entity *mapent)
 					b->originalentitynum, b->originalbrushnum);
 		}
 	}
+}
+
+void BrushCheckZHLT_hull(Entity *e, Brush *b)
+{
 	for (int h = 0; h < NUM_HULLS; h++) // Loop through all hulls
 	{
 		char key[16];					// Key name for the hull shape.
 		sprintf(key, "zhlt_hull%d", h); // Format key name to include the hull number, used to look up hull shape data in entity properties
-		auto value = ValueForKey(mapent, key);
+		auto value = ValueForKey(e, key);
 
 		if (*value) // If we have a value associated with the key from the entity properties copy the value to brush's hull shape for this hull
 		{
@@ -221,234 +378,10 @@ static void ParseBrush(Entity *mapent)
 			b->hullshapes[h] = nullptr;
 		}
 	}
-	mapent->numbrushes++;
-	ok = GetToken(true);
+}
 
-	while (ok) // Loop through brush sides
-	{
-		if (!strcmp(g_token, "}")) // If we have reached the end of the brush
-		{
-			break;
-		}
-
-		hlassume(g_numbrushsides < MAX_MAP_SIDES, assume_MAX_MAP_SIDES);
-		side = &g_brushsides[g_numbrushsides]; // Get next brush side from global array
-		g_numbrushsides++;					   // Global brush side counter
-		b->numsides++;						   // Number of sides for the current brush
-		side->bevel = false;
-		// read the three point plane definition
-
-		for (i = 0; i < 3; i++) // Read 3 point plane definition for brush side
-		{
-			if (i != 0) // If not the first point get next token
-			{
-				GetToken(true);
-			}
-			if (strcmp(g_token, "(")) // Token must be '('
-			{
-				Error("Parsing Entity %i, Brush %i, Side %i : Expecting '(' got '%s'",
-					  b->originalentitynum, b->originalbrushnum,
-					  b->numsides, g_token);
-			}
-			for (j = 0; j < 3; j++) // Get three coords for the point
-			{
-				GetToken(false);					  // Get next token on same line
-				side->planepts[i][j] = atof(g_token); // Convert token to float and store in planepts
-			}
-			GetToken(false);
-
-			if (strcmp(g_token, ")"))
-			{
-				Error("Parsing	Entity %i, Brush %i, Side %i : Expecting ')' got '%s'",
-					  b->originalentitynum, b->originalbrushnum,
-					  b->numsides, g_token);
-			}
-		}
-
-		// read the     texturedef
-		GetToken(false);
-		strupr(g_token);
-		{ // Check for tool textures on the brush
-			if (!strncasecmp(g_token, "NOCLIP", 6) || !strncasecmp(g_token, "NULLNOCLIP", 10))
-			{
-				strcpy(g_token, "NULL");
-				b->noclip = true;
-			}
-			if (!strncasecmp(g_token, "BEVELBRUSH", 10))
-			{
-				strcpy(g_token, "NULL");
-				b->bevel = true;
-			}
-			if (!strncasecmp(g_token, "BEVEL", 5))
-			{
-				strcpy(g_token, "NULL");
-				side->bevel = true;
-			}
-			if (!strncasecmp(g_token, "BEVELHINT", 9))
-			{
-				side->bevel = true;
-			}
-			if (!strncasecmp(g_token, "CLIP", 4))
-			{
-				b->cliphull |= (1 << NUM_HULLS); // arbitrary nonexistent hull
-				int h;
-				if (!strncasecmp(g_token, "CLIPHULL", 8) && (h = g_token[8] - '0', 0 < h && h < NUM_HULLS))
-				{
-					b->cliphull |= (1 << h); // hull h
-				}
-				if (!strncasecmp(g_token, "CLIPBEVEL", 9))
-				{
-					side->bevel = true;
-				}
-				if (!strncasecmp(g_token, "CLIPBEVELBRUSH", 14))
-				{
-					b->bevel = true;
-				}
-				strcpy(g_token, "SKIP");
-			}
-		}
-		safe_strncpy(side->texture.name, g_token, sizeof(side->texture.name));
-
-		// texture U axis
-		GetToken(false);
-		if (strcmp(g_token, "["))
-		{
-			hlassume(false, assume_MISSING_BRACKET_IN_TEXTUREDEF);
-		}
-
-		GetToken(false);
-		side->texture.UAxis[0] = atof(g_token);
-		GetToken(false);
-		side->texture.UAxis[1] = atof(g_token);
-		GetToken(false);
-		side->texture.UAxis[2] = atof(g_token);
-		GetToken(false);
-		side->texture.shift[0] = atof(g_token);
-
-		GetToken(false);
-		if (strcmp(g_token, "]"))
-		{
-			Error("missing ']' in texturedef (U)");
-		}
-
-		// texture V axis
-		GetToken(false);
-		if (strcmp(g_token, "["))
-		{
-			Error("missing '[' in texturedef (V)");
-		}
-
-		GetToken(false);
-		side->texture.VAxis[0] = atof(g_token);
-		GetToken(false);
-		side->texture.VAxis[1] = atof(g_token);
-		GetToken(false);
-		side->texture.VAxis[2] = atof(g_token);
-		GetToken(false);
-		side->texture.shift[1] = atof(g_token);
-
-		GetToken(false);
-		if (strcmp(g_token, "]"))
-		{
-			Error("missing ']' in texturedef (V)");
-		}
-
-		// Texture rotation is implicit in U/V axes.
-		GetToken(false);
-		side->texture.rotate = 0;
-
-		// texure scale
-		GetToken(false);
-		side->texture.scale[0] = atof(g_token);
-		GetToken(false);
-		side->texture.scale[1] = atof(g_token);
-
-		ok = GetToken(true); // Done with line, this reads the first item from the next line
-	};
-	if (b->cliphull != 0) // has CLIP* texture
-	{
-		unsigned int mask_anyhull = 0;
-		for (int h = 1; h < NUM_HULLS; h++)
-		{
-			mask_anyhull |= (1 << h);
-		}
-		if ((b->cliphull & mask_anyhull) == 0) // no CLIPHULL1 or CLIPHULL2 or CLIPHULL3 texture
-		{
-			b->cliphull |= mask_anyhull; // CLIP all hulls
-		}
-	}
-
-	b->contents = contents = CheckBrushContents(b);
-	for (j = 0; j < b->numsides; j++)
-	{
-		side = &g_brushsides[b->firstside + j];
-		if (nullify && strncasecmp(side->texture.name, "BEVEL", 5) && strncasecmp(side->texture.name, "ORIGIN", 6) && strncasecmp(side->texture.name, "HINT", 4) && strncasecmp(side->texture.name, "SKIP", 4) && strncasecmp(side->texture.name, "SOLIDHINT", 9) && strncasecmp(side->texture.name, "BEVELHINT", 9) && strncasecmp(side->texture.name, "SPLITFACE", 9) && strncasecmp(side->texture.name, "BOUNDINGBOX", 11) && strncasecmp(side->texture.name, "CONTENT", 7) && strncasecmp(side->texture.name, "SKY", 3))
-		{
-			safe_strncpy(side->texture.name, "NULL", sizeof(side->texture.name));
-		}
-	}
-	for (j = 0; j < b->numsides; j++)
-	{
-		// change to SKIP now that we have set brush content.
-		side = &g_brushsides[b->firstside + j];
-		if (!strncasecmp(side->texture.name, "SPLITFACE", 9))
-		{
-			strcpy(side->texture.name, "SKIP");
-		}
-	}
-	for (j = 0; j < b->numsides; j++)
-	{
-		side = &g_brushsides[b->firstside + j];
-		if (!strncasecmp(side->texture.name, "CONTENT", 7))
-		{
-			strcpy(side->texture.name, "NULL");
-		}
-	}
-	{
-		for (j = 0; j < b->numsides; j++) // NULLIFY trigger
-		{
-			side = &g_brushsides[b->firstside + j];
-			if (!strncasecmp(side->texture.name, "AAATRIGGER", 10))
-			{
-				strcpy(side->texture.name, "NULL");
-			}
-		}
-	}
-
-	//
-	// origin brushes are removed, but they set
-	// the rotation origin for the rest of the brushes
-	// in the entity
-	//
-
-	if (contents == CONTENTS_ORIGIN)
-	{
-		if (*ValueForKey(mapent, "origin"))
-		{
-			Error("Entity %i, Brush %i: Only one ORIGIN brush allowed.",
-				  b->originalentitynum, b->originalbrushnum);
-		}
-		char string[MAXTOKEN];
-		vec3_t origin;
-
-		b->contents = contents_t::CONTENTS_SOLID;
-		CreateBrush(mapent->firstbrush + b->brushnum); // to get sizes
-		b->contents = contents;
-
-		for (i = 0; i < NUM_HULLS; i++)
-		{
-			b->hulls[i].faces = nullptr;
-		}
-
-		if (b->entitynum != 0) // Ignore for WORLD (code elsewhere enforces no ORIGIN in world message)
-		{
-			VectorAdd(b->hulls[0].bounds.m_Mins, b->hulls[0].bounds.m_Maxs, origin);
-			VectorScale(origin, 0.5, origin);
-
-			safe_snprintf(string, MAXTOKEN, "%i %i %i", (int)origin[0], (int)origin[1], (int)origin[2]);
-			SetKeyValue(&g_entities[b->entitynum], "origin", string);
-		}
-	}
+void BrushCheckZHLT_usemodel(Entity *e, Brush *b)
+{
 	if (*ValueForKey(&g_entities[b->entitynum], "zhlt_usemodel"))
 	{
 		memset(&g_brushsides[b->firstside], 0, b->numsides * sizeof(Side));
@@ -462,17 +395,75 @@ static void ParseBrush(Entity *mapent)
 		}
 		memset(b, 0, sizeof(Brush));
 		g_nummapbrushes--;
-		mapent->numbrushes--;
+		e->numbrushes--;
 		return;
 	}
+}
+
+void BrushCheckInfo_hullshape(Entity *e, Brush *b)
+{
 	if (!strcmp(ValueForKey(&g_entities[b->entitynum], "classname"), "info_hullshape"))
 	{
 		// all brushes should be erased, but not now.
 		return;
 	}
-	if (contents == CONTENTS_BOUNDINGBOX)
+}
+
+void BushCheckClipTexture(Brush *b)
+{
+	if (b->cliphull != 0) // has CLIP* texture
 	{
-		if (*ValueForKey(mapent, "zhlt_minsmaxs"))
+		unsigned int mask_anyhull = 0;
+		for (int h = 1; h < NUM_HULLS; h++)
+		{
+			mask_anyhull |= (1 << h);
+		}
+		if ((b->cliphull & mask_anyhull) == 0) // no CLIPHULL1 or CLIPHULL2 or CLIPHULL3 texture
+		{
+			b->cliphull |= mask_anyhull; // CLIP all hulls
+		}
+	}
+}
+
+void BrushCheckORIGINtexture(Entity *e, Brush *b)
+{
+	auto content = b->contents;
+	if (content == CONTENTS_ORIGIN)
+	{
+		if (*ValueForKey(e, "origin"))
+		{
+			Error("Entity %i, Brush %i: Only one ORIGIN brush allowed.",
+				  b->originalentitynum, b->originalbrushnum);
+		}
+		char string[MAXTOKEN];
+		vec3_t origin;
+
+		b->contents = contents_t::CONTENTS_SOLID;
+		CreateBrush(e->firstbrush + b->brushnum); // to get sizes
+		b->contents = content;
+
+		for (int i = 0; i < NUM_HULLS; i++)
+		{
+			b->hulls[i].faces = nullptr;
+		}
+
+		if (b->entitynum != 0) // Ignore for WORLD (code elsewhere enforces no ORIGIN in world message)
+		{
+			VectorAdd(b->hulls[0].bounds.m_Mins, b->hulls[0].bounds.m_Maxs, origin);
+			VectorScale(origin, 0.5, origin);
+
+			safe_snprintf(string, MAXTOKEN, "%i %i %i", (int)origin[0], (int)origin[1], (int)origin[2]);
+			SetKeyValue(&g_entities[b->entitynum], "origin", string);
+		}
+	}
+}
+
+void BrushCheckBOUNDINGBOXtexture(Entity *e, Brush *b)
+{
+	auto content = b->contents;
+	if (content == CONTENTS_BOUNDINGBOX)
+	{
+		if (*ValueForKey(e, "zhlt_minsmaxs"))
 		{
 			Error("Entity %i, Brush %i: Only one BoundingBox brush allowed.",
 				  b->originalentitynum, b->originalbrushnum);
@@ -480,17 +471,17 @@ static void ParseBrush(Entity *mapent)
 		char string[MAXTOKEN];
 		vec3_t mins, maxs;
 		char *origin = nullptr;
-		if (*ValueForKey(mapent, "origin"))
+		if (*ValueForKey(e, "origin"))
 		{
-			origin = strdup(ValueForKey(mapent, "origin"));
-			SetKeyValue(mapent, "origin", "");
+			origin = strdup(ValueForKey(e, "origin"));
+			SetKeyValue(e, "origin", "");
 		}
 
 		b->contents = contents_t::CONTENTS_SOLID;
-		CreateBrush(mapent->firstbrush + b->brushnum); // to get sizes
-		b->contents = contents;
+		CreateBrush(e->firstbrush + b->brushnum); // to get sizes
+		b->contents = content;
 
-		for (i = 0; i < NUM_HULLS; i++)
+		for (int i = 0; i < NUM_HULLS; i++)
 		{
 			b->hulls[i].faces = nullptr;
 		}
@@ -506,47 +497,130 @@ static void ParseBrush(Entity *mapent)
 
 		if (origin)
 		{
-			SetKeyValue(mapent, "origin", origin);
+			SetKeyValue(e, "origin", origin);
 			delete origin;
 		}
 	}
+}
+
+void BrushCheckClipSkybox(Entity *e, Brush *b, Side *s)
+{
 	if (g_skyclip && b->contents == CONTENTS_SKY && !b->noclip)
 	{
-		auto newb = CopyCurrentBrush(mapent, b);
+		auto newb = CopyCurrentBrush(e, b);
 		newb->contents = contents_t::CONTENTS_SOLID;
 		newb->cliphull = ~0;
-		for (j = 0; j < newb->numsides; j++)
+		for (int i = 0; i < newb->numsides; i++)
 		{
-			side = &g_brushsides[newb->firstside + j];
-			strcpy(side->texture.name, "NULL");
+			s = &g_brushsides[newb->firstside + i];
+			strcpy(s->texture.name, "NULL");
 		}
 	}
+}
+
+void BrushCheckContentEmpty(Entity *e, Brush *b, Side *s)
+{
+
 	if (b->cliphull != 0 && b->contents == CONTENTS_TOEMPTY)
 	{
 		// check for mix of CLIP and normal texture
 		bool mixed = false;
-		for (j = 0; j < b->numsides; j++)
+		for (int i = 0; i < b->numsides; i++)
 		{
-			side = &g_brushsides[b->firstside + j];
-			if (!strncasecmp(side->texture.name, "NULL", 4))
+			s = &g_brushsides[b->firstside + i];
+			if (!strncasecmp(s->texture.name, "NULL", 4))
 			{ // this is not supposed to be a HINT brush, so remove all invisible faces from hull 0.
-				strcpy(side->texture.name, "SKIP");
+				strcpy(s->texture.name, "SKIP");
 			}
-			if (strncasecmp(side->texture.name, "SKIP", 4))
+			if (strncasecmp(s->texture.name, "SKIP", 4))
 				mixed = true;
 		}
 		if (mixed)
 		{
-			auto newb = CopyCurrentBrush(mapent, b);
+			auto newb = CopyCurrentBrush(e, b);
 			newb->cliphull = 0;
 		}
 		b->contents = contents_t::CONTENTS_SOLID;
-		for (j = 0; j < b->numsides; j++)
+		for (int i = 0; i < b->numsides; i++)
 		{
-			side = &g_brushsides[b->firstside + j];
-			strcpy(side->texture.name, "NULL");
+			s = &g_brushsides[b->firstside + i];
+			strcpy(s->texture.name, "NULL");
 		}
 	}
+}
+// End of Brush* functions, now is time to parse brush
+// =====================================================================================
+
+// =====================================================================================
+//  Parse a brush from script
+// =====================================================================================
+static void ParseBrush(Entity *mapent)
+{
+	auto b = &g_mapbrushes[g_nummapbrushes]; // Current brush
+	int i, j;								 // Loop counters
+	Side *side;								 // Current side of the brush
+	bool ok;
+	auto nullify = BrushCheckZHLT_Invisible(mapent); // If the current entity is part of an invis entity
+	hlassume(g_nummapbrushes < MAX_MAP_BRUSHES, assume_MAX_MAP_BRUSHES);
+
+	g_nummapbrushes++;										// Increment the global brush counter, we are adding a new brush
+	b->firstside = g_numbrushsides;							// Set the first side of the brush to current global side count20
+	b->originalentitynum = g_numparsedentities;				// Record original entity number brush belongs to
+	b->originalbrushnum = g_numparsedbrushes;				// Record original brush number
+	b->entitynum = g_numentities - 1;						// Set brush entity number to last created entity
+	b->brushnum = g_nummapbrushes - mapent->firstbrush - 1; // Calculate the brush number within the current entity.
+	b->noclip = 0;											// Initialize false for now
+
+	BrushCheckZHLT_noclip(mapent, b);
+	b->cliphull = 0;
+	b->bevel = false;				  // Change depending on the tool texture used
+	BrushCheckFunc_detail(mapent, b); // Validate func_detail values
+	BrushCheckZHLT_hull(mapent, b);
+
+	mapent->numbrushes++;
+	ok = GetToken(true);
+
+	while (ok) // Loop through brush sides
+	{
+		if (!strcmp(g_token, "}")) // If we have reached the end of the brush
+		{
+			break;
+		}
+
+		hlassume(g_numbrushsides < MAX_MAP_SIDES, assume_MAX_MAP_SIDES);
+		side = &g_brushsides[g_numbrushsides]; // Get next brush side from global array
+		g_numbrushsides++;					   // Global brush side counter
+		b->numsides++;						   // Number of sides for the current brush
+		side->bevel = false;
+
+		ParseFace(b, side); // ( x1 y1 z1 ) ( x2 y2 z2 ) ( x3 y3 z3 ) TEXTURENAME [ Ux Uy Uz Ushift ] [ Vx Vy Vz Vshift ] rotation Uscale Vscale
+
+		ok = GetToken(true); // Done with line, this reads the first item from the next line
+	};
+	BushCheckClipTexture(b); // Check CLIP* texture
+
+	b->contents = CheckBrushContents(b);
+
+	BrushNullify(b, side, nullify); // Replace textures by NULL texture
+
+	BrushConvertSPLITFACE(b, side); // Change to SKIP now that we have set brush content.
+
+	//
+	// origin brushes are removed, but they set
+	// the rotation origin for the rest of the brushes
+	// in the entity
+	//
+	BrushCheckORIGINtexture(mapent, b);
+
+	BrushCheckZHLT_usemodel(mapent, b);
+
+	BrushCheckInfo_hullshape(mapent, b);
+
+	BrushCheckBOUNDINGBOXtexture(mapent, b);
+
+	BrushCheckClipSkybox(mapent, b, side);
+
+	BrushCheckContentEmpty(mapent, b, side);
 }
 
 // =====================================================================================
