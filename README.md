@@ -7,9 +7,10 @@ How? well,
  -  Updated C-style `struct` definition to C++ style
  -  Rearranged `#includes`
  -   Removed `SYSTEM_WIN32` macro and related code (now only linux is supported)
- -  Replaced `malloc` with `new` (TODO: use smart pointers)
+ -  Replaced `malloc` with `new`
  -   Removed old map file version (<220 and QuArK) support
  -   Main() functions was simplified adding a function to handle arguments, removed the function that reads the params from settings.txt file, also info_compile_parameters support removed
+ -   Removed unused code
 
    
    It's still difficult to read, but at least there are fewer lines of code. I probably got fucked up some function along the way (for example: read transfer lists file (.inc file) fails when try opening), but it still generates playable bsp maps. (Btw, I'm learning C++ with this project)
