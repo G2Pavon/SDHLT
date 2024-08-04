@@ -5,22 +5,6 @@
 #include "log.h"
 
 // =====================================================================================
-//  CheckStack
-// =====================================================================================
-#ifdef USE_CHECK_STACK
-static void CheckStack(const LeafVIS *const leaf, const ThreadDataVIS *const thread)
-{
-    pstackVIS *p;
-
-    for (p = thread->pstack_head.next; p; p = p->next)
-    {
-        if (p->leaf == leaf)
-            Error("CheckStack: leaf recursion");
-    }
-}
-#endif
-
-// =====================================================================================
 //  AllocStackWinding
 // =====================================================================================
 inline static auto AllocStackWinding(pstackVIS *const stack) -> WindingVIS *
@@ -199,7 +183,6 @@ inline auto ChopWinding(WindingVIS *const in, pstackVIS *const stack, const Plan
 // =====================================================================================
 //  AddPlane
 // =====================================================================================
-#ifdef RVIS_LEVEL_2
 inline static void AddPlane(pstackVIS *const stack, const PlaneVIS *const split)
 {
     int j;
@@ -218,7 +201,6 @@ inline static void AddPlane(pstackVIS *const stack, const PlaneVIS *const split)
     stack->clipPlane[stack->clipPlaneCount] = *split;
     stack->clipPlaneCount++;
 }
-#endif
 
 // =====================================================================================
 //  ClipToSeperators
@@ -360,10 +342,7 @@ inline static auto ClipToSeperators(
             {
                 AddPlane(stack, &plane);
             }
-
-#ifdef RVIS_LEVEL_1
-            break; /* Antony was here */
-#endif
+            break; /* Antony was here */ // #ifdef RVIS_LEVEL_1
         }
     }
 
@@ -381,9 +360,6 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
     LeafVIS *leaf;
 
     leaf = &g_leafs[leafnum];
-#ifdef USE_CHECK_STACK
-    CheckStack(leaf, thread);
-#endif
 
     {
         const unsigned offset = leafnum >> 3;
@@ -397,17 +373,11 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
         }
     }
 
-#ifdef USE_CHECK_STACK
-    prevstack->next = &stack;
-    stack.next = NULL;
-#endif
     stack.head = prevstack->head;
     stack.leaf = leaf;
     stack.portal = nullptr;
-#ifdef RVIS_LEVEL_2
     stack.clipPlaneCount = -1;
     stack.clipPlane = nullptr;
-#endif
 
     // check all portals for flowing into other leafs
     unsigned i;
@@ -489,9 +459,6 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
         }
 
         stack.portal = p;
-#ifdef USE_CHECK_STACK
-        stack.next = NULL;
-#endif
         stack.freewindings[0] = 1;
         stack.freewindings[1] = 1;
         stack.freewindings[2] = 1;
@@ -520,7 +487,6 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
             continue;
         }
 
-#ifdef RVIS_LEVEL_2
         if (stack.clipPlaneCount == -1)
         {
             stack.clipPlaneCount = 0;
@@ -541,20 +507,6 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
             if (stack.pass == nullptr)
                 continue;
         }
-#else
-
-        stack.pass = ClipToSeperators(stack.source, prevstack->pass, stack.pass, false, &stack);
-        if (!stack.pass)
-        {
-            continue;
-        }
-
-        stack.pass = ClipToSeperators(prevstack->pass, stack.source, stack.pass, true, &stack);
-        if (!stack.pass)
-        {
-            continue;
-        }
-#endif
 
         if (g_fullvis)
         {
@@ -574,15 +526,6 @@ inline static void RecursiveLeafFlow(const int leafnum, const ThreadDataVIS *con
         // flow through it for real
         RecursiveLeafFlow(p->leaf, thread, &stack);
     }
-
-#ifdef RVIS_LEVEL_2
-#if 0
-    if (stack.clipPlane != NULL)
-    {
-        delete stack.clipPlane;
-    }
-#endif
-#endif
 }
 
 // =====================================================================================
