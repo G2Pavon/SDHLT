@@ -230,7 +230,7 @@ extern auto CheckFaceForEnv_Sky(const FaceBSP *const f) -> bool;
 extern void CullStuff();
 
 //=============================================================================
-// qbsp.c
+// hlbsp.c
 extern bool g_watervis;
 extern bool g_estimate;
 extern int g_maxnode_size;

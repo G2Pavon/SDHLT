@@ -12,7 +12,7 @@
 
 #include <cstring>
 
-#include "bsp5.h"
+#include "hlbsp.h"
 #include "arguments.h"
 #include "filelib.h"
 #include "threads.h"

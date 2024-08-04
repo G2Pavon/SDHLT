@@ -2,7 +2,7 @@
 #include <cstring>
 
 #include "maplib.h"
-#include "csg.h"
+#include "hlcsg.h"
 #include "blockmem.h"
 #include "log.h"
 

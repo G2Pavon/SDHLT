@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "vis.h"
+#include "hlvis.h"
 #include "threads.h"
 #include "log.h"
 

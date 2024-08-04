@@ -55,6 +55,29 @@ set(COMMON_HEADERS
 )
 
 #================
+# CSG
+#================
+
+set(CSG_DIR ${DIR}/sCSG)
+
+set(CSG_SOURCES
+    ${COMMON_SOURCES}
+    ${CSG_DIR}/brush.cpp
+    ${CSG_DIR}/hullfile.cpp
+    ${CSG_DIR}/map.cpp
+    ${CSG_DIR}/hlcsg.cpp
+    ${CSG_DIR}/textures.cpp
+)
+
+set(CSG_HEADERS
+    ${COMMON_HEADERS}
+    ${CSG_DIR}/hlcsg.h
+    ${CSG_DIR}/textures.h
+    ${CSG_DIR}/map.h
+)
+
+
+#================
 # BSP
 #================
 
@@ -66,7 +89,7 @@ set(BSP_SOURCES
     ${BSP_DIR}/merge.cpp
     ${BSP_DIR}/outside.cpp
     ${BSP_DIR}/portals.cpp
-    ${BSP_DIR}/qbsp.cpp
+    ${BSP_DIR}/hlbsp.cpp
     ${BSP_DIR}/solidbsp.cpp
     ${BSP_DIR}/surfaces.cpp
     ${BSP_DIR}/tjunc.cpp
@@ -75,30 +98,26 @@ set(BSP_SOURCES
 
 set(BSP_HEADERS
     ${COMMON_HEADERS}
-    ${BSP_DIR}/bsp5.h
+    ${BSP_DIR}/hlbsp.h
 )
 
 #================
-# CSG
+# VIS
 #================
 
-set(CSG_DIR ${DIR}/sCSG)
+set(VIS_DIR ${DIR}/sVIS)
 
-set(CSG_SOURCES
+set(VIS_SOURCES
     ${COMMON_SOURCES}
-    ${CSG_DIR}/brush.cpp
-    ${CSG_DIR}/hullfile.cpp
-    ${CSG_DIR}/map.cpp
-    ${CSG_DIR}/qcsg.cpp
-    ${CSG_DIR}/textures.cpp
+    ${VIS_DIR}/flow.cpp
+    ${VIS_DIR}/hlvis.cpp
 )
 
-set(CSG_HEADERS
+set(VIS_HEADERS
     ${COMMON_HEADERS}
-    ${CSG_DIR}/csg.h
-    ${CSG_DIR}/textures.h
-    ${CSG_DIR}/map.h
+    ${VIS_DIR}/hlvis.h
 )
+
 
 #================
 # RAD
@@ -113,8 +132,8 @@ set(RAD_SOURCES
     ${RAD_DIR}/lightmap.cpp
     ${RAD_DIR}/loadtextures.cpp
     ${RAD_DIR}/mathutil.cpp
-    ${RAD_DIR}/qrad.cpp
-    ${RAD_DIR}/qradutil.cpp
+    ${RAD_DIR}/hlrad.cpp
+    ${RAD_DIR}/hlradutil.cpp
     ${RAD_DIR}/sparse.cpp
     ${RAD_DIR}/trace.cpp
     ${RAD_DIR}/transfers.cpp
@@ -126,24 +145,7 @@ set(RAD_SOURCES
 set(RAD_HEADERS
     ${COMMON_HEADERS}
     ${RAD_DIR}/compress.h
-    ${RAD_DIR}/qrad.h
-)
-
-#================
-# VIS
-#================
-
-set(VIS_DIR ${DIR}/sVIS)
-
-set(VIS_SOURCES
-    ${COMMON_SOURCES}
-    ${VIS_DIR}/flow.cpp
-    ${VIS_DIR}/vis.cpp
-)
-
-set(VIS_HEADERS
-    ${COMMON_HEADERS}
-    ${VIS_DIR}/vis.h
+    ${RAD_DIR}/hlrad.h
 )
 
 #================

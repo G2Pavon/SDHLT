@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstring>
 
-#include "bsp5.h"
+#include "hlbsp.h"
 #include "log.h"
 
 // TODO: we should consider corners in addition to brinks.

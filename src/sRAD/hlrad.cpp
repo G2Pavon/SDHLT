@@ -15,7 +15,7 @@
 #include <vector>
 #include <cstring>
 
-#include "qrad.h"
+#include "hlrad.h"
 #include "arguments.h"
 #include "blockmem.h"
 #include "threads.h"

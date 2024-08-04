@@ -30,7 +30,7 @@ static const MessageTable_t assumes[assume_last] = {
     {"NULL Pointer", internalerror, contact},
     {"Bad Thread Workcount", internalerror, contact},
 
-    // qcsg
+    // hlcsg
     {"Missing '[' in texturedef (U)", maperror, reference},
     {"plane with no normal", maperror, reference},
     {"brush with coplanar faces", maperror, reference},
@@ -45,7 +45,7 @@ static const MessageTable_t assumes[assume_last] = {
     {"Exceeded MAX_SWITCHED_LIGHTS", "The maximum number of switchable light entities has been reached", selfexplanitory},
     {"Exceeded MAX_TEXFILES", internallimit, contact},
 
-    // qbsp
+    // hlbsp
     {"LEAK in the map", maperror, reference},
     {"Exceeded MAX_LEAF_FACES", "This error is almost always caused by an invalid brush, by having huge rooms, or scaling a texture down to extremely small values (between -1 and 1)",
      "Find the invalid brush.  Any imported prefabs, carved brushes, or vertex manipulated brushes should be suspect"},
@@ -58,7 +58,7 @@ static const MessageTable_t assumes[assume_last] = {
     {"Leaf portal saw into leaf", maperror, reference},
     {"Exceeded MAX_PORTALS_ON_LEAF", maperror, reference},
 
-    // qrad
+    // hlrad
     {"Exceeded MAX_TEXLIGHTS", "The maximum number of texture lights in use by a single map has been reached",
      "Use fewer texture lights."},
     {"Exceeded MAX_PATCHES", maperror, reference},

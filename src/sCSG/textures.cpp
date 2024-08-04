@@ -3,7 +3,7 @@
 #include <string>
 #include <cstring>
 
-#include "csg.h" // TODO: implement map.h
+#include "hlcsg.h" // TODO: implement map.h
 #include "threads.h"
 #include "log.h"
 #include "filelib.h"

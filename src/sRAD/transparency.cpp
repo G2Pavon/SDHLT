@@ -4,7 +4,7 @@
 
 #include <cstring>
 
-#include "qrad.h"
+#include "hlrad.h"
 #include "threads.h"
 
 struct transList_t

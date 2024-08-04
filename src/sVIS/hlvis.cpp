@@ -16,7 +16,7 @@
 #include <string>
 #include <cstring>
 
-#include "vis.h"
+#include "hlvis.h"
 #include "arguments.h"
 #include "threads.h"
 #include "filelib.h"

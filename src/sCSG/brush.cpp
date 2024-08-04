@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "csg.h"
+#include "hlcsg.h"
 #include "textures.h"
 #include "threads.h"
 #include "blockmem.h"

@@ -258,7 +258,7 @@ struct MinLight
 typedef std::vector<MinLight>::iterator minlight_i;
 
 //
-// qrad globals
+// hlrad globals
 //
 
 extern std::vector<MinLight> s_minlights;
@@ -366,7 +366,7 @@ extern funcCheckVisBit g_CheckVisBit;
 extern auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &backorigin, const vec3_t &backnormal, vec3_t &transparency_out) -> bool;
 extern void MdlLightHack();
 
-// qradutil.c
+// hlradutil.c
 extern auto PatchPlaneDist(const Patch *const patch) -> vec_t;
 extern auto PointInLeaf(const vec3_t point) -> BSPLumpLeaf *;
 extern void MakeBackplanes();

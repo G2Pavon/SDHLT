@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "csg.h"
+#include "hlcsg.h"
 #include "textures.h"
 #include "maplib.h"
 #include "arguments.h"

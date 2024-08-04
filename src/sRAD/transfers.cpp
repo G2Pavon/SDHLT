@@ -1,6 +1,6 @@
 #include <sys/stat.h>
 
-#include "qrad.h"
+#include "hlrad.h"
 #include "blockmem.h"
 #include "log.h"
 

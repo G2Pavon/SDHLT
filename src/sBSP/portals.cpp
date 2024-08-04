@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "bsp5.h"
+#include "hlbsp.h"
 #include "log.h"
 
 NodeBSP g_outside_node; // portals outside the world face this

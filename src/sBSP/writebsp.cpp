@@ -1,7 +1,7 @@
 #include <cstring>
 #include <map>
 
-#include "bsp5.h"
+#include "hlbsp.h"
 #include "log.h"
 
 //  WriteClipNodes_r

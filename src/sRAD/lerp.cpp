@@ -1,7 +1,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "qrad.h"
+#include "hlrad.h"
 #include "log.h"
 
 struct interpolation_t
