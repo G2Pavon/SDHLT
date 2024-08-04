@@ -1,3 +1,5 @@
+#pragma once
+
 #include "bspfile.h"
 #include "mathlib.h"
 #include "winding.h"

@@ -25,16 +25,6 @@ constexpr bool DEFAULT_ESTIMATE = true;
 #define BOGUS_RANGE g_iWorldExtent // seedee
 
 //=============================================================================
-// map.c
-
-//=============================================================================
-// textures.cpp
-
-extern void WriteMiptex();
-extern auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec3_t origin) -> int;
-extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
-
-//=============================================================================
 // brush.c
 extern auto CheckBrushContents(const Brush *const b) -> contents_t;
 
