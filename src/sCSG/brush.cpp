@@ -108,13 +108,6 @@ auto PlaneFromPoints(const vec_t *const p0, const vec_t *const p1, const vec_t *
 	return -1;
 }
 
-const char ClipTypeStrings[5][11] = {{"smallest"}, {"normalized"}, {"simple"}, {"precise"}, {"legacy"}};
-
-auto GetClipTypeString(cliptype ct) -> const char *
-{
-	return ClipTypeStrings[ct];
-}
-
 // =====================================================================================
 //  AddHullPlane (subroutine for replacement of ExpandBrush, KGP)
 //  Called to add any and all clip hull planes by the new ExpandBrush.

@@ -36,8 +36,6 @@ extern auto GetTextureByNumber_CSG(int texturenumber) -> const char *;
 
 //=============================================================================
 // brush.c
-
-extern auto Brush_LoadEntity(Entity *ent, int hullnum) -> Brush *;
 extern auto CheckBrushContents(const Brush *const b) -> contents_t;
 
 extern void CreateBrush(int brushnum);
