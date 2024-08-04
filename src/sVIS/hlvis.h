@@ -1,17 +1,29 @@
 #pragma once
 
 #include "mathlib.h"
-#include "winding.h"
+#include "bspfile.h" // MAX_MAP_LEAFS
 
 constexpr int DEFAULT_MAXDISTANCE_RANGE = 0;
-
 constexpr bool DEFAULT_FULLVIS = false;
 constexpr bool DEFAULT_INFO = true;
 constexpr bool DEFAULT_ESTIMATE = true;
 constexpr bool DEFAULT_FASTVIS = false;
 
+//==========================
+// Since hlvis.h only needs the constants from winding.h,
+// I decided to copy them here and remove the inclusion of winding.h,
+// as I found it a bit confusing to have here WindingVIS (formerly winding_t)
+// and the Winding class in winding.h
 constexpr int MAX_PORTALS = 32768;
 constexpr int MAX_POINTS_ON_FIXED_WINDING = 32;
+constexpr int MAX_POINTS_ON_WINDING = 128;
+// TODO: FIX THIS STUPID SHIT (MAX_POINTS_ON_WINDING)
+constexpr int SIDE_FRONT = 0;
+constexpr int SIDE_ON = 2;
+constexpr int SIDE_BACK = 1;
+constexpr int SIDE_CROSS = -2;
+// End constants
+//=============================
 
 struct WindingVIS
 {
