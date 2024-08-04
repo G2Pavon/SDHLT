@@ -629,7 +629,6 @@ static void ParseBrush(Entity *mapent)
 // =====================================================================================
 auto ParseMapEntity() -> bool
 {
-	bool all_clip = true;
 	int entity_index;
 	Entity *current_entity;
 	EntityProperty *e;
@@ -678,18 +677,6 @@ auto ParseMapEntity() -> bool
 			delete e->key;
 			delete e->value;
 			delete e;
-		}
-	}
-
-	// Check if all brushes are clip brushes
-	{
-		for (int i = 0; i < current_entity->numbrushes; ++i)
-		{
-			auto *brush = &g_mapbrushes[current_entity->firstbrush + i];
-			if (brush->cliphull == 0 && brush->contents != CONTENTS_ORIGIN && brush->contents != CONTENTS_BOUNDINGBOX)
-			{
-				all_clip = false;
-			}
 		}
 	}
 
