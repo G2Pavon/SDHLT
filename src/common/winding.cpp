@@ -145,91 +145,6 @@ auto Winding::Copy() const -> Winding *
     return newWinding;
 }
 
-void Winding::Check(
-    vec_t epsilon) const
-{
-    unsigned int i, j;
-    vec_t *p1;
-    vec_t *p2;
-    vec_t d, edgedist;
-    vec3_t dir, edgenormal, facenormal;
-    vec_t area;
-    vec_t facedist;
-
-    if (m_NumPoints < 3)
-    {
-        Error("Winding::Check : %i points", m_NumPoints);
-    }
-
-    area = getArea();
-    if (area < 1)
-    {
-        Error("Winding::Check : %f area", area);
-    }
-
-    getPlane(facenormal, facedist);
-
-    for (i = 0; i < m_NumPoints; i++)
-    {
-        p1 = m_Points[i];
-
-        for (j = 0; j < 3; j++)
-        {
-            if (p1[j] > BOGUS_RANGE || p1[j] < -BOGUS_RANGE)
-            {
-                Error("Winding::Check : BOGUS_RANGE: %f", p1[j]);
-            }
-        }
-
-        j = i + 1 == m_NumPoints ? 0 : i + 1;
-
-        // check the point is on the face plane
-        d = DotProduct(p1, facenormal) - facedist;
-        if (d < -ON_EPSILON || d > ON_EPSILON)
-        {
-            Error("Winding::Check : point off plane");
-        }
-
-        // check the edge isn't degenerate
-        p2 = m_Points[j];
-        VectorSubtract(p2, p1, dir);
-
-        if (VectorLength(dir) < ON_EPSILON)
-        {
-            Error("Winding::Check : degenerate edge");
-        }
-
-        CrossProduct(facenormal, dir, edgenormal);
-        VectorNormalize(edgenormal);
-        edgedist = DotProduct(p1, edgenormal);
-        edgedist += ON_EPSILON;
-
-        // all other points must be on front side
-        for (j = 0; j < m_NumPoints; j++)
-        {
-            if (j == i)
-            {
-                continue;
-            }
-            d = DotProduct(m_Points[j], edgenormal);
-            if (d > edgedist)
-            {
-                Error("Winding::Check : non-convex");
-            }
-        }
-    }
-}
-
-auto Winding::Valid() const -> bool
-{
-    // TODO: Check to ensure there are 3 non-colinear points
-    if ((m_NumPoints < 3) || (!m_Points))
-    {
-        return false;
-    }
-    return true;
-}
-
 //
 // Construction
 //
@@ -243,19 +158,6 @@ Winding::Winding()
 Winding::Winding(vec3_t *points, uint32_t numpoints)
 {
     hlassert(numpoints >= 3);
-    m_NumPoints = numpoints;
-    m_MaxPoints = (m_NumPoints + 3) & ~3; // groups of 4
-
-    m_Points = new vec3_t[m_MaxPoints];
-    memcpy(m_Points, points, sizeof(vec3_t) * m_NumPoints);
-}
-
-void Winding::initFromPoints(vec3_t *points, uint32_t numpoints)
-{
-    hlassert(numpoints >= 3);
-
-    Reset();
-
     m_NumPoints = numpoints;
     m_MaxPoints = (m_NumPoints + 3) & ~3; // groups of 4
 
@@ -955,74 +857,4 @@ void Winding::Divide(const dplane_t &split, Winding **front, Winding **back, vec
         *back = nullptr;
         *front = this;
     }
-}
-
-void Winding::addPoint(const vec3_t newpoint)
-{
-    if (m_NumPoints >= m_MaxPoints)
-    {
-        resize(m_NumPoints + 1);
-    }
-    VectorCopy(newpoint, m_Points[m_NumPoints]);
-    m_NumPoints++;
-}
-
-void Winding::insertPoint(const vec3_t newpoint, const unsigned int offset)
-{
-    if (offset >= m_NumPoints)
-    {
-        addPoint(newpoint);
-    }
-    else
-    {
-        if (m_NumPoints >= m_MaxPoints)
-        {
-            resize(m_NumPoints + 1);
-        }
-
-        unsigned x;
-        for (x = m_NumPoints; x > offset; x--)
-        {
-            VectorCopy(m_Points[x - 1], m_Points[x]);
-        }
-        VectorCopy(newpoint, m_Points[x]);
-
-        m_NumPoints++;
-    }
-}
-
-void Winding::resize(uint32_t newsize)
-{
-    newsize = (newsize + 3) & ~3; // groups of 4
-
-    auto *newpoints = new vec3_t[newsize];
-    m_NumPoints = qmin(newsize, m_NumPoints);
-    memcpy(newpoints, m_Points, m_NumPoints);
-    delete[] m_Points;
-    m_Points = newpoints;
-    m_MaxPoints = newsize;
-}
-
-void Winding::CopyPoints(vec3_t *points, int &numpoints)
-{
-    if (!points)
-    {
-        numpoints = 0;
-        return;
-    }
-
-    memcpy(points, m_Points, sizeof(vec3_t) * m_NumPoints);
-
-    numpoints = m_NumPoints;
-}
-
-void Winding::Reset()
-{
-    if (m_Points)
-    {
-        delete[] m_Points;
-        m_Points = nullptr;
-    }
-
-    m_NumPoints = m_MaxPoints = 0;
 }
