@@ -8,9 +8,10 @@
 // =====================================================================================
 auto AllocBlock(const unsigned long size) -> void *
 {
-    if (!size)
+    if (size == 0)
     {
         Warning("Attempting to allocate 0 bytes");
+        return nullptr; // Or handle the case in another appropriate manner
     }
     return calloc(1, size);
 }
@@ -24,7 +25,7 @@ auto FreeBlock(void *pointer) -> bool
     {
         Warning("Freeing a null pointer");
     }
-    delete pointer;
+    free(pointer);
     return true;
 }
 

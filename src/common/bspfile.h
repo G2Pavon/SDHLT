@@ -332,7 +332,6 @@ extern auto CompressVis(const byte *const src, const unsigned int src_length, by
 extern void LoadBSPImage(BSPLumpHeader *header);
 extern void LoadBSPFile(const char *const filename);
 extern void WriteBSPFile(const char *const filename);
-extern void PrintBSPFileSizes();
 extern void WriteExtentFile(const char *const filename);
 extern auto CalcFaceExtents_test() -> bool;
 extern void GetFaceExtents(int facenum, int mins_out[2], int maxs_out[2]);

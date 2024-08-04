@@ -722,7 +722,6 @@ auto main(const int argc, char **argv) -> int
     CalcVis();
     g_visdatasize = vismap_p - g_dvisdata;
     Log("g_visdatasize:%i  compressed from %i\n", g_visdatasize, originalvismapsize);
-    PrintBSPFileSizes();
     WriteBSPFile(source);
 
     end = I_FloatTime();

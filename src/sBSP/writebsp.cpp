@@ -783,8 +783,6 @@ void FinishBSPFile()
 	delete[] clipnodes;
 	WriteExtentFile(g_extentfilename);
 
-	PrintBSPFileSizes();
-
 #undef dplane_t // this allow us to temporarily access the raw data directly without the layer of indirection
 #undef g_dplanes
 	for (int i = 0; i < g_numplanes; i++)

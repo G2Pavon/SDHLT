@@ -2479,8 +2479,6 @@ auto main(const int argc, char **argv) -> int
 	DeleteOpaqueNodes();
 
 	EmbedLightmapInTextures();
-
-	PrintBSPFileSizes();
 	WriteBSPFile(g_source);
 
 	end = I_FloatTime();

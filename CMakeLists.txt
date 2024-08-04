@@ -167,6 +167,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         -fno-strict-aliasing
         -pthread
         -pipe
+        -Wextra
     )
     message("${CMAKE_PROJECT_NAME} > Configuring for ${CMAKE_SYSTEM_NAME} (64-bit)")
 else()
