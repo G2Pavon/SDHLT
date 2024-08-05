@@ -21,7 +21,6 @@ constexpr int SIDE_CROSS = -2;
 #error you must add -dDOUBLEVEC_T to the project!
 #endif
 #define dplane_t plane_t
-#define g_dplanes g_mapplanes
 
 struct dplane_t
 {
@@ -30,7 +29,7 @@ struct dplane_t
   vec_t dist;
   planetypes type;
 };
-extern dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
+extern dplane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 #endif
 class Winding
 {

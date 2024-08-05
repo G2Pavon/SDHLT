@@ -150,7 +150,7 @@ struct BSPLumpVertex
     float point[3];
 };
 
-struct dplane_t // don't rename until remove winding.h g_dplanes macro BSPLumpPlane
+struct dplane_t // FIXME: Changing the name (BSPLumpPlane) causes it to conflict with winding.h's dplane_t macro
 {
     float normal[3];
     float dist;

@@ -46,7 +46,7 @@ static auto WritePlane(int planenum) -> int
 	}
 	// add plane to BSP
 	hlassume(gNumMappedPlanes < MAX_MAP_PLANES, assume_MAX_MAP_PLANES);
-	gMappedPlanes[gNumMappedPlanes] = g_dplanes[planenum];
+	gMappedPlanes[gNumMappedPlanes] = g_mapplanes[planenum];
 	gPlaneMap.insert(PlaneMap::value_type(planenum, gNumMappedPlanes));
 
 	return gNumMappedPlanes++;
@@ -703,7 +703,7 @@ void FinishBSPFile()
 
 	for (int counter = 0; counter < gNumMappedPlanes; counter++)
 	{
-		g_dplanes[counter] = gMappedPlanes[counter];
+		g_mapplanes[counter] = gMappedPlanes[counter];
 	}
 	g_bspnumplanes = gNumMappedPlanes;
 
@@ -784,7 +784,6 @@ void FinishBSPFile()
 	WriteExtentFile(g_extentfilename);
 
 #undef dplane_t // this allow us to temporarily access the raw data directly without the layer of indirection
-#undef g_dplanes
 	for (int i = 0; i < g_bspnumplanes; i++)
 	{
 		plane_t *mp = &g_mapplanes[i];
@@ -794,6 +793,5 @@ void FinishBSPFile()
 		dp->type = mp->type;
 	}
 #define dplane_t plane_t
-#define g_dplanes g_mapplanes
 	WriteBSPFile(g_bspfilename);
 }

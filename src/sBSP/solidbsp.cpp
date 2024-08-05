@@ -396,7 +396,7 @@ static auto ChooseMidPlaneFromList(SurfaceBSP *surfaces, const vec3_t mins, cons
 			continue;
 		}
 
-		plane = &g_dplanes[p->planenum];
+		plane = &g_mapplanes[p->planenum];
 
 		// check for axis aligned surfaces
 		l = plane->type;
@@ -529,7 +529,7 @@ static auto ChoosePlaneFromList(SurfaceBSP *surfaces, const vec3_t mins, const v
 		double coplanarcount = 0;
 		double epsilonsplit = 0;
 
-		plane = &g_dplanes[p->planenum];
+		plane = &g_mapplanes[p->planenum];
 
 		for (f = p->faces; f; f = f->next)
 		{
@@ -761,7 +761,7 @@ static void DivideSurface(SurfaceBSP *in, const dplane_t *const split, SurfaceBS
 	SurfaceBSP *news;
 	dplane_t *inplane;
 
-	inplane = &g_dplanes[in->planenum];
+	inplane = &g_mapplanes[in->planenum];
 
 	// parallel case is easy
 
@@ -872,7 +872,7 @@ static void SplitNodeSurfaces(SurfaceBSP *surfaces, const NodeBSP *const node)
 	SurfaceBSP *backfrag;
 	dplane_t *splitplane;
 
-	splitplane = &g_dplanes[node->planenum];
+	splitplane = &g_mapplanes[node->planenum];
 
 	frontlist = nullptr;
 	backlist = nullptr;
@@ -913,7 +913,7 @@ static void SplitNodeBrushes(BrushBSP *brushes, const NodeBSP *node)
 	const dplane_t *splitplane;
 	frontlist = nullptr;
 	backlist = nullptr;
-	splitplane = &g_dplanes[node->planenum];
+	splitplane = &g_mapplanes[node->planenum];
 	for (b = brushes; b; b = next)
 	{
 		next = b->next;
@@ -1247,7 +1247,7 @@ static void MakeNodePortal(NodeBSP *node)
 	Winding *w;
 	int side = 0;
 
-	plane = &g_dplanes[node->planenum];
+	plane = &g_mapplanes[node->planenum];
 	w = new Winding(*plane);
 
 	new_portal = AllocPortal();
@@ -1301,7 +1301,7 @@ static void SplitNodePortals(NodeBSP *node)
 	Winding *frontwinding;
 	Winding *backwinding;
 
-	plane = &g_dplanes[node->planenum];
+	plane = &g_mapplanes[node->planenum];
 	f = node->children[0];
 	b = node->children[1];
 
@@ -1575,13 +1575,13 @@ static void BuildBspTree_r(NodeBSP *node)
 			BrushBSP *copy, *front, *back;
 			if (k == 0)
 			{ // front child
-				VectorCopy(g_dplanes[split->planenum].normal, p.normal);
-				p.dist = g_dplanes[split->planenum].dist - BOUNDS_EXPANSION;
+				VectorCopy(g_mapplanes[split->planenum].normal, p.normal);
+				p.dist = g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION;
 			}
 			else
 			{ // back child
-				VecSubtractVector(0, g_dplanes[split->planenum].normal, p.normal);
-				p.dist = -g_dplanes[split->planenum].dist - BOUNDS_EXPANSION;
+				VecSubtractVector(0, g_mapplanes[split->planenum].normal, p.normal);
+				p.dist = -g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION;
 			}
 			copy = NewBrushFromBrush(node->boundsbrush);
 			SplitBrush(copy, &p, &front, &back);

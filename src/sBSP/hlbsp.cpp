@@ -51,7 +51,7 @@ int g_subdivide_size = DEFAULT_SUBDIVIDE_SIZE;
 
 bool g_nohull2 = false;
 
-dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
+dplane_t g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 
 // =====================================================================================
 //  Extract File stuff (ExtractFile | ExtractFilePath | ExtractFileBase)
@@ -136,7 +136,7 @@ static void SplitFaceTmp(FaceBSP *in, const dplane_t *const split, FaceBSP **fro
 		if (in->detaillevel)
 		{
 			// put front face in front node, and back face in back node.
-			const dplane_t *faceplane = &g_dplanes[in->planenum];
+			const dplane_t *faceplane = &g_mapplanes[in->planenum];
 			if (DotProduct(faceplane->normal, split->normal) > NORMAL_EPSILON) // usually near 1.0 or -1.0
 			{
 				*front = in;
@@ -935,7 +935,7 @@ static auto ReadBrushes(FILE *file) -> BrushBSP *
 			}
 			SideBSP *s;
 			s = AllocSide();
-			s->plane = g_dplanes[planenum ^ 1];
+			s->plane = g_mapplanes[planenum ^ 1];
 			s->w = new Winding(numpoints);
 			int x;
 			for (x = 0; x < numpoints; x++)
@@ -1245,7 +1245,6 @@ static void ProcessFile(const char *const filename)
 		{
 			Warning("Couldn't open %s", name);
 #undef dplane_t
-#undef g_dplanes
 			for (i = 0; i < g_bspnumplanes; i++)
 			{
 				plane_t *mp = &g_mapplanes[i];
@@ -1255,7 +1254,6 @@ static void ProcessFile(const char *const filename)
 				mp->type = dp->type;
 			}
 #define dplane_t plane_t
-#define g_dplanes g_mapplanes
 		}
 		else
 		{
@@ -1263,7 +1261,7 @@ static void ProcessFile(const char *const filename)
 			{
 				Error("Invalid plane data");
 			}
-			SafeRead(planefile, g_dplanes, g_bspnumplanes * sizeof(dplane_t));
+			SafeRead(planefile, g_mapplanes, g_bspnumplanes * sizeof(dplane_t));
 			fclose(planefile);
 		}
 	}

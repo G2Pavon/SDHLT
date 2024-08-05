@@ -1136,7 +1136,7 @@ auto ExpandClipnodes_r(bclipnode_t *bclipnodes, int &numbclipnodes, const BSPLum
 	{
 		c->isleaf = false;
 		c->planenum = clipnodes[headnode].planenum;
-		c->plane = &g_dplanes[c->planenum];
+		c->plane = &g_mapplanes[c->planenum];
 		for (int k = 0; k < 2; k++)
 		{
 			c->children[k] = ExpandClipnodes_r(bclipnodes, numbclipnodes, clipnodes, clipnodes[headnode].children[k]);
@@ -1452,7 +1452,7 @@ auto AddPartition(bclipnode_t *clipnode, int planenum, bool planeside, int conte
 			for (side = 0; side < 2; side++)
 			{
 				btreepoint_t *tp = GetPointFromEdge(ei->e, side);
-				const dplane_t *plane = &g_dplanes[planenum];
+				const dplane_t *plane = &g_mapplanes[planenum];
 				vec_t dist = DotProduct(tp->v, plane->normal) - plane->dist;
 				if (planeside ? dist < -ON_EPSILON : dist > ON_EPSILON)
 				{
