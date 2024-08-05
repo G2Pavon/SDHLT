@@ -40,7 +40,7 @@ BSPLumpLeaf g_bspleafs[MAX_MAP_LEAFS];
 int g_bspleafs_checksum;
 
 int g_bspnumplanes;
-dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
+dplane_t g_bspplanes[MAX_INTERNAL_MAP_PLANES];
 int g_bspplanes_checksum;
 
 int g_bspnumvertexes;
@@ -161,7 +161,7 @@ void DecompressVis(const byte *src, byte *const dest, const unsigned int dest_le
 	int row;
 
 	row = (g_bspmodels[0].visleafs + 7) >> 3; // same as the length used by VIS program in CompressVis
-											// The wrong size will cause DecompressVis to spend extremely long time once the source pointer runs into the invalid area in g_bspvisdata (for example, in BuildFaceLights, some faces could hang for a few seconds), and sometimes to crash.
+											  // The wrong size will cause DecompressVis to spend extremely long time once the source pointer runs into the invalid area in g_bspvisdata (for example, in BuildFaceLights, some faces could hang for a few seconds), and sometimes to crash.
 
 	out = dest;
 
@@ -255,10 +255,10 @@ static void SwapBSPFile(const bool todisk)
 	{
 		for (j = 0; j < 3; j++)
 		{
-			g_dplanes[i].normal[j] = LittleFloat(g_dplanes[i].normal[j]);
+			g_bspplanes[i].normal[j] = LittleFloat(g_bspplanes[i].normal[j]);
 		}
-		g_dplanes[i].dist = LittleFloat(g_dplanes[i].dist);
-		g_dplanes[i].type = (planetypes)LittleLong(g_dplanes[i].type);
+		g_bspplanes[i].dist = LittleFloat(g_bspplanes[i].dist);
+		g_bspplanes[i].type = (planetypes)LittleLong(g_bspplanes[i].type);
 	}
 
 	//
@@ -444,7 +444,7 @@ void LoadBSPImage(BSPLumpHeader *const header)
 
 	g_bspnummodels = CopyLump(LUMP_MODELS, g_bspmodels, sizeof(BSPLumpModel), header);
 	g_bspnumvertexes = CopyLump(LUMP_VERTEXES, g_bspvertexes, sizeof(BSPLumpVertex), header);
-	g_bspnumplanes = CopyLump(LUMP_PLANES, g_dplanes, sizeof(dplane_t), header);
+	g_bspnumplanes = CopyLump(LUMP_PLANES, g_bspplanes, sizeof(dplane_t), header);
 	g_bspnumleafs = CopyLump(LUMP_LEAFS, g_bspleafs, sizeof(BSPLumpLeaf), header);
 	g_bspnumnodes = CopyLump(LUMP_NODES, g_bspnodes, sizeof(BSPLumpNode), header);
 	g_bspnumtexinfo = CopyLump(LUMP_TEXINFO, g_bsptexinfo, sizeof(BSPLumpTexInfo), header);
@@ -467,7 +467,7 @@ void LoadBSPImage(BSPLumpHeader *const header)
 
 	g_bspmodels_checksum = FastChecksum(g_bspmodels, g_bspnummodels * sizeof(g_bspmodels[0]));
 	g_bspvertexes_checksum = FastChecksum(g_bspvertexes, g_bspnumvertexes * sizeof(g_bspvertexes[0]));
-	g_bspplanes_checksum = FastChecksum(g_dplanes, g_bspnumplanes * sizeof(g_dplanes[0]));
+	g_bspplanes_checksum = FastChecksum(g_bspplanes, g_bspnumplanes * sizeof(g_bspplanes[0]));
 	g_bspleafs_checksum = FastChecksum(g_bspleafs, g_bspnumleafs * sizeof(g_bspleafs[0]));
 	g_bspnodes_checksum = FastChecksum(g_bspnodes, g_bspnumnodes * sizeof(g_bspnodes[0]));
 	g_bsptexinfo_checksum = FastChecksum(g_bsptexinfo, g_bspnumtexinfo * sizeof(g_bsptexinfo[0]));
@@ -519,7 +519,7 @@ void WriteBSPFile(const char *const filename)
 	SafeWrite(bspfile, header, sizeof(BSPLumpHeader)); // overwritten later
 
 	//      LUMP TYPE       DATA            LENGTH                              HEADER  BSPFILE
-	AddLump(LUMP_PLANES, g_dplanes, g_bspnumplanes * sizeof(dplane_t), header, bspfile);
+	AddLump(LUMP_PLANES, g_bspplanes, g_bspnumplanes * sizeof(dplane_t), header, bspfile);
 	AddLump(LUMP_LEAFS, g_bspleafs, g_bspnumleafs * sizeof(BSPLumpLeaf), header, bspfile);
 	AddLump(LUMP_VERTEXES, g_bspvertexes, g_bspnumvertexes * sizeof(BSPLumpVertex), header, bspfile);
 	AddLump(LUMP_NODES, g_bspnodes, g_bspnumnodes * sizeof(BSPLumpNode), header, bspfile);

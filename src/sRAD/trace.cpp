@@ -35,7 +35,7 @@ static void MakeTnode(const int nodenum)
 	t = tnode_p++;
 
 	node = g_bspnodes + nodenum;
-	plane = g_dplanes + node->planenum;
+	plane = g_bspplanes + node->planenum;
 
 	t->type = plane->type;
 	VectorCopy(plane->normal, t->normal);
@@ -622,7 +622,7 @@ void CreateOpaqueNodes()
 			delete of->winding;
 			of->winding = nullptr;
 		}
-		of->plane = g_dplanes[df->planenum];
+		of->plane = g_bspplanes[df->planenum];
 		if (df->side)
 		{
 			VectorInverse(of->plane.normal);
@@ -647,9 +647,9 @@ void CreateOpaqueNodes()
 	{
 		opaquenode_t *on = &opaquenodes[i];
 		BSPLumpNode *dn = &g_bspnodes[i];
-		on->type = g_dplanes[dn->planenum].type;
-		VectorCopy(g_dplanes[dn->planenum].normal, on->normal);
-		on->dist = g_dplanes[dn->planenum].dist;
+		on->type = g_bspplanes[dn->planenum].type;
+		VectorCopy(g_bspplanes[dn->planenum].normal, on->normal);
+		on->dist = g_bspplanes[dn->planenum].dist;
 		on->children[0] = dn->children[0];
 		on->children[1] = dn->children[1];
 		on->firstface = dn->firstface;

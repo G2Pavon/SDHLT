@@ -4105,7 +4105,7 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 		return;
 	auto *node = &g_bspnodes[nodenum];
 	float mid[3];
-	auto *plane = &g_dplanes[node->planenum];
+	auto *plane = &g_bspplanes[node->planenum];
 	auto front = DotProduct(start, plane->normal) - plane->dist;
 	auto back = DotProduct(end, plane->normal) - plane->dist;
 	auto side = front < 0;

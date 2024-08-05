@@ -12,7 +12,7 @@ auto PointInLeaf_Worst_r(int nodenum, const vec3_t point) -> BSPLumpLeaf *
 	while (nodenum >= 0)
 	{
 		node = &g_bspnodes[nodenum];
-		plane = &g_dplanes[node->planenum];
+		plane = &g_bspplanes[node->planenum];
 		dist = DotProduct(point, plane->normal) - plane->dist;
 		if (dist > HUNT_WALL_EPSILON)
 		{
@@ -58,7 +58,7 @@ auto PointInLeaf(const vec3_t point) -> BSPLumpLeaf *
 	while (nodenum >= 0)
 	{
 		node = &g_bspnodes[nodenum];
-		plane = &g_dplanes[node->planenum];
+		plane = &g_bspplanes[node->planenum];
 		dist = DotProduct(point, plane->normal) - plane->dist;
 		if (dist >= 0.0)
 		{
@@ -92,8 +92,8 @@ void MakeBackplanes()
 
 	for (i = 0; i < g_bspnumplanes; i++)
 	{
-		backplanes[i].dist = -g_dplanes[i].dist;
-		VectorSubtract(vec3_origin, g_dplanes[i].normal, backplanes[i].normal);
+		backplanes[i].dist = -g_bspplanes[i].dist;
+		VectorSubtract(vec3_origin, g_bspplanes[i].normal, backplanes[i].normal);
 	}
 }
 
@@ -110,7 +110,7 @@ auto getPlaneFromFace(const BSPLumpFace *const face) -> const dplane_t *
 	}
 	else
 	{
-		return &g_dplanes[face->planenum];
+		return &g_bspplanes[face->planenum];
 	}
 }
 
@@ -124,7 +124,7 @@ auto getPlaneFromFaceNumber(const unsigned int faceNumber) -> const dplane_t *
 	}
 	else
 	{
-		return &g_dplanes[face->planenum];
+		return &g_bspplanes[face->planenum];
 	}
 }
 
@@ -148,9 +148,9 @@ void getAdjustedPlaneFromFaceNumber(unsigned int faceNumber, dplane_t *plane)
 	{
 		vec_t dist;
 
-		VectorCopy(g_dplanes[face->planenum].normal, plane->normal);
+		VectorCopy(g_bspplanes[face->planenum].normal, plane->normal);
 		dist = DotProduct(plane->normal, face_offset);
-		plane->dist = g_dplanes[face->planenum].dist + dist;
+		plane->dist = g_bspplanes[face->planenum].dist + dist;
 	}
 }
 

@@ -289,7 +289,7 @@ extern BSPLumpLeaf g_bspleafs[MAX_MAP_LEAFS];
 extern int g_bspleafs_checksum;
 
 extern int g_bspnumplanes;
-extern dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES]; // don't rename until remove winding.h g_dplanes macro
+extern dplane_t g_bspplanes[MAX_INTERNAL_MAP_PLANES]; // don't rename until remove winding.h g_dplanes macro
 extern int g_bspplanes_checksum;
 
 extern int g_bspnumvertexes;

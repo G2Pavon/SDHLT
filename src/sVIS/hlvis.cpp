@@ -597,7 +597,7 @@ auto VisLeafnumForPoint(const vec3_t point) -> int
     while (nodenum >= 0)
     {
         node = &g_bspnodes[nodenum];
-        plane = &g_dplanes[node->planenum];
+        plane = &g_bspplanes[node->planenum];
         dist = DotProduct(point, plane->normal) - plane->dist;
         if (dist >= 0.0)
         {

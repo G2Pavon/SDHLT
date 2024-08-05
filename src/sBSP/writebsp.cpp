@@ -788,7 +788,7 @@ void FinishBSPFile()
 	for (int i = 0; i < g_bspnumplanes; i++)
 	{
 		plane_t *mp = &g_mapplanes[i];
-		dplane_t *dp = &g_dplanes[i];
+		dplane_t *dp = &g_bspplanes[i];
 		VectorCopy(mp->normal, dp->normal);
 		dp->dist = mp->dist;
 		dp->type = mp->type;
