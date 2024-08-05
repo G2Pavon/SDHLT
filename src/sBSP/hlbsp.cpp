@@ -1247,13 +1247,13 @@ static void ProcessFile(const char *const filename)
 #undef dplane_t
 			for (i = 0; i < g_bspnumplanes; i++)
 			{
-				plane_t *mp = &g_mapplanes[i];
+				windingplane_t *mp = &g_mapplanes[i];
 				dplane_t *dp = &g_bspplanes[i];
 				VectorCopy(dp->normal, mp->normal);
 				mp->dist = dp->dist;
 				mp->type = dp->type;
 			}
-#define dplane_t plane_t
+#define dplane_t windingplane_t
 		}
 		else
 		{

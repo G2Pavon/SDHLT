@@ -786,12 +786,12 @@ void FinishBSPFile()
 #undef dplane_t // this allow us to temporarily access the raw data directly without the layer of indirection
 	for (int i = 0; i < g_bspnumplanes; i++)
 	{
-		plane_t *mp = &g_mapplanes[i];
+		windingplane_t *mp = &g_mapplanes[i];
 		dplane_t *dp = &g_bspplanes[i];
 		VectorCopy(mp->normal, dp->normal);
 		dp->dist = mp->dist;
 		dp->type = mp->type;
 	}
-#define dplane_t plane_t
+#define dplane_t windingplane_t
 	WriteBSPFile(g_bspfilename);
 }

@@ -20,7 +20,7 @@ constexpr int SIDE_CROSS = -2;
 #ifndef DOUBLEVEC_T
 #error you must add -dDOUBLEVEC_T to the project!
 #endif
-#define dplane_t plane_t
+#define dplane_t windingplane_t
 
 struct dplane_t
 {
