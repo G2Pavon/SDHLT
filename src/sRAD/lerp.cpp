@@ -783,7 +783,7 @@ void InterpolateSampleLight(const vec3_t position, int surface, int numstyles, c
 		vec_t bestdist;
 		vec_t dot;
 
-		if (surface < 0 || surface >= g_numfaces)
+		if (surface < 0 || surface >= g_bspnumfaces)
 		{
 			Error("InterpolateSampleLight: internal error: surface number out of range.");
 		}
@@ -1509,7 +1509,7 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 	const dplane_t *dp2;
 
 	facenum = facetrian->facenum;
-	f = &g_dfaces[facenum];
+	f = &g_bspfaces[facenum];
 	dp = getPlaneFromFace(f);
 
 	facetrian->neighbors.resize(0);
@@ -1518,14 +1518,14 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 
 	for (i = 0; i < f->numedges; i++)
 	{
-		e = g_dsurfedges[f->firstedge + i];
+		e = g_bspsurfedges[f->firstedge + i];
 		es = &g_edgeshare[abs(e)];
 		if (!es->smooth)
 		{
 			continue;
 		}
 		f2 = es->faces[e > 0 ? 1 : 0];
-		facenum2 = f2 - g_dfaces;
+		facenum2 = f2 - g_bspfaces;
 		dp2 = getPlaneFromFace(f2);
 		if (DotProduct(dp->normal, dp2->normal) < -NORMAL_EPSILON)
 		{
@@ -1546,7 +1546,7 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 
 	for (i = 0; i < f->numedges; i++)
 	{
-		e = g_dsurfedges[f->firstedge + i];
+		e = g_bspsurfedges[f->firstedge + i];
 		es = &g_edgeshare[abs(e)];
 		if (!es->smooth)
 		{
@@ -1557,7 +1557,7 @@ static void FindNeighbors(facetriangulation_t *facetrian)
 			for (fl = es->vertex_facelist[side]; fl; fl = fl->next)
 			{
 				f2 = fl->face;
-				facenum2 = f2 - g_dfaces;
+				facenum2 = f2 - g_bspfaces;
 				dp2 = getPlaneFromFace(f2);
 				if (DotProduct(dp->normal, dp2->normal) < -NORMAL_EPSILON)
 				{
@@ -1594,7 +1594,7 @@ static void BuildWalls(facetriangulation_t *facetrian)
 	vec_t dot;
 
 	facenum = facetrian->facenum;
-	f = &g_dfaces[facenum];
+	f = &g_bspfaces[facenum];
 	dp = getPlaneFromFace(f);
 
 	facetrian->walls.resize(0);
@@ -1602,7 +1602,7 @@ static void BuildWalls(facetriangulation_t *facetrian)
 	for (i = 0; i < (int)facetrian->neighbors.size(); i++)
 	{
 		facenum2 = facetrian->neighbors[i];
-		f2 = &g_dfaces[facenum2];
+		f2 = &g_bspfaces[facenum2];
 		dp2 = getPlaneFromFace(f2);
 		if (DotProduct(dp->normal, dp2->normal) <= 0.1)
 		{
@@ -1610,14 +1610,14 @@ static void BuildWalls(facetriangulation_t *facetrian)
 		}
 		for (j = 0; j < f2->numedges; j++)
 		{
-			e = g_dsurfedges[f2->firstedge + j];
+			e = g_bspsurfedges[f2->firstedge + j];
 			es = &g_edgeshare[abs(e)];
 			if (!es->smooth)
 			{
 				facetriangulation_t::Wall wall;
 
-				VectorAdd(g_dvertexes[g_dedges[abs(e)].v[0]].point, g_face_offset[facenum], wall.points[0]);
-				VectorAdd(g_dvertexes[g_dedges[abs(e)].v[1]].point, g_face_offset[facenum], wall.points[1]);
+				VectorAdd(g_bspvertexes[g_bspedges[abs(e)].v[0]].point, g_face_offset[facenum], wall.points[0]);
+				VectorAdd(g_bspvertexes[g_bspedges[abs(e)].v[1]].point, g_face_offset[facenum], wall.points[1]);
 				VectorSubtract(wall.points[1], wall.points[0], wall.direction);
 				dot = DotProduct(wall.direction, dp->normal);
 				VectorMA(wall.direction, -dot, dp->normal, wall.direction);
@@ -1745,7 +1745,7 @@ void FreeTriangulations()
 		int j;
 		facetriangulation_t *facetrian;
 
-		for (i = 0; i < g_numfaces; i++)
+		for (i = 0; i < g_bspnumfaces; i++)
 		{
 			facetrian = g_facetriangulations[i];
 

@@ -19,7 +19,7 @@ struct intersecttest_t
 };
 auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 {
-	auto *f2 = &g_dfaces[facenum];
+	auto *f2 = &g_bspfaces[facenum];
 	auto *w = new Winding(*f2);
 	int k;
 	for (k = 0; k < w->m_NumPoints; k++)
@@ -39,7 +39,7 @@ auto TestFaceIntersect(intersecttest_t *t, int facenum) -> bool
 }
 auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 {
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 	auto *t = new intersecttest_t;
 	hlassume(t != nullptr, assume_NoMemory);
 	t->clipplanes = new dplane_t[f->numedges];
@@ -48,19 +48,19 @@ auto CreateIntersectTest(const dplane_t *p, int facenum) -> intersecttest_t *
 	for (int j = 0; j < f->numedges; j++)
 	{
 		// should we use winding instead?
-		auto edgenum = g_dsurfedges[f->firstedge + j];
+		auto edgenum = g_bspsurfedges[f->firstedge + j];
 		{
 			vec3_t v0, v1;
 			vec3_t dir, normal;
 			if (edgenum < 0)
 			{
-				VectorCopy(g_dvertexes[g_dedges[-edgenum].v[1]].point, v0);
-				VectorCopy(g_dvertexes[g_dedges[-edgenum].v[0]].point, v1);
+				VectorCopy(g_bspvertexes[g_bspedges[-edgenum].v[1]].point, v0);
+				VectorCopy(g_bspvertexes[g_bspedges[-edgenum].v[0]].point, v1);
 			}
 			else
 			{
-				VectorCopy(g_dvertexes[g_dedges[edgenum].v[0]].point, v0);
-				VectorCopy(g_dvertexes[g_dedges[edgenum].v[1]].point, v1);
+				VectorCopy(g_bspvertexes[g_bspedges[edgenum].v[0]].point, v0);
+				VectorCopy(g_bspvertexes[g_bspedges[edgenum].v[1]].point, v1);
 			}
 			VectorAdd(v0, g_face_offset[facenum], v0);
 			VectorAdd(v1, g_face_offset[facenum], v1);
@@ -97,13 +97,13 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 //
 {
 	VectorCopy(getPlaneFromFace(f)->normal, normal);
-	auto vnum = g_dedges[edgeabs].v[edgeend];
+	auto vnum = g_bspedges[edgeabs].v[edgeend];
 	int i, e, count1, count2;
 	int edge, edgenext;
 	for (count1 = count2 = 0, i = 0; i < f->numedges; i++)
 	{
-		e = g_dsurfedges[f->firstedge + i];
-		if (g_dedges[abs(e)].v[0] == g_dedges[abs(e)].v[1])
+		e = g_bspsurfedges[f->firstedge + i];
+		if (g_bspedges[abs(e)].v[0] == g_bspedges[abs(e)].v[1])
 			continue;
 		if (abs(e) == edgeabs)
 		{
@@ -111,7 +111,7 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 			edge = e;
 			count1++;
 		}
-		else if (g_dedges[abs(e)].v[0] == vnum || g_dedges[abs(e)].v[1] == vnum)
+		else if (g_bspedges[abs(e)].v[0] == vnum || g_bspedges[abs(e)].v[1] == vnum)
 		{
 			auto iedgenext = i;
 			edgenext = e;
@@ -123,21 +123,21 @@ auto AddFaceForVertexNormal(const int edgeabs, int &edgeabsnext, const int edgee
 		return -1;
 	}
 	vec3_t vec1, vec2;
-	auto vnum11 = g_dedges[abs(edge)].v[edge > 0 ? 0 : 1];
-	auto vnum12 = g_dedges[abs(edge)].v[edge > 0 ? 1 : 0];
-	auto vnum21 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 0 : 1];
-	auto vnum22 = g_dedges[abs(edgenext)].v[edgenext > 0 ? 1 : 0];
+	auto vnum11 = g_bspedges[abs(edge)].v[edge > 0 ? 0 : 1];
+	auto vnum12 = g_bspedges[abs(edge)].v[edge > 0 ? 1 : 0];
+	auto vnum21 = g_bspedges[abs(edgenext)].v[edgenext > 0 ? 0 : 1];
+	auto vnum22 = g_bspedges[abs(edgenext)].v[edgenext > 0 ? 1 : 0];
 	if (vnum == vnum12 && vnum == vnum21 && vnum != vnum11 && vnum != vnum22)
 	{
-		VectorSubtract(g_dvertexes[vnum11].point, g_dvertexes[vnum].point, vec1);
-		VectorSubtract(g_dvertexes[vnum22].point, g_dvertexes[vnum].point, vec2);
+		VectorSubtract(g_bspvertexes[vnum11].point, g_bspvertexes[vnum].point, vec1);
+		VectorSubtract(g_bspvertexes[vnum22].point, g_bspvertexes[vnum].point, vec2);
 		edgeabsnext = abs(edgenext);
 		edgeendnext = edgenext > 0 ? 0 : 1;
 	}
 	else if (vnum == vnum11 && vnum == vnum22 && vnum != vnum12 && vnum != vnum21)
 	{
-		VectorSubtract(g_dvertexes[vnum12].point, g_dvertexes[vnum].point, vec1);
-		VectorSubtract(g_dvertexes[vnum21].point, g_dvertexes[vnum].point, vec2);
+		VectorSubtract(g_bspvertexes[vnum12].point, g_bspvertexes[vnum].point, vec1);
+		VectorSubtract(g_bspvertexes[vnum21].point, g_bspvertexes[vnum].point, vec2);
 		edgeabsnext = abs(edgenext);
 		edgeendnext = edgenext > 0 ? 1 : 0;
 	}
@@ -183,10 +183,10 @@ static auto TranslateTexToTex(int facenum, int edgenum, int facenum2, Matrix &m,
 	TranslateWorldToTex(facenum, worldtotex);
 	TranslateWorldToTex(facenum2, worldtotex2);
 
-	auto *e = &g_dedges[edgenum];
+	auto *e = &g_bspedges[edgenum];
 	for (int i = 0; i < 2; i++)
 	{
-		vert[i] = &g_dvertexes[e->v[i]];
+		vert[i] = &g_bspvertexes[e->v[i]];
 		ApplyMatrix(worldtotex, vert[i]->point, face_vert[i]);
 		face_vert[i][2] = 0; // this value is naturally close to 0 assuming that the edge is on the face plane, but let's make this more explicit.
 		ApplyMatrix(worldtotex2, vert[i]->point, face2_vert[i]);
@@ -234,17 +234,17 @@ void PairEdges()
 	EdgeShare *e;
 	memset(&g_edgeshare, 0, sizeof(g_edgeshare));
 
-	auto *f = g_dfaces;
-	for (int i = 0; i < g_numfaces; i++, f++)
+	auto *f = g_bspfaces;
+	for (int i = 0; i < g_bspnumfaces; i++, f++)
 	{
-		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+		if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			// special textures don't have lightmaps
 			continue;
 		}
 		for (int j = 0; j < f->numedges; j++)
 		{
-			auto k = g_dsurfedges[f->firstedge + j];
+			auto k = g_bspsurfedges[f->firstedge + j];
 			if (k < 0)
 			{
 				e = &g_edgeshare[-k];
@@ -279,8 +279,8 @@ void PairEdges()
 
 					e->cos_normals_angle = DotProduct(normals[0], normals[1]);
 
-					auto m0 = g_texinfo[e->faces[0]->texinfo].miptex;
-					auto m1 = g_texinfo[e->faces[1]->texinfo].miptex;
+					auto m0 = g_bsptexinfo[e->faces[0]->texinfo].miptex;
+					auto m1 = g_bsptexinfo[e->faces[1]->texinfo].miptex;
 					auto smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
 					if (m0 != m1)
 					{
@@ -304,14 +304,14 @@ void PairEdges()
 						}
 					}
 				}
-				if (!VectorCompare(g_translucenttextures[g_texinfo[e->faces[0]->texinfo].miptex], g_translucenttextures[g_texinfo[e->faces[1]->texinfo].miptex]))
+				if (!VectorCompare(g_translucenttextures[g_bsptexinfo[e->faces[0]->texinfo].miptex], g_translucenttextures[g_bsptexinfo[e->faces[1]->texinfo].miptex]))
 				{
 					e->coplanar = false;
 					VectorClear(e->interface_normal);
 				}
 				{
-					auto miptex0 = g_texinfo[e->faces[0]->texinfo].miptex;
-					auto miptex1 = g_texinfo[e->faces[1]->texinfo].miptex;
+					auto miptex0 = g_bsptexinfo[e->faces[0]->texinfo].miptex;
+					auto miptex1 = g_bsptexinfo[e->faces[1]->texinfo].miptex;
 					if (fabs(g_lightingconeinfo[miptex0][0] - g_lightingconeinfo[miptex1][0]) > NORMAL_EPSILON ||
 						fabs(g_lightingconeinfo[miptex0][1] - g_lightingconeinfo[miptex1][1]) > NORMAL_EPSILON)
 					{
@@ -326,13 +326,13 @@ void PairEdges()
 				if (e->smooth)
 				{
 					// compute the matrix in advance
-					if (!TranslateTexToTex(e->faces[0] - g_dfaces, abs(k), e->faces[1] - g_dfaces, e->textotex[0], e->textotex[1]))
+					if (!TranslateTexToTex(e->faces[0] - g_bspfaces, abs(k), e->faces[1] - g_bspfaces, e->textotex[0], e->textotex[1]))
 					{
 						e->smooth = false;
 						e->coplanar = false;
 						VectorClear(e->interface_normal);
 
-						auto *dv = &g_dvertexes[g_dedges[abs(k)].v[0]];
+						auto *dv = &g_bspvertexes[g_bspedges[abs(k)].v[0]];
 					}
 				}
 			}
@@ -352,11 +352,11 @@ void PairEdges()
 			if (!e->smooth)
 				continue;
 			VectorCopy(e->interface_normal, edgenormal);
-			if (g_dedges[edgeabs].v[0] == g_dedges[edgeabs].v[1])
+			if (g_bspedges[edgeabs].v[0] == g_bspedges[edgeabs].v[1])
 			{
 				vec3_t errorpos;
-				VectorCopy(g_dvertexes[g_dedges[edgeabs].v[0]].point, errorpos);
-				VectorAdd(errorpos, g_face_offset[e->faces[0] - g_dfaces], errorpos);
+				VectorCopy(g_bspvertexes[g_bspedges[edgeabs].v[0]].point, errorpos);
+				VectorAdd(errorpos, g_face_offset[e->faces[0] - g_bspfaces], errorpos);
 				VectorCopy(edgenormal, e->vertex_normal[0]);
 				VectorCopy(edgenormal, e->vertex_normal[1]);
 			}
@@ -364,13 +364,13 @@ void PairEdges()
 			{
 				const dplane_t *p0 = getPlaneFromFace(e->faces[0]);
 				const dplane_t *p1 = getPlaneFromFace(e->faces[1]);
-				intersecttest_t *test0 = CreateIntersectTest(p0, e->faces[0] - g_dfaces);
-				intersecttest_t *test1 = CreateIntersectTest(p1, e->faces[1] - g_dfaces);
+				intersecttest_t *test0 = CreateIntersectTest(p0, e->faces[0] - g_bspfaces);
+				intersecttest_t *test1 = CreateIntersectTest(p1, e->faces[1] - g_bspfaces);
 				for (edgeend = 0; edgeend < 2; edgeend++)
 				{
 					vec3_t errorpos;
-					VectorCopy(g_dvertexes[g_dedges[edgeabs].v[edgeend]].point, errorpos);
-					VectorAdd(errorpos, g_face_offset[e->faces[0] - g_dfaces], errorpos);
+					VectorCopy(g_bspvertexes[g_bspedges[edgeabs].v[edgeend]].point, errorpos);
+					VectorAdd(errorpos, g_face_offset[e->faces[0] - g_bspfaces], errorpos);
 					angles = 0;
 					VectorClear(normals);
 
@@ -393,8 +393,8 @@ void PairEdges()
 							}
 							if (DotProduct(normal, p0->normal) <= NORMAL_EPSILON || DotProduct(normal, p1->normal) <= NORMAL_EPSILON)
 								break;
-							auto m0 = g_texinfo[f->texinfo].miptex;
-							auto m1 = g_texinfo[fcurrent->texinfo].miptex;
+							auto m0 = g_bsptexinfo[f->texinfo].miptex;
+							auto m1 = g_bsptexinfo[fcurrent->texinfo].miptex;
 							auto smoothvalue = qmax(g_smoothvalues[m0], g_smoothvalues[m1]);
 							if (m0 != m1)
 							{
@@ -407,7 +407,7 @@ void PairEdges()
 							if (DotProduct(edgenormal, normal) < qmax(smoothvalue - NORMAL_EPSILON, NORMAL_EPSILON))
 								break;
 							if (fcurrent != e->faces[0] && fcurrent != e->faces[1] &&
-								(TestFaceIntersect(test0, fcurrent - g_dfaces) || TestFaceIntersect(test1, fcurrent - g_dfaces)))
+								(TestFaceIntersect(test0, fcurrent - g_bspfaces) || TestFaceIntersect(test1, fcurrent - g_bspfaces)))
 							{
 								break;
 							}
@@ -518,9 +518,9 @@ static auto TextureNameFromFace(const BSPLumpFace *const f) -> const char *
 	//
 	// check for light emited by texture
 	//
-	auto *tx = &g_texinfo[f->texinfo];
-	auto ofs = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[tx->miptex];
-	auto *mt = (BSPLumpMiptex *)((byte *)g_dtexdata + ofs);
+	auto *tx = &g_bsptexinfo[f->texinfo];
+	auto ofs = ((BSPLumpMiptexHeader *)g_bsptexdata)->dataofs[tx->miptex];
+	auto *mt = (BSPLumpMiptex *)((byte *)g_bsptexdata + ofs);
 
 	return mt->name;
 }
@@ -542,18 +542,18 @@ static void CalcFaceExtents(lightinfo_t *l)
 	mins[0] = mins[1] = 99999999;
 	maxs[0] = maxs[1] = -99999999;
 
-	auto *tex = &g_texinfo[s->texinfo];
+	auto *tex = &g_bsptexinfo[s->texinfo];
 
 	for (i = 0; i < s->numedges; i++)
 	{
-		e = g_dsurfedges[s->firstedge + i];
+		e = g_bspsurfedges[s->firstedge + i];
 		if (e >= 0)
 		{
-			v = g_dvertexes + g_dedges[e].v[0];
+			v = g_bspvertexes + g_bspedges[e].v[0];
 		}
 		else
 		{
-			v = g_dvertexes + g_dedges[-e].v[1];
+			v = g_bspvertexes + g_bspedges[-e].v[1];
 		}
 
 		for (int j = 0; j < 2; j++)
@@ -593,18 +593,18 @@ static void CalcFaceExtents(lightinfo_t *l)
 		)
 		{
 			ThreadLock();
-			PrintOnce("\nfor Face %li (texture %s) at ", s - g_dfaces, TextureNameFromFace(s));
+			PrintOnce("\nfor Face %li (texture %s) at ", s - g_bspfaces, TextureNameFromFace(s));
 
 			for (i = 0; i < s->numedges; i++)
 			{
-				e = g_dsurfedges[s->firstedge + i];
+				e = g_bspsurfedges[s->firstedge + i];
 				if (e >= 0)
 				{
-					v = g_dvertexes + g_dedges[e].v[0];
+					v = g_bspvertexes + g_bspedges[e].v[0];
 				}
 				else
 				{
-					v = g_dvertexes + g_dedges[-e].v[1];
+					v = g_bspvertexes + g_bspedges[-e].v[1];
 				}
 				vec3_t pos;
 				VectorAdd(v->point, g_face_offset[facenum], pos);
@@ -650,7 +650,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 	int i;
 	vec3_t texnormal;
 
-	auto *tex = &g_texinfo[l->face->texinfo];
+	auto *tex = &g_bsptexinfo[l->face->texinfo];
 
 	// convert from float to double
 	for (i = 0; i < 2; i++)
@@ -670,7 +670,7 @@ static void CalcFaceVectors(lightinfo_t *l)
 	auto distscale = DotProduct(texnormal, l->facenormal);
 	if (distscale == 0.0)
 	{
-		const unsigned facenum = l->face - g_dfaces;
+		const unsigned facenum = l->face - g_bspfaces;
 
 		ThreadLock();
 		Log("Malformed face (%d) normal @ \n", facenum);
@@ -763,7 +763,7 @@ static void SetSTFromSurf(const lightinfo_t *const l, const vec_t *surf, vec_t &
 
 struct samplefragedge_t
 {
-	int edgenum; // g_dedges index
+	int edgenum; // g_bspedges index
 	int edgeside;
 	int nextfacenum; // where to grow
 	bool tried;
@@ -828,7 +828,7 @@ void ChopFrag(samplefrag_t *frag)
 	Matrix worldtotex;
 	const vec3_t v_up = {0, 0, 1};
 
-	auto *f = &g_dfaces[frag->facenum];
+	auto *f = &g_bspfaces[frag->facenum];
 	auto *facewinding = new Winding(*f);
 
 	TranslateWorldToTex(frag->facenum, worldtotex);
@@ -878,20 +878,20 @@ void ChopFrag(samplefrag_t *frag)
 		auto *e = &frag->edges[frag->numedges];
 
 		// some basic info
-		e->edgenum = abs(g_dsurfedges[f->firstedge + i]);
-		e->edgeside = (g_dsurfedges[f->firstedge + i] < 0 ? 1 : 0);
+		e->edgenum = abs(g_bspsurfedges[f->firstedge + i]);
+		e->edgeside = (g_bspsurfedges[f->firstedge + i] < 0 ? 1 : 0);
 		auto *es = &g_edgeshare[e->edgenum];
 		if (!es->smooth)
 		{
 			continue;
 		}
-		if (es->faces[e->edgeside] - g_dfaces != frag->facenum)
+		if (es->faces[e->edgeside] - g_bspfaces != frag->facenum)
 		{
 			Error("internal error 1 in GrowSingleSampleFrag");
 		}
 		const auto *m = &es->textotex[e->edgeside];
 		const auto *m_inverse = &es->textotex[1 - e->edgeside];
-		e->nextfacenum = es->faces[1 - e->edgeside] - g_dfaces;
+		e->nextfacenum = es->faces[1 - e->edgeside] - g_bspfaces;
 		if (e->nextfacenum == frag->facenum)
 		{
 			continue; // an invalid edge (usually very short)
@@ -900,9 +900,9 @@ void ChopFrag(samplefrag_t *frag)
 
 		// translate the edge points from world to the texture plane of the original frag
 		//   so the distances are able to be compared among edges from different frags
-		auto *de = &g_dedges[e->edgenum];
-		auto *dv1 = &g_dvertexes[de->v[e->edgeside]];
-		auto *dv2 = &g_dvertexes[de->v[1 - e->edgeside]];
+		auto *de = &g_bspedges[e->edgenum];
+		auto *dv1 = &g_bspvertexes[de->v[e->edgeside]];
+		auto *dv2 = &g_bspvertexes[de->v[1 - e->edgeside]];
 		ApplyMatrix(worldtotex, dv1->point, tmp);
 		ApplyMatrix(frag->mycoordtocoord, tmp, e->point1);
 		e->point1[2] = 0.0;
@@ -1340,7 +1340,7 @@ static auto SetSampleFromST(vec_t *const point,
 			const unsigned facenum = bestfrag->facenum;
 			ThreadLock();
 			Log("Malformed face (%d) normal @ \n", facenum);
-			auto *w = new Winding(g_dfaces[facenum]);
+			auto *w = new Winding(g_bspfaces[facenum]);
 			for (int x = 0; x < w->m_NumPoints; x++)
 			{
 				VectorAdd(w->m_Points[x], g_face_offset[facenum], w->m_Points[x]);
@@ -1552,7 +1552,7 @@ void CreateDirectLights()
 			VectorCopy(p->origin, dl->origin);
 
 			leaf = PointInLeaf(dl->origin);
-			leafnum = leaf - g_dleafs;
+			leafnum = leaf - g_bspleafs;
 
 			dl->next = directlights[leafnum];
 			directlights[leafnum] = dl;
@@ -1604,7 +1604,7 @@ void CreateDirectLights()
 			VectorScale(dl->intensity, 1.0 / Q_PI, dl->intensity);
 			VectorMultiply(dl->intensity, p->texturereflectivity, dl->intensity);
 
-			auto *f = &g_dfaces[p->faceNumber];
+			auto *f = &g_bspfaces[p->faceNumber];
 			if (g_face_entity[p->faceNumber] - g_entities != 0 && !strncasecmp(GetTextureByNumber(f->texinfo), "!", 1))
 			{
 				numdlights++;
@@ -1614,7 +1614,7 @@ void CreateDirectLights()
 				VectorMA(dl->origin, -2, dl->normal, dl2->origin);
 				VectorSubtract(vec3_origin, dl->normal, dl2->normal);
 				leaf = PointInLeaf(dl2->origin);
-				leafnum = leaf - g_dleafs;
+				leafnum = leaf - g_bspleafs;
 				dl2->next = directlights[leafnum];
 				directlights[leafnum] = dl2;
 			}
@@ -1677,7 +1677,7 @@ void CreateDirectLights()
 		GetVectorForKey(e, "origin", dl->origin);
 
 		leaf = PointInLeaf(dl->origin);
-		leafnum = leaf - g_dleafs;
+		leafnum = leaf - g_bspleafs;
 
 		dl->next = directlights[leafnum];
 		directlights[leafnum] = dl;
@@ -2005,7 +2005,7 @@ void CreateDirectLights()
 
 	int countnormallights = 0, countfastlights = 0;
 	{
-		for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+		for (int l = 0; l < 1 + g_bspmodels[0].visleafs; l++)
 		{
 			for (dl = directlights[l]; dl; dl = dl->next)
 			{
@@ -2064,7 +2064,7 @@ void CreateDirectLights()
 	Log("%i light styles\n", numstyles);
 	// move all emit_skylight to leaf 0 (the solid leaf)
 	DirectLight *skylights = nullptr;
-	for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+	for (int l = 0; l < 1 + g_bspmodels[0].visleafs; l++)
 	{
 		DirectLight **pdl;
 		for (dl = directlights[l], pdl = &directlights[l]; dl; dl = *pdl)
@@ -2115,7 +2115,7 @@ void CreateDirectLights()
 // =====================================================================================
 void DeleteDirectLights()
 {
-	for (int l = 0; l < 1 + g_dmodels[0].visleafs; l++)
+	for (int l = 0; l < 1 + g_bspmodels[0].visleafs; l++)
 	{
 		auto *dl = directlights[l];
 		while (dl)
@@ -2317,9 +2317,9 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 	vec3_t texlightgap_textoworld[2];
 	// calculates textoworld
 	{
-		auto *f = &g_dfaces[texlightgap_surfacenum];
+		auto *f = &g_bspfaces[texlightgap_surfacenum];
 		const auto *dp = getPlaneFromFace(f);
-		auto *tex = &g_texinfo[f->texinfo];
+		auto *tex = &g_bsptexinfo[f->texinfo];
 
 		for (int x = 0; x < 2; x++)
 		{
@@ -2336,7 +2336,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 		}
 	}
 
-	for (int i = 0; i < 1 + g_dmodels[0].visleafs; i++)
+	for (int i = 0; i < 1 + g_bspmodels[0].visleafs; i++)
 	{
 		auto *l = directlights[i];
 		if (l)
@@ -2851,7 +2851,7 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 // =====================================================================================
 void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 {
-	const auto *f = g_dfaces + facenum;
+	const auto *f = g_bspfaces + facenum;
 	const auto *p = getPlaneFromFace(f);
 	vec3_t facenormal;
 
@@ -2893,9 +2893,9 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 				next_edge = f->firstedge;
 			}
 
-			auto e = g_dsurfedges[f->firstedge + j];
-			auto e1 = g_dsurfedges[prev_edge];
-			auto e2 = g_dsurfedges[next_edge];
+			auto e = g_bspsurfedges[f->firstedge + j];
+			auto e1 = g_bspsurfedges[prev_edge];
+			auto e2 = g_bspsurfedges[next_edge];
 
 			auto *es = &g_edgeshare[abs(e)];
 			auto *es1 = &g_edgeshare[abs(e1)];
@@ -2908,13 +2908,13 @@ void GetPhongNormal(int facenum, const vec3_t spot, vec3_t phongnormal)
 
 			if (e > 0)
 			{
-				VectorCopy(g_dvertexes[g_dedges[e].v[0]].point, p1);
-				VectorCopy(g_dvertexes[g_dedges[e].v[1]].point, p2);
+				VectorCopy(g_bspvertexes[g_bspedges[e].v[0]].point, p1);
+				VectorCopy(g_bspvertexes[g_bspedges[e].v[1]].point, p2);
 			}
 			else
 			{
-				VectorCopy(g_dvertexes[g_dedges[-e].v[1]].point, p1);
-				VectorCopy(g_dvertexes[g_dedges[-e].v[0]].point, p2);
+				VectorCopy(g_bspvertexes[g_bspedges[-e].v[1]].point, p1);
+				VectorCopy(g_bspvertexes[g_bspedges[-e].v[0]].point, p2);
 			}
 
 			// Adjust for origin-based models
@@ -3110,7 +3110,7 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 			if (l->translucent_b)
 			{
 				const dplane_t *surfaceplane = getPlaneFromFaceNumber(surface);
-				auto *surfacewinding = new Winding(g_dfaces[surface]);
+				auto *surfacewinding = new Winding(g_bspfaces[surface]);
 
 				VectorCopy(spot, spot2);
 				for (int x = 0; x < surfacewinding->m_NumPoints; x++)
@@ -3146,11 +3146,11 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 		}
 		// calculate visibility for the sample
 		{
-			if (!g_visdatasize)
+			if (!g_bspvisdatasize)
 			{
 				if (i == 0)
 				{
-					memset(pvs, 255, (g_dmodels[0].visleafs + 7) / 8);
+					memset(pvs, 255, (g_bspmodels[0].visleafs + 7) / 8);
 				}
 			}
 			else
@@ -3161,22 +3161,22 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 				{
 					if (thisoffset == -1)
 					{
-						memset(pvs, 0, (g_dmodels[0].visleafs + 7) / 8);
+						memset(pvs, 0, (g_bspmodels[0].visleafs + 7) / 8);
 					}
 					else
 					{
-						DecompressVis(&g_dvisdata[leaf->visofs], pvs, sizeof(pvs));
+						DecompressVis(&g_bspvisdata[leaf->visofs], pvs, sizeof(pvs));
 					}
 				}
 				lastoffset = thisoffset;
 			}
 			if (l->translucent_b)
 			{
-				if (!g_visdatasize)
+				if (!g_bspvisdatasize)
 				{
 					if (i == 0)
 					{
-						memset(pvs2, 255, (g_dmodels[0].visleafs + 7) / 8);
+						memset(pvs2, 255, (g_bspmodels[0].visleafs + 7) / 8);
 					}
 				}
 				else
@@ -3187,11 +3187,11 @@ void CalcLightmap(lightinfo_t *l, byte *styles)
 					{
 						if (thisoffset2 == -1)
 						{
-							memset(pvs2, 0, (g_dmodels[0].visleafs + 7) / 8);
+							memset(pvs2, 0, (g_bspmodels[0].visleafs + 7) / 8);
 						}
 						else
 						{
-							DecompressVis(&g_dvisdata[leaf2->visofs], pvs2, sizeof(pvs2));
+							DecompressVis(&g_bspvisdata[leaf2->visofs], pvs2, sizeof(pvs2));
 						}
 					}
 					lastoffset2 = thisoffset2;
@@ -3238,7 +3238,7 @@ void BuildFacelights(const int facenum)
 	byte pvs2[(MAX_MAP_LEAFS + 7) / 8];
 	int thisoffset2 = -1, lastoffset2 = -1;
 
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 
 	//
 	// some surfaces don't need lightmaps
@@ -3249,7 +3249,7 @@ void BuildFacelights(const int facenum)
 		f_styles[j] = 255;
 	}
 
-	if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+	if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 	{
 		for (j = 0; j < MAXLIGHTMAPS; j++)
 		{
@@ -3269,9 +3269,9 @@ void BuildFacelights(const int facenum)
 	l.surfnum = facenum;
 	l.face = f;
 
-	VectorCopy(g_translucenttextures[g_texinfo[f->texinfo].miptex], l.translucent_v);
+	VectorCopy(g_translucenttextures[g_bsptexinfo[f->texinfo].miptex], l.translucent_v);
 	l.translucent_b = !VectorCompare(l.translucent_v, vec3_origin);
-	l.miptex = g_texinfo[f->texinfo].miptex;
+	l.miptex = g_bsptexinfo[f->texinfo].miptex;
 
 	//
 	// rotate plane
@@ -3467,9 +3467,9 @@ void BuildFacelights(const int facenum)
 	for (patch = g_face_patches[facenum]; patch; patch = patch->next)
 	{
 		// get the PVS for the pos to limit the number of checks
-		if (!g_visdatasize)
+		if (!g_bspvisdatasize)
 		{
-			memset(pvs, 255, (g_dmodels[0].visleafs + 7) / 8);
+			memset(pvs, 255, (g_bspmodels[0].visleafs + 7) / 8);
 			lastoffset = -1;
 		}
 		else
@@ -3481,20 +3481,20 @@ void BuildFacelights(const int facenum)
 			{
 				if (thisoffset == -1)
 				{
-					memset(pvs, 0, (g_dmodels[0].visleafs + 7) / 8);
+					memset(pvs, 0, (g_bspmodels[0].visleafs + 7) / 8);
 				}
 				else
 				{
-					DecompressVis(&g_dvisdata[leaf->visofs], pvs, sizeof(pvs));
+					DecompressVis(&g_bspvisdata[leaf->visofs], pvs, sizeof(pvs));
 				}
 			}
 			lastoffset = thisoffset;
 		}
 		if (l.translucent_b)
 		{
-			if (!g_visdatasize)
+			if (!g_bspvisdatasize)
 			{
-				memset(pvs2, 255, (g_dmodels[0].visleafs + 7) / 8);
+				memset(pvs2, 255, (g_bspmodels[0].visleafs + 7) / 8);
 				lastoffset2 = -1;
 			}
 			else
@@ -3507,11 +3507,11 @@ void BuildFacelights(const int facenum)
 				{
 					if (thisoffset2 == -1)
 					{
-						memset(pvs2, 0, (g_dmodels[0].visleafs + 7) / 8);
+						memset(pvs2, 0, (g_bspmodels[0].visleafs + 7) / 8);
 					}
 					else
 					{
-						DecompressVis(&g_dvisdata[leaf2->visofs], pvs2, sizeof(pvs2));
+						DecompressVis(&g_bspvisdata[leaf2->visofs], pvs2, sizeof(pvs2));
 					}
 				}
 				lastoffset2 = thisoffset2;
@@ -3782,14 +3782,14 @@ void PrecompLightmapOffsets()
 {
 	int lightstyles;
 
-	g_lightdatasize = 0;
+	g_bsplightdatasize = 0;
 
-	for (int facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_bspnumfaces; facenum++)
 	{
-		auto *f = &g_dfaces[facenum];
+		auto *f = &g_bspfaces[facenum];
 		auto *fl = &facelight[facenum];
 
-		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+		if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue; // non-lit texture
 		}
@@ -3925,30 +3925,30 @@ void PrecompLightmapOffsets()
 			continue;
 		}
 
-		f->lightofs = g_lightdatasize;
-		g_lightdatasize += fl->numsamples * 3 * lightstyles;
-		hlassume(g_lightdatasize <= g_max_map_lightdata, assume_MAX_MAP_LIGHTING); // lightdata
+		f->lightofs = g_bsplightdatasize;
+		g_bsplightdatasize += fl->numsamples * 3 * lightstyles;
+		hlassume(g_bsplightdatasize <= g_max_map_lightdata, assume_MAX_MAP_LIGHTING); // lightdata
 	}
 }
 void ReduceLightmap()
 {
-	auto *oldlightdata = new byte[g_lightdatasize];
+	auto *oldlightdata = new byte[g_bsplightdatasize];
 	hlassume(oldlightdata != nullptr, assume_NoMemory);
-	memcpy(oldlightdata, g_dlightdata, g_lightdatasize);
-	g_lightdatasize = 0;
+	memcpy(oldlightdata, g_bsplightdata, g_bsplightdatasize);
+	g_bsplightdatasize = 0;
 
-	for (int facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_bspnumfaces; facenum++)
 	{
-		auto *f = &g_dfaces[facenum];
+		auto *f = &g_bspfaces[facenum];
 		auto *fl = &facelight[facenum];
-		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+		if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue; // non-lit texture
 		}
 		// just need to zero the lightmap so that it won't contribute to lightdata size
 		if (IntForKey(g_face_entity[facenum], "zhlt_striprad"))
 		{
-			f->lightofs = g_lightdatasize;
+			f->lightofs = g_bsplightdatasize;
 			for (int k = 0; k < MAXLIGHTMAPS; k++)
 			{
 				f->styles[k] = 255;
@@ -3963,7 +3963,7 @@ void ReduceLightmap()
 		int k;
 		unsigned char oldstyles[MAXLIGHTMAPS];
 		auto oldofs = f->lightofs;
-		f->lightofs = g_lightdatasize;
+		f->lightofs = g_bsplightdatasize;
 		for (k = 0; k < MAXLIGHTMAPS; k++)
 		{
 			oldstyles[k] = f->styles[k];
@@ -3983,11 +3983,11 @@ void ReduceLightmap()
 				continue;
 			}
 			f->styles[numstyles] = oldstyles[k];
-			hlassume(g_lightdatasize + fl->numsamples * 3 * (numstyles + 1) <= g_max_map_lightdata, assume_MAX_MAP_LIGHTING);
-			memcpy(&g_dlightdata[f->lightofs + fl->numsamples * 3 * numstyles], &oldlightdata[oldofs + fl->numsamples * 3 * k], fl->numsamples * 3);
+			hlassume(g_bsplightdatasize + fl->numsamples * 3 * (numstyles + 1) <= g_max_map_lightdata, assume_MAX_MAP_LIGHTING);
+			memcpy(&g_bsplightdata[f->lightofs + fl->numsamples * 3 * numstyles], &oldlightdata[oldofs + fl->numsamples * 3 * k], fl->numsamples * 3);
 			numstyles++;
 		}
-		g_lightdatasize += fl->numsamples * 3 * numstyles;
+		g_bsplightdatasize += fl->numsamples * 3 * numstyles;
 	}
 	delete oldlightdata;
 }
@@ -4025,7 +4025,7 @@ struct mdllight_t
 
 auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 {
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 	int i, j;
 	for (i = 0; i < ml->facecount; i++)
 	{
@@ -4055,7 +4055,7 @@ auto MLH_AddFace(mdllight_t *ml, int facenum) -> int
 }
 void MLH_AddSample(mdllight_t *ml, int facenum, int w, int h, int s, int t, const vec3_t pos)
 {
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 	int i;
 	auto r = MLH_AddFace(ml, facenum);
 	if (r == -1)
@@ -4083,7 +4083,7 @@ void MLH_AddSample(mdllight_t *ml, int facenum, int w, int h, int s, int t, cons
 	{
 		if (ml->face[r].style[j].exist)
 		{
-			ml->face[r].sample[i].style[j] = &g_dlightdata[f->lightofs + (num + size * ml->face[r].style[j].seq) * 3];
+			ml->face[r].sample[i].style[j] = &g_bsplightdata[f->lightofs + (num + size * ml->face[r].style[j].seq) * 3];
 		}
 	}
 }
@@ -4092,7 +4092,7 @@ void MLH_CalcExtents(const BSPLumpFace *f, int *texturemins, int *extents)
 	int bmins[2];
 	int bmaxs[2];
 
-	GetFaceExtents(f - g_dfaces, bmins, bmaxs);
+	GetFaceExtents(f - g_bspfaces, bmins, bmaxs);
 	for (int i = 0; i < 2; i++)
 	{
 		texturemins[i] = bmins[i] * TEXTURE_STEP;
@@ -4103,7 +4103,7 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 {
 	if (nodenum < 0)
 		return;
-	auto *node = &g_dnodes[nodenum];
+	auto *node = &g_bspnodes[nodenum];
 	float mid[3];
 	auto *plane = &g_dplanes[node->planenum];
 	auto front = DotProduct(start, plane->normal) - plane->dist;
@@ -4126,8 +4126,8 @@ void MLH_GetSamples_r(mdllight_t *ml, int nodenum, const float *start, const flo
 	{
 		for (int i = 0; i < node->numfaces; i++)
 		{
-			auto *f = &g_dfaces[node->firstface + i];
-			auto *tex = &g_texinfo[f->texinfo];
+			auto *f = &g_bspfaces[node->firstface + i];
+			auto *tex = &g_bsptexinfo[f->texinfo];
 			const auto *texname = GetTextureByNumber(f->texinfo);
 			if (!strncmp(texname, "sky", 3))
 			{
@@ -4251,11 +4251,11 @@ void CreateFacelightDependencyList()
 	}
 
 	// for each face
-	for (int facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_bspnumfaces; facenum++)
 	{
-		auto *f = &g_dfaces[facenum];
+		auto *f = &g_bspfaces[facenum];
 		auto *fl = &facelight[facenum];
-		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+		if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue;
 		}
@@ -4265,7 +4265,7 @@ void CreateFacelightDependencyList()
 			for (i = 0; i < fl->numsamples; i++)
 			{
 				auto surface = fl->samples[k][i].surface; // that surface contains at least one sample from this face
-				if (0 <= surface && surface < g_numfaces)
+				if (0 <= surface && surface < g_bspnumfaces)
 				{
 					// insert this face into the dependency list of that surface
 					for (item = g_dependentfacelights[surface]; item != nullptr; item = item->next)
@@ -4310,11 +4310,11 @@ void FreeFacelightDependencyList()
 // =====================================================================================
 void ScaleDirectLights()
 {
-	for (int facenum = 0; facenum < g_numfaces; facenum++)
+	for (int facenum = 0; facenum < g_bspnumfaces; facenum++)
 	{
-		auto *f = &g_dfaces[facenum];
+		auto *f = &g_bspfaces[facenum];
 
-		if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+		if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 		{
 			continue;
 		}
@@ -4337,16 +4337,16 @@ void ScaleDirectLights()
 // =====================================================================================
 void AddPatchLights(int facenum)
 {
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 
-	if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+	if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 	{
 		return;
 	}
 
 	for (auto *item = g_dependentfacelights[facenum]; item != nullptr; item = item->next)
 	{
-		auto *f_other = &g_dfaces[item->facenum];
+		auto *f_other = &g_bspfaces[item->facenum];
 		auto *fl_other = &facelight[item->facenum];
 		for (int k = 0; k < MAXLIGHTMAPS && f_other->styles[k] != 255; k++)
 		{
@@ -4399,10 +4399,10 @@ void FinalLightFace(const int facenum)
 	int lightstyles;
 	int lbi[3];
 
-	auto *f = &g_dfaces[facenum];
+	auto *f = &g_bspfaces[facenum];
 	auto *fl = &facelight[facenum];
 
-	if (g_texinfo[f->texinfo].flags & TEX_SPECIAL)
+	if (g_bsptexinfo[f->texinfo].flags & TEX_SPECIAL)
 	{
 		return; // non-lit texture
 	}
@@ -4553,7 +4553,7 @@ void FinalLightFace(const int facenum)
 					lbi[i] = 255;
 			}
 			{
-				unsigned char *colors = &g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3];
+				unsigned char *colors = &g_bsplightdata[f->lightofs + k * fl->numsamples * 3 + j * 3];
 
 				colors[0] = (unsigned char)lbi[0];
 				colors[1] = (unsigned char)lbi[1];

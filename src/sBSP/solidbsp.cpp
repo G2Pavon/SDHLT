@@ -502,7 +502,7 @@ static auto ChoosePlaneFromList(SurfaceBSP *surfaces, const vec3_t mins, const v
 
 	planecount = 0;
 	totalsplit = 0;
-	tmpvalue = new double[g_numplanes][2];
+	tmpvalue = new double[g_bspnumplanes][2];
 	surfacetree = BuildSurfaceTree(surfaces, ON_EPSILON);
 
 	//
@@ -1159,15 +1159,15 @@ static void LinkLeafFaces(SurfaceBSP *planelist, NodeBSP *leafnode)
 	}
 	if (surf)
 	{
-		Entity *ent = EntityForModel(g_nummodels - 1);
-		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
+		Entity *ent = EntityForModel(g_bspnummodels - 1);
+		if (g_bspnummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;
 		}
 		Warning(R"(Ambiguous leafnode content ( %s and %s ) at (%.0f,%.0f,%.0f)-(%.0f,%.0f,%.0f) in hull %d of model %d (entity: classname "%s", origin "%s", targetname "%s"))",
 				ContentsToString(ContentsForRank(r)), ContentsToString(ContentsForRank(rank)),
 				leafnode->mins[0], leafnode->mins[1], leafnode->mins[2], leafnode->maxs[0], leafnode->maxs[1], leafnode->maxs[2],
-				g_hullnum, g_nummodels - 1,
+				g_hullnum, g_bspnummodels - 1,
 				(ent ? ValueForKey(ent, "classname") : "unknown"),
 				(ent ? ValueForKey(ent, "origin") : "unknown"),
 				(ent ? ValueForKey(ent, "targetname") : "unknown"));

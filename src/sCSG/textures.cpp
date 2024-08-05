@@ -22,7 +22,7 @@ static char *texmap[MAX_INTERNAL_MAP_TEXINFO];
 static int numtexmap = 0;
 
 static auto texmap_store(char *texname, bool shouldlock = true) -> int
-// This function should never be called unless a new entry in g_texinfo is being allocated.
+// This function should never be called unless a new entry in g_bsptexinfo is being allocated.
 {
     if (shouldlock)
     {
@@ -417,7 +417,7 @@ void WriteMiptex()
     int texsize, totaltexsize = 0;
     double start, end;
 
-    g_texdatasize = 0;
+    g_bsptexdatasize = 0;
 
     start = I_FloatTime();
     {
@@ -513,13 +513,13 @@ void WriteMiptex()
 
     start = I_FloatTime();
     {
-        auto *tx = g_texinfo;
+        auto *tx = g_bsptexinfo;
 
         // Sort them FIRST by wadfile and THEN by name for most efficient loading in the engine.
         qsort((void *)miptex, (size_t)nummiptex, sizeof(miptex[0]), lump_sorter_by_wad_and_name);
 
         // Sleazy Hack 104 Pt 2 - After sorting the miptex array, reset the texinfos to point to the right miptexs
-        for (int i = 0; i < g_numtexinfo; i++, tx++)
+        for (int i = 0; i < g_bspnumtexinfo; i++, tx++)
         {
             auto *miptex_name = texmap_retrieve(tx->miptex);
 
@@ -532,7 +532,7 @@ void WriteMiptex()
     start = I_FloatTime();
     {
         // Now setup to get the miptex data (or just the headers if using -wadtextures) from the wadfile
-        auto *l = (BSPLumpMiptexHeader *)g_dtexdata;
+        auto *l = (BSPLumpMiptexHeader *)g_bsptexdata;
         auto *data = (byte *)&l->dataofs[nummiptex];
         l->nummiptex = nummiptex;
         char writewad_name[_MAX_PATH]; // Write temp wad file with processed textures
@@ -570,7 +570,7 @@ void WriteMiptex()
             l->dataofs[i] = data - (byte *)l;
             byte *writewad_data;
             int writewad_datasize;
-            auto len = LoadLump(miptex + i, data, &texsize, &g_dtexdata[g_max_map_miptex] - data, writewad_data, writewad_datasize); // Load lump data
+            auto len = LoadLump(miptex + i, data, &texsize, &g_bsptexdata[g_max_map_miptex] - data, writewad_data, writewad_datasize); // Load lump data
 
             if (writewad_data)
             {
@@ -601,7 +601,7 @@ void WriteMiptex()
             }
             data += len;
         }
-        g_texdatasize = data - g_dtexdata;
+        g_bsptexdatasize = data - g_bsptexdata;
         // Write lump info and header to the temp wad file
         writewad_header.infotableofs = ftell(writewad_file);
         SafeWrite(writewad_file, writewad_lumpinfos, writewad_header.numlumps * sizeof(dlumpinfo_t));
@@ -683,11 +683,11 @@ auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec
     }
 
     //
-    // find the g_texinfo
+    // find the g_bsptexinfo
     //
     ThreadLock();
-    auto *tc = g_texinfo;
-    for (i = 0; i < g_numtexinfo; i++, tc++)
+    auto *tc = g_bsptexinfo;
+    for (i = 0; i < g_bspnumtexinfo; i++, tc++)
     {
         // Sleazy hack 104, Pt 3 - Use strcmp on names to avoid dups
         if (strcmp(texmap_retrieve(tc->miptex), bt->name) != 0)
@@ -713,21 +713,21 @@ auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec
     skip:;
     }
 
-    hlassume(g_numtexinfo < MAX_INTERNAL_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
+    hlassume(g_bspnumtexinfo < MAX_INTERNAL_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
 
     *tc = tx;
     tc->miptex = texmap_store(bt->name, false);
-    g_numtexinfo++;
+    g_bspnumtexinfo++;
     ThreadUnlock();
     return i;
 }
 
-// Before WriteMiptex(), for each texinfo in g_texinfo, .miptex is a string rather than texture index, so this function should be used instead of GetTextureByNumber.
+// Before WriteMiptex(), for each texinfo in g_bsptexinfo, .miptex is a string rather than texture index, so this function should be used instead of GetTextureByNumber.
 auto GetTextureByNumber_CSG(int texturenumber) -> const char *
 {
     if (texturenumber == -1)
         return "";
-    return texmap_retrieve(g_texinfo[texturenumber].miptex);
+    return texmap_retrieve(g_bsptexinfo[texturenumber].miptex);
 }
 
 //

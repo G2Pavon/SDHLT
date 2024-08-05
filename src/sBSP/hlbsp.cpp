@@ -646,7 +646,7 @@ static auto SurflistFromValidFaces() -> SurfchainBSP *
 	sc->surfaces = nullptr;
 
 	// grab planes from both sides
-	for (i = 0; i < g_numplanes; i += 2)
+	for (i = 0; i < g_bspnumplanes; i += 2)
 	{
 		if (!validfaces[i] && !validfaces[i + 1])
 		{
@@ -805,7 +805,7 @@ static auto ReadSurfs(FILE *file) -> SurfchainBSP *
 {
 	int r;
 	int detaillevel;
-	int planenum, g_texinfo, contents, numpoints;
+	int planenum, texinfo, contents, numpoints;
 	FaceBSP *f;
 	int i;
 	double v[3];
@@ -818,7 +818,7 @@ static auto ReadSurfs(FILE *file) -> SurfchainBSP *
 		if (file == polyfiles[2] && g_nohull2)
 			break;
 		line++;
-		r = fscanf(file, "%i %i %i %i %i\n", &detaillevel, &planenum, &g_texinfo, &contents, &numpoints);
+		r = fscanf(file, "%i %i %i %i %i\n", &detaillevel, &planenum, &texinfo, &contents, &numpoints);
 		if (r == 0 || r == -1)
 		{
 			return nullptr;
@@ -835,20 +835,20 @@ static auto ReadSurfs(FILE *file) -> SurfchainBSP *
 		{
 			Error("ReadSurfs (line %i): %i > MAXPOINTS\nThis is caused by a face with too many verticies (typically found on end-caps of high-poly cylinders)\n", line, numpoints);
 		}
-		if (planenum > g_numplanes)
+		if (planenum > g_bspnumplanes)
 		{
-			Error("ReadSurfs (line %i): %i > g_numplanes\n", line, planenum);
+			Error("ReadSurfs (line %i): %i > g_bspnumplanes\n", line, planenum);
 		}
-		if (g_texinfo > g_numtexinfo)
+		if (texinfo > g_bspnumtexinfo)
 		{
-			Error("ReadSurfs (line %i): %i > g_numtexinfo", line, g_texinfo);
+			Error("ReadSurfs (line %i): %i > g_bspnumtexinfo", line, texinfo);
 		}
 		if (detaillevel < 0)
 		{
 			Error("ReadSurfs (line %i): detaillevel %i < 0", line, detaillevel);
 		}
 
-		if (!strcasecmp(GetTextureByNumber(g_texinfo), "skip"))
+		if (!strcasecmp(GetTextureByNumber(texinfo), "skip"))
 		{
 			for (i = 0; i < numpoints; i++)
 			{
@@ -866,7 +866,7 @@ static auto ReadSurfs(FILE *file) -> SurfchainBSP *
 		f = AllocFace();
 		f->detaillevel = detaillevel;
 		f->planenum = planenum;
-		f->texturenum = g_texinfo;
+		f->texturenum = texinfo;
 		f->contents = contents;
 		f->numpoints = numpoints;
 		f->next = validfaces[planenum];
@@ -973,12 +973,12 @@ static auto ProcessModel() -> bool
 		return false; // all models are done
 	detailbrushes = ReadBrushes(brushfiles[0]);
 
-	hlassume(g_nummodels < MAX_MAP_MODELS, assume_MAX_MAP_MODELS);
+	hlassume(g_bspnummodels < MAX_MAP_MODELS, assume_MAX_MAP_MODELS);
 
-	startleafs = g_numleafs;
-	int modnum = g_nummodels;
-	model = &g_dmodels[modnum];
-	g_nummodels++;
+	startleafs = g_bspnumleafs;
+	int modnum = g_bspnummodels;
+	model = &g_bspmodels[modnum];
+	g_bspnummodels++;
 
 	g_hullnum = 0; // vluzacn
 	VectorFill(model->mins, 99999);
@@ -1012,7 +1012,7 @@ static auto ProcessModel() -> bool
 
 	// build all the portals in the bsp tree
 	// some portals are solid polygons, and some are paths to other leafs
-	if (g_nummodels == 1) // assume non-world bmodels are simple
+	if (g_bspnummodels == 1) // assume non-world bmodels are simple
 	{
 		FillInside(nodes);
 		nodes = FillOutside(nodes, (g_bLeaked != true), 0); // make a leakfile if bad
@@ -1026,8 +1026,8 @@ static auto ProcessModel() -> bool
 	MakeFaceEdges();
 
 	// emit the faces for the bsp file
-	model->headnode[0] = g_numnodes;
-	model->firstface = g_numfaces;
+	model->headnode[0] = g_bspnumnodes;
+	model->firstface = g_bspnumfaces;
 	bool novisiblebrushes = false;
 	// model->headnode[0]<0 will crash HL, so must split it.
 	if (nodes->planenum == -1)
@@ -1035,7 +1035,7 @@ static auto ProcessModel() -> bool
 		novisiblebrushes = true;
 		if (nodes->markfaces[0] != nullptr)
 			hlassume(false, assume_EmptySolid);
-		if (g_numplanes == 0)
+		if (g_bspnumplanes == 0)
 			Error("No valid planes.\n");
 		nodes->planenum = 0; // arbitrary plane
 		nodes->children[0] = AllocNode();
@@ -1067,8 +1067,8 @@ static auto ProcessModel() -> bool
 		VectorFill(nodes->maxs, 0);
 	}
 	WriteDrawNodes(nodes);
-	model->numfaces = g_numfaces - model->firstface;
-	model->visleafs = g_numleafs - startleafs;
+	model->numfaces = g_bspnumfaces - model->firstface;
+	model->visleafs = g_bspnumleafs - startleafs;
 
 	// the clipping hulls are simpler
 	for (g_hullnum = 1; g_hullnum < NUM_HULLS; g_hullnum++)
@@ -1100,7 +1100,7 @@ static auto ProcessModel() -> bool
 		nodes = SolidBSP(surfs,
 						 detailbrushes,
 						 modnum == 0);
-		if (g_nummodels == 1) // assume non-world bmodels are simple
+		if (g_bspnummodels == 1) // assume non-world bmodels are simple
 		{
 			nodes = FillOutside(nodes, (g_bLeaked != true), g_hullnum);
 		}
@@ -1117,7 +1117,7 @@ static auto ProcessModel() -> bool
 		}
 		else
 		{
-			model->headnode[g_hullnum] = g_numclipnodes;
+			model->headnode[g_hullnum] = g_bspnumclipnodes;
 			WriteClipNodes(nodes);
 		}
 	}
@@ -1137,13 +1137,13 @@ static auto ProcessModel() -> bool
 	}
 	if (model->mins[0] > model->maxs[0])
 	{
-		Entity *ent = EntityForModel(g_nummodels - 1);
-		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
+		Entity *ent = EntityForModel(g_bspnummodels - 1);
+		if (g_bspnummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;
 		}
 		Warning(R"(Empty solid entity: model %d (entity: classname "%s", origin "%s", targetname "%s"))",
-				g_nummodels - 1,
+				g_bspnummodels - 1,
 				(ent ? ValueForKey(ent, "classname") : "unknown"),
 				(ent ? ValueForKey(ent, "origin") : "unknown"),
 				(ent ? ValueForKey(ent, "targetname") : "unknown"));
@@ -1152,13 +1152,13 @@ static auto ProcessModel() -> bool
 	}
 	else if (novisiblebrushes)
 	{
-		Entity *ent = EntityForModel(g_nummodels - 1);
-		if (g_nummodels - 1 != 0 && ent == &g_entities[0])
+		Entity *ent = EntityForModel(g_bspnummodels - 1);
+		if (g_bspnummodels - 1 != 0 && ent == &g_entities[0])
 		{
 			ent = nullptr;
 		}
 		Warning(R"(No visible brushes in solid entity: model %d (entity: classname "%s", origin "%s", targetname "%s", range (%.0f,%.0f,%.0f) - (%.0f,%.0f,%.0f)))",
-				g_nummodels - 1,
+				g_bspnummodels - 1,
 				(ent ? ValueForKey(ent, "classname") : "unknown"),
 				(ent ? ValueForKey(ent, "origin") : "unknown"),
 				(ent ? ValueForKey(ent, "targetname") : "unknown"),
@@ -1246,7 +1246,7 @@ static void ProcessFile(const char *const filename)
 			Warning("Couldn't open %s", name);
 #undef dplane_t
 #undef g_dplanes
-			for (i = 0; i < g_numplanes; i++)
+			for (i = 0; i < g_bspnumplanes; i++)
 			{
 				plane_t *mp = &g_mapplanes[i];
 				dplane_t *dp = &g_dplanes[i];
@@ -1259,11 +1259,11 @@ static void ProcessFile(const char *const filename)
 		}
 		else
 		{
-			if (q_filelength(planefile) != g_numplanes * sizeof(dplane_t))
+			if (q_filelength(planefile) != g_bspnumplanes * sizeof(dplane_t))
 			{
 				Error("Invalid plane data");
 			}
-			SafeRead(planefile, g_dplanes, g_numplanes * sizeof(dplane_t));
+			SafeRead(planefile, g_dplanes, g_bspnumplanes * sizeof(dplane_t));
 			fclose(planefile);
 		}
 	}

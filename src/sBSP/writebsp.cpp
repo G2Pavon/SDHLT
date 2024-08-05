@@ -57,7 +57,7 @@ static auto WritePlane(int planenum) -> int
 // =====================================================================================
 static auto WriteTexinfo(int texinfo) -> int
 {
-	if (texinfo < 0 || texinfo >= g_numtexinfo)
+	if (texinfo < 0 || texinfo >= g_bspnumtexinfo)
 	{
 		Error("Bad texinfo number %d.\n", texinfo);
 	}
@@ -72,7 +72,7 @@ static auto WriteTexinfo(int texinfo) -> int
 	int c;
 	hlassume(g_nummappedtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
 	c = g_nummappedtexinfo;
-	g_mappedtexinfo[g_nummappedtexinfo] = g_texinfo[texinfo];
+	g_mappedtexinfo[g_nummappedtexinfo] = g_bsptexinfo[texinfo];
 	g_texinfomap.insert(texinfomap_t::value_type(texinfo, g_nummappedtexinfo));
 	g_nummappedtexinfo++;
 	return c;
@@ -114,10 +114,10 @@ static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodem
 		return num;
 	}
 
-	BSPLumpClipnode tmpclipnode; // this clipnode will be inserted into g_dclipnodes[c] if it can't be merged
+	BSPLumpClipnode tmpclipnode; // this clipnode will be inserted into g_bspclipnodes[c] if it can't be merged
 	cn = &tmpclipnode;
-	c = g_numclipnodes;
-	g_numclipnodes++;
+	c = g_bspnumclipnodes;
+	g_bspnumclipnodes++;
 	if (node->planenum & 1)
 	{
 		Error("WriteClipNodes_r: odd planenum");
@@ -132,17 +132,17 @@ static auto WriteClipNodes_r(NodeBSP *node, const NodeBSP *portalleaf, clipnodem
 	if (output == outputmap->end())
 	{
 		hlassume(c < MAX_MAP_CLIPNODES, assume_MAX_MAP_CLIPNODES);
-		g_dclipnodes[c] = *cn;
+		g_bspclipnodes[c] = *cn;
 		(*outputmap)[MakeKey(*cn)] = c;
 	}
 	else
 	{ // Optimize clipnodes
 		count_mergedclipnodes++;
-		if (g_numclipnodes != c + 1)
+		if (g_bspnumclipnodes != c + 1)
 		{
 			Error("Merge clipnodes: internal error");
 		}
-		g_numclipnodes = c;
+		g_bspnumclipnodes = c;
 		c = output->second; // use existing clipnode
 	}
 
@@ -170,12 +170,12 @@ static auto WriteDrawLeaf(NodeBSP *node, const NodeBSP *portalleaf) -> int
 	FaceBSP **fp;
 	FaceBSP *f;
 	BSPLumpLeaf *leaf_p;
-	int leafnum = g_numleafs;
+	int leafnum = g_bspnumleafs;
 
 	// emit a leaf
-	hlassume(g_numleafs < MAX_MAP_LEAFS, assume_MAX_MAP_LEAFS);
-	leaf_p = &g_dleafs[g_numleafs];
-	g_numleafs++;
+	hlassume(g_bspnumleafs < MAX_MAP_LEAFS, assume_MAX_MAP_LEAFS);
+	leaf_p = &g_bspleafs[g_bspnumleafs];
+	g_bspnumleafs++;
 
 	leaf_p->contents = portalleaf->contents;
 
@@ -210,7 +210,7 @@ static auto WriteDrawLeaf(NodeBSP *node, const NodeBSP *portalleaf) -> int
 	//
 	// write the marksurfaces
 	//
-	leaf_p->firstmarksurface = g_nummarksurfaces;
+	leaf_p->firstmarksurface = g_bspnummarksurfaces;
 
 	hlassume(node->markfaces != nullptr, assume_EmptySolid);
 
@@ -239,15 +239,15 @@ static auto WriteDrawLeaf(NodeBSP *node, const NodeBSP *portalleaf) -> int
 				f = f->original;
 				continue;
 			}
-			g_dmarksurfaces[g_nummarksurfaces] = f->outputnumber;
-			hlassume(g_nummarksurfaces < MAX_MAP_MARKSURFACES, assume_MAX_MAP_MARKSURFACES);
-			g_nummarksurfaces++;
+			g_bspmarksurfaces[g_bspnummarksurfaces] = f->outputnumber;
+			hlassume(g_bspnummarksurfaces < MAX_MAP_MARKSURFACES, assume_MAX_MAP_MARKSURFACES);
+			g_bspnummarksurfaces++;
 			f = f->original; // grab tjunction split faces
 		} while (f);
 	}
 	delete[] node->markfaces;
 
-	leaf_p->nummarksurfaces = g_nummarksurfaces - leaf_p->firstmarksurface;
+	leaf_p->nummarksurfaces = g_bspnummarksurfaces - leaf_p->firstmarksurface;
 	return leafnum;
 }
 
@@ -275,15 +275,15 @@ static void WriteFace(FaceBSP *f)
 		return;
 	}
 
-	f->outputnumber = g_numfaces;
+	f->outputnumber = g_bspnumfaces;
 
-	df = &g_dfaces[g_numfaces];
-	hlassume(g_numfaces < MAX_MAP_FACES, assume_MAX_MAP_FACES);
-	g_numfaces++;
+	df = &g_bspfaces[g_bspnumfaces];
+	hlassume(g_bspnumfaces < MAX_MAP_FACES, assume_MAX_MAP_FACES);
+	g_bspnumfaces++;
 
 	df->planenum = WritePlane(f->planenum);
 	df->side = f->planenum & 1;
-	df->firstedge = g_numsurfedges;
+	df->firstedge = g_bspnumsurfedges;
 	df->numedges = f->numpoints;
 
 	df->texinfo = WriteTexinfo(f->texturenum);
@@ -291,9 +291,9 @@ static void WriteFace(FaceBSP *f)
 	for (i = 0; i < f->numpoints; i++)
 	{
 		e = f->outputedges[i];
-		hlassume(g_numsurfedges < MAX_MAP_SURFEDGES, assume_MAX_MAP_SURFEDGES);
-		g_dsurfedges[g_numsurfedges] = e;
-		g_numsurfedges++;
+		hlassume(g_bspnumsurfedges < MAX_MAP_SURFEDGES, assume_MAX_MAP_SURFEDGES);
+		g_bspsurfedges[g_bspnumsurfedges] = e;
+		g_bspnumsurfedges++;
 	}
 	delete[] f->outputedges;
 	f->outputedges = nullptr;
@@ -332,12 +332,12 @@ static auto WriteDrawNodes_r(NodeBSP *node, const NodeBSP *portalleaf) -> int
 	BSPLumpNode *n;
 	int i;
 	FaceBSP *f;
-	int nodenum = g_numnodes;
+	int nodenum = g_bspnumnodes;
 
 	// emit a node
-	hlassume(g_numnodes < MAX_MAP_NODES, assume_MAX_MAP_NODES);
-	n = &g_dnodes[g_numnodes];
-	g_numnodes++;
+	hlassume(g_bspnumnodes < MAX_MAP_NODES, assume_MAX_MAP_NODES);
+	n = &g_bspnodes[g_bspnumnodes];
+	g_bspnumnodes++;
 
 	vec3_t mins, maxs;
 #if 0
@@ -368,14 +368,14 @@ static auto WriteDrawNodes_r(NodeBSP *node, const NodeBSP *portalleaf) -> int
 		Error("WriteDrawNodes_r: odd planenum");
 	}
 	n->planenum = WritePlane(node->planenum);
-	n->firstface = g_numfaces;
+	n->firstface = g_bspnumfaces;
 
 	for (f = node->faces; f; f = f->next)
 	{
 		WriteFace(f);
 	}
 
-	n->numfaces = g_numfaces - n->firstface;
+	n->numfaces = g_bspnumfaces - n->firstface;
 
 	//
 	// recursively output the other nodes
@@ -537,20 +537,20 @@ void BeginBSPFile()
 	g_texinfomap.clear();
 
 	count_mergedclipnodes = 0;
-	g_nummodels = 0;
-	g_numfaces = 0;
-	g_numnodes = 0;
-	g_numclipnodes = 0;
-	g_numvertexes = 0;
-	g_nummarksurfaces = 0;
-	g_numsurfedges = 0;
+	g_bspnummodels = 0;
+	g_bspnumfaces = 0;
+	g_bspnumnodes = 0;
+	g_bspnumclipnodes = 0;
+	g_bspnumvertexes = 0;
+	g_bspnummarksurfaces = 0;
+	g_bspnumsurfedges = 0;
 
 	// edge 0 is not used, because 0 can't be negated
-	g_numedges = 1;
+	g_bspnumedges = 1;
 
 	// leaf 0 is common solid with no faces
-	g_numleafs = 1;
-	g_dleafs[0].contents = contents_t::CONTENTS_SOLID;
+	g_bspnumleafs = 1;
+	g_bspleafs[0].contents = contents_t::CONTENTS_SOLID;
 }
 
 // =====================================================================================
@@ -558,25 +558,25 @@ void BeginBSPFile()
 // =====================================================================================
 void FinishBSPFile()
 {
-	if (g_dmodels[0].visleafs > MAX_MAP_LEAFS_ENGINE)
+	if (g_bspmodels[0].visleafs > MAX_MAP_LEAFS_ENGINE)
 	{
-		Warning("Number of world leaves(%d) exceeded MAX_MAP_LEAFS(%d)\nIf you encounter problems when running your map, consider this the most likely cause.\n", g_dmodels[0].visleafs, MAX_MAP_LEAFS_ENGINE);
+		Warning("Number of world leaves(%d) exceeded MAX_MAP_LEAFS(%d)\nIf you encounter problems when running your map, consider this the most likely cause.\n", g_bspmodels[0].visleafs, MAX_MAP_LEAFS_ENGINE);
 	}
-	if (g_dmodels[0].numfaces > MAX_MAP_WORLDFACES)
+	if (g_bspmodels[0].numfaces > MAX_MAP_WORLDFACES)
 	{
-		Warning("Number of world faces(%d) exceeded %d. Some faces will disappear in game.\nTo reduce world faces, change some world brushes (including func_details) to func_walls.\n", g_dmodels[0].numfaces, MAX_MAP_WORLDFACES);
+		Warning("Number of world faces(%d) exceeded %d. Some faces will disappear in game.\nTo reduce world faces, change some world brushes (including func_details) to func_walls.\n", g_bspmodels[0].numfaces, MAX_MAP_WORLDFACES);
 	}
-	Log("Reduced %d clipnodes to %d\n", g_numclipnodes + count_mergedclipnodes, g_numclipnodes);
+	Log("Reduced %d clipnodes to %d\n", g_bspnumclipnodes + count_mergedclipnodes, g_bspnumclipnodes);
 	{
-		Log("Reduced %d texinfos to %d\n", g_numtexinfo, g_nummappedtexinfo);
+		Log("Reduced %d texinfos to %d\n", g_bspnumtexinfo, g_nummappedtexinfo);
 		for (int i = 0; i < g_nummappedtexinfo; i++)
 		{
-			g_texinfo[i] = g_mappedtexinfo[i];
+			g_bsptexinfo[i] = g_mappedtexinfo[i];
 		}
-		g_numtexinfo = g_nummappedtexinfo;
+		g_bspnumtexinfo = g_nummappedtexinfo;
 	}
 	{ // Optimize BSP Write
-		auto *l = (BSPLumpMiptexHeader *)g_dtexdata;
+		auto *l = (BSPLumpMiptexHeader *)g_bsptexdata;
 		int &g_nummiptex = l->nummiptex;
 		bool *Used = new bool[g_nummiptex];
 		int Num = 0, Size = 0;
@@ -584,7 +584,7 @@ void FinishBSPFile()
 		int i;
 		hlassume(Used != nullptr && Map != nullptr, assume_NoMemory);
 		int *lumpsizes = new int[g_nummiptex];
-		const int newdatasizemax = g_texdatasize - ((byte *)&l->dataofs[g_nummiptex] - (byte *)l);
+		const int newdatasizemax = g_bsptexdatasize - ((byte *)&l->dataofs[g_nummiptex] - (byte *)l);
 		byte *newdata = new byte[newdatasizemax];
 		int newdatasize = 0;
 		hlassume(lumpsizes != nullptr && newdata != nullptr, assume_NoMemory);
@@ -596,7 +596,7 @@ void FinishBSPFile()
 				lumpsizes[i] = -1;
 				continue;
 			}
-			lumpsizes[i] = g_texdatasize - l->dataofs[i];
+			lumpsizes[i] = g_bsptexdatasize - l->dataofs[i];
 			for (int j = 0; j < g_nummiptex; j++)
 			{
 				int lumpsize = l->dataofs[j] - l->dataofs[i];
@@ -612,9 +612,9 @@ void FinishBSPFile()
 			Warning("Bad texdata structure.\n");
 			goto skipReduceTexdata;
 		}
-		for (i = 0; i < g_numtexinfo; i++)
+		for (i = 0; i < g_bspnumtexinfo; i++)
 		{
-			BSPLumpTexInfo *t = &g_texinfo[i];
+			BSPLumpTexInfo *t = &g_bsptexinfo[i];
 			if (t->miptex < 0 || t->miptex >= g_nummiptex)
 			{
 				Warning("Bad miptex number %d.\n", t->miptex);
@@ -666,9 +666,9 @@ void FinishBSPFile()
 				Map[i] = -1;
 			}
 		}
-		for (i = 0; i < g_numtexinfo; i++)
+		for (i = 0; i < g_bspnumtexinfo; i++)
 		{
-			BSPLumpTexInfo *t = &g_texinfo[i];
+			BSPLumpTexInfo *t = &g_bsptexinfo[i];
 			t->miptex = Map[t->miptex];
 		}
 		Size += (byte *)&l->dataofs[Num] - (byte *)l;
@@ -690,22 +690,22 @@ void FinishBSPFile()
 			}
 		}
 		memcpy(&l->dataofs[Num], newdata, newdatasize);
-		Log("Reduced %d texdatas to %d (%d bytes to %d)\n", g_nummiptex, Num, g_texdatasize, Size);
+		Log("Reduced %d texdatas to %d (%d bytes to %d)\n", g_nummiptex, Num, g_bsptexdatasize, Size);
 		g_nummiptex = Num;
-		g_texdatasize = Size;
+		g_bsptexdatasize = Size;
 	skipReduceTexdata:;
 		delete[] lumpsizes;
 		delete[] newdata;
 		delete[] Used;
 		delete[] Map;
 	}
-	Log("Reduced %d planes to %d\n", g_numplanes, gNumMappedPlanes);
+	Log("Reduced %d planes to %d\n", g_bspnumplanes, gNumMappedPlanes);
 
 	for (int counter = 0; counter < gNumMappedPlanes; counter++)
 	{
 		g_dplanes[counter] = gMappedPlanes[counter];
 	}
-	g_numplanes = gNumMappedPlanes;
+	g_bspnumplanes = gNumMappedPlanes;
 
 	Log("FixBrinks:\n");
 	BSPLumpClipnode *clipnodes; //[MAX_MAP_CLIPNODES]
@@ -718,19 +718,19 @@ void FinishBSPFile()
 	hlassume(headnode != nullptr, assume_NoMemory);
 
 	int i, j, level;
-	for (i = 0; i < g_nummodels; i++)
+	for (i = 0; i < g_bspnummodels; i++)
 	{
-		BSPLumpModel *m = &g_dmodels[i];
+		BSPLumpModel *m = &g_bspmodels[i];
 		for (j = 1; j < NUM_HULLS; j++)
 		{
-			brinkinfo[i][j] = CreateBrinkinfo(g_dclipnodes, m->headnode[j]);
+			brinkinfo[i][j] = CreateBrinkinfo(g_bspclipnodes, m->headnode[j]);
 		}
 	}
 	for (level = BrinkAny; level > BrinkNone; level--)
 	{
 		numclipnodes = 0;
 		count_mergedclipnodes = 0;
-		for (i = 0; i < g_nummodels; i++)
+		for (i = 0; i < g_bspnummodels; i++)
 		{
 			for (j = 1; j < NUM_HULLS; j++)
 			{
@@ -744,12 +744,12 @@ void FinishBSPFile()
 				break;
 			}
 		}
-		if (i == g_nummodels)
+		if (i == g_bspnummodels)
 		{
 			break;
 		}
 	}
-	for (i = 0; i < g_nummodels; i++)
+	for (i = 0; i < g_bspnummodels; i++)
 	{
 		for (j = 1; j < NUM_HULLS; j++)
 		{
@@ -766,12 +766,12 @@ void FinishBSPFile()
 		{
 			Warning("Not all brinks have been fixed because clipnode data is almost full.");
 		}
-		Log("Increased %d clipnodes to %d.\n", g_numclipnodes, numclipnodes);
-		g_numclipnodes = numclipnodes;
-		memcpy(g_dclipnodes, clipnodes, numclipnodes * sizeof(BSPLumpClipnode));
-		for (i = 0; i < g_nummodels; i++)
+		Log("Increased %d clipnodes to %d.\n", g_bspnumclipnodes, numclipnodes);
+		g_bspnumclipnodes = numclipnodes;
+		memcpy(g_bspclipnodes, clipnodes, numclipnodes * sizeof(BSPLumpClipnode));
+		for (i = 0; i < g_bspnummodels; i++)
 		{
-			BSPLumpModel *m = &g_dmodels[i];
+			BSPLumpModel *m = &g_bspmodels[i];
 			for (j = 1; j < NUM_HULLS; j++)
 			{
 				m->headnode[j] = headnode[i][j];
@@ -785,7 +785,7 @@ void FinishBSPFile()
 
 #undef dplane_t // this allow us to temporarily access the raw data directly without the layer of indirection
 #undef g_dplanes
-	for (int i = 0; i < g_numplanes; i++)
+	for (int i = 0; i < g_bspnumplanes; i++)
 	{
 		plane_t *mp = &g_mapplanes[i];
 		dplane_t *dp = &g_dplanes[i];

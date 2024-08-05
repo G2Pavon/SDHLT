@@ -320,13 +320,13 @@ void LoadTextureFromWad(RADTexture *tex, const BSPLumpMiptex *header)
 void LoadTextures()
 {
 	Log("Load Textures:\n");
-	g_numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
+	g_numtextures = g_bsptexdatasize ? ((BSPLumpMiptexHeader *)g_bsptexdata)->nummiptex : 0;
 	g_textures = new RADTexture[g_numtextures];
 	hlassume(g_textures != nullptr, assume_NoMemory);
 	for (int i = 0; i < g_numtextures; i++)
 	{
-		auto offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[i];
-		auto size = g_texdatasize - offset;
+		auto offset = ((BSPLumpMiptexHeader *)g_bsptexdata)->dataofs[i];
+		auto size = g_bsptexdatasize - offset;
 		auto *tex = &g_textures[i];
 		if (offset < 0 || size < (int)sizeof(BSPLumpMiptex))
 		{
@@ -335,7 +335,7 @@ void LoadTextures()
 		}
 		else
 		{
-			auto *mt = (BSPLumpMiptex *)&g_dtexdata[offset];
+			auto *mt = (BSPLumpMiptex *)&g_bsptexdata[offset];
 			if (mt->offsets[0])
 			{
 				LoadTexture(tex, mt, size);
@@ -808,7 +808,7 @@ static auto CQ_MapPoint(const unsigned char point[CQ_DIM], const unsigned char (
 
 // =====================================================================================
 //  EmbedLightmapInTextures
-//      check for "zhlt_embedlightmap" and update g_dfaces, g_texinfo, g_dtexdata and g_dlightdata
+//      check for "zhlt_embedlightmap" and update g_bspfaces, g_texinfo, g_bsptexdata and g_bsplightdata
 // =====================================================================================
 
 constexpr int RADTEXTURES_MAX = 2048; // should be smaller than 62 * 62 and smaller than MAX_MAP_TEXTURES
@@ -818,7 +818,7 @@ static int g_newtextures_size[RADTEXTURES_MAX];
 
 auto NewTextures_GetCurrentMiptexIndex() -> int
 {
-	auto *texdata = (BSPLumpMiptexHeader *)g_dtexdata;
+	auto *texdata = (BSPLumpMiptexHeader *)g_bsptexdata;
 	return texdata->nummiptex + g_newtextures_num;
 }
 
@@ -843,14 +843,14 @@ void NewTextures_Write()
 	}
 
 	int i;
-	auto *texdata = (BSPLumpMiptexHeader *)g_dtexdata;
+	auto *texdata = (BSPLumpMiptexHeader *)g_bsptexdata;
 
 	auto *dataaddr = (byte *)&texdata->dataofs[texdata->nummiptex];
-	auto datasize = (g_dtexdata + g_texdatasize) - dataaddr;
+	auto datasize = (g_bsptexdata + g_bsptexdatasize) - dataaddr;
 	auto *newdataaddr = (byte *)&texdata->dataofs[texdata->nummiptex + g_newtextures_num];
-	hlassume(g_texdatasize + (newdataaddr - dataaddr) <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
+	hlassume(g_bsptexdatasize + (newdataaddr - dataaddr) <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
 	memmove(newdataaddr, dataaddr, datasize);
-	g_texdatasize += newdataaddr - dataaddr;
+	g_bsptexdatasize += newdataaddr - dataaddr;
 	for (i = 0; i < texdata->nummiptex; i++)
 	{
 		if (texdata->dataofs[i] < 0) // bad texture
@@ -863,10 +863,10 @@ void NewTextures_Write()
 	hlassume(texdata->nummiptex + g_newtextures_num < MAX_MAP_TEXTURES, assume_MAX_MAP_TEXTURES);
 	for (i = 0; i < g_newtextures_num; i++)
 	{
-		hlassume(g_texdatasize + g_newtextures_size[i] <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
-		memcpy(g_dtexdata + g_texdatasize, g_newtextures_data[i], g_newtextures_size[i]);
-		texdata->dataofs[texdata->nummiptex + i] = g_texdatasize;
-		g_texdatasize += g_newtextures_size[i];
+		hlassume(g_bsptexdatasize + g_newtextures_size[i] <= g_max_map_miptex, assume_MAX_MAP_MIPTEX);
+		memcpy(g_bsptexdata + g_bsptexdatasize, g_newtextures_data[i], g_newtextures_size[i]);
+		texdata->dataofs[texdata->nummiptex + i] = g_bsptexdatasize;
+		g_bsptexdatasize += g_newtextures_size[i];
 	}
 	texdata->nummiptex += g_newtextures_num;
 
@@ -898,7 +898,7 @@ static void GetLightInt(BSPLumpFace *face, const int texsize[2], int ix, int iy,
 	}
 	for (int k = 0; k < MAXLIGHTMAPS && face->styles[k] != 255; k++)
 	{
-		auto *samples = &g_dlightdata[face->lightofs + k * (texsize[0] + 1) * (texsize[1] + 1) * 3];
+		auto *samples = &g_bsplightdata[face->lightofs + k * (texsize[0] + 1) * (texsize[1] + 1) * 3];
 		if (face->styles[k] == 0)
 		{
 			VectorAdd(light, &samples[(iy * (texsize[0] + 1) + ix) * 3], light);
@@ -932,21 +932,21 @@ static void GetLight(BSPLumpFace *face, const int texsize[2], double x, double y
 
 static auto GetValidTextureName(int miptex, char name[16]) -> bool
 {
-	auto numtextures = g_texdatasize ? ((BSPLumpMiptexHeader *)g_dtexdata)->nummiptex : 0;
+	auto numtextures = g_bsptexdatasize ? ((BSPLumpMiptexHeader *)g_bsptexdata)->nummiptex : 0;
 
 	if (miptex < 0 || miptex >= numtextures)
 	{
 		return false;
 	}
-	auto offset = ((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[miptex];
-	auto size = g_texdatasize - offset;
-	if (offset < 0 || g_dtexdata + offset < (byte *)&((BSPLumpMiptexHeader *)g_dtexdata)->dataofs[numtextures] ||
+	auto offset = ((BSPLumpMiptexHeader *)g_bsptexdata)->dataofs[miptex];
+	auto size = g_bsptexdatasize - offset;
+	if (offset < 0 || g_bsptexdata + offset < (byte *)&((BSPLumpMiptexHeader *)g_bsptexdata)->dataofs[numtextures] ||
 		size < (int)sizeof(BSPLumpMiptex))
 	{
 		return false;
 	}
 
-	auto *mt = (BSPLumpMiptex *)&g_dtexdata[offset];
+	auto *mt = (BSPLumpMiptex *)&g_bsptexdata[offset];
 	safe_strncpy(name, mt->name, 16);
 
 	if (strcmp(name, mt->name))
@@ -964,12 +964,12 @@ static auto GetValidTextureName(int miptex, char name[16]) -> bool
 
 void EmbedLightmapInTextures()
 {
-	if (!g_lightdatasize)
+	if (!g_bsplightdatasize)
 	{
 		// hlrad hasn't run
 		return;
 	}
-	if (!g_texdatasize)
+	if (!g_bsptexdatasize)
 	{
 		// texdata hasn't been initialized
 		return;
@@ -981,22 +981,22 @@ void EmbedLightmapInTextures()
 	int count_bytes = 0;
 	auto logged = false;
 
-	for (int i = 0; i < g_numfaces; i++)
+	for (int i = 0; i < g_bspnumfaces; i++)
 	{
-		auto *f = &g_dfaces[i];
+		auto *f = &g_bspfaces[i];
 
 		if (f->lightofs == -1) // some faces don't have lightmap
 		{
 			continue;
 		}
-		if (f->texinfo < 0 || f->texinfo >= g_numtexinfo)
+		if (f->texinfo < 0 || f->texinfo >= g_bspnumtexinfo)
 		{
 			continue;
 		}
 
 		auto *ent = g_face_entity[i];
 		auto originaltexinfonum = f->texinfo;
-		auto *originaltexinfo = &g_texinfo[originaltexinfonum];
+		auto *originaltexinfo = &g_bsptexinfo[originaltexinfonum];
 		char texname[16];
 		if (!GetValidTextureName(originaltexinfo->miptex, texname))
 		{
@@ -1289,12 +1289,12 @@ void EmbedLightmapInTextures()
 
 		// emit a texinfo
 
-		hlassume(g_numtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
-		f->texinfo = g_numtexinfo;
-		auto *info = &g_texinfo[g_numtexinfo];
-		g_numtexinfo++;
+		hlassume(g_bspnumtexinfo < MAX_MAP_TEXINFO, assume_MAX_MAP_TEXINFO);
+		f->texinfo = g_bspnumtexinfo;
+		auto *info = &g_bsptexinfo[g_bspnumtexinfo];
+		g_bspnumtexinfo++;
 
-		*info = g_texinfo[originaltexinfonum];
+		*info = g_bsptexinfo[originaltexinfonum];
 		if (resolution != 1)
 		{
 			// apply a scale and a shift over the original vectors

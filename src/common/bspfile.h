@@ -264,67 +264,67 @@ constexpr int ANGLE_DOWN = -2.0; // #define ANGLE_DOWN  -2 //--vluzacn
 // BSP File Data
 //
 
-extern int g_nummodels;
-extern BSPLumpModel g_dmodels[MAX_MAP_MODELS];
-extern int g_dmodels_checksum;
+extern int g_bspnummodels;
+extern BSPLumpModel g_bspmodels[MAX_MAP_MODELS];
+extern int g_bspmodels_checksum;
 
-extern int g_visdatasize;
-extern byte g_dvisdata[MAX_MAP_VISIBILITY];
-extern int g_dvisdata_checksum;
+extern int g_bspvisdatasize;
+extern byte g_bspvisdata[MAX_MAP_VISIBILITY];
+extern int g_bspvisdata_checksum;
 
-extern int g_lightdatasize;
-extern byte *g_dlightdata;
-extern int g_dlightdata_checksum;
+extern int g_bsplightdatasize;
+extern byte *g_bsplightdata;
+extern int g_bsplightdata_checksum;
 
-extern int g_texdatasize;
-extern byte *g_dtexdata; // (BSPLumpMiptexHeader)
-extern int g_dtexdata_checksum;
+extern int g_bsptexdatasize;
+extern byte *g_bsptexdata; // (BSPLumpMiptexHeader)
+extern int g_bsptexdata_checksum;
 
-extern int g_entdatasize;
-extern char g_dentdata[MAX_MAP_ENTSTRING];
-extern int g_dentdata_checksum;
+extern int g_bspentdatasize;
+extern char g_bspentdata[MAX_MAP_ENTSTRING];
+extern int g_bspentdata_checksum;
 
-extern int g_numleafs;
-extern BSPLumpLeaf g_dleafs[MAX_MAP_LEAFS];
-extern int g_dleafs_checksum;
+extern int g_bspnumleafs;
+extern BSPLumpLeaf g_bspleafs[MAX_MAP_LEAFS];
+extern int g_bspleafs_checksum;
 
-extern int g_numplanes;
-extern dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES];
-extern int g_dplanes_checksum;
+extern int g_bspnumplanes;
+extern dplane_t g_dplanes[MAX_INTERNAL_MAP_PLANES]; // don't rename until remove hlvis.h g_dplanes macro
+extern int g_bspplanes_checksum;
 
-extern int g_numvertexes;
-extern BSPLumpVertex g_dvertexes[MAX_MAP_VERTS];
-extern int g_dvertexes_checksum;
+extern int g_bspnumvertexes;
+extern BSPLumpVertex g_bspvertexes[MAX_MAP_VERTS];
+extern int g_bspvertexes_checksum;
 
-extern int g_numnodes;
-extern BSPLumpNode g_dnodes[MAX_MAP_NODES];
-extern int g_dnodes_checksum;
+extern int g_bspnumnodes;
+extern BSPLumpNode g_bspnodes[MAX_MAP_NODES];
+extern int g_bspnodes_checksum;
 
-extern int g_numtexinfo;
-extern BSPLumpTexInfo g_texinfo[MAX_INTERNAL_MAP_TEXINFO];
-extern int g_texinfo_checksum;
+extern int g_bspnumtexinfo;
+extern BSPLumpTexInfo g_bsptexinfo[MAX_INTERNAL_MAP_TEXINFO];
+extern int g_bsptexinfo_checksum;
 
-extern int g_numfaces;
-extern BSPLumpFace g_dfaces[MAX_MAP_FACES];
-extern int g_dfaces_checksum;
+extern int g_bspnumfaces;
+extern BSPLumpFace g_bspfaces[MAX_MAP_FACES];
+extern int g_bspfaces_checksum;
 
 extern int g_iWorldExtent;
 
-extern int g_numclipnodes;
-extern BSPLumpClipnode g_dclipnodes[MAX_MAP_CLIPNODES];
-extern int g_dclipnodes_checksum;
+extern int g_bspnumclipnodes;
+extern BSPLumpClipnode g_bspclipnodes[MAX_MAP_CLIPNODES];
+extern int g_bspclipnodes_checksum;
 
-extern int g_numedges;
-extern BSPLumpEdge g_dedges[MAX_MAP_EDGES];
-extern int g_dedges_checksum;
+extern int g_bspnumedges;
+extern BSPLumpEdge g_bspedges[MAX_MAP_EDGES];
+extern int g_bspedges_checksum;
 
-extern int g_nummarksurfaces;
-extern unsigned short g_dmarksurfaces[MAX_MAP_MARKSURFACES];
-extern int g_dmarksurfaces_checksum;
+extern int g_bspnummarksurfaces;
+extern unsigned short g_bspmarksurfaces[MAX_MAP_MARKSURFACES];
+extern int g_bspmarksurfaces_checksum;
 
-extern int g_numsurfedges;
-extern int g_dsurfedges[MAX_MAP_SURFEDGES];
-extern int g_dsurfedges_checksum;
+extern int g_bspnumsurfedges;
+extern int g_bspsurfedges[MAX_MAP_SURFEDGES];
+extern int g_bspsurfedges_checksum;
 
 extern void DecompressVis(const byte *src, byte *const dest, const unsigned int dest_length);
 extern auto CompressVis(const byte *const src, const unsigned int src_length, byte *dest, unsigned int dest_length) -> int;

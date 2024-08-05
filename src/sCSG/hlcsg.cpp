@@ -245,7 +245,7 @@ static void SaveOutside(const Brush *const brush, const int hull, BrushFace *out
         {
             auto texinfo = face->texinfo;
             const auto *texname = GetTextureByNumber_CSG(texinfo);
-            auto *tex = &g_texinfo[texinfo];
+            auto *tex = &g_bsptexinfo[texinfo];
 
             if (texinfo != -1                                                         // nullified textures (NULL, BEVEL, aaatrigger, etc.)
                 && !(tex->flags & TEX_SPECIAL)                                        // sky
@@ -964,7 +964,7 @@ static void ProcessModels() // a.k.a brush entity
 
 static void EmitPlanes()
 {
-    g_numplanes = g_nummapplanes;
+    g_bspnumplanes = g_nummapplanes;
     {
         char name[_MAX_PATH];
         safe_snprintf(name, _MAX_PATH, "%s.pln", g_Mapname);

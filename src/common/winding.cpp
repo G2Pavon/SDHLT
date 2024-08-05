@@ -281,17 +281,17 @@ Winding::Winding(const BSPLumpFace &face, vec_t epsilon)
     unsigned i;
     for (i = 0; i < face.numedges; i++)
     {
-        se = g_dsurfedges[face.firstedge + i];
+        se = g_bspsurfedges[face.firstedge + i];
         if (se < 0)
         {
-            v = g_dedges[-se].v[1];
+            v = g_bspedges[-se].v[1];
         }
         else
         {
-            v = g_dedges[se].v[0];
+            v = g_bspedges[se].v[0];
         }
 
-        dv = &g_dvertexes[v];
+        dv = &g_bspvertexes[v];
         VectorCopy(dv->point, m_Points[i]);
     }
 

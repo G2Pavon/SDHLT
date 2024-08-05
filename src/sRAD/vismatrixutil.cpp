@@ -280,7 +280,7 @@ void MakeScales(const int threadnum)
 		bool lighting_diversify;
 		vec_t lighting_power;
 		vec_t lighting_scale;
-		int miptex = g_texinfo[g_dfaces[patch->faceNumber].texinfo].miptex;
+		int miptex = g_bsptexinfo[g_bspfaces[patch->faceNumber].texinfo].miptex;
 		lighting_power = g_lightingconeinfo[miptex][0];
 		lighting_scale = g_lightingconeinfo[miptex][1];
 		lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);
@@ -525,7 +525,7 @@ void MakeRGBScales(const int threadnum)
 		bool lighting_diversify;
 		vec_t lighting_power;
 		vec_t lighting_scale;
-		int miptex = g_texinfo[g_dfaces[patch->faceNumber].texinfo].miptex;
+		int miptex = g_bsptexinfo[g_bspfaces[patch->faceNumber].texinfo].miptex;
 		lighting_power = g_lightingconeinfo[miptex][0];
 		lighting_scale = g_lightingconeinfo[miptex][1];
 		lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);

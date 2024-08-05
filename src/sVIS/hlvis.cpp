@@ -273,7 +273,7 @@ static void LeafFlow(const int leafnum)
 
     for (j = 0; j < g_leafcounts[leafnum]; j++)
     {
-        g_dleafs[g_leafstarts[leafnum] + j + 1].visofs = dest - vismap;
+        g_bspleafs[g_leafstarts[leafnum] + j + 1].visofs = dest - vismap;
     }
 
     memcpy(dest, compressed, i);
@@ -310,13 +310,13 @@ void SaveVisData(const char *filename)
     if (!fp)
         return;
 
-    SafeWrite(fp, g_dvisdata, (vismap_p - g_dvisdata));
+    SafeWrite(fp, g_bspvisdata, (vismap_p - g_bspvisdata));
 
     // BUG BUG BUG!
     // Leaf offsets need to be saved too!!!!
-    for (i = 0; i < g_numleafs; i++)
+    for (i = 0; i < g_bspnumleafs; i++)
     {
-        SafeWrite(fp, &g_dleafs[i].visofs, sizeof(int));
+        SafeWrite(fp, &g_bspleafs[i].visofs, sizeof(int));
     }
 
     fclose(fp);
@@ -364,7 +364,7 @@ static void CalcVis()
         free(g_uncompressed);
         g_uncompressed = (byte *)calloc(g_portalleafs, g_bitbytes);
 
-        vismap_p = g_dvisdata;
+        vismap_p = g_bspvisdata;
 
         // We don't need to run BasePortalVis again
         NamedRunThreadsOn(g_portalleafs, g_estimate, MaxDistVis);
@@ -435,11 +435,11 @@ static void LoadPortals(char *portal_image)
 
     originalvismapsize = g_portalleafs * ((g_portalleafs + 7) / 8);
 
-    vismap = vismap_p = g_dvisdata;
+    vismap = vismap_p = g_bspvisdata;
     vismap_end = vismap + MAX_MAP_VISIBILITY;
 
     if (g_portalleafs > MAX_MAP_LEAFS)
-    { // this may cause hlvis to overflow, because numportalleafs can be larger than g_numleafs in some special cases
+    { // this may cause hlvis to overflow, because numportalleafs can be larger than g_bspnumleafs in some special cases
         Error("Too many portalleafs (g_portalleafs(%d) > MAX_MAP_LEAFS(%d)).", g_portalleafs, MAX_MAP_LEAFS);
     }
     g_leafcount_all = 0;
@@ -456,9 +456,9 @@ static void LoadPortals(char *portal_image)
         g_leafstarts[i] = g_leafcount_all;
         g_leafcount_all += g_leafcounts[i];
     }
-    if (g_leafcount_all != g_dmodels[0].visleafs)
+    if (g_leafcount_all != g_bspmodels[0].visleafs)
     { // internal error (this should never happen)
-        Error("Corrupted leaf mapping (g_leafcount_all(%d) != g_dmodels[0].visleafs(%d)).", g_leafcount_all, g_dmodels[0].visleafs);
+        Error("Corrupted leaf mapping (g_leafcount_all(%d) != g_bspmodels[0].visleafs(%d)).", g_leafcount_all, g_bspmodels[0].visleafs);
     }
     for (i = 0; i < g_portalleafs; i++)
     {
@@ -596,7 +596,7 @@ auto VisLeafnumForPoint(const vec3_t point) -> int
     nodenum = 0;
     while (nodenum >= 0)
     {
-        node = &g_dnodes[nodenum];
+        node = &g_bspnodes[nodenum];
         plane = &g_dplanes[node->planenum];
         dist = DotProduct(point, plane->normal) - plane->dist;
         if (dist >= 0.0)
@@ -720,8 +720,8 @@ auto main(const int argc, char **argv) -> int
     g_uncompressed = (byte *)calloc(g_portalleafs, g_bitbytes);
 
     CalcVis();
-    g_visdatasize = vismap_p - g_dvisdata;
-    Log("g_visdatasize:%i  compressed from %i\n", g_visdatasize, originalvismapsize);
+    g_bspvisdatasize = vismap_p - g_bspvisdata;
+    Log("g_bspvisdatasize:%i  compressed from %i\n", g_bspvisdatasize, originalvismapsize);
     WriteBSPFile(source);
 
     end = I_FloatTime();

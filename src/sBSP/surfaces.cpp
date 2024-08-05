@@ -42,7 +42,7 @@ void SubdivideFace(FaceBSP *f, FaceBSP **prevptr)
     {
         return;
     }
-    tex = &g_texinfo[f->texturenum];
+    tex = &g_bsptexinfo[f->texturenum];
 
     if (tex->flags & TEX_SPECIAL)
     {
@@ -300,17 +300,17 @@ static auto GetVertex(const vec3_t in, const int planenum) -> int
     hv->next = hashverts[h];
     hashverts[h] = hv;
     VectorCopy(vert, hv->point);
-    hv->num = g_numvertexes;
+    hv->num = g_bspnumvertexes;
     hlassume(hv->num != MAX_MAP_VERTS, assume_MAX_MAP_VERTS);
     hvert_p++;
 
     // emit a vertex
-    hlassume(g_numvertexes < MAX_MAP_VERTS, assume_MAX_MAP_VERTS);
+    hlassume(g_bspnumvertexes < MAX_MAP_VERTS, assume_MAX_MAP_VERTS);
 
-    g_dvertexes[g_numvertexes].point[0] = vert[0];
-    g_dvertexes[g_numvertexes].point[1] = vert[1];
-    g_dvertexes[g_numvertexes].point[2] = vert[2];
-    g_numvertexes++;
+    g_bspvertexes[g_bspnumvertexes].point[0] = vert[0];
+    g_bspvertexes[g_bspnumvertexes].point[1] = vert[1];
+    g_bspvertexes[g_bspnumvertexes].point[2] = vert[2];
+    g_bspnumvertexes++;
 
     return hv->num;
 }
@@ -332,9 +332,9 @@ auto GetEdge(const vec3_t p1, const vec3_t p2, FaceBSP *f) -> int
 
     v1 = GetVertex(p1, f->planenum);
     v2 = GetVertex(p2, f->planenum);
-    for (i = firstmodeledge; i < g_numedges; i++)
+    for (i = firstmodeledge; i < g_bspnumedges; i++)
     {
-        edge = &g_dedges[i];
+        edge = &g_bspedges[i];
         if (v1 == edge->v[1] && v2 == edge->v[0] && !edgefaces[i][1] && edgefaces[i][0]->contents == f->contents && edgefaces[i][0]->planenum != (f->planenum ^ 1) && edgefaces[i][0]->contents == f->contents)
         {
             edgefaces[i][1] = f;
@@ -343,9 +343,9 @@ auto GetEdge(const vec3_t p1, const vec3_t p2, FaceBSP *f) -> int
     }
 
     // emit an edge
-    hlassume(g_numedges < MAX_MAP_EDGES, assume_MAX_MAP_EDGES);
-    edge = &g_dedges[g_numedges];
-    g_numedges++;
+    hlassume(g_bspnumedges < MAX_MAP_EDGES, assume_MAX_MAP_EDGES);
+    edge = &g_bspedges[g_bspnumedges];
+    g_bspnumedges++;
     edge->v[0] = v1;
     edge->v[1] = v2;
     edgefaces[i][0] = f;
@@ -359,6 +359,6 @@ auto GetEdge(const vec3_t p1, const vec3_t p2, FaceBSP *f) -> int
 void MakeFaceEdges()
 {
     InitHash();
-    firstmodeledge = g_numedges;
-    firstmodelface = g_numfaces;
+    firstmodeledge = g_bspnumedges;
+    firstmodelface = g_bspnumfaces;
 }

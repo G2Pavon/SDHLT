@@ -468,7 +468,7 @@ void ExpandBrush(Brush *brush, const int hullnum)
 
 		if (current_face->bevel)
 		{
-			// don't adjust origin - we'll correct g_texinfo's flags in a later step
+			// don't adjust origin - we'll correct g_bsptexinfo's flags in a later step
 		}
 		// The old offset will generate an extremely small gap when the normal is close to axis, causing epsilon errors (ambiguous leafnode content, player falling into ground, etc.).
 		// For example: with the old shifting method, slopes with angle arctan(1/8) and arctan(1/64) will result in gaps of 0.0299 unit and 0.000488 unit respectively, which are smaller than ON_EPSILON, while in both 'simple' cliptype and the new method, the gaps are 2.0 units and 0.25 unit, which are good.
