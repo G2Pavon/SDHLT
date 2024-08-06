@@ -40,10 +40,10 @@ int g_leafcount_all;
 // AJM: MVD
 //
 
-static byte *vismap;
-static byte *vismap_p;
-static byte *vismap_end; // past visfile
-static int originalvismapsize;
+static byte *g_vismap;
+static byte *g_vismap_p;
+static byte *g_vismap_end; // past visfile
+static int g_originalvismapsize;
 
 byte *g_uncompressed; // [bitbytes*portalleafs]
 
@@ -63,7 +63,7 @@ OverviewVIS g_overview[g_overview_max];
 int g_overview_count = 0;
 LeafInfoVIS *g_leafinfos = nullptr;
 
-static int totalvis = 0;
+static int g_totalvis = 0;
 
 // =====================================================================================
 //  PlaneFromWinding
@@ -86,16 +86,13 @@ static void PlaneFromWinding(WindingVIS *w, PlaneVIS *plane)
 // =====================================================================================
 static auto NewWinding(const int points) -> WindingVIS *
 {
-    WindingVIS *w;
-    int size;
-
     if (points > MAX_POINTS_ON_WINDING)
     {
         Error("NewWinding: %i points > MAX_POINTS_ON_WINDING", points);
     }
 
-    size = (int)(intptr_t)((WindingVIS *)nullptr)->points[points];
-    w = (WindingVIS *)calloc(1, size);
+    auto size = (int)(intptr_t)((WindingVIS *)nullptr)->points[points];
+    auto *w = (WindingVIS *)calloc(1, size);
 
     return w;
 }
@@ -110,7 +107,6 @@ static auto GetNextPortal() -> PortalVIS *
     int j;
     PortalVIS *p;
     PortalVIS *tp;
-    int min;
 
     if (GetThreadWork() == -1)
     {
@@ -118,7 +114,7 @@ static auto GetNextPortal() -> PortalVIS *
     }
     ThreadLock();
 
-    min = 99999;
+    auto min = 99999;
     p = nullptr;
 
     for (j = 0, tp = g_portals; j < g_numportals * 2; j++, tp++)
@@ -161,31 +157,24 @@ static void LeafThread(int unused)
 // =====================================================================================
 static void LeafFlow(const int leafnum)
 {
-    LeafVIS *leaf;
-    byte *outbuffer;
     byte compressed[MAX_MAP_LEAFS / 8];
     unsigned i;
     unsigned j;
-    int k;
-    int tmp;
-    int numvis;
-    byte *dest;
-    PortalVIS *p;
 
     //
     // flow through all portals, collecting visible bits
     //
     memset(compressed, 0, sizeof(compressed));
-    outbuffer = g_uncompressed + leafnum * g_bitbytes;
-    leaf = &g_leafs[leafnum];
-    tmp = 0;
+    auto *outbuffer = g_uncompressed + leafnum * g_bitbytes;
+    auto *leaf = &g_leafs[leafnum];
+    auto tmp = 0;
 
     const unsigned offset = leafnum >> 3;
     const unsigned bit = (1 << (leafnum & 7));
 
     for (i = 0; i < leaf->numportals; i++)
     {
-        p = leaf->portals[i];
+        auto *p = leaf->portals[i];
         if (p->status != stat_done)
         {
             Error("portal not done (leaf %d)", leafnum);
@@ -205,7 +194,7 @@ static void LeafFlow(const int leafnum)
             tmp = 1;
             Warning("Leaf portals saw into leaf");
             Log("    Problem at portal between leaves %i and %i:\n   ", leafnum, p->leaf);
-            for (k = 0; k < p->winding->numpoints; k++)
+            for (int k = 0; k < p->winding->numpoints; k++)
             {
                 Log("    (%4.3f %4.3f %4.3f)\n", p->winding->points[k][0], p->winding->points[k][1], p->winding->points[k][2]);
             }
@@ -230,7 +219,7 @@ static void LeafFlow(const int leafnum)
         }
     }
 
-    numvis = 0;
+    auto numvis = 0;
     for (i = 0; i < g_portalleafs; i++)
     {
         if (outbuffer[i >> 3] & (1 << (i & 7)))
@@ -242,7 +231,7 @@ static void LeafFlow(const int leafnum)
     //
     // compress the bit string
     //
-    totalvis += numvis;
+    g_totalvis += numvis;
 
     byte buffer2[MAX_MAP_LEAFS / 8];
     int diskbytes = (g_leafcount_all + 7) >> 3;
@@ -263,17 +252,17 @@ static void LeafFlow(const int leafnum)
     }
     i = CompressVis(buffer2, diskbytes, compressed, sizeof(compressed));
 
-    dest = vismap_p;
-    vismap_p += i;
+    auto *dest = g_vismap_p;
+    g_vismap_p += i;
 
-    if (vismap_p > vismap_end)
+    if (g_vismap_p > g_vismap_end)
     {
         Error("Vismap expansion overflow");
     }
 
     for (j = 0; j < g_leafcounts[leafnum]; j++)
     {
-        g_bspleafs[g_leafstarts[leafnum] + j + 1].visofs = dest - vismap;
+        g_bspleafs[g_leafstarts[leafnum] + j + 1].visofs = dest - g_vismap;
     }
 
     memcpy(dest, compressed, i);
@@ -286,9 +275,7 @@ static void CalcPortalVis()
 {
     if (g_fastvis)
     {
-        int i;
-
-        for (i = 0; i < g_numportals * 2; i++)
+        for (int i = 0; i < g_numportals * 2; i++)
         {
             g_portals[i].visbits = g_portals[i].mightsee;
             g_portals[i].status = stat_done;
@@ -304,17 +291,16 @@ static void CalcPortalVis()
 // =====================================================================================
 void SaveVisData(const char *filename)
 {
-    int i;
     FILE *fp = fopen(filename, "wb");
 
     if (!fp)
         return;
 
-    SafeWrite(fp, g_bspvisdata, (vismap_p - g_bspvisdata));
+    SafeWrite(fp, g_bspvisdata, (g_vismap_p - g_bspvisdata));
 
     // BUG BUG BUG!
     // Leaf offsets need to be saved too!!!!
-    for (i = 0; i < g_bspnumleafs; i++)
+    for (int i = 0; i < g_bspnumleafs; i++)
     {
         SafeWrite(fp, &g_bspleafs[i].visofs, sizeof(int));
     }
@@ -351,11 +337,11 @@ static void CalcVis()
         LeafFlow(i);
     }
 
-    Log("average leafs visible: %i\n", totalvis / g_portalleafs);
+    Log("average leafs visible: %i\n", g_totalvis / g_portalleafs);
 
     if (g_maxdistance)
     {
-        totalvis = 0;
+        g_totalvis = 0;
 
         Log("saving visdata to %s...\n", visdatafile);
         SaveVisData(visdatafile);
@@ -364,7 +350,7 @@ static void CalcVis()
         free(g_uncompressed);
         g_uncompressed = (byte *)calloc(g_portalleafs, g_bitbytes);
 
-        vismap_p = g_bspvisdata;
+        g_vismap_p = g_bspvisdata;
 
         // We don't need to run BasePortalVis again
         NamedRunThreadsOn(g_portalleafs, g_estimate, MaxDistVis);
@@ -376,7 +362,7 @@ static void CalcVis()
         {
             LeafFlow(i);
         }
-        Log("average maxdistance leafs visible: %i\n", totalvis / g_portalleafs);
+        Log("average maxdistance leafs visible: %i\n", g_totalvis / g_portalleafs);
     }
 }
 
@@ -398,15 +384,12 @@ static void LoadPortals(char *portal_image)
 {
     int i, j;
     PortalVIS *p;
-    LeafVIS *l;
     int numpoints;
-    WindingVIS *w;
     int leafnums[2];
     PlaneVIS plane;
     const char *const seperators = " ()\r\n\t";
-    char *token;
 
-    token = strtok(portal_image, seperators);
+    auto *token = strtok(portal_image, seperators);
     CheckNullToken(token);
     if (!sscanf(token, "%u", &g_portalleafs))
     {
@@ -433,10 +416,10 @@ static void LoadPortals(char *portal_image)
     g_leafcounts = (int *)calloc(g_portalleafs, sizeof(int));
     g_leafstarts = (int *)calloc(g_portalleafs, sizeof(int));
 
-    originalvismapsize = g_portalleafs * ((g_portalleafs + 7) / 8);
+    g_originalvismapsize = g_portalleafs * ((g_portalleafs + 7) / 8);
 
-    vismap = vismap_p = g_bspvisdata;
-    vismap_end = vismap + MAX_MAP_VISIBILITY;
+    g_vismap = g_vismap_p = g_bspvisdata;
+    g_vismap_end = g_vismap + MAX_MAP_VISIBILITY;
 
     if (g_portalleafs > MAX_MAP_LEAFS)
     { // this may cause hlvis to overflow, because numportalleafs can be larger than g_bspnumleafs in some special cases
@@ -505,7 +488,7 @@ static void LoadPortals(char *portal_image)
             Error("LoadPortals: reading portal %i", i);
         }
 
-        w = p->winding = NewWinding(numpoints);
+        auto *w = p->winding = NewWinding(numpoints);
         w->original = true;
         w->numpoints = numpoints;
 
@@ -540,7 +523,7 @@ static void LoadPortals(char *portal_image)
         PlaneFromWinding(w, &plane);
 
         // create forward portal
-        l = &g_leafs[leafnums[0]];
+        auto *l = &g_leafs[leafnums[0]];
         hlassume(l->numportals < MAX_PORTALS_ON_LEAF, assume_MAX_PORTALS_ON_LEAF);
         l->portals[l->numportals] = p;
         l->numportals++;
@@ -588,17 +571,12 @@ static void LoadPortalsByFilename(const char *const filename)
 
 auto VisLeafnumForPoint(const vec3_t point) -> int
 {
-    int nodenum;
-    vec_t dist;
-    BSPLumpNode *node;
-    dplane_t *plane;
-
-    nodenum = 0;
+    auto nodenum = 0;
     while (nodenum >= 0)
     {
-        node = &g_bspnodes[nodenum];
-        plane = &g_bspplanes[node->planenum];
-        dist = DotProduct(point, plane->normal) - plane->dist;
+        auto *node = &g_bspnodes[nodenum];
+        auto *plane = &g_bspplanes[node->planenum];
+        auto dist = DotProduct(point, plane->normal) - plane->dist;
         if (dist >= 0.0)
         {
             nodenum = node->children[0];
@@ -614,8 +592,7 @@ auto VisLeafnumForPoint(const vec3_t point) -> int
 
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg)
 {
-    int i;
-    for (i = 1; i < argc; i++)
+    for (int i = 1; i < argc; i++)
     {
         if (!strcasecmp(argv[i], "-fast"))
         {
@@ -720,8 +697,8 @@ auto main(const int argc, char **argv) -> int
     g_uncompressed = (byte *)calloc(g_portalleafs, g_bitbytes);
 
     CalcVis();
-    g_bspvisdatasize = vismap_p - g_bspvisdata;
-    Log("g_bspvisdatasize:%i  compressed from %i\n", g_bspvisdatasize, originalvismapsize);
+    g_bspvisdatasize = g_vismap_p - g_bspvisdata;
+    Log("g_bspvisdatasize:%i  compressed from %i\n", g_bspvisdatasize, g_originalvismapsize);
     WriteBSPFile(source);
 
     end = I_FloatTime();
