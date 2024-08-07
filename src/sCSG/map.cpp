@@ -268,7 +268,7 @@ void ParseFace(Brush *b, Side *s)
 // =====================================================================================
 // These Brush* functions are more like ProcessBrush(), so i think they should called outside ParseBrush
 
-static auto BrushCheckZHLT_Invisible(Entity *mapent) -> bool
+auto BrushCheckZHLT_Invisible(Entity *mapent) -> bool
 {
 	using namespace std;
 
@@ -554,7 +554,7 @@ void BrushCheckContentEmpty(Entity *e, Brush *b, Side *s)
 // =====================================================================================
 //  Parse a brush from script
 // =====================================================================================
-static void ParseBrush(Entity *mapent)
+void ParseBrush(Entity *mapent)
 {
 	auto b = &g_mapbrushes[g_nummapbrushes]; // Current brush
 	int i, j;								 // Loop counters
