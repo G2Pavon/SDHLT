@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdio>
+
 #include "mathlib.h"
 #include "map.h"
 
@@ -27,7 +29,6 @@ constexpr bool DEFAULT_ESTIMATE = true;
 //=============================================================================
 // brush.c
 extern auto CheckBrushContents(const Brush *const b) -> contents_t;
-
 extern void CreateBrush(int brushnum);
 extern void CreateHullShape(int entitynum, bool disabled, const char *id, int defaulthulls);
 extern void InitDefaultHulls();
@@ -45,12 +46,38 @@ extern bool g_bClipNazi;
 extern Plane g_mapplanes[MAX_INTERNAL_MAP_PLANES];
 extern int g_nummapplanes;
 
-extern auto NewFaceFromFace(const BrushFace *const in) -> BrushFace *;
-extern auto CopyFace(const BrushFace *const f) -> BrushFace *;
+auto NewFaceFromFace(const BrushFace *const in) -> BrushFace *;
+auto CopyFace(const BrushFace *const face) -> BrushFace *;
+auto CopyFacesToOutside(BrushHull *bh) -> BrushFace *;
+
+void WriteFace(const int hull, const BrushFace *const face, int detaillevel, FILE **out);
+void WriteDetailBrush(int hull, const BrushFace *faces, FILE **out);
+
+void BoundWorld(int numbrushes, Brush *brushes, BoundingBox wolrdbounds);
+
+void SaveOutside(const Brush *const brush, const int hull, BrushFace *outside, const int mirrorcontents);
+void CSGBrush(int brushnum);
+extern auto ContentsToString(const contents_t type) -> const char *;
+
+void SetModelNumbers(Entity *entities, int numentities);
+void ReuseModel(Entity *entities, int numentities);
+void SetLightStyles(Entity *entities, int numentities);
+void ConvertHintToEmpty(Brush *brushes);
+void MarkEntForNoclip(Entity *ent, Brush *brushes);
+void CSGCleanup();
+void CheckForNoClip(Entity *entities, int numentities);
+void BoundWorld(Brush *brushes, BoundingBox worldbounds, int numbrushes);
+void SetModelCenters(Entity *entities, int numentities, Brush *brushes);
+void ProcessModels(Entity *entities, Brush *brushes, int numentities);
+
+void OpenHullFiles(FILE **outhull, FILE **outdetail, const char *mapname);
+void CloseHullFiles(FILE **hulls, FILE **detailbrush);
+void WriteHullSizeFile(vec3_t (*hull_size)[2], const char *mapname);
+
+void EmitPlanes(Plane *planes, int num_map_planes, const char *mapname);
+void WriteBSP(const char *const name, Brush *brushes);
 
 void HandleArgs(int argc, char **argv, const char *&mapname_from_arg);
-void OpenHullFiles();
-void WriteHullSizeFile();
 
 //============================================================================
 // hullfile.cpp
