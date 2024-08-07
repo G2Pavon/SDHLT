@@ -95,6 +95,7 @@ void OpenWadFile(const char *name, bool fullpath = false)
 		int numlumps;
 		int infotableofs;
 	} wadinfo;
+
 	if (wad->filesize < (int)sizeof(wadinfo))
 	{
 		Error("Invalid wad file '%s'.", wad->path);

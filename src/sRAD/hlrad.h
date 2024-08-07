@@ -299,8 +299,8 @@ extern const vec3_t vec3_one;
 extern float_type g_transfer_compress_type;
 extern vector_type g_rgbtransfer_compress_type;
 extern float g_corings[ALLSTYLES];
-extern int stylewarningcount; // not thread safe
-extern int stylewarningnext;  // not thread safe
+extern int g_stylewarningcount; // not thread safe
+extern int g_stylewarningnext;	// not thread safe
 extern vec3_t *g_translucenttextures;
 extern vec_t g_translucentdepth;
 extern vec3_t *g_lightingconeinfo; //[nummiptex]; X component = power, Y component = scale, Z component = nothing

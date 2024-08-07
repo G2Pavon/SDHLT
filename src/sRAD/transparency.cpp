@@ -235,9 +235,11 @@ struct styleList_t
 	unsigned p2;
 	char style;
 };
+
 static styleList_t *s_style_list = nullptr;
 static unsigned int s_style_count = 0;
 static unsigned int s_max_style_count = 0;
+
 void AddStyleToStyleArray(const unsigned p1, const unsigned p2, const int style)
 {
 	if (style == -1)
@@ -271,6 +273,7 @@ void AddStyleToStyleArray(const unsigned p1, const unsigned p2, const int style)
 	// unlock list
 	ThreadUnlock();
 }
+
 static auto SortStyleList(const void *a, const void *b) -> int
 {
 	const styleList_t *item1 = (styleList_t *)a;
@@ -302,6 +305,7 @@ void CreateFinalStyleArrays(const char *print_name)
 	else
 		Log("%-20s: %5.1f bytes\n", print_name, (double)size); //--vluzacn
 }
+
 void FreeStyleArrays()
 {
 	if (s_style_count)
@@ -311,6 +315,7 @@ void FreeStyleArrays()
 
 	s_max_style_count = s_style_count = 0;
 }
+
 void GetStyle(const unsigned p1, const unsigned p2, int &style, unsigned int &next_index)
 {
 	style = -1;

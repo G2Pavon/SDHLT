@@ -12,17 +12,14 @@
 
 void writetransfers(const char *const transferfile, const long total_patches)
 {
-    FILE *file;
-
-    file = fopen(transferfile, "w+b");
+    auto *file = fopen(transferfile, "w+b");
     if (file != nullptr)
     {
-        unsigned amtwritten;
         Patch *patch;
 
         Log("Writing transfers file [%s]\n", transferfile);
 
-        amtwritten = fwrite(&total_patches, sizeof(total_patches), 1, file);
+        unsigned amtwritten = fwrite(&total_patches, sizeof(total_patches), 1, file);
         if (amtwritten != 1)
         {
             goto FailedWrite;
@@ -84,18 +81,16 @@ FailedWrite:
 
 auto readtransfers(const char *const transferfile, const long numpatches) -> bool
 {
-    FILE *file;
     long total_patches;
 
-    file = fopen(transferfile, "rb");
+    auto *file = fopen(transferfile, "rb");
     if (file != nullptr)
     {
-        unsigned amtread;
         Patch *patch;
 
         Log("Reading transfers file [%s]\n", transferfile);
 
-        amtread = fread(&total_patches, sizeof(total_patches), 1, file);
+        unsigned amtread = fread(&total_patches, sizeof(total_patches), 1, file);
         if (amtread != 1)
         {
             goto FailedRead;
@@ -151,10 +146,9 @@ auto readtransfers(const char *const transferfile, const long numpatches) -> boo
 
 FailedRead:
 {
-    unsigned x;
     Patch *patch = g_patches;
 
-    for (x = 0; x < g_num_patches; x++, patch++)
+    for (unsigned x = 0; x < g_num_patches; x++, patch++)
     {
         FreeBlock(patch->tData);
         FreeBlock(patch->tIndex);

@@ -18,11 +18,10 @@ auto FindTransferOffsetPatchnum(TransferIndex *tIndex, const Patch *const patch,
 	//
 	int low = 0;
 	int high = patch->iIndex - 1;
-	int offset;
 
 	while (true)
 	{
-		offset = (low + high) / 2;
+		int offset = (low + high) / 2;
 
 		if ((tIndex[offset].index + tIndex[offset].size) < patchnum)
 		{
@@ -34,11 +33,10 @@ auto FindTransferOffsetPatchnum(TransferIndex *tIndex, const Patch *const patch,
 		}
 		else
 		{
-			unsigned x;
 			unsigned int rval = 0;
 			TransferIndex *pIndex = tIndex;
 
-			for (x = 0; x < offset; x++, pIndex++)
+			for (unsigned x = 0; x < offset; x++, pIndex++)
 			{
 				rval += pIndex->size + 1;
 			}
@@ -189,9 +187,8 @@ auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &bac
 
 			vec3_t emitorigin;
 			vec3_t delta;
-			vec_t dist;
 			VectorSubtract(backorigin, emitpatch->origin, delta);
-			dist = VectorLength(delta);
+			vec_t dist = VectorLength(delta);
 			if (dist < emitpatch->emitter_range - ON_EPSILON)
 			{
 				GetAlternateOrigin(backorigin, backnormal, emitpatch, emitorigin);
@@ -230,21 +227,12 @@ auto CheckVisBitBackwards(unsigned receiver, unsigned emitter, const vec3_t &bac
 
 void MakeScales(const int threadnum)
 {
-	int i;
 	unsigned j;
 	vec3_t delta;
-	vec_t dist;
-	int count;
-	float trans;
-	Patch *patch;
 	Patch *patch2;
 	vec3_t origin;
-	const vec_t *normal1;
-	const vec_t *normal2;
 
 	unsigned int fastfind_index = 0;
-
-	vec_t total;
 
 	transfer_raw_index_t *tIndex;
 	float *tData;
@@ -252,15 +240,15 @@ void MakeScales(const int threadnum)
 	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(TransferIndex) * (g_num_patches + 1));
 	auto *tData_All = (float *)AllocBlock(sizeof(float) * (g_num_patches + 1));
 
-	count = 0;
+	int count = 0;
 
 	while (true)
 	{
-		i = GetThreadWork();
+		int i = GetThreadWork();
 		if (i == -1)
 			break;
 
-		patch = g_patches + i;
+		auto *patch = g_patches + i;
 		patch->iIndex = 0;
 		patch->iData = 0;
 
@@ -268,7 +256,7 @@ void MakeScales(const int threadnum)
 		tData = tData_All;
 
 		VectorCopy(patch->origin, origin);
-		normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
+		const vec_t *normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
 
 		vec3_t backorigin;
 		vec3_t backnormal;
@@ -291,12 +279,8 @@ void MakeScales(const int threadnum)
 
 		for (j = 0, patch2 = g_patches; j < g_num_patches; j++, patch2++)
 		{
-			vec_t dot1;
-			vec_t dot2;
-
 			vec3_t transparency = {1.0, 1.0, 1.0};
-			bool useback;
-			useback = false;
+			bool useback = false;
 
 			if (!g_CheckVisBit(i, j, transparency, fastfind_index) || (i == j))
 			{
@@ -315,7 +299,7 @@ void MakeScales(const int threadnum)
 				}
 			}
 
-			normal2 = getPlaneFromFaceNumber(patch2->faceNumber)->normal;
+			const vec_t *normal2 = getPlaneFromFaceNumber(patch2->faceNumber)->normal;
 
 			// calculate transferemnce
 			VectorSubtract(patch2->origin, origin, delta);
@@ -326,13 +310,13 @@ void MakeScales(const int threadnum)
 			// move emitter back to its plane
 			VectorMA(delta, -PATCH_HUNT_OFFSET, normal2, delta);
 
-			dist = VectorNormalize(delta);
-			dot1 = DotProduct(delta, normal1);
+			vec_t dist = VectorNormalize(delta);
+			vec_t dot1 = DotProduct(delta, normal1);
 			if (useback)
 			{
 				dot1 = DotProduct(delta, backnormal);
 			}
-			dot2 = -DotProduct(delta, normal2);
+			vec_t dot2 = -DotProduct(delta, normal2);
 			bool light_behind_surface = false;
 			if (dot1 <= NORMAL_EPSILON)
 			{
@@ -347,7 +331,7 @@ void MakeScales(const int threadnum)
 			{
 				dot1 = lighting_scale * pow(dot1, lighting_power);
 			}
-			trans = (dot1 * dot2) / (dist * dist); // Inverse square falloff factoring angle between patch normals
+			float trans = (dot1 * dot2) / (dist * dist); // Inverse square falloff factoring angle between patch normals
 			if (trans * patch2->area > 0.8f)
 				trans = 0.8f / patch2->area;
 			if (dist < patch2->emitter_range - ON_EPSILON)
@@ -356,22 +340,17 @@ void MakeScales(const int threadnum)
 				{
 					trans = 0.0;
 				}
-				vec_t sightarea;
-				const vec_t *receiver_origin;
-				const vec_t *receiver_normal;
-				const Winding *emitter_winding;
-				receiver_origin = origin;
-				receiver_normal = normal1;
+				const vec_t *receiver_origin = origin;
+				const vec_t *receiver_normal = normal1;
 				if (useback)
 				{
 					receiver_origin = backorigin;
 					receiver_normal = backnormal;
 				}
-				emitter_winding = patch2->winding;
-				sightarea = CalcSightArea(receiver_origin, receiver_normal, emitter_winding, patch2->emitter_skylevel, lighting_power, lighting_scale);
+				const Winding *emitter_winding = patch2->winding;
+				vec_t sightarea = CalcSightArea(receiver_origin, receiver_normal, emitter_winding, patch2->emitter_skylevel, lighting_power, lighting_scale);
 
-				vec_t frac;
-				frac = dist / patch2->emitter_range;
+				vec_t frac = dist / patch2->emitter_range;
 				frac = (frac - 0.5f) * 2.0f; // make a smooth transition between the two methods
 				frac = qmax(0, qmin(frac, 1));
 				trans = frac * trans + (1 - frac) * (sightarea / patch2->area); // because later we will multiply this back
@@ -430,7 +409,7 @@ void MakeScales(const int threadnum)
 			g_transfer_data_bytes += data_size;
 			ThreadUnlock();
 
-			total = 1 / Q_PI;
+			vec_t total = 1 / Q_PI;
 			{
 				unsigned x;
 				transfer_data_t *t1 = patch->tData;
@@ -475,45 +454,34 @@ void MakeScales(const int threadnum)
  */
 void MakeRGBScales(const int threadnum)
 {
-	int i;
 	unsigned j;
 	vec3_t delta;
-	vec_t dist;
-	int count;
 	float trans[3];
-	float trans_one;
-	Patch *patch;
 	Patch *patch2;
 	vec3_t origin;
-	const vec_t *normal1;
-	const vec_t *normal2;
 
 	unsigned int fastfind_index = 0;
-	vec_t total;
-
-	transfer_raw_index_t *tIndex;
-	float *tRGBData;
 
 	auto *tIndex_All = (transfer_raw_index_t *)AllocBlock(sizeof(TransferIndex) * (g_num_patches + 1));
 	auto *tRGBData_All = (float *)AllocBlock(sizeof(float[3]) * (g_num_patches + 1));
 
-	count = 0;
+	int count = 0;
 
 	while (true)
 	{
-		i = GetThreadWork();
+		int i = GetThreadWork();
 		if (i == -1)
 			break;
 
-		patch = g_patches + i;
+		auto *patch = g_patches + i;
 		patch->iIndex = 0;
 		patch->iData = 0;
 
-		tIndex = tIndex_All;
-		tRGBData = tRGBData_All;
+		transfer_raw_index_t *tIndex = tIndex_All;
+		float *tRGBData = tRGBData_All;
 
 		VectorCopy(patch->origin, origin);
-		normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
+		const vec_t *normal1 = getPlaneFromFaceNumber(patch->faceNumber)->normal;
 
 		vec3_t backorigin;
 		vec3_t backnormal;
@@ -522,13 +490,10 @@ void MakeRGBScales(const int threadnum)
 			VectorMA(patch->origin, -(g_translucentdepth + 2 * PATCH_HUNT_OFFSET), normal1, backorigin);
 			VectorSubtract(vec3_origin, normal1, backnormal);
 		}
-		bool lighting_diversify;
-		vec_t lighting_power;
-		vec_t lighting_scale;
 		int miptex = g_bsptexinfo[g_bspfaces[patch->faceNumber].texinfo].miptex;
-		lighting_power = g_lightingconeinfo[miptex][0];
-		lighting_scale = g_lightingconeinfo[miptex][1];
-		lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);
+		vec_t lighting_power = g_lightingconeinfo[miptex][0];
+		vec_t lighting_scale = g_lightingconeinfo[miptex][1];
+		bool lighting_diversify = (lighting_power != 1.0 || lighting_scale != 1.0);
 
 		// find out which patch2's will collect light
 		// from patch
@@ -536,11 +501,8 @@ void MakeRGBScales(const int threadnum)
 
 		for (j = 0, patch2 = g_patches; j < g_num_patches; j++, patch2++)
 		{
-			vec_t dot1;
-			vec_t dot2;
 			vec3_t transparency = {1.0, 1.0, 1.0};
-			bool useback;
-			useback = false;
+			bool useback = false;
 
 			if (!g_CheckVisBit(i, j, transparency, fastfind_index) || (i == j))
 			{
@@ -558,7 +520,7 @@ void MakeRGBScales(const int threadnum)
 				}
 			}
 
-			normal2 = getPlaneFromFaceNumber(patch2->faceNumber)->normal;
+			const vec_t *normal2 = getPlaneFromFaceNumber(patch2->faceNumber)->normal;
 
 			// calculate transferemnce
 			VectorSubtract(patch2->origin, origin, delta);
@@ -569,13 +531,13 @@ void MakeRGBScales(const int threadnum)
 			// move emitter back to its plane
 			VectorMA(delta, -PATCH_HUNT_OFFSET, normal2, delta);
 
-			dist = VectorNormalize(delta);
-			dot1 = DotProduct(delta, normal1);
+			vec_t dist = VectorNormalize(delta);
+			vec_t dot1 = DotProduct(delta, normal1);
 			if (useback)
 			{
 				dot1 = DotProduct(delta, backnormal);
 			}
-			dot2 = -DotProduct(delta, normal2);
+			vec_t dot2 = -DotProduct(delta, normal2);
 			bool light_behind_surface = false;
 			if (dot1 <= NORMAL_EPSILON)
 			{
@@ -590,7 +552,7 @@ void MakeRGBScales(const int threadnum)
 			{
 				dot1 = lighting_scale * pow(dot1, lighting_power);
 			}
-			trans_one = (dot1 * dot2) / (dist * dist); // Inverse square falloff factoring angle between patch normals
+			float trans_one = (dot1 * dot2) / (dist * dist); // Inverse square falloff factoring angle between patch normals
 
 			if (trans_one * patch2->area > 0.8f)
 			{
@@ -602,22 +564,17 @@ void MakeRGBScales(const int threadnum)
 				{
 					trans_one = 0.0;
 				}
-				vec_t sightarea;
-				const vec_t *receiver_origin;
-				const vec_t *receiver_normal;
-				const Winding *emitter_winding;
-				receiver_origin = origin;
-				receiver_normal = normal1;
+				const vec_t *receiver_origin = origin;
+				const vec_t *receiver_normal = normal1;
 				if (useback)
 				{
 					receiver_origin = backorigin;
 					receiver_normal = backnormal;
 				}
-				emitter_winding = patch2->winding;
-				sightarea = CalcSightArea(receiver_origin, receiver_normal, emitter_winding, patch2->emitter_skylevel, lighting_power, lighting_scale);
+				const Winding *emitter_winding = patch2->winding;
+				vec_t sightarea = CalcSightArea(receiver_origin, receiver_normal, emitter_winding, patch2->emitter_skylevel, lighting_power, lighting_scale);
 
-				vec_t frac;
-				frac = dist / patch2->emitter_range;
+				vec_t frac = dist / patch2->emitter_range;
 				frac = (frac - 0.5f) * 2.0f; // make a smooth transition between the two methods
 				frac = qmax(0, qmin(frac, 1));
 				trans_one = frac * trans_one + (1 - frac) * (sightarea / patch2->area); // because later we will multiply this back
@@ -682,14 +639,13 @@ void MakeRGBScales(const int threadnum)
 			g_transfer_data_bytes += data_size;
 			ThreadUnlock();
 
-			total = 1 / Q_PI;
+			vec_t total = 1 / Q_PI;
 			{
-				unsigned x;
 				rgb_transfer_data_t *t1 = patch->tRGBData;
 				float *t2 = tRGBData_All;
 
 				float f[3];
-				for (x = 0; x < patch->iData; x++, t1 += vector_size[g_rgbtransfer_compress_type], t2 += 3)
+				for (unsigned x = 0; x < patch->iData; x++, t1 += vector_size[g_rgbtransfer_compress_type], t2 += 3)
 				{
 					VectorScale(t2, total, f);
 					vector_compress(g_rgbtransfer_compress_type, t1, &f[0], &f[1], &f[2]);

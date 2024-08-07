@@ -2704,11 +2704,11 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 
 			if (style_index == ALLSTYLES) // shouldn't happen
 			{
-				if (++stylewarningcount >= stylewarningnext)
+				if (++g_stylewarningcount >= g_stylewarningnext)
 				{
-					stylewarningnext = stylewarningcount * 2;
+					g_stylewarningnext = g_stylewarningcount * 2;
 					Warning("Too many direct light styles on a face(%f,%f,%f)", pos[0], pos[1], pos[2]);
-					Warning(" total %d warnings for too many styles", stylewarningcount);
+					Warning(" total %d warnings for too many styles", g_stylewarningcount);
 				}
 				return;
 			}
@@ -2818,11 +2818,11 @@ static void AddSamplesToPatches(const sample_t **samples, const unsigned char *s
 					}
 					if (k == ALLSTYLES)
 					{
-						if (++stylewarningcount >= stylewarningnext)
+						if (++g_stylewarningcount >= g_stylewarningnext)
 						{
-							stylewarningnext = stylewarningcount * 2;
+							g_stylewarningnext = g_stylewarningcount * 2;
 							Warning("Too many direct light styles on a face(?,?,?)\n");
-							Warning(" total %d warnings for too many styles", stylewarningcount);
+							Warning(" total %d warnings for too many styles", g_stylewarningcount);
 						}
 					}
 					else
@@ -3560,11 +3560,11 @@ void BuildFacelights(const int facenum)
 			}
 			if (j == ALLSTYLES)
 			{
-				if (++stylewarningcount >= stylewarningnext)
+				if (++g_stylewarningcount >= g_stylewarningnext)
 				{
-					stylewarningnext = stylewarningcount * 2;
+					g_stylewarningnext = g_stylewarningcount * 2;
 					Warning("Too many direct light styles on a face(?,?,?)");
-					Warning(" total %d warnings for too many styles", stylewarningcount);
+					Warning(" total %d warnings for too many styles", g_stylewarningcount);
 				}
 			}
 			else

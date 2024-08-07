@@ -21,9 +21,7 @@ sparse_column_t *s_vismatrix;
 // Vismatrix protected
 static auto IsVisbitInArray(const unsigned x, const unsigned y) -> unsigned
 {
-    int first, last, current;
     int y_byte = y / 8;
-    sparse_row_t *row;
     sparse_column_t *column = s_vismatrix + x;
 
     if (!column->count)
@@ -31,15 +29,15 @@ static auto IsVisbitInArray(const unsigned x, const unsigned y) -> unsigned
         return -1;
     }
 
-    first = 0;
-    last = column->count - 1;
+    int first = 0;
+    int last = column->count - 1;
 
     //    Warning("Searching . . .");
     // binary search to find visbit
     while (true)
     {
-        current = (first + last) / 2;
-        row = column->row + current;
+        int current = (first + last) / 2;
+        auto *row = column->row + current;
         //        Warning("first %u, last %u, current %u, row %p, row->offset %u", first, last, current, row, row->offset);
         if ((row->offset) < y_byte)
         {
@@ -62,13 +60,11 @@ static auto IsVisbitInArray(const unsigned x, const unsigned y) -> unsigned
 
 static void SetVisColumn(int patchnum, bool uncompressedcolumn[MAX_SPARSE_VISMATRIX_PATCHES])
 {
-    sparse_column_t *column;
     int mbegin;
     int m;
-    int i;
     unsigned int bits;
 
-    column = &s_vismatrix[patchnum];
+    auto *column = &s_vismatrix[patchnum];
     if (column->count || column->row)
     {
         Error("SetVisColumn: column has been set");
@@ -105,7 +101,7 @@ static void SetVisColumn(int patchnum, bool uncompressedcolumn[MAX_SPARSE_VISMAT
     column->row = new sparse_row_t[column->count];
     hlassume(column->row != nullptr, assume_NoMemory);
 
-    i = 0;
+    auto i = 0;
     for (mbegin = 0; mbegin < g_num_patches; mbegin += 8)
     {
         bits = 0;
@@ -213,9 +209,9 @@ static void TestPatchToFace(const unsigned patchnum, const int facenum, const in
                     }
                     vec3_t origin1, origin2;
                     vec3_t delta;
-                    vec_t dist;
                     VectorSubtract(patch->origin, patch2->origin, delta);
-                    dist = VectorLength(delta);
+                    vec_t dist = VectorLength(delta);
+
                     if (dist < patch2->emitter_range - ON_EPSILON)
                     {
                         GetAlternateOrigin(patch->origin, plane->normal, patch2, origin2);
@@ -272,13 +268,8 @@ static void TestPatchToFace(const unsigned patchnum, const int facenum, const in
  */
 static void BuildVisLeafs(int threadnum)
 {
-    int i;
-    int facenum, facenum2;
     byte pvs[(MAX_MAP_LEAFS + 7) / 8];
-    BSPLumpLeaf *srcleaf;
     Patch *patch;
-    int head;
-    unsigned patchnum;
     bool *uncompressedcolumn = new bool[MAX_SPARSE_VISMATRIX_PATCHES];
     hlassume(uncompressedcolumn != nullptr, assume_NoMemory);
 
@@ -288,13 +279,13 @@ static void BuildVisLeafs(int threadnum)
         // build a minimal BSP tree that only
         // covers areas relevent to the PVS
         //
-        i = GetThreadWork();
+        int i = GetThreadWork();
         if (i == -1)
         {
             break;
         }
         i++; // skip leaf 0
-        srcleaf = &g_bspleafs[i];
+        auto *srcleaf = &g_bspleafs[i];
         if (!g_bspvisdatasize)
         {
             memset(pvs, 255, (g_bspmodels[0].visleafs + 7) / 8);
@@ -307,25 +298,25 @@ static void BuildVisLeafs(int threadnum)
             }
             DecompressVis(&g_bspvisdata[srcleaf->visofs], pvs, sizeof(pvs));
         }
-        head = 0;
+        auto head = 0;
 
         //
         // go through all the faces inside the
         // leaf, and process the patches that
         // actually have origins inside
         //
-        for (facenum = 0; facenum < g_bspnumfaces; facenum++)
+        for (int facenum = 0; facenum < g_bspnumfaces; facenum++)
         {
             for (patch = g_face_patches[facenum]; patch; patch = patch->next)
             {
                 if (patch->leafnum != i)
                     continue;
-                patchnum = patch - g_patches;
+                unsigned patchnum = patch - g_patches;
                 for (int m = 0; m < g_num_patches; m++)
                 {
                     uncompressedcolumn[m] = false;
                 }
-                for (facenum2 = facenum + 1; facenum2 < g_bspnumfaces; facenum2++)
+                for (int facenum2 = facenum + 1; facenum2 < g_bspnumfaces; facenum2++)
                     TestPatchToFace(patchnum, facenum2, head, pvs, uncompressedcolumn);
                 SetVisColumn(patchnum, uncompressedcolumn);
             }
@@ -380,8 +371,7 @@ static void FreeVisMatrix()
 static void DumpVismatrixInfo()
 {
     unsigned totals[8];
-    size_t total_vismatrix_memory;
-    total_vismatrix_memory = sizeof(sparse_column_t) * g_num_patches;
+    size_t total_vismatrix_memory = sizeof(sparse_column_t) * g_num_patches;
 
     sparse_column_t *column_end = s_vismatrix + g_num_patches;
     sparse_column_t *column = s_vismatrix;
