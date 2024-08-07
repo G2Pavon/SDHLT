@@ -4,10 +4,6 @@
 #include "filelib.h"
 #include "log.h"
 
-#ifdef WORDS_BIGENDIAN
-#error "HLRAD_TEXTURE doesn't support WORDS_BIGENDIAN, because I have no big endian machine to test it"
-#endif
-
 int g_numtextures;
 RADTexture *g_textures;
 

@@ -2,10 +2,6 @@
 
 #include <cstddef>
 
-#ifdef WORDS_BIGENDIAN
-#error
-#endif
-
 extern void compress_compatability_test();
 
 extern const size_t unused_size; // located at the end of a block

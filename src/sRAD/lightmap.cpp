@@ -2301,9 +2301,6 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 	vec3_t delta;
 	float dot, dot2;
 	float ratio;
-#ifdef HLRAD_OPACITY // AJM
-	float l_opacity;
-#endif
 	int style_index;
 	int step_match;
 	bool sky_used = false;
