@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mathtypes.h"
+#include "face.h"
 
 constexpr int MAX_HULLSHAPES = 128; // arbitrary
 constexpr int NUM_HULLS = 4;        // NUM_HULLS should be no larger than MAX_MAP_HULLS
@@ -43,4 +44,10 @@ struct HullShape
     bool disabled;
     int numbrushes; // must be 0 or 1
     HullBrush **brushes;
+};
+
+struct BrushHull
+{
+    BoundingBox bounds;
+    BrushFace *faces;
 };
