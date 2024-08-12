@@ -2365,7 +2365,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 								}
 
 								// search back to see if we can hit a sky brush
-								VectorScale(l->sunnormals[j], -BOGUS_RANGE, delta);
+								VectorScale(l->sunnormals[j], -RAD_BOGUS_RANGE, delta);
 								VectorAdd(pos, delta, delta);
 								vec3_t skyhit;
 								VectorCopy(delta, skyhit);
@@ -2426,7 +2426,7 @@ static void GatherSampleLight(const vec3_t pos, const byte *const pvs, const vec
 								}
 
 								// search back to see if we can hit a sky brush
-								VectorScale(skynormals[j], -BOGUS_RANGE, delta);
+								VectorScale(skynormals[j], -RAD_BOGUS_RANGE, delta);
 								VectorAdd(pos, delta, delta);
 								vec3_t skyhit;
 								VectorCopy(delta, skyhit);

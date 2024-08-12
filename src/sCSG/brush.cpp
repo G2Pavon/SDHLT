@@ -202,8 +202,8 @@ void ExpandBrushWithHullBrush(const Brush *brush, const BrushHull *hull0, const 
 				continue;
 			}
 			// now test precisely
-			auto dotmin = BOGUS_RANGE;
-			auto dotmax = -BOGUS_RANGE;
+			auto dotmin = CSG_BOGUS_RANGE;
+			auto dotmax = -CSG_BOGUS_RANGE;
 			hlassume(hbf->numvertexes >= 1, assume_first);
 			for (vec3_t *v = hbf->vertexes; v < hbf->vertexes + hbf->numvertexes; v++)
 			{
@@ -227,7 +227,7 @@ void ExpandBrushWithHullBrush(const Brush *brush, const BrushHull *hull0, const 
 
 		// find the impact point
 		vec3_t bestvertex;
-		auto bestdist = BOGUS_RANGE;
+		auto bestdist = CSG_BOGUS_RANGE;
 		hlassume(hb->numvertexes >= 1, assume_first);
 		for (hbv = hb->vertexes; hbv < hb->vertexes + hb->numvertexes; hbv++)
 		{
@@ -335,7 +335,7 @@ void ExpandBrushWithHullBrush(const Brush *brush, const BrushHull *hull0, const 
 	{
 		// find the impact point
 		vec3_t bestvertex;
-		auto bestdist = BOGUS_RANGE;
+		auto bestdist = CSG_BOGUS_RANGE;
 		if (!hull0->faces)
 		{
 			continue;
@@ -788,11 +788,11 @@ restart:
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (h->bounds.m_Mins[i] < -BOGUS_RANGE / 2 || h->bounds.m_Maxs[i] > BOGUS_RANGE / 2)
+		if (h->bounds.m_Mins[i] < -CSG_BOGUS_RANGE / 2 || h->bounds.m_Maxs[i] > CSG_BOGUS_RANGE / 2)
 		{
 			Fatal(assume_BRUSH_OUTSIDE_WORLD, "Entity %i, Brush %i: outside world(+/-%d): (%.0f,%.0f,%.0f)-(%.0f,%.0f,%.0f)",
 				  b->originalentitynum, b->originalbrushnum,
-				  BOGUS_RANGE / 2,
+				  CSG_BOGUS_RANGE / 2,
 				  h->bounds.m_Mins[0], h->bounds.m_Mins[1], h->bounds.m_Mins[2],
 				  h->bounds.m_Maxs[0], h->bounds.m_Maxs[1], h->bounds.m_Maxs[2]);
 		}

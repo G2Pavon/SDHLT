@@ -359,8 +359,8 @@ static void cutWindingWithGrid(Patch *patch, const dplane_t *plA, const dplane_t
 		vec_t minB;
 		vec_t maxB;
 
-		minA = minB = BOGUS_RANGE;
-		maxA = maxB = -BOGUS_RANGE;
+		minA = minB = RAD_BOGUS_RANGE;
+		maxA = maxB = -RAD_BOGUS_RANGE;
 		for (int x = 0; x < winding->m_NumPoints; x++)
 		{
 			auto *point = winding->m_Points[x];

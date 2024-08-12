@@ -6,10 +6,9 @@
 #include "mathlib.h"
 #include "hlassert.h"
 
-#undef BOGUS_RANGE
 #undef ON_EPSILON
 
-constexpr float BOGUS_RANGE = 80000.0;
+constexpr float WINDING_BOGUS_RANGE = 80000.0;
 #define ON_EPSILON epsilon
 
 //
@@ -208,7 +207,7 @@ void Winding::initFromPlane(const vec3_t normal, const vec_t dist)
 
     // find the major axis
 
-    max = -BOGUS_RANGE;
+    max = -WINDING_BOGUS_RANGE;
     int x = -1;
     for (i = 0; i < 3; i++)
     {
@@ -244,8 +243,8 @@ void Winding::initFromPlane(const vec3_t normal, const vec_t dist)
 
     CrossProduct(vup, normal, vright);
 
-    VectorScale(vup, BOGUS_RANGE, vup);
-    VectorScale(vright, BOGUS_RANGE, vright);
+    VectorScale(vup, WINDING_BOGUS_RANGE, vup);
+    VectorScale(vright, WINDING_BOGUS_RANGE, vright);
 
     // project a really big     axis aligned box onto the plane
     m_NumPoints = 4;

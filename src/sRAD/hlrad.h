@@ -61,7 +61,7 @@ constexpr int ACCURATEBOUNCE_DEFAULT_SKYLEVEL = 5; // sample 1026 normals
 
 constexpr int ALLSTYLES = 64; // HL limit. //--vluzacn
 
-constexpr int BOGUS_RANGE = 131072;
+constexpr int RAD_BOGUS_RANGE = 131072;
 
 struct Matrix
 {

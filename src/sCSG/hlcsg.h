@@ -24,7 +24,7 @@ constexpr float FLOOR_Z = 0.7f;
 constexpr cliptype DEFAULT_CLIPTYPE = clip_simple;
 constexpr bool DEFAULT_CLIPNAZI = false;
 constexpr bool DEFAULT_ESTIMATE = true;
-#define BOGUS_RANGE g_iWorldExtent // seedee
+#define CSG_BOGUS_RANGE g_iWorldExtent // seedee
 
 //=============================================================================
 // brush.c

@@ -5,7 +5,7 @@
 #include "mathlib.h"
 #include "winding.h"
 
-constexpr int BOGUS_RANGE = 144000;
+constexpr int BSP_BOGUS_RANGE = 144000;
 
 // the exact bounding box of the brushes is expanded some for the headnode
 // volume.  is this still needed?

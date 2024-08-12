@@ -560,8 +560,8 @@ auto BrushFromBox(const vec3_t mins, const vec3_t maxs) -> BrushBSP *
 
 void CalcBrushBounds(const BrushBSP *b, vec3_t &mins, vec3_t &maxs)
 {
-	VectorFill(mins, BOGUS_RANGE);
-	VectorFill(maxs, -BOGUS_RANGE);
+	VectorFill(mins, BSP_BOGUS_RANGE);
+	VectorFill(maxs, -BSP_BOGUS_RANGE);
 	for (SideBSP *s = b->sides; s; s = s->next)
 	{
 		vec3_t windingmins, windingmaxs;
