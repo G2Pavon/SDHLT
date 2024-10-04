@@ -62,11 +62,12 @@ set(CSG_DIR ${DIR}/sCSG)
 
 set(CSG_SOURCES
     ${COMMON_SOURCES}
-    ${CSG_DIR}/brush.cpp
-    ${CSG_DIR}/hullfile.cpp
-    ${CSG_DIR}/map.cpp
     ${CSG_DIR}/hlcsg.cpp
     ${CSG_DIR}/textures.cpp
+    ${CSG_DIR}/hullfile.cpp
+    ${CSG_DIR}/map.cpp
+    ${CSG_DIR}/brush.cpp
+    ${CSG_DIR}/hull.cpp
 )
 
 set(CSG_HEADERS
@@ -74,6 +75,9 @@ set(CSG_HEADERS
     ${CSG_DIR}/hlcsg.h
     ${CSG_DIR}/textures.h
     ${CSG_DIR}/map.h
+    ${CSG_DIR}/brush.h
+    ${CSG_DIR}/face.h
+    ${CSG_DIR}/hull.h
 )
 
 
