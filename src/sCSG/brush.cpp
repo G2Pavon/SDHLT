@@ -844,7 +844,7 @@ auto MakeBrushPlanes(Brush *b) -> bool
 		f->plane = &g_mapplanes[planenum];
 		f->next = b->hulls[0].faces;
 		b->hulls[0].faces = f;
-		f->texinfo = TexinfoForBrushTexture(f->plane, &s->texture, origin);
+		f->texinfo = TexinfoForBrushTexture(&s->texture, origin);
 		f->bevel = b->bevel || s->bevel;
 	}
 

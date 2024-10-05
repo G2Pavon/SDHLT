@@ -3,21 +3,20 @@
 #include <string>
 #include <cstring>
 
-#include "hlcsg.h" // TODO: implement map.h
+#include "textures.h"
+#include "face.h"
 #include "threads.h"
 #include "log.h"
 #include "filelib.h"
-#include "textures.h"
-#include "bspfile.h"
 #include "mathlib.h"
 
 static int nummiptex = 0;
-static lumpinfo_t miptex[MAX_MAP_TEXTURES];
+static WadLumpInfo miptex[MAX_MAP_TEXTURES];
 static int nTexLumps = 0;
-static lumpinfo_t *lumpinfo = nullptr;
+static WadLumpInfo *lumpinfo = nullptr;
 static int nTexFiles = 0;
 static FILE *texfiles[MAX_TEXFILES];
-static wadpath_t *texwadpathes[MAX_TEXFILES]; // maps index of the wad to its path
+static WadPath *texwadpathes[MAX_TEXFILES]; // maps index of the wad to its path
 static char *texmap[MAX_INTERNAL_MAP_TEXINFO];
 static int numtexmap = 0;
 
@@ -86,8 +85,8 @@ void CleanupName(const char *const in, char *out)
 // =====================================================================================
 auto lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
 {
-    auto *plump1 = (lumpinfo_t *)lump1;
-    auto *plump2 = (lumpinfo_t *)lump2;
+    auto *plump1 = (WadLumpInfo *)lump1;
+    auto *plump2 = (WadLumpInfo *)lump2;
 
     if (plump1->iTexFile == plump2->iTexFile)
     {
@@ -101,8 +100,8 @@ auto lump_sorter_by_wad_and_name(const void *lump1, const void *lump2) -> int
 
 auto lump_sorter_by_name(const void *lump1, const void *lump2) -> int
 {
-    auto *plump1 = (lumpinfo_t *)lump1;
-    auto *plump2 = (lumpinfo_t *)lump2;
+    auto *plump1 = (WadLumpInfo *)lump1;
+    auto *plump2 = (WadLumpInfo *)lump2;
 
     return strcmp(plump1->name, plump2->name);
 }
@@ -142,8 +141,8 @@ auto FindMiptex(const char *const name) -> int
 auto TEX_InitFromWad() -> bool
 {
     int i;
-    wadinfo_t wadinfo;
-    wadpath_t *currentwad;
+    WadInfo wadinfo;
+    WadPath *currentwad;
 
     Log("\n"); // looks cleaner
     // update wad inclusion
@@ -218,11 +217,11 @@ auto TEX_InitFromWad() -> bool
             Warning("fseek to %d in wadfile %s failed\n", wadinfo.infotableofs, pszWadFile);
 
         // memalloc for this lump
-        lumpinfo = (lumpinfo_t *)realloc(lumpinfo, (nTexLumps + wadinfo.numlumps) * sizeof(lumpinfo_t));
+        lumpinfo = (WadLumpInfo *)realloc(lumpinfo, (nTexLumps + wadinfo.numlumps) * sizeof(WadLumpInfo));
 
         for (int j = 0; j < wadinfo.numlumps; j++, nTexLumps++)
         {
-            SafeRead(texfile, &lumpinfo[nTexLumps], (sizeof(lumpinfo_t) - sizeof(int))); // iTexFile is NOT read from file
+            SafeRead(texfile, &lumpinfo[nTexLumps], (sizeof(WadLumpInfo) - sizeof(int))); // iTexFile is NOT read from file
             char szWadFileName[_MAX_PATH];
             ExtractFile(pszWadFile, szWadFileName);
             CleanupName(lumpinfo[nTexLumps].name, lumpinfo[nTexLumps].name);
@@ -249,11 +248,11 @@ auto TEX_InitFromWad() -> bool
 // =====================================================================================
 //  FindTexture
 // =====================================================================================
-auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
+auto FindTexture(const WadLumpInfo *const source) -> WadLumpInfo *
 {
-    lumpinfo_t *found = nullptr;
+    WadLumpInfo *found = nullptr;
 
-    found = (lumpinfo_t *)bsearch(source, (void *)lumpinfo, (size_t)nTexLumps, sizeof(lumpinfo[0]), lump_sorter_by_name);
+    found = (WadLumpInfo *)bsearch(source, (void *)lumpinfo, (size_t)nTexLumps, sizeof(lumpinfo[0]), lump_sorter_by_name);
     if (!found)
     {
         Warning("::FindTexture() texture %s not found!", source->name);
@@ -277,7 +276,7 @@ auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
             last = last + 1;
         }
         // find the best matching lump
-        lumpinfo_t *best = nullptr;
+        WadLumpInfo *best = nullptr;
         for (found = first; found < last + 1; found++)
         {
             bool better = false;
@@ -316,7 +315,7 @@ auto FindTexture(const lumpinfo_t *const source) -> lumpinfo_t *
 // =====================================================================================
 //  LoadLump
 // =====================================================================================
-auto LoadLump(const lumpinfo_t *const source, byte *dest, int *texsize, int dest_maxsize, byte *&writewad_data, int &writewad_datasize) -> int
+auto LoadLump(const WadLumpInfo *const source, byte *dest, int *texsize, int dest_maxsize, byte *&writewad_data, int &writewad_datasize) -> int
 {
     writewad_data = nullptr;
     writewad_datasize = -1;
@@ -415,24 +414,18 @@ void AddAnimatingTextures()
 void WriteMiptex()
 {
     int texsize, totaltexsize = 0;
-    double start, end;
 
     g_bsptexdatasize = 0;
-
-    start = I_FloatTime();
     {
         if (!TEX_InitFromWad())
             return;
 
         AddAnimatingTextures();
     }
-    end = I_FloatTime();
-
-    start = I_FloatTime();
     {
         for (int i = 0; i < nummiptex; i++)
         {
-            lumpinfo_t *found;
+            WadLumpInfo *found;
 
             found = FindTexture(miptex + i);
             if (found)
@@ -446,7 +439,6 @@ void WriteMiptex()
             }
         }
     }
-    end = I_FloatTime();
 
     // Now we have filled lumpinfo for each miptex and the number of used textures for each wad.
     {
@@ -454,12 +446,12 @@ void WriteMiptex()
         int i;
 
         szUsedWads[0] = 0;
-        std::vector<wadpath_t *> usedWads;
-        std::vector<wadpath_t *> includedWads;
+        std::vector<WadPath *> usedWads;
+        std::vector<WadPath *> includedWads;
 
         for (i = 0; i < nTexFiles; i++)
         {
-            wadpath_t *currentwad = texwadpathes[i];
+            WadPath *currentwad = texwadpathes[i];
             if (currentwad->usedbymap && currentwad->usedtextures > 0)
             {
                 char tmp[_MAX_PATH];
@@ -471,7 +463,7 @@ void WriteMiptex()
         }
         for (i = 0; i < nTexFiles; i++)
         {
-            wadpath_t *currentwad = texwadpathes[i];
+            WadPath *currentwad = texwadpathes[i];
             if (!currentwad->usedbymap && currentwad->usedtextures > 0)
             {
                 includedWads.push_back(currentwad);
@@ -481,9 +473,9 @@ void WriteMiptex()
         {
             Log("Wad files used by map\n");
             Log("---------------------\n");
-            for (std::vector<wadpath_t *>::iterator it = usedWads.begin(); it != usedWads.end(); ++it)
+            for (std::vector<WadPath *>::iterator it = usedWads.begin(); it != usedWads.end(); ++it)
             {
-                wadpath_t *currentwad = *it;
+                WadPath *currentwad = *it;
                 LogWadUsage(currentwad, nummiptex);
             }
             Log("---------------------\n\n");
@@ -497,9 +489,9 @@ void WriteMiptex()
             Log("Additional wad files included\n");
             Log("-----------------------------\n");
 
-            for (std::vector<wadpath_t *>::iterator it = includedWads.begin(); it != includedWads.end(); ++it)
+            for (std::vector<WadPath *>::iterator it = includedWads.begin(); it != includedWads.end(); ++it)
             {
-                wadpath_t *currentwad = *it;
+                WadPath *currentwad = *it;
                 LogWadUsage(currentwad, nummiptex);
             }
             Log("-----------------------------\n\n");
@@ -511,7 +503,6 @@ void WriteMiptex()
         SetKeyValue(&g_entities[0], "wad", szUsedWads);
     }
 
-    start = I_FloatTime();
     {
         auto *tx = g_bsptexinfo;
 
@@ -527,9 +518,6 @@ void WriteMiptex()
         }
         texmap_clear();
     }
-    end = I_FloatTime();
-
-    start = I_FloatTime();
     {
         // Now setup to get the miptex data (or just the headers if using -wadtextures) from the wadfile
         auto *l = (BSPLumpMiptexHeader *)g_bsptexdata;
@@ -546,7 +534,7 @@ void WriteMiptex()
             char pad1, pad2;
             char name[MAXWADNAME];
         };
-        wadinfo_t writewad_header;
+        WadInfo writewad_header;
 
         safe_snprintf(writewad_name, _MAX_PATH, "%s.wa_", g_Mapname); // Generate temp wad file name based on mapname
         auto *writewad_file = SafeOpenWrite(writewad_name);
@@ -563,7 +551,7 @@ void WriteMiptex()
         writewad_header.identification[3] = '3';
         writewad_header.numlumps = 0;
 
-        if (fseek(writewad_file, sizeof(wadinfo_t), SEEK_SET)) // Move file pointer to skip header
+        if (fseek(writewad_file, sizeof(WadInfo), SEEK_SET)) // Move file pointer to skip header
             Error("File write failure");
         for (int i = 0; i < nummiptex; i++) // Process each miptex, writing its data to the temp wad file
         {
@@ -607,18 +595,17 @@ void WriteMiptex()
         SafeWrite(writewad_file, writewad_lumpinfos, writewad_header.numlumps * sizeof(dlumpinfo_t));
         if (fseek(writewad_file, 0, SEEK_SET))
             Error("File write failure");
-        SafeWrite(writewad_file, &writewad_header, sizeof(wadinfo_t));
+        SafeWrite(writewad_file, &writewad_header, sizeof(WadInfo));
         if (fclose(writewad_file))
             Error("File write failure");
     }
-    end = I_FloatTime();
     Log("Texture usage: %1.2f/%1.2f MB)\n", (float)totaltexsize / (1024 * 1024), (float)g_max_map_miptex / (1024 * 1024));
 }
 
 // =====================================================================================
 //  LogWadUsage //seedee
 // =====================================================================================
-void LogWadUsage(wadpath_t *currentwad, int nummiptex)
+void LogWadUsage(WadPath *currentwad, int nummiptex)
 {
     if (currentwad == nullptr)
     {
@@ -634,7 +621,7 @@ void LogWadUsage(wadpath_t *currentwad, int nummiptex)
 // =====================================================================================
 //  TexinfoForBrushTexture
 // =====================================================================================
-auto TexinfoForBrushTexture(const Plane *const plane, FaceTexture *bt, const vec3_t origin) -> int
+auto TexinfoForBrushTexture(FaceTexture *bt, const vec3_t origin) -> int
 {
     BSPLumpTexInfo tx;
     int i;
@@ -735,7 +722,7 @@ auto GetTextureByNumber_CSG(int texturenumber) -> const char *
 //
 //
 
-wadpath_t *g_pWadPaths[MAX_WADPATHS];
+WadPath *g_pWadPaths[MAX_WADPATHS];
 int g_iNumWadPaths = 0;
 
 // =====================================================================================
@@ -744,9 +731,9 @@ int g_iNumWadPaths = 0;
 // =====================================================================================
 void PushWadPath(const char *const path, bool inuse)
 {
-    wadpath_t *currentWad;
+    WadPath *currentWad;
     hlassume(g_iNumWadPaths < MAX_WADPATHS, assume_MAX_TEXFILES);
-    currentWad = new wadpath_t;
+    currentWad = new WadPath;
     safe_strncpy(currentWad->path, path, _MAX_PATH); // Copy path into currentWad->path
     currentWad->usedbymap = inuse;
     currentWad->usedtextures = 0;  // Updated later in autowad procedures
@@ -760,7 +747,7 @@ void PushWadPath(const char *const path, bool inuse)
     else
     {
         delete currentWad;
-        Error("PushWadPath: too many wadpaths (i%/i%)", g_iNumWadPaths, MAX_WADPATHS);
+        Error("PushWadPath: too many wadpaths (%i/%i)", g_iNumWadPaths, MAX_WADPATHS);
     }
 }
 
@@ -770,7 +757,7 @@ void PushWadPath(const char *const path, bool inuse)
 void FreeWadPaths()
 {
     int i;
-    wadpath_t *current;
+    WadPath *current;
 
     for (i = 0; i < g_iNumWadPaths; i++)
     {
@@ -781,7 +768,7 @@ void FreeWadPaths()
 
 // =====================================================================================
 //  GetUsedWads
-//      parse the "wad" keyvalue into wadpath_t structs
+//      parse the "wad" keyvalue into WadPath structs
 // =====================================================================================
 void GetUsedWads()
 {
