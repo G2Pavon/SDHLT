@@ -10,7 +10,6 @@
 
 static FILE *g_outhullfiles[NUM_HULLS]; // pointer to each of the hull out files (.p0, .p1, ect.)
 static FILE *g_out_detailbrush[NUM_HULLS];
-BoundingBox g_world_bounds;
 
 bool g_skyclip = DEFAULT_SKYCLIP;       // no sky clipping "-noskyclip"
 bool g_estimate = DEFAULT_ESTIMATE;     // progress estimates "-estimate"
@@ -801,20 +800,6 @@ void CheckForNoClip(Entity *entities, int numentities)
     Log("%i entities discarded from clipping hulls\n", count);
 }
 
-void BoundWorld(Brush *brushes, BoundingBox worldbounds, int numbrushes)
-{
-    worldbounds.reset();
-    for (int i = 0; i < numbrushes; i++)
-    {
-        auto *h = &brushes[i].hulls[0];
-        if (!h->faces)
-        {
-            continue;
-        }
-        worldbounds.add(h->bounds);
-    }
-}
-
 void SetModelCenters(Entity *entities, int numentities, Brush *brushes)
 {
     for (int i = 0; i < numentities; i++)
@@ -1036,9 +1021,6 @@ auto main(const int argc, char **argv) -> int
 
     NamedRunThreadsOnIndividual(g_nummapbrushes, g_estimate, CreateBrush); // createbrush
     CheckFatal();
-
-    BoundWorld(g_mapbrushes, g_world_bounds, g_nummapbrushes); // boundworld
-
     SetModelCenters(g_entities, g_numentities, g_mapbrushes); // Set model centers
 
     OpenHullFiles(g_outhullfiles, g_out_detailbrush, g_Mapname);

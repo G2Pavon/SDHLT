@@ -53,8 +53,6 @@ auto CopyFacesToOutside(BrushHull *bh) -> BrushFace *;
 void WriteFace(const int hull, const BrushFace *const face, int detaillevel, FILE **out);
 void WriteDetailBrush(int hull, const BrushFace *faces, FILE **out);
 
-void BoundWorld(int numbrushes, Brush *brushes, BoundingBox wolrdbounds);
-
 void SaveOutside(const Brush *const brush, const int hull, BrushFace *outside, const int mirrorcontents);
 void CSGBrush(int brushnum);
 extern auto ContentsToString(const contents_t type) -> const char *;
@@ -66,7 +64,6 @@ void ConvertHintToEmpty(Brush *brushes);
 void MarkEntForNoclip(Entity *ent, Brush *brushes);
 void CSGCleanup();
 void CheckForNoClip(Entity *entities, int numentities);
-void BoundWorld(Brush *brushes, BoundingBox worldbounds, int numbrushes);
 void SetModelCenters(Entity *entities, int numentities, Brush *brushes);
 void ProcessModels(Entity *entities, Brush *brushes, int numentities);
 
