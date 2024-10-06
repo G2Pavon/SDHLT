@@ -1,7 +1,8 @@
 #pragma once
 
-#include "cmdlib.h" //--vluzacn
+#include <string>
 
+#include "cmdlib.h" //--vluzacn
 #include "mathtypes.h"
 #include "messages.h"
 
@@ -9,7 +10,7 @@
 // log.c globals
 //
 
-extern char *g_Program;
+extern std::string g_Program;
 extern char g_Mapname[_MAX_PATH];
 extern char g_Wadpath[_MAX_PATH]; // seedee
 

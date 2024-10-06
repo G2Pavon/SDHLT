@@ -9,8 +9,8 @@ void Usage(ProgramType programType)
     switch (programType)
     {
     case ProgramType::PROGRAM_CSG:
-        Log(" %s.exe map_name.map -argument", g_Program);
-        Log("\n %s Arguments :\n\n", g_Program);
+        Log(" %s.exe map_name.map -argument", g_Program.c_str());
+        Log("\n %s Arguments :\n\n", g_Program.c_str());
         Log("    -clipeconomy     : turn clipnode economy mode on\n");
         Log("    -cliptype value  : set to smallest, normalized, simple, precise, or legacy (default)\n");
         Log("    -lightdata #     : Alter maximum lighting memory limit (in kb)\n");
@@ -20,8 +20,8 @@ void Usage(ProgramType programType)
         break;
 
     case ProgramType::PROGRAM_BSP:
-        Log(" %s.exe map_name.map -argument", g_Program);
-        Log("\n %s Arguments :\n\n", g_Program);
+        Log(" %s.exe map_name.map -argument", g_Program.c_str());
+        Log("\n %s Arguments :\n\n", g_Program.c_str());
         Log("    -subdivide #   : Sets the face subdivide size\n");
         Log("    -maxnodesize # : Sets the maximum portal node size\n\n");
         Log("    -texdata #     : Alter maximum texture memory limit (in kb)\n");
@@ -30,8 +30,8 @@ void Usage(ProgramType programType)
         break;
 
     case ProgramType::PROGRAM_VIS:
-        Log(" %s.exe <mapname.map> -argument", g_Program);
-        Log("\n %s Arguments :\n\n", g_Program);
+        Log(" %s.exe <mapname.map> -argument", g_Program.c_str());
+        Log("\n %s Arguments :\n\n", g_Program.c_str());
         Log("    -full           : Full vis\n");
         Log("    -fast           : Fast vis\n\n");
         Log("    -texdata #      : Alter maximum texture memory limit (in kb)\n");
@@ -42,8 +42,8 @@ void Usage(ProgramType programType)
         break;
 
     case ProgramType::PROGRAM_RAD:
-        Log(" %s.exe <mapname.map> -argument", g_Program);
-        Log("\n %s Arguments :\n\n", g_Program);
+        Log(" %s.exe <mapname.map> -argument", g_Program.c_str());
+        Log("\n %s Arguments :\n\n", g_Program.c_str());
         Log("    -extra          : Improve lighting quality by doing 9 point oversampling\n");
         Log("    -bounce #       : Set number of radiosity bounces\n");
         Log("    -limiter #      : Set light clipping threshold (-1=None)\n");

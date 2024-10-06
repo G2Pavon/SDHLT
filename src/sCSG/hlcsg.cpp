@@ -154,7 +154,7 @@ void WriteFace(const int hull, const BrushFace *const face, int detaillevel, FIL
 
     fprintf(out[hull], "%i %i %i %i %u\n", detaillevel, face->planenum, face->texinfo, face->contents, w->m_NumPoints); // plane summary
 
-    for (int i = 0; i < w->m_NumPoints; i++) // for each of the points on the face
+    for (uint32_t i = 0; i < w->m_NumPoints; i++) // for each of the points on the face
     {
         fprintf(out[hull], "%5.8f %5.8f %5.8f\n", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]); // write the co-ords
     }
@@ -171,7 +171,7 @@ void WriteDetailBrush(int hull, const BrushFace *faces, FILE **out)
     {
         auto *w = face->w;
         fprintf(out[hull], "%i %u\n", face->planenum, w->m_NumPoints);
-        for (int i = 0; i < w->m_NumPoints; i++)
+        for (uint32_t i = 0; i < w->m_NumPoints; i++)
         {
             fprintf(out[hull], "%5.8f %5.8f %5.8f\n", w->m_Points[i][0], w->m_Points[i][1], w->m_Points[i][2]);
         }
@@ -279,7 +279,7 @@ void SaveOutside(const Brush *const brush, const int hull, BrushFace *outside, c
                 }
 
                 auto bad = false;
-                for (int i = 0; i < face->w->m_NumPoints; i++)
+                for (uint32_t i = 0; i < face->w->m_NumPoints; i++)
                 {
                     for (int j = 0; j < 2; j++)
                     {
@@ -305,7 +305,7 @@ void SaveOutside(const Brush *const brush, const int hull, BrushFace *outside, c
             face->contents = backcontents;
             face->texinfo = backnull ? -1 : texinfo;
 
-            for (int i = 0; i < face->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
+            for (uint32_t i = 0; i < face->w->m_NumPoints / 2; i++) // swap point orders and add points backwards
             {
                 VectorCopy(face->w->m_Points[i], temp);
                 VectorCopy(face->w->m_Points[face->w->m_NumPoints - 1 - i], face->w->m_Points[i]);
@@ -465,8 +465,7 @@ void CSGBrush(int brushnum)
                             continue;
                         }
                         int valid = 0;
-                        int x;
-                        for (x = 0; x < w->m_NumPoints; x++)
+                        for (uint32_t x = 0; x < w->m_NumPoints; x++)
                         {
                             vec_t dist = DotProduct(w->m_Points[x], face2->plane->normal) - face2->plane->dist;
                             if (dist >= -ON_EPSILON * 4) // only estimate
@@ -511,7 +510,6 @@ void CSGBrush(int brushnum)
                 }
                 delete w;
 
-                auto faceArea = face ? face->w->getArea() : 0;
                 if (face) // there is one convex fragment of the original, face left inside brush2
                 {
                     if ((hull ? (brush2->clipnodedetaillevel > brush1->clipnodedetaillevel) : (brush2->detaillevel > brush1->detaillevel)))
@@ -635,8 +633,6 @@ void SetLightStyles(Entity *entities, int numentities)
     char value[10];
     char lighttargets[MAX_SWITCHED_LIGHTS][MAX_LIGHTTARGETS_NAME];
 
-    auto newtexlight = false;
-
     auto stylenum = 0; // any light that is controlled (has a targetname) must have a unique style number generated for it
     for (int i = 1; i < numentities; i++)
     {
@@ -662,7 +658,7 @@ void SetLightStyles(Entity *entities, int numentities)
                 continue;
             case -3:                          // (HACK) a piggyback texlight: switched on and off by triggering a real light that has the same name
                 SetKeyValue(e, "style", "0"); // just in case the level designer didn't give it a name
-                newtexlight = true;           // don't 'continue', fall out
+                // don't 'continue', fall out
             }
         }
         t = ValueForKey(e, "targetname");
@@ -804,7 +800,6 @@ void SetModelCenters(Entity *entities, int numentities, Brush *brushes)
 {
     for (int i = 0; i < numentities; i++)
     {
-        int last;
         char string[MAXTOKEN];
         auto *e = &entities[i];
         BoundingBox bounds;
@@ -864,17 +859,20 @@ void ProcessModels(Entity *entities, Brush *brushes, int numentities)
                 b_contents = true;
                 contents = brush->contents;
             }
-            for (j = 0; j < entities[i].numbrushes; j++)
             {
-                Brush *brush = &temps[j];
-                if (brush->contents == contents)
-                {
-                    brushes[first + placed] = *brush;
-                    placed++;
-                }
+                if (b_contents)
+                    for (j = 0; j < entities[i].numbrushes; j++)
+                    {
+                        Brush *brush = &temps[j];
+                        if (brush->contents == contents)
+                        {
+                            brushes[first + placed] = *brush;
+                            placed++;
+                        }
+                    }
+                b_placedcontents = true;
+                placedcontents = contents;
             }
-            b_placedcontents = true;
-            placedcontents = contents;
         }
         delete[] temps;
 
@@ -956,7 +954,7 @@ void EmitPlanes(Plane *planes, int num_map_planes, const char *mapname)
         auto *planeout = fopen(name, "wb");
         if (!planeout)
             Error("Couldn't open %s", name);
-        SafeWrite(planeout, g_mapplanes, num_map_planes * sizeof(Plane));
+        SafeWrite(planeout, planes, num_map_planes * sizeof(Plane));
         fclose(planeout);
     }
 }

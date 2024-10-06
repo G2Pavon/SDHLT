@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
+#include <string>
 
 #include <unistd.h>
 
@@ -12,7 +13,7 @@
 #include "filelib.h"
 #include "maplib.h"
 
-char *g_Program = "Uninitialized variable ::g_Program";
+std::string g_Program = "Uninitialized variable ::g_Program";
 char g_Mapname[_MAX_PATH] = "Uninitialized variable ::g_Mapname";
 char g_Wadpath[_MAX_PATH] = "Uninitialized variable ::g_Wadpath";
 
@@ -129,7 +130,7 @@ void LogError(const char *const message)
 
         if (ErrorLog)
         {
-            fprintf(ErrorLog, "%s: %s\n", g_Program, message);
+            fprintf(ErrorLog, "%s: %s\n", g_Program.c_str(), message);
             fflush(ErrorLog);
             fclose(ErrorLog);
             ErrorLog = nullptr;
@@ -342,7 +343,7 @@ void Banner()
     Log("%s " SDHLT_VERSIONSTRING
         " " PLATFORM_VERSIONSTRING
         " (%s)\n",
-        g_Program, __DATE__);
+        g_Program.c_str(), __DATE__);
     // Log("BUGGY %s (built: %s)\nUse at own risk.\n", g_Program, __DATE__);
 
     Log("seedee's Half-Life Compilation Tools\n"
@@ -356,7 +357,7 @@ void Banner()
 void LogStart(int argc, char **argv)
 {
     Banner();
-    Log("-----  BEGIN  %s -----\n", g_Program);
+    Log("-----  BEGIN  %s -----\n", g_Program.c_str());
     LogArgs(argc, argv);
 }
 
@@ -383,7 +384,7 @@ void LogArguments(int argc, char **argv)
 // =====================================================================================
 void LogEnd()
 {
-    Log("\n-----   END   %s -----\n\n\n\n", g_Program);
+    Log("\n-----   END   %s -----\n\n\n\n", g_Program.c_str());
 }
 
 // =====================================================================================
